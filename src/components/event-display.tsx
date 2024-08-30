@@ -1,0 +1,94 @@
+import {
+    CalendarPlus,
+    Send,
+    Link
+} from "lucide-react"
+
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Button } from "@/components/ui/button"
+import { Separator } from "@/components/ui/separator"
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
+} from "@/components/ui/tooltip"
+
+import { Event } from "@/app/data"
+
+interface EventDisplayProps {
+    event: Event | null
+}
+
+export function EventDisplay({ event }: EventDisplayProps) {
+    const today = new Date()
+
+    return (
+        <ScrollArea className="h-screen">
+            <div className="flex h-full flex-col">
+                <div className="flex items-center p-2">
+                    <div className="flex items-center gap-2">
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button variant="ghost" size="icon" disabled={!event}>
+                                    <CalendarPlus className="h-4 w-4" />
+                                    <span className="sr-only">Add to Calendar</span>
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Add to Calendar</TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button variant="ghost" size="icon" disabled={!event}>
+                                    <Send className="h-4 w-4" />
+                                    <span className="sr-only">Share</span>
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Share</TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button variant="ghost" size="icon" disabled={!event}>
+                                    <Link className="h-4 w-4" />
+                                    <span className="sr-only">External Link</span>
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>External Link</TooltipContent>
+                        </Tooltip>
+                    </div>
+                </div>
+                <Separator />
+                {event ? (
+                    <div className="flex flex-1 flex-col">
+                        <div className="flex items-start p-4">
+                            <div className="flex items-start gap-4 text-sm">
+                                <div className="grid gap-2">
+                                    <div className="grid gap-1">
+                                        <div className="font-semibold">{event.name}</div>
+                                        <div className="text-xs font-medium">{event.date}</div>
+                                        <div className="text-xs font-medium">{event.time}</div>
+                                    </div>
+                                    <div className="grid gap-1">
+                                        <div className="text-xs font-medium">{event.location}</div>
+                                        <div className="text-xs font-medium">
+                                            <span>Cost:</span> {event.cost}
+                                        </div>
+                                    </div>
+                                    <div className="text-xs text-muted-foreground">{event.subject}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <Separator />
+                        <div className="flex-1 whitespace-pre-wrap p-4 text-sm">
+                            {event.description}
+                        </div>
+                        <Separator className="mt-auto" />
+                    </div>
+                ) : (
+                    <div className="p-8 text-center text-muted-foreground">
+                        No message selected
+                    </div>
+                )}
+            </div>
+        </ScrollArea>
+    )
+}
