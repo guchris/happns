@@ -22,6 +22,37 @@ interface EventDisplayProps {
 export function EventDisplay({ event }: EventDisplayProps) {
     const today = new Date()
 
+    const openExternalLink = () => {
+        if (event && event.link) {
+            window.open(event.link, "_blank")
+        }
+    }
+
+    function getGoogleCalendarLink(event: Event) {
+        // Parse the date
+        const eventDate = new Date(`${event.date} ${event.time.split(" - ")[0]}`);
+        const eventEndTime = event.time.split(" - ")[1];
+        
+        // If the event spans multiple days, use the end date; otherwise, assume it ends the same day
+        const eventEndDate = eventEndTime 
+            ? new Date(`${event.date} ${eventEndTime}`)
+            : new Date(eventDate.getTime() + 3600000); // Default to 1 hour duration if no end time
+    
+        // Format dates for Google Calendar (YYYYMMDDTHHMMSSZ)
+        const startDate = eventDate.toISOString().replace(/-|:|\.\d\d\d/g, "");
+        const endDate = eventEndDate.toISOString().replace(/-|:|\.\d\d\d/g, "");
+    
+        return `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.name)}&dates=${startDate}/${endDate}&details=${encodeURIComponent(event.description)}&location=${encodeURIComponent(event.location)}&sf=true&output=xml`;
+    }
+    
+
+    const addToCalendar = () => {
+        if (event) {
+            const googleCalendarLink = getGoogleCalendarLink(event);
+            window.open(googleCalendarLink, "_blank");
+        }
+    };
+
     return (
         <ScrollArea className="h-screen">
             <div className="flex h-full flex-col">
@@ -29,7 +60,7 @@ export function EventDisplay({ event }: EventDisplayProps) {
                     <div className="flex items-center gap-2">
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" disabled={!event}>
+                                <Button variant="ghost" size="icon" disabled={!event} onClick={addToCalendar}>
                                     <CalendarPlus className="h-4 w-4" />
                                     <span className="sr-only">Add to Calendar</span>
                                 </Button>
@@ -47,7 +78,7 @@ export function EventDisplay({ event }: EventDisplayProps) {
                         </Tooltip>
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" disabled={!event}>
+                                <Button variant="ghost" size="icon" disabled={!event} onClick={openExternalLink}>
                                     <Link className="h-4 w-4" />
                                     <span className="sr-only">External Link</span>
                                 </Button>
