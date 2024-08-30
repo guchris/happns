@@ -94,17 +94,17 @@ export function EventDisplay({ event }: EventDisplayProps) {
                             <div className="flex items-start gap-4 text-sm">
                                 <div className="grid gap-2">
                                     <div className="grid gap-1">
-                                        <div className="font-semibold">{event.name}</div>
-                                        <div className="text-xs font-medium">{event.date}</div>
-                                        <div className="text-xs font-medium">{event.time}</div>
+                                        <div className="text-base font-semibold">{event.name}</div>
+                                        <div className="text-sm font-medium">{event.date}</div>
+                                        <div className="text-sm font-medium">{event.time}</div>
                                     </div>
                                     <div className="grid gap-1">
-                                        <div className="text-xs font-medium">{event.location}</div>
-                                        <div className="text-xs font-medium">
+                                        <div className="text-sm">{event.location}</div>
+                                        <div className="text-sm">
                                             <span>Cost:</span> {event.cost}
                                         </div>
                                     </div>
-                                    <div className="text-xs text-muted-foreground">{event.subject}</div>
+                                    <div className="text-sm text-muted-foreground">{event.subject}</div>
                                 </div>
                             </div>
                         </div>

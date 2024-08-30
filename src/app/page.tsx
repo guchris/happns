@@ -5,14 +5,22 @@ import Link from "next/link";
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button";
 
+import { PlusCircledIcon } from "@radix-ui/react-icons"
+
 const cities = ["Seattle", "New York City", "San Francisco"];
 
 export default function Home() {
   return (
 
     <div className="hidden h-full flex-col md:flex">
-        <div className="w-full flex items-center py-4 px-4 md:h-14">
+        <div className="w-full flex items-center justify-between py-4 px-4 md:h-14">
             <h2 className="text-lg font-semibold">happns</h2>
+            <Button>
+              <PlusCircledIcon className="mr-2 h-4 w-4" />
+              <Link href="https://www.chris-corner.com" target="_blank" rel="noopener noreferrer">
+                Add event
+              </Link>
+            </Button>
         </div>
         <Separator />
         <div className="flex flex-col items-start space-y-4 p-4">
