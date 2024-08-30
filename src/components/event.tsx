@@ -43,7 +43,7 @@ export function Event({
     const [selectedCost, setSelectedCost] = React.useState<string | undefined>(undefined)
     const [dateRange, setDateRange] = React.useState<DateRange | undefined>({
         from: new Date(),
-        to: addDays(new Date(), 7),
+        to: undefined,
     })
 
     const parseEventDate = (dateString: string) => {
@@ -61,13 +61,12 @@ export function Event({
         }
     }
 
-    const isEventInRange = (eventStart: Date, eventEnd: Date, rangeStart: Date, rangeEnd: Date) => {
-        // Check if any part of the event date range falls within the selected date range
+    const isEventInRange = (eventStart: Date, eventEnd: Date, rangeStart: Date, rangeEnd?: Date) => {
+        const effectiveRangeEnd = rangeEnd || new Date(9999, 11, 31); // Use far-future date if rangeEnd is undefined
         return (
-            isWithinInterval(eventStart, { start: rangeStart, end: rangeEnd }) || // Event starts within range
-            isWithinInterval(eventEnd, { start: rangeStart, end: rangeEnd }) || // Event ends within range
-            (isWithinInterval(rangeStart, { start: eventStart, end: eventEnd })) || // Range starts within event
-            (isWithinInterval(rangeEnd, { start: eventStart, end: eventEnd })) // Range ends within event
+            isWithinInterval(eventStart, { start: rangeStart, end: effectiveRangeEnd }) || 
+            isWithinInterval(eventEnd, { start: rangeStart, end: effectiveRangeEnd }) || 
+            (rangeStart <= eventStart && effectiveRangeEnd >= eventEnd)
         )
     }
 
@@ -75,7 +74,6 @@ export function Event({
         const { startDate, endDate } = parseEventDate(e.date)
         const isInDateRange =
             dateRange?.from &&
-            dateRange?.to &&
             isEventInRange(startDate, endDate, dateRange.from, dateRange.to)
 
         return (
@@ -98,7 +96,7 @@ export function Event({
         setSelectedFormat(undefined)
         setSelectedNeighborhood(undefined)
         setSelectedCost(undefined)
-        setDateRange({ from: new Date(), to: addDays(new Date(), 7) })
+        setDateRange({ from: new Date(), to: undefined })
     }
 
     return (
@@ -212,7 +210,9 @@ export function Event({
                 <ResizableHandle withHandle />
 
                 <ResizablePanel defaultSize={defaultLayout[2]} minSize={30} className="h-full overflow-y-auto">
-                    <EventDisplay event={events.find((item) => item.id === event.selected) || null} />
+                    {filteredEvents.length > 0 && (
+                        <EventDisplay event={events.find((item) => item.id === event.selected) || null} />
+                    )}
                 </ResizablePanel>
             </ResizablePanelGroup>
         </TooltipProvider>
