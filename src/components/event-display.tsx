@@ -13,7 +13,7 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip"
 
-import { Event } from "@/app/data"
+import { Event } from "@/app/types"
 
 interface EventDisplayProps {
     event: Event | null

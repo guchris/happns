@@ -1,4 +1,4 @@
-import { ComponentProps, useState } from "react"
+import { useState } from "react"
 import { format, parse } from "date-fns"
 
 import { cn } from "@/lib/utils"
@@ -15,7 +15,7 @@ import {
     CollapsibleTrigger,
 } from "@/components/ui/collapsible"
 
-import { Event } from "@/app/data"
+import { Event } from "@/app/types"
 import { useEvent } from "@/app/use-event"
 
 interface EventListProps {

@@ -1,13 +1,13 @@
 import { atom, useAtom } from "jotai"
 
-import { Event, events } from "@/app/data"
+import { Event } from "@/app/types"
 
 type Config = {
     selected: Event["id"] | null
 }
 
 const configAtom = atom<Config>({
-    selected: events[0].id,
+    selected: null
 })
 
 export function useEvent() {

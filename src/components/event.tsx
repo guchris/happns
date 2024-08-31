@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { format, isWithinInterval, parse, addDays } from "date-fns"
+import { isWithinInterval, parse } from "date-fns"
 import { DateRange } from "react-day-picker"
 
 import {
@@ -25,7 +25,7 @@ import { EventDisplay } from "@/components/event-display"
 import { EventList } from "@/components/event-list"
 
 import { useEvent } from "@/app/use-event"
-import { type Event } from "@/app/data"
+import { type Event } from "@/app/types"
 
 interface EventProps {
     events: Event[]
