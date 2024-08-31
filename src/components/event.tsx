@@ -34,7 +34,7 @@ interface EventProps {
 export function Event({
     events
 }: EventProps) {
-    const [event] = useEvent()
+    const [event, setEvent] = useEvent()
     const defaultLayout = [20, 40, 40]
 
     const [selectedCategory, setSelectedCategory] = React.useState<string | undefined>(undefined)
@@ -45,6 +45,13 @@ export function Event({
         from: new Date(),
         to: undefined,
     })
+
+    React.useEffect(() => {
+        setEvent((prevEvent) => ({
+            ...prevEvent,
+            selected: null,
+        }))
+    }, [setEvent])
 
     const parseEventDate = (dateString: string) => {
         if (dateString.includes("-")) {
@@ -121,7 +128,7 @@ export function Event({
                                 {/* <Label htmlFor="category">Event Category</Label> */}
                                 <Select onValueChange={setSelectedCategory}>
                                     <SelectTrigger id="category" className="w-full">
-                                        <SelectValue placeholder="Select Category" />
+                                        <SelectValue placeholder="Category" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="arts">Arts</SelectItem>
@@ -151,7 +158,7 @@ export function Event({
                                 {/* <Label htmlFor="format">Event Format</Label> */}
                                 <Select onValueChange={setSelectedFormat}>
                                     <SelectTrigger id="format" className="w-full">
-                                        <SelectValue placeholder="Select Format" />
+                                        <SelectValue placeholder="Format" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="in-person">In-Person</SelectItem>
@@ -164,7 +171,7 @@ export function Event({
                                 {/* <Label htmlFor="neighborhood">Neighborhood</Label> */}
                                 <Select onValueChange={setSelectedNeighborhood}>
                                     <SelectTrigger id="neighborhood" className="w-full">
-                                        <SelectValue placeholder="Select Neighborhood" />
+                                        <SelectValue placeholder="Neighborhood" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="capitol-hill">Capitol Hill</SelectItem>
@@ -173,7 +180,8 @@ export function Event({
                                         <SelectItem value="fremont">Fremont</SelectItem>
                                         <SelectItem value="queen-anne">Queen Anne</SelectItem>
                                         <SelectItem value="seattle">Seattle</SelectItem>
-                                        <SelectItem value="tukwila">Teattle</SelectItem>
+                                        <SelectItem value="tukwila">Tukwila</SelectItem>
+                                        <SelectItem value="tukwila">Wallingford</SelectItem>
                                         <SelectItem value="west-seattle">West Seattle</SelectItem>
                                     </SelectContent>
                                 </Select>
@@ -182,7 +190,7 @@ export function Event({
                                 {/* <Label htmlFor="cost">Cost</Label> */}
                                 <Select onValueChange={setSelectedCost}>
                                     <SelectTrigger id="cost" className="w-full">
-                                        <SelectValue placeholder="Select Cost" />
+                                        <SelectValue placeholder="Cost" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="free">Free</SelectItem>
@@ -195,7 +203,7 @@ export function Event({
                                 </Select>
                             </div>
                             <Button variant="outline" onClick={handleClearAll} className="w-full">
-                                Clear All
+                                Reset
                             </Button>
                         </form>
                     </div>

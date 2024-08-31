@@ -116,7 +116,7 @@ export function EventDisplay({ event }: EventDisplayProps) {
                     </div>
                 ) : (
                     <div className="p-8 text-center text-muted-foreground">
-                        No message selected
+                        No event selected
                     </div>
                 )}
             </div>
