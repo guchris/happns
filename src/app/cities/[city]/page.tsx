@@ -27,7 +27,7 @@ export default function CityPage() {
                     </h2>
                     <Button>
                         <PlusCircledIcon className="mr-2 h-4 w-4" />
-                        <Link href="https://www.chris-corner.com" className="text-sm" target="_blank" rel="noopener noreferrer">
+                        <Link href="https://airtable.com/app0fFoxhSVvQHNmo/pag41f358zYRYELLj/form" target="_blank">
                             Add event
                         </Link>
                     </Button>

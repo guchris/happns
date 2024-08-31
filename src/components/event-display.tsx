@@ -101,7 +101,7 @@ export function EventDisplay({ event }: EventDisplayProps) {
                                     <div className="grid gap-1">
                                         <div className="text-sm">{event.location}</div>
                                         <div className="text-sm">
-                                            <span>Cost:</span> {event.cost}
+                                            <span>Cost: $</span>{event.cost}
                                         </div>
                                     </div>
                                     <div className="text-sm text-muted-foreground">{event.subject}</div>

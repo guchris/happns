@@ -209,7 +209,7 @@ export function Event({
                     </div>
                 </ResizablePanel>
 
-                <ResizableHandle />
+                <ResizableHandle withHandle />
 
                 <ResizablePanel defaultSize={defaultLayout[1]} minSize={30} className="h-full overflow-y-auto">
                     <EventList items={filteredEvents} />

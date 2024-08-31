@@ -17,7 +17,7 @@ export default function Home() {
             <h2 className="text-lg font-semibold">happns</h2>
             <Button>
               <PlusCircledIcon className="mr-2 h-4 w-4" />
-              <Link href="https://www.chris-corner.com" target="_blank" rel="noopener noreferrer">
+              <Link href="https://airtable.com/app0fFoxhSVvQHNmo/pag41f358zYRYELLj/form" target="_blank">
                 Add event
               </Link>
             </Button>
