@@ -15,10 +15,16 @@ import {
     SelectItem,
     SelectTrigger,
     SelectValue,
-  } from "@/components/ui/select"  
+} from "@/components/ui/select"
+import {
+    Sheet,
+    SheetContent,
+    SheetTrigger,
+    SheetClose
+} from "@/components/ui/sheet";
 import { TooltipProvider } from "@/components/ui/tooltip"
-import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
+import { Separator } from "@/components/ui/separator"
 
 import { CalendarDateRangePicker } from "@/components/date-range-picker"
 import { EventDisplay } from "@/components/event-display"
@@ -117,7 +123,7 @@ export function Event({
                 }}
                 className="h-full items-stretch"
             >
-                <ResizablePanel defaultSize={defaultLayout[0]} minSize={15} maxSize={20} className="h-full overflow-y-auto">
+                <ResizablePanel defaultSize={defaultLayout[0]} minSize={15} maxSize={20} className="h-full overflow-y-auto hidden md:block">
                     <div className="p-4">
                         <form className="space-y-4">
                             <CalendarDateRangePicker
@@ -212,6 +218,107 @@ export function Event({
                 <ResizableHandle withHandle />
 
                 <ResizablePanel defaultSize={defaultLayout[1]} minSize={30} className="h-full overflow-y-auto">
+                    {/* <div className="flex items-center px-4 py-2 md:hidden">
+                        <Button variant="secondary" className="ml-auto">Filters</Button>
+                    </div> */}
+                    <div className="flex items-center px-4 py-2 md:hidden">
+                        <Sheet>
+                            <SheetTrigger asChild>
+                                <Button variant="secondary" className="ml-auto">Filters</Button>
+                            </SheetTrigger>
+                            <SheetContent side="bottom">
+                                <div className="p-4">
+                                    <form className="space-y-4">
+                                        <CalendarDateRangePicker
+                                            selected={dateRange}
+                                            onSelect={setDateRange}
+                                        />
+                                        <div className="space-y-2">
+                                            <Select onValueChange={setSelectedCategory}>
+                                                <SelectTrigger id="category" className="w-full">
+                                                    <SelectValue placeholder="Category" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="arts">Arts</SelectItem>
+                                                    <SelectItem value="music">Music</SelectItem>
+                                                    <SelectItem value="food-drink">Food & Drink</SelectItem>
+                                                    <SelectItem value="sports-fitness">Sports & Fitness</SelectItem>
+                                                    <SelectItem value="family">Family</SelectItem>
+                                                    <SelectItem value="professional">Professional</SelectItem>
+                                                    <SelectItem value="technology">Technology</SelectItem>
+                                                    <SelectItem value="education">Education</SelectItem>
+                                                    <SelectItem value="wellness">Wellness</SelectItem>
+                                                    <SelectItem value="charity">Charity</SelectItem>
+                                                    <SelectItem value="culture">Culture</SelectItem>
+                                                    <SelectItem value="holiday-seasonal">Holiday & Seasonal</SelectItem>
+                                                    <SelectItem value="nightlife">Nightlife</SelectItem>
+                                                    <SelectItem value="fashion-beauty">Fashion & Beauty</SelectItem>
+                                                    <SelectItem value="environment">Environment</SelectItem>
+                                                    <SelectItem value="religion">Religion</SelectItem>
+                                                    <SelectItem value="politics">Politics</SelectItem>
+                                                    <SelectItem value="travel">Travel</SelectItem>
+                                                    <SelectItem value="gaming">Gaming</SelectItem>
+                                                    <SelectItem value="crafts">Crafts</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Select onValueChange={setSelectedFormat}>
+                                                <SelectTrigger id="format" className="w-full">
+                                                    <SelectValue placeholder="Format" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="in-person">In-Person</SelectItem>
+                                                    <SelectItem value="online">Online</SelectItem>
+                                                    <SelectItem value="hybrid">Hybrid</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Select onValueChange={setSelectedNeighborhood}>
+                                                <SelectTrigger id="neighborhood" className="w-full">
+                                                    <SelectValue placeholder="Neighborhood" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="capitol-hill">Capitol Hill</SelectItem>
+                                                    <SelectItem value="ballard">Ballard</SelectItem>
+                                                    <SelectItem value="beacon-hill">Beacon Hill</SelectItem>
+                                                    <SelectItem value="fremont">Fremont</SelectItem>
+                                                    <SelectItem value="queen-anne">Queen Anne</SelectItem>
+                                                    <SelectItem value="seattle">Seattle</SelectItem>
+                                                    <SelectItem value="tukwila">Tukwila</SelectItem>
+                                                    <SelectItem value="wallingford">Wallingford</SelectItem>
+                                                    <SelectItem value="west-seattle">West Seattle</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Select onValueChange={setSelectedCost}>
+                                                <SelectTrigger id="cost" className="w-full">
+                                                    <SelectValue placeholder="Cost" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="free">Free</SelectItem>
+                                                    <SelectItem value="varies">Varies</SelectItem>
+                                                    <SelectItem value="$0-$25">$0-$25</SelectItem>
+                                                    <SelectItem value="$25-$50">$25-$50</SelectItem>
+                                                    <SelectItem value="$50-$100">$50-$100</SelectItem>
+                                                    <SelectItem value="$100+">$100+</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                        <Button variant="outline" onClick={handleClearAll} className="w-full">
+                                            Reset
+                                        </Button>
+                                        <SheetClose asChild>
+                                            <Button className="w-full mt-4">Apply Filters</Button>
+                                        </SheetClose>
+                                    </form>
+                                </div>
+                            </SheetContent>
+                        </Sheet>
+                    </div>
+                    <Separator />
                     <EventList items={filteredEvents} />
                 </ResizablePanel>
 
