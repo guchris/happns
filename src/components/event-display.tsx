@@ -1,7 +1,8 @@
 import {
     CalendarPlus,
-    Send,
-    Link
+    SquareArrowOutUpRight,
+    MapPin,
+    Send
 } from "lucide-react"
 
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -25,6 +26,12 @@ export function EventDisplay({ event }: EventDisplayProps) {
     const openExternalLink = () => {
         if (event && event.link) {
             window.open(event.link, "_blank")
+        }
+    }
+
+    const openGoogleMapsLink = () => {
+        if (event && event.gmaps) {
+            window.open(event.gmaps, "_blank")
         }
     }
 
@@ -69,21 +76,30 @@ export function EventDisplay({ event }: EventDisplayProps) {
                         </Tooltip>
                         <Tooltip>
                             <TooltipTrigger asChild>
+                                <Button variant="ghost" size="icon" disabled={!event} onClick={openExternalLink}>
+                                    <SquareArrowOutUpRight className="h-4 w-4" />
+                                    <span className="sr-only">External Link</span>
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>External Link</TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button variant="ghost" size="icon" disabled={!event} onClick={openGoogleMapsLink}>
+                                    <MapPin className="h-4 w-4" />
+                                    <span className="sr-only">Directions</span>
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Directions</TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
                                 <Button variant="ghost" size="icon" disabled={!event}>
                                     <Send className="h-4 w-4" />
                                     <span className="sr-only">Share</span>
                                 </Button>
                             </TooltipTrigger>
                             <TooltipContent>Share</TooltipContent>
-                        </Tooltip>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" disabled={!event} onClick={openExternalLink}>
-                                    <Link className="h-4 w-4" />
-                                    <span className="sr-only">External Link</span>
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>External Link</TooltipContent>
                         </Tooltip>
                     </div>
                 </div>
