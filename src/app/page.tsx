@@ -13,7 +13,7 @@ export default function Home() {
   return (
 
     <div className="flex h-full flex-col">
-        <div className="w-full flex items-center justify-between py-4 px-4 md:h-14">
+        <div className="w-full flex items-center justify-between py-4 px-4 h-14">
             <h2 className="text-lg font-semibold">happns</h2>
             <Button>
               <PlusCircledIcon className="mr-2 h-4 w-4" />

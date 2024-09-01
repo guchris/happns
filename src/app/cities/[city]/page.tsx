@@ -46,11 +46,8 @@ export default function CityPage() {
 
     return (
         <>
-            {/* Mobile View */}
-
-            {/* Desktop View */}
             <div className="flex h-full flex-col">
-                <div className="w-full flex items-center justify-between py-4 px-4 md:h-14">
+                <div className="w-full flex items-center justify-between py-4 px-4 h-14">
                     <h2 className="text-lg font-semibold">
                         <Link href="/">happns</Link>
                         /{city}

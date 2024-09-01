@@ -215,13 +215,13 @@ export function Event({
                     </div>
                 </ResizablePanel>
 
-                <ResizableHandle withHandle />
+                <ResizableHandle className="hidden md:block" />
 
                 <ResizablePanel defaultSize={defaultLayout[1]} minSize={30} className="h-full overflow-y-auto">
                     <div className="flex items-center px-4 py-2 md:hidden">
                         <Sheet>
                             <SheetTrigger asChild>
-                                <Button variant="secondary" className="ml-auto">Filters</Button>
+                                <Button variant="secondary" className="w-full">Filters</Button>
                             </SheetTrigger>
                             <SheetContent side="bottom">
                                 <div className="p-4">
@@ -315,7 +315,7 @@ export function Event({
                             </SheetContent>
                         </Sheet>
                     </div>
-                    <Separator />
+                    <Separator className="md:hidden" />
                     <EventList items={filteredEvents} />
                 </ResizablePanel>
 
