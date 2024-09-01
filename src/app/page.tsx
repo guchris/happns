@@ -12,7 +12,7 @@ const cities = ["Seattle", "New York City", "San Francisco"];
 export default function Home() {
   return (
 
-    <div className="hidden h-full flex-col md:flex">
+    <div className="flex h-full flex-col">
         <div className="w-full flex items-center justify-between py-4 px-4 md:h-14">
             <h2 className="text-lg font-semibold">happns</h2>
             <Button>

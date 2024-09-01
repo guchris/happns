@@ -218,9 +218,6 @@ export function Event({
                 <ResizableHandle withHandle />
 
                 <ResizablePanel defaultSize={defaultLayout[1]} minSize={30} className="h-full overflow-y-auto">
-                    {/* <div className="flex items-center px-4 py-2 md:hidden">
-                        <Button variant="secondary" className="ml-auto">Filters</Button>
-                    </div> */}
                     <div className="flex items-center px-4 py-2 md:hidden">
                         <Sheet>
                             <SheetTrigger asChild>
