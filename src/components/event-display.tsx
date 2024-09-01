@@ -104,13 +104,13 @@ export function EventDisplay({ event }: EventDisplayProps) {
                                             <span>Cost: $</span>{event.cost}
                                         </div>
                                     </div>
-                                    <div className="text-sm text-muted-foreground">{event.subject}</div>
+                                    <div className="text-sm text-muted-foreground">{event.description}</div>
                                 </div>
                             </div>
                         </div>
                         <Separator />
                         <div className="flex-1 whitespace-pre-wrap p-4 text-sm">
-                            {event.description}
+                            {event.details}
                         </div>
                         <Separator className="mt-auto" />
                     </div>

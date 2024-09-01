@@ -103,7 +103,7 @@ function CollapsibleItem({ date, events, isLastItem }: CollapsibleItemProps) {
                                 <div className="text-xs font-medium">{item.time}</div>
                             </div>
                             <div className="line-clamp-1 text-xs text-muted-foreground">
-                                {item.subject.substring(0, 300)}
+                                {item.description.substring(0, 300)}
                             </div>
                         </button>
                     ))}

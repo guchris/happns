@@ -28,13 +28,14 @@ export default function CityPage() {
             cost: doc.data().cost,
             date: doc.data().date,
             description: doc.data().description,
+            details: doc.data().details,
             format: doc.data().format,
+            gmaps: doc.data().gmaps,
             id: doc.id,
             link: doc.data().link,
             location: doc.data().location,
             name: doc.data().name,
             neighborhood: doc.data().neighborhood,
-            subject: doc.data().subject,
             time: doc.data().time,
           }));
           setEvents(eventList);
