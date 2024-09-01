@@ -47,13 +47,19 @@ export function EventList({ items }: EventListProps) {
         return acc
     }, {} as Record<string, Event[]>)
 
+    // Sort dates in ascending order based on Date objects
+    const sortedDates = Object.keys(eventsByDate).sort((a, b) => {
+        const dateA = parse(a, "MMMM d, yyyy", new Date())
+        const dateB = parse(b, "MMMM d, yyyy", new Date())
+        return dateA.getTime() - dateB.getTime()
+    })
 
     return (
         <ScrollArea className="h-screen">
             <div className="flex flex-col">
-                {Object.entries(eventsByDate).map(([date, events], index) => (
+                {sortedDates.map((date, index) => (
                     <div key={date}>
-                        <CollapsibleItem date={date} events={events} isLastItem={index === Object.entries(eventsByDate).length - 1} />
+                        <CollapsibleItem date={date} events={eventsByDate[date]} isLastItem={index === sortedDates.length - 1} />
                     </div>
                 ))}
             </div>
