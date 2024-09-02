@@ -32,6 +32,7 @@ export default function CityPage() {
             format: doc.data().format,
             gmaps: doc.data().gmaps,
             id: doc.id,
+            image: doc.data().image,
             link: doc.data().link,
             location: doc.data().location,
             name: doc.data().name,

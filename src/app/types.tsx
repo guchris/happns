@@ -7,6 +7,7 @@ export interface Event {
     format: string;
     gmaps: string;
     id: string;
+    image: string;
     link: string;
     location: string;
     name: string;
