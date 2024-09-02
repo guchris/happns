@@ -39,6 +39,63 @@ import {
 import { CalendarIcon } from "@radix-ui/react-icons"
 
 const eventFormSchema = z.object({
+    category: z.string(),
+    cost: z
+        .number({
+            required_error: "Cost is required.",
+            invalid_type_error: "Cost must be a number.",
+        })
+        .nonnegative({
+            message: "Cost must be a non-negative number.",
+        }),
+    description: z
+        .string()
+        .min(4, {
+            message: "Description must be at least 4 characters.",
+        })
+        .max(320, {
+            message: "Description must not be longer than 320 characters.",
+        }),
+    details: z
+        .string()
+        .min(4, {
+            message: "Details must be at least 4 characters.",
+        })
+        .max(10000, {
+            message: "Details must not be longer than 10,000 characters.",
+        }),
+    endDate: z.date({
+        required_error: "An end date is required.",
+    }),
+    endTime: z
+        .string()
+        .regex(/^(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)$/i, {
+            message: "End time must be in HH:mm AM/PM format.",
+        }),
+    format: z.enum(["in-person", "online", "hybrid"], {
+        required_error: "Please select a format.",
+    }),
+    gmaps: z
+        .string()
+        .url({
+            message: "Please enter a valid Google Maps URL.",
+        }),
+    image: z.any({
+        required_error: "An image is required.",
+    }),
+    link: z
+        .string()
+        .url({
+            message: "Please enter a valid URL.",
+        }),
+    location: z
+        .string()
+        .min(2, {
+            message: "Location must be at least 2 characters.",
+        })
+        .max(100, {
+            message: "Location must not be longer than 100 characters.",
+        }),
     name: z
         .string()
         .min(2, {
@@ -47,33 +104,34 @@ const eventFormSchema = z.object({
         .max(50, {
             message: "Name must not be longer than 50 characters.",
         }),
-    category: z
-        .string(),
-    description: z.string().max(320).min(4),
-    details: z.string().max(10000).min(4),
+    neighborhood: z.enum([
+        "ballard",
+        "beacon-hill",
+        "capitol-hill",
+        "fremont",
+        "queen-anne",
+        "seattle",
+        "tukwila",
+        "wallingford",
+        "west-seattle",
+    ], {
+        required_error: "Please select a neighborhood.",
+    }),
     startDate: z.date({
-        required_error: "A start date is required."
+        required_error: "A start date is required.",
     }),
-    endDate: z.date({
-        required_error: "An end date is required."
-    }),
-    link: z.string().url({
-        message: "Please enter a valid URL."
-    }),
-})
+    startTime: z
+        .string()
+        .regex(/^(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)$/i, {
+            message: "Start time must be in HH:mm AM/PM format.",
+        })
+});
 
 type EventFormValues = z.infer<typeof eventFormSchema>
-
-const defaultValues: Partial<EventFormValues> = {
-    description: "Lorem ipsum description",
-    details: "Lorem ipsum details"
-}
-
 
 export default function EventForm() {
     const form = useForm<EventFormValues>({
         resolver: zodResolver(eventFormSchema),
-        defaultValues,
         mode: "onChange",
     })
 
@@ -128,7 +186,7 @@ export default function EventForm() {
                                 <FormItem>
                                     <FormLabel>Description</FormLabel>
                                     <FormControl>
-                                        <Input {...field} />
+                                        <Input {...field} placeholder="Enter a description" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -141,7 +199,7 @@ export default function EventForm() {
                                 <FormItem>
                                     <FormLabel>Details</FormLabel>
                                     <FormControl>
-                                        <Textarea {...field} />
+                                        <Textarea {...field} placeholder="Enter the details" />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -188,76 +246,220 @@ export default function EventForm() {
                         />
                         <FormField
                             control={form.control}
-                            name="startDate"
+                            name="format"
                             render={({ field }) => (
-                                <FormItem className="flex flex-col">
-                                    <FormLabel>Start Date</FormLabel>
-                                    <Popover>
-                                        <PopoverTrigger asChild>
-                                            <FormControl>
-                                                <Button
-                                                    variant={"outline"}
-                                                    className={cn(
-                                                        "pl-3 text-left font-normal",
-                                                        !field.value && "text-muted-foreground"
-                                                    )}
-                                                >
-                                                    {field.value ? (
-                                                        format(field.value, "PPP")
-                                                    ) : (
-                                                        <span>Pick a start date</span>
-                                                    )}
-                                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                                </Button>
-                                            </FormControl>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="w-auto p-0" align="start">
-                                            <Calendar
-                                                mode="single"
-                                                selected={field.value}
-                                                onSelect={field.onChange}
-                                                initialFocus
+                                <FormItem>
+                                    <FormLabel>Event Format</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select a format" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            <SelectItem value="in-person">In-Person</SelectItem>
+                                            <SelectItem value="online">Online</SelectItem>
+                                            <SelectItem value="hybrid">Hybrid</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <div className="grid grid-cols-2 gap-4 w-full">
+                            <FormField
+                                control={form.control}
+                                name="startDate"
+                                render={({ field }) => (
+                                    <FormItem className="flex flex-col">
+                                        <FormLabel>Start Date</FormLabel>
+                                        <Popover>
+                                            <PopoverTrigger asChild>
+                                                <FormControl>
+                                                    <Button
+                                                        variant={"outline"}
+                                                        className={cn(
+                                                            "pl-3 text-left font-normal",
+                                                            !field.value && "text-muted-foreground"
+                                                        )}
+                                                    >
+                                                        {field.value ? (
+                                                            format(field.value, "PPP")
+                                                        ) : (
+                                                            <span>Pick a start date</span>
+                                                        )}
+                                                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                    </Button>
+                                                </FormControl>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-auto p-0" align="start">
+                                                <Calendar
+                                                    mode="single"
+                                                    selected={field.value}
+                                                    onSelect={field.onChange}
+                                                    initialFocus
+                                                />
+                                            </PopoverContent>
+                                        </Popover>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="endDate"
+                                render={({ field }) => (
+                                    <FormItem className="flex flex-col">
+                                        <FormLabel>End Date</FormLabel>
+                                        <Popover>
+                                            <PopoverTrigger asChild>
+                                                <FormControl>
+                                                    <Button
+                                                        variant={"outline"}
+                                                        className={cn(
+                                                            "pl-3 text-left font-normal",
+                                                            !field.value && "text-muted-foreground"
+                                                        )}
+                                                    >
+                                                        {field.value ? (
+                                                            format(field.value, "PPP")
+                                                        ) : (
+                                                            <span>Pick an end date</span>
+                                                        )}
+                                                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                    </Button>
+                                                </FormControl>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-auto p-0" align="start">
+                                                <Calendar
+                                                    mode="single"
+                                                    selected={field.value}
+                                                    onSelect={field.onChange}
+                                                    initialFocus
+                                                />
+                                            </PopoverContent>
+                                        </Popover>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4 w-full">
+                            <FormField
+                                control={form.control}
+                                name="startTime"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Start Time</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="text"
+                                                {...field}
+                                                placeholder="Enter start time"
+                                                pattern="(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)"
                                             />
-                                        </PopoverContent>
-                                    </Popover>
+                                        </FormControl>
+                                        <FormDescription>
+                                            HH:mm AM/PM
+                                        </FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="endTime"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>End Time</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="text"
+                                                {...field}
+                                                placeholder="Enter end time (HH:mm AM/PM)"
+                                                pattern="(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)"
+                                            />
+                                        </FormControl>
+                                        <FormDescription>
+                                            HH:mm AM/PM
+                                        </FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                        <FormField
+                            control={form.control}
+                            name="cost"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Cost</FormLabel>
+                                    <FormControl>
+                                        <Input type="number" {...field} placeholder="Enter the cost" />
+                                    </FormControl>
+                                    <FormDescription>
+                                        This is the cost of attending the event (in USD).
+                                    </FormDescription>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
                         <FormField
                             control={form.control}
-                            name="endDate"
+                            name="location"
                             render={({ field }) => (
-                                <FormItem className="flex flex-col">
-                                    <FormLabel>End Date</FormLabel>
-                                    <Popover>
-                                        <PopoverTrigger asChild>
-                                            <FormControl>
-                                                <Button
-                                                    variant={"outline"}
-                                                    className={cn(
-                                                        "pl-3 text-left font-normal",
-                                                        !field.value && "text-muted-foreground"
-                                                    )}
-                                                >
-                                                    {field.value ? (
-                                                        format(field.value, "PPP")
-                                                    ) : (
-                                                        <span>Pick an end date</span>
-                                                    )}
-                                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                                </Button>
-                                            </FormControl>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="w-auto p-0" align="start">
-                                            <Calendar
-                                                mode="single"
-                                                selected={field.value}
-                                                onSelect={field.onChange}
-                                                initialFocus
-                                            />
-                                        </PopoverContent>
-                                    </Popover>
+                                <FormItem>
+                                    <FormLabel>Location</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} placeholder="Enter the location name" />
+                                    </FormControl>
+                                    <FormDescription>
+                                        This is the name of the location where the event will take place.
+                                    </FormDescription>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="gmaps"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Google Maps Link</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} placeholder="https://maps.app.goo.gl/abc" />
+                                    </FormControl>
+                                    <FormDescription>
+                                        This is the Google Maps link to the event location.
+                                    </FormDescription>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="neighborhood"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Neighborhood</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select a neighborhood" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            <SelectItem value="capitol-hill">Capitol Hill</SelectItem>
+                                            <SelectItem value="ballard">Ballard</SelectItem>
+                                            <SelectItem value="beacon-hill">Beacon Hill</SelectItem>
+                                            <SelectItem value="fremont">Fremont</SelectItem>
+                                            <SelectItem value="queen-anne">Queen Anne</SelectItem>
+                                            <SelectItem value="seattle">Seattle</SelectItem>
+                                            <SelectItem value="tukwila">Tukwila</SelectItem>
+                                            <SelectItem value="wallingford">Wallingford</SelectItem>
+                                            <SelectItem value="west-seattle">West Seattle</SelectItem>
+                                        </SelectContent>
+                                    </Select>
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -273,6 +475,22 @@ export default function EventForm() {
                                     </FormControl>
                                     <FormDescription>
                                         This is the URL link to the event.
+                                    </FormDescription>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="image"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Event Image / Flyer</FormLabel>
+                                    <FormControl>
+                                        <Input type="file" accept="image/*" onChange={(e) => field.onChange(e.target.files?.[0])} />
+                                    </FormControl>
+                                    <FormDescription>
+                                        Upload an image for the event (JPG, PNG, etc.).
                                     </FormDescription>
                                     <FormMessage />
                                 </FormItem>
