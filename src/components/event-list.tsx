@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { format, parse } from "date-fns"
+import Image from "next/image"
 
 import { cn } from "@/lib/utils"
 import {
@@ -9,6 +10,7 @@ import {
 
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
+import { Badge } from "@/components/ui/badge"
 import {
     Collapsible,
     CollapsibleContent,
@@ -89,7 +91,7 @@ function CollapsibleItem({ date, events, isLastItem }: CollapsibleItemProps) {
                         <button
                             key={item.id}
                             className={cn(
-                                "flex flex-col w-full items-start gap-2 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent",
+                                "flex flex-col md:flex-row w-full items-start gap-4 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent",
                                 event.selected === item.id && "bg-muted"
                             )}
                             onClick={() =>
@@ -99,17 +101,27 @@ function CollapsibleItem({ date, events, isLastItem }: CollapsibleItemProps) {
                                 })
                             }
                         >
-                            <div className="flex w-full flex-col gap-1">
-                                <div className="flex items-center">
-                                    <div className="flex items-center gap-2">
-                                        <div className="font-semibold">{item.name}</div>
-                                    </div>
+                            <Image
+                                src="/tempFlyer1.svg"
+                                alt={item.name}
+                                width={150}
+                                height={150}
+                                className="object-cover rounded-lg w-full md:w-48 md:h-auto"
+                            />
+                            <div className="flex flex-col gap-2 w-full">
+                                <div className="flex flex-col gap-1">
+                                    <div className="font-semibold">{item.name}</div>
+                                    <div className="text-xs font-medium">{item.date}</div>
+                                    <div className="text-xs font-medium">{item.time}</div>
                                 </div>
-                                <div className="text-xs font-medium">{item.date}</div>
-                                <div className="text-xs font-medium">{item.time}</div>
-                            </div>
-                            <div className="line-clamp-1 text-xs text-muted-foreground">
-                                {item.description.substring(0, 300)}
+                                <div className="line-clamp-4 text-xs text-muted-foreground">
+                                    {item.description.substring(0, 300)}
+                                </div>
+                                <div className="inline-flex">
+                                    <Badge variant="secondary" className="inline-block">
+                                        {item.category}
+                                    </Badge>
+                                </div>
                             </div>
                         </button>
                     ))}
