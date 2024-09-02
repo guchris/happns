@@ -54,7 +54,7 @@ export default function CityPage() {
                     </h2>
                     <Button>
                         <PlusCircledIcon className="mr-2 h-4 w-4" />
-                        <Link href="/add-event">
+                        <Link href="/event-form">
                             Add event
                         </Link>
                     </Button>
