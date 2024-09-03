@@ -29,6 +29,7 @@ import { Separator } from "@/components/ui/separator"
 import { CalendarDateRangePicker } from "@/components/date-range-picker"
 import { EventDisplay } from "@/components/event-display"
 import { EventList } from "@/components/event-list"
+import { categoryOptions, formatOptions, neighborhoodOptions, costOptions } from "@/lib/selectOptions";
 
 import { useEvent } from "@/app/use-event"
 import { type Event } from "@/app/types"
@@ -129,102 +130,58 @@ export function Event({
                                 onSelect={setDateRange}
                             />
                             <div className="space-y-2">
-                                {/* <Label htmlFor="category">Event Category</Label> */}
                                 <Select onValueChange={setSelectedCategory}>
-                                    <SelectTrigger id="category" className="w-full">
+                                    <SelectTrigger>
                                         <SelectValue placeholder="Category" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="arts">Arts</SelectItem>
-                                        <SelectItem value="music">Music</SelectItem>
-                                        <SelectItem value="food-drink">Food & Drink</SelectItem>
-                                        <SelectItem value="sports-fitness">Sports & Fitness</SelectItem>
-                                        <SelectItem value="family">Family</SelectItem>
-                                        <SelectItem value="professional">Professional</SelectItem>
-                                        <SelectItem value="technology">Technology</SelectItem>
-                                        <SelectItem value="education">Education</SelectItem>
-                                        <SelectItem value="wellness">Wellness</SelectItem>
-                                        <SelectItem value="charity">Charity</SelectItem>
-                                        <SelectItem value="culture">Culture</SelectItem>
-                                        <SelectItem value="holiday-seasonal">Holiday & Seasonal</SelectItem>
-                                        <SelectItem value="nightlife">Nightlife</SelectItem>
-                                        <SelectItem value="fashion-beauty">Fashion & Beauty</SelectItem>
-                                        <SelectItem value="environment">Environment</SelectItem>
-                                        <SelectItem value="religion">Religion</SelectItem>
-                                        <SelectItem value="politics">Politics</SelectItem>
-                                        <SelectItem value="travel">Travel</SelectItem>
-                                        <SelectItem value="gaming">Gaming</SelectItem>
-                                        <SelectItem value="crafts">Crafts</SelectItem>
+                                        {categoryOptions.map(option => (
+                                            <SelectItem key={option.value} value={option.value}>
+                                                {option.label}
+                                            </SelectItem>
+                                        ))}
                                     </SelectContent>
                                 </Select>
                             </div>
                             <div className="space-y-2">
-                                {/* <Label htmlFor="format">Event Format</Label> */}
                                 <Select onValueChange={setSelectedFormat}>
-                                    <SelectTrigger id="format" className="w-full">
+                                    <SelectTrigger>
                                         <SelectValue placeholder="Format" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="in-person">In-Person</SelectItem>
-                                        <SelectItem value="online">Online</SelectItem>
-                                        <SelectItem value="hybrid">Hybrid</SelectItem>
+                                        {formatOptions.map(option => (
+                                            <SelectItem key={option.value} value={option.value}>
+                                                {option.label}
+                                            </SelectItem>
+                                        ))}
                                     </SelectContent>
                                 </Select>
                             </div>
                             <div className="space-y-2">
-                                {/* <Label htmlFor="neighborhood">Neighborhood</Label> */}
                                 <Select onValueChange={setSelectedNeighborhood}>
-                                    <SelectTrigger id="neighborhood" className="w-full">
+                                    <SelectTrigger>
                                         <SelectValue placeholder="Neighborhood" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="ballard">Ballard</SelectItem>
-                                        <SelectItem value="belltown">Belltown</SelectItem>
-                                        <SelectItem value="beacon-hill">Beacon Hill</SelectItem>
-                                        <SelectItem value="broadway">Broadway</SelectItem>
-                                        <SelectItem value="capitol-hill">Capitol Hill</SelectItem>
-                                        <SelectItem value="central-district">Central District</SelectItem>
-                                        <SelectItem value="columbia-city">Columbia City</SelectItem>
-                                        <SelectItem value="eastlake">Eastlake</SelectItem>
-                                        <SelectItem value="first-hill">First Hill</SelectItem>
-                                        <SelectItem value="fremont">Fremont</SelectItem>
-                                        <SelectItem value="georgetown">Georgetown</SelectItem>
-                                        <SelectItem value="greenlake">Greenlake</SelectItem>
-                                        <SelectItem value="international-district">International District (Chinatown)</SelectItem>
-                                        <SelectItem value="laurelhurst">Laurelhurst</SelectItem>
-                                        <SelectItem value="madison-park">Madison Park</SelectItem>
-                                        <SelectItem value="madrona">Madrona</SelectItem>
-                                        <SelectItem value="magnolia">Magnolia</SelectItem>
-                                        <SelectItem value="mount-baker">Mount Baker</SelectItem>
-                                        <SelectItem value="northgate">Northgate</SelectItem>
-                                        <SelectItem value="pioneer-square">Pioneer Square</SelectItem>
-                                        <SelectItem value="queen-anne">Queen Anne</SelectItem>
-                                        <SelectItem value="rainier-valley">Rainier Valley</SelectItem>
-                                        <SelectItem value="ravenna">Ravenna</SelectItem>
-                                        <SelectItem value="seattle">Seattle</SelectItem>
-                                        <SelectItem value="sodo">SODO</SelectItem>
-                                        <SelectItem value="south-lake-union">South Lake Union</SelectItem>
-                                        <SelectItem value="northgate">Northgate</SelectItem>
-                                        <SelectItem value="tukwila">Tukwila</SelectItem>
-                                        <SelectItem value="university-district">University District</SelectItem>
-                                        <SelectItem value="wallingford">Wallingford</SelectItem>
-                                        <SelectItem value="westlake">Westlake</SelectItem>
-                                        <SelectItem value="west-seattle">West Seattle</SelectItem>
+                                        {neighborhoodOptions.map(option => (
+                                            <SelectItem key={option.value} value={option.value}>
+                                                {option.label}
+                                            </SelectItem>
+                                        ))}
                                     </SelectContent>
                                 </Select>
                             </div>
                             <div className="space-y-2">
-                                {/* <Label htmlFor="cost">Cost</Label> */}
                                 <Select onValueChange={setSelectedCost}>
-                                    <SelectTrigger id="cost" className="w-full">
+                                    <SelectTrigger>
                                         <SelectValue placeholder="Cost" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="free">Free</SelectItem>
-                                        <SelectItem value="$0-$25">$0-$25</SelectItem>
-                                        <SelectItem value="$25-$50">$25-$50</SelectItem>
-                                        <SelectItem value="$50-$100">$50-$100</SelectItem>
-                                        <SelectItem value="$100+">$100+</SelectItem>
+                                        {costOptions.map(option => (
+                                            <SelectItem key={option.value} value={option.value}>
+                                                {option.label}
+                                            </SelectItem>
+                                        ))}
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -252,97 +209,57 @@ export function Event({
                                         />
                                         <div className="space-y-2">
                                             <Select onValueChange={setSelectedCategory}>
-                                                <SelectTrigger id="category" className="w-full">
+                                                <SelectTrigger className="w-full">
                                                     <SelectValue placeholder="Category" />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    <SelectItem value="arts">Arts</SelectItem>
-                                                    <SelectItem value="music">Music</SelectItem>
-                                                    <SelectItem value="food-drink">Food & Drink</SelectItem>
-                                                    <SelectItem value="sports-fitness">Sports & Fitness</SelectItem>
-                                                    <SelectItem value="family">Family</SelectItem>
-                                                    <SelectItem value="professional">Professional</SelectItem>
-                                                    <SelectItem value="technology">Technology</SelectItem>
-                                                    <SelectItem value="education">Education</SelectItem>
-                                                    <SelectItem value="wellness">Wellness</SelectItem>
-                                                    <SelectItem value="charity">Charity</SelectItem>
-                                                    <SelectItem value="culture">Culture</SelectItem>
-                                                    <SelectItem value="holiday-seasonal">Holiday & Seasonal</SelectItem>
-                                                    <SelectItem value="nightlife">Nightlife</SelectItem>
-                                                    <SelectItem value="fashion-beauty">Fashion & Beauty</SelectItem>
-                                                    <SelectItem value="environment">Environment</SelectItem>
-                                                    <SelectItem value="religion">Religion</SelectItem>
-                                                    <SelectItem value="politics">Politics</SelectItem>
-                                                    <SelectItem value="travel">Travel</SelectItem>
-                                                    <SelectItem value="gaming">Gaming</SelectItem>
-                                                    <SelectItem value="crafts">Crafts</SelectItem>
+                                                    {categoryOptions.map(option => (
+                                                        <SelectItem key={option.value} value={option.value}>
+                                                            {option.label}
+                                                        </SelectItem>
+                                                    ))}
                                                 </SelectContent>
                                             </Select>
                                         </div>
                                         <div className="space-y-2">
                                             <Select onValueChange={setSelectedFormat}>
-                                                <SelectTrigger id="format" className="w-full">
+                                                <SelectTrigger className="w-full">
                                                     <SelectValue placeholder="Format" />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    <SelectItem value="in-person">In-Person</SelectItem>
-                                                    <SelectItem value="online">Online</SelectItem>
-                                                    <SelectItem value="hybrid">Hybrid</SelectItem>
+                                                    {formatOptions.map(option => (
+                                                        <SelectItem key={option.value} value={option.value}>
+                                                            {option.label}
+                                                        </SelectItem>
+                                                    ))}
                                                 </SelectContent>
                                             </Select>
                                         </div>
                                         <div className="space-y-2">
                                             <Select onValueChange={setSelectedNeighborhood}>
-                                                <SelectTrigger id="neighborhood" className="w-full">
+                                                <SelectTrigger className="w-full">
                                                     <SelectValue placeholder="Neighborhood" />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    <SelectItem value="ballard">Ballard</SelectItem>
-                                                    <SelectItem value="belltown">Belltown</SelectItem>
-                                                    <SelectItem value="beacon-hill">Beacon Hill</SelectItem>
-                                                    <SelectItem value="broadway">Broadway</SelectItem>
-                                                    <SelectItem value="capitol-hill">Capitol Hill</SelectItem>
-                                                    <SelectItem value="central-district">Central District</SelectItem>
-                                                    <SelectItem value="columbia-city">Columbia City</SelectItem>
-                                                    <SelectItem value="eastlake">Eastlake</SelectItem>
-                                                    <SelectItem value="first-hill">First Hill</SelectItem>
-                                                    <SelectItem value="fremont">Fremont</SelectItem>
-                                                    <SelectItem value="georgetown">Georgetown</SelectItem>
-                                                    <SelectItem value="greenlake">Greenlake</SelectItem>
-                                                    <SelectItem value="international-district">International District (Chinatown)</SelectItem>
-                                                    <SelectItem value="laurelhurst">Laurelhurst</SelectItem>
-                                                    <SelectItem value="madison-park">Madison Park</SelectItem>
-                                                    <SelectItem value="madrona">Madrona</SelectItem>
-                                                    <SelectItem value="magnolia">Magnolia</SelectItem>
-                                                    <SelectItem value="mount-baker">Mount Baker</SelectItem>
-                                                    <SelectItem value="northgate">Northgate</SelectItem>
-                                                    <SelectItem value="pioneer-square">Pioneer Square</SelectItem>
-                                                    <SelectItem value="queen-anne">Queen Anne</SelectItem>
-                                                    <SelectItem value="rainier-valley">Rainier Valley</SelectItem>
-                                                    <SelectItem value="ravenna">Ravenna</SelectItem>
-                                                    <SelectItem value="seattle">Seattle</SelectItem>
-                                                    <SelectItem value="sodo">SODO</SelectItem>
-                                                    <SelectItem value="south-lake-union">South Lake Union</SelectItem>
-                                                    <SelectItem value="northgate">Northgate</SelectItem>
-                                                    <SelectItem value="tukwila">Tukwila</SelectItem>
-                                                    <SelectItem value="university-district">University District</SelectItem>
-                                                    <SelectItem value="wallingford">Wallingford</SelectItem>
-                                                    <SelectItem value="westlake">Westlake</SelectItem>
-                                                    <SelectItem value="west-seattle">West Seattle</SelectItem>
+                                                    {neighborhoodOptions.map(option => (
+                                                        <SelectItem key={option.value} value={option.value}>
+                                                            {option.label}
+                                                        </SelectItem>
+                                                    ))}
                                                 </SelectContent>
                                             </Select>
                                         </div>
                                         <div className="space-y-2">
                                             <Select onValueChange={setSelectedCost}>
-                                                <SelectTrigger id="cost" className="w-full">
+                                                <SelectTrigger className="w-full">
                                                     <SelectValue placeholder="Cost" />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    <SelectItem value="free">Free</SelectItem>
-                                                    <SelectItem value="$0-$25">$0-$25</SelectItem>
-                                                    <SelectItem value="$25-$50">$25-$50</SelectItem>
-                                                    <SelectItem value="$50-$100">$50-$100</SelectItem>
-                                                    <SelectItem value="$100+">$100+</SelectItem>
+                                                    {costOptions.map(option => (
+                                                        <SelectItem key={option.value} value={option.value}>
+                                                            {option.label}
+                                                        </SelectItem>
+                                                    ))}
                                                 </SelectContent>
                                             </Select>
                                         </div>

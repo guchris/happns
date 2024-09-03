@@ -12,6 +12,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod"
 
 import { cn } from "@/lib/utils"
+import { categoryOptions, formatOptions, neighborhoodOptions } from "@/lib/selectOptions";
+
 import { format } from "date-fns"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
@@ -285,26 +287,11 @@ export default function EventForm() {
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                        <SelectItem value="arts">Arts</SelectItem>
-                                        <SelectItem value="music">Music</SelectItem>
-                                        <SelectItem value="food-drink">Food & Drink</SelectItem>
-                                        <SelectItem value="sports-fitness">Sports & Fitness</SelectItem>
-                                        <SelectItem value="family">Family</SelectItem>
-                                        <SelectItem value="professional">Professional</SelectItem>
-                                        <SelectItem value="technology">Technology</SelectItem>
-                                        <SelectItem value="education">Education</SelectItem>
-                                        <SelectItem value="wellness">Wellness</SelectItem>
-                                        <SelectItem value="charity">Charity</SelectItem>
-                                        <SelectItem value="culture">Culture</SelectItem>
-                                        <SelectItem value="holiday-seasonal">Holiday & Seasonal</SelectItem>
-                                        <SelectItem value="nightlife">Nightlife</SelectItem>
-                                        <SelectItem value="fashion-beauty">Fashion & Beauty</SelectItem>
-                                        <SelectItem value="environment">Environment</SelectItem>
-                                        <SelectItem value="religion">Religion</SelectItem>
-                                        <SelectItem value="politics">Politics</SelectItem>
-                                        <SelectItem value="travel">Travel</SelectItem>
-                                        <SelectItem value="gaming">Gaming</SelectItem>
-                                        <SelectItem value="crafts">Crafts</SelectItem>
+                                        {categoryOptions.map((option) => (
+                                            <SelectItem key={option.value} value={option.value}>
+                                                {option.label}
+                                            </SelectItem>
+                                        ))}
                                     </SelectContent>
                                 </Select>
                                 <FormMessage />
@@ -324,9 +311,11 @@ export default function EventForm() {
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                        <SelectItem value="in-person">In-Person</SelectItem>
-                                        <SelectItem value="online">Online</SelectItem>
-                                        <SelectItem value="hybrid">Hybrid</SelectItem>
+                                        {formatOptions.map((option) => (
+                                            <SelectItem key={option.value} value={option.value}>
+                                                {option.label}
+                                            </SelectItem>
+                                        ))}
                                     </SelectContent>
                                 </Select>
                                 <FormMessage />
@@ -521,38 +510,11 @@ export default function EventForm() {
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                        <SelectItem value="ballard">Ballard</SelectItem>
-                                        <SelectItem value="belltown">Belltown</SelectItem>
-                                        <SelectItem value="beacon-hill">Beacon Hill</SelectItem>
-                                        <SelectItem value="broadway">Broadway</SelectItem>
-                                        <SelectItem value="capitol-hill">Capitol Hill</SelectItem>
-                                        <SelectItem value="central-district">Central District</SelectItem>
-                                        <SelectItem value="columbia-city">Columbia City</SelectItem>
-                                        <SelectItem value="eastlake">Eastlake</SelectItem>
-                                        <SelectItem value="first-hill">First Hill</SelectItem>
-                                        <SelectItem value="fremont">Fremont</SelectItem>
-                                        <SelectItem value="georgetown">Georgetown</SelectItem>
-                                        <SelectItem value="greenlake">Greenlake</SelectItem>
-                                        <SelectItem value="international-district">International District (Chinatown)</SelectItem>
-                                        <SelectItem value="laurelhurst">Laurelhurst</SelectItem>
-                                        <SelectItem value="madison-park">Madison Park</SelectItem>
-                                        <SelectItem value="madrona">Madrona</SelectItem>
-                                        <SelectItem value="magnolia">Magnolia</SelectItem>
-                                        <SelectItem value="mount-baker">Mount Baker</SelectItem>
-                                        <SelectItem value="northgate">Northgate</SelectItem>
-                                        <SelectItem value="pioneer-square">Pioneer Square</SelectItem>
-                                        <SelectItem value="queen-anne">Queen Anne</SelectItem>
-                                        <SelectItem value="rainier-valley">Rainier Valley</SelectItem>
-                                        <SelectItem value="ravenna">Ravenna</SelectItem>
-                                        <SelectItem value="seattle">Seattle</SelectItem>
-                                        <SelectItem value="sodo">SODO</SelectItem>
-                                        <SelectItem value="south-lake-union">South Lake Union</SelectItem>
-                                        <SelectItem value="northgate">Northgate</SelectItem>
-                                        <SelectItem value="tukwila">Tukwila</SelectItem>
-                                        <SelectItem value="university-district">University District</SelectItem>
-                                        <SelectItem value="wallingford">Wallingford</SelectItem>
-                                        <SelectItem value="westlake">Westlake</SelectItem>
-                                        <SelectItem value="west-seattle">West Seattle</SelectItem>
+                                        {neighborhoodOptions.map((option) => (
+                                            <SelectItem key={option.value} value={option.value}>
+                                                {option.label}
+                                            </SelectItem>
+                                        ))}
                                     </SelectContent>
                                 </Select>
                                 <FormMessage />
