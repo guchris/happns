@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link";
+import { v4 as uuidv4 } from "uuid";
 
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { addDoc, collection } from "firebase/firestore";
@@ -164,7 +165,8 @@ export default function EventForm() {
 
         const uploadImage = async () => {
             if (data.image) {
-                const storageRef = ref(storage, `event_images/${data.image.name}`);
+                const uuid = uuidv4();
+                const storageRef = ref(storage, `event_images/${uuid}`);
                 const uploadTask = uploadBytesResumable(storageRef, data.image);
     
                 return new Promise<string>((resolve, reject) => {

@@ -112,7 +112,7 @@ function CollapsibleItem({ date, events, isLastItem }: CollapsibleItemProps) {
                                 }
                             >
                                 <Image
-                                    src="/tempFlyer1.svg"
+                                    src={item.image || "/tempFlyer1.svg"}
                                     alt={item.name}
                                     width={150}
                                     height={150}
