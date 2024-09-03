@@ -521,14 +521,37 @@ export default function EventForm() {
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                        <SelectItem value="capitol-hill">Capitol Hill</SelectItem>
                                         <SelectItem value="ballard">Ballard</SelectItem>
+                                        <SelectItem value="belltown">Belltown</SelectItem>
                                         <SelectItem value="beacon-hill">Beacon Hill</SelectItem>
+                                        <SelectItem value="broadway">Broadway</SelectItem>
+                                        <SelectItem value="capitol-hill">Capitol Hill</SelectItem>
+                                        <SelectItem value="central-district">Central District</SelectItem>
+                                        <SelectItem value="columbia-city">Columbia City</SelectItem>
+                                        <SelectItem value="eastlake">Eastlake</SelectItem>
+                                        <SelectItem value="first-hill">First Hill</SelectItem>
                                         <SelectItem value="fremont">Fremont</SelectItem>
+                                        <SelectItem value="georgetown">Georgetown</SelectItem>
+                                        <SelectItem value="greenlake">Greenlake</SelectItem>
+                                        <SelectItem value="international-district">International District (Chinatown)</SelectItem>
+                                        <SelectItem value="laurelhurst">Laurelhurst</SelectItem>
+                                        <SelectItem value="madison-park">Madison Park</SelectItem>
+                                        <SelectItem value="madrona">Madrona</SelectItem>
+                                        <SelectItem value="magnolia">Magnolia</SelectItem>
+                                        <SelectItem value="mount-baker">Mount Baker</SelectItem>
+                                        <SelectItem value="northgate">Northgate</SelectItem>
+                                        <SelectItem value="pioneer-square">Pioneer Square</SelectItem>
                                         <SelectItem value="queen-anne">Queen Anne</SelectItem>
+                                        <SelectItem value="rainier-valley">Rainier Valley</SelectItem>
+                                        <SelectItem value="ravenna">Ravenna</SelectItem>
                                         <SelectItem value="seattle">Seattle</SelectItem>
+                                        <SelectItem value="sodo">SODO</SelectItem>
+                                        <SelectItem value="south-lake-union">South Lake Union</SelectItem>
+                                        <SelectItem value="northgate">Northgate</SelectItem>
                                         <SelectItem value="tukwila">Tukwila</SelectItem>
+                                        <SelectItem value="university-district">University District</SelectItem>
                                         <SelectItem value="wallingford">Wallingford</SelectItem>
+                                        <SelectItem value="westlake">Westlake</SelectItem>
                                         <SelectItem value="west-seattle">West Seattle</SelectItem>
                                     </SelectContent>
                                 </Select>
