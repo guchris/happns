@@ -120,102 +120,97 @@ export function Event({
     return (
         <TooltipProvider delayDuration={0}>
             {/* Mobile View */}
-            <div className="md:hidden h-full flex flex-col">
-                {/* Sticky Top Bar */}
-                <div className="sticky top-0 z-10 bg-white">
-                    <div className="flex items-center px-4 py-2">
-                        <Sheet>
-                            <SheetTrigger asChild>
-                                <Button variant="secondary" className="w-full">Filters</Button>
-                            </SheetTrigger>
-                            <SheetContent side="bottom">
-                                <div className="p-4">
-                                    <form className="space-y-4">
-                                        <CalendarDateRangePicker
-                                            selected={dateRange}
-                                            onSelect={setDateRange}
-                                        />
-                                        <div className="space-y-2">
-                                            <Select onValueChange={setSelectedCategory}>
-                                                <SelectTrigger className="w-full">
-                                                    <SelectValue placeholder="Category" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {categoryOptions.map(option => (
-                                                        <SelectItem key={option.value} value={option.value}>
-                                                            {option.label}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Select onValueChange={setSelectedFormat}>
-                                                <SelectTrigger className="w-full">
-                                                    <SelectValue placeholder="Format" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {formatOptions.map(option => (
-                                                        <SelectItem key={option.value} value={option.value}>
-                                                            {option.label}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Select onValueChange={setSelectedNeighborhood}>
-                                                <SelectTrigger className="w-full">
-                                                    <SelectValue placeholder="Neighborhood" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {neighborhoodOptions.map(option => (
-                                                        <SelectItem key={option.value} value={option.value}>
-                                                            {option.label}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Select onValueChange={setSelectedCost}>
-                                                <SelectTrigger className="w-full">
-                                                    <SelectValue placeholder="Cost" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {costOptions.map(option => (
-                                                        <SelectItem key={option.value} value={option.value}>
-                                                            {option.label}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
-                                        <Button variant="outline" onClick={handleClearAll} className="w-full">
-                                            Reset
-                                        </Button>
-                                        <SheetClose asChild>
-                                            <Button className="w-full mt-4">Apply Filters</Button>
-                                        </SheetClose>
-                                    </form>
-                                </div>
-                            </SheetContent>
-                        </Sheet>
-                    </div>
-                    <Separator />
-                </div>
-
-                {/* Scrollable Event List */}
-                <div className="flex-1 overflow-y-auto">
-                    {!event.selected ? (
+            <div className="md:hidden">
+                {!event.selected ? (
+                    <div>
+                        <div className="flex items-center px-4 py-2">
+                            <Sheet>
+                                <SheetTrigger asChild>
+                                    <Button variant="secondary" className="w-full">Filters</Button>
+                                </SheetTrigger>
+                                <SheetContent side="bottom">
+                                    <div className="p-4">
+                                        <form className="space-y-4">
+                                            <CalendarDateRangePicker
+                                                selected={dateRange}
+                                                onSelect={setDateRange}
+                                            />
+                                            <div className="space-y-2">
+                                                <Select onValueChange={setSelectedCategory}>
+                                                    <SelectTrigger className="w-full">
+                                                        <SelectValue placeholder="Category" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {categoryOptions.map(option => (
+                                                            <SelectItem key={option.value} value={option.value}>
+                                                                {option.label}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Select onValueChange={setSelectedFormat}>
+                                                    <SelectTrigger className="w-full">
+                                                        <SelectValue placeholder="Format" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {formatOptions.map(option => (
+                                                            <SelectItem key={option.value} value={option.value}>
+                                                                {option.label}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Select onValueChange={setSelectedNeighborhood}>
+                                                    <SelectTrigger className="w-full">
+                                                        <SelectValue placeholder="Neighborhood" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {neighborhoodOptions.map(option => (
+                                                            <SelectItem key={option.value} value={option.value}>
+                                                                {option.label}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Select onValueChange={setSelectedCost}>
+                                                    <SelectTrigger className="w-full">
+                                                        <SelectValue placeholder="Cost" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {costOptions.map(option => (
+                                                            <SelectItem key={option.value} value={option.value}>
+                                                                {option.label}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                            <Button variant="outline" onClick={handleClearAll} className="w-full">
+                                                Reset
+                                            </Button>
+                                            <SheetClose asChild>
+                                                <Button className="w-full mt-4">Apply Filters</Button>
+                                            </SheetClose>
+                                        </form>
+                                    </div>
+                                </SheetContent>
+                            </Sheet>
+                        </div>
+                        <Separator />
                         <EventList items={filteredEvents} />
-                    ) : (
-                        <EventDisplay 
-                            event={events.find((item) => item.id === event.selected) || null} 
-                            onBack={() => setEvent({ ...event, selected: null })} 
-                        />
-                    )}
-                </div>
+                    </div>
+                ) : (
+                    <EventDisplay 
+                        event={events.find((item) => item.id === event.selected) || null} 
+                        onBack={() => setEvent({ ...event, selected: null })} 
+                    />
+                )}
             </div>
 
             {/* Desktop View */}
