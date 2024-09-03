@@ -1,6 +1,6 @@
 import { atom, useAtom } from "jotai"
 
-import { Event } from "@/app/types"
+import { Event } from "@/components/types"
 
 type Config = {
     selected: Event["id"] | null
