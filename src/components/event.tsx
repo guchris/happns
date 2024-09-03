@@ -61,15 +61,14 @@ export function Event({
 
     const parseEventDate = (dateString: string) => {
         if (dateString.includes("-")) {
-            // Handle ranges like "October 27-28, 2024"
-            const [startPart, endPart] = dateString.split("-")
-            const year = startPart.match(/\d{4}$/) ? '' : `, ${new Date().getFullYear()}`; // If the year is missing in the second part, assume it's the same as the first part
-            const startDate = parse(startPart.trim() + year, "MMMM d, yyyy", new Date())
-            const endDate = parse(endPart.trim(), "MMMM d, yyyy", startDate)
+            // Handle ranges like "10/27/2024 - 10/29/2024"
+            const [startPart, endPart] = dateString.split(" - ")
+            const startDate = parse(startPart.trim(), "MM/dd/yyyy", new Date())
+            const endDate = parse(endPart.trim(), "MM/dd/yyyy", startDate)
             return { startDate, endDate }
         } else {
-            // Handle single dates like "October 27, 2024"
-            const date = parse(dateString, "MMMM d, yyyy", new Date())
+            // Handle single dates like "10/27/2024"
+            const date = parse(dateString, "MM/dd/yyyy", new Date())
             return { startDate: date, endDate: date }
         }
     }
