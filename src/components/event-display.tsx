@@ -16,6 +16,7 @@ import {
 
 {/* Icon Imports */}
 import {
+    ArrowLeft,
     CalendarPlus,
     SquareArrowOutUpRight,
     MapPin,
@@ -24,9 +25,10 @@ import {
 
 interface EventDisplayProps {
     event: Event | null
+    onBack: () => void
 }
 
-export function EventDisplay({ event }: EventDisplayProps) {
+export function EventDisplay({ event, onBack }: EventDisplayProps) {
     const today = new Date()
 
     const openExternalLink = () => {
@@ -69,7 +71,15 @@ export function EventDisplay({ event }: EventDisplayProps) {
     return (
         <ScrollArea className="h-screen">
             <div className="flex h-full flex-col">
-                <div className="flex items-center p-2">
+                <div className="flex items-center justify-between p-2">
+
+                    {/* Back Button */}
+                    <Button variant="ghost" size="icon" onClick={onBack}>
+                        <ArrowLeft className="h-4 w-4" />
+                        <span className="sr-only">Back to List</span>
+                    </Button>
+
+                    {/* Action Buttons */}
                     <div className="flex items-center gap-2">
                         <Tooltip>
                             <TooltipTrigger asChild>
@@ -109,7 +119,10 @@ export function EventDisplay({ event }: EventDisplayProps) {
                         </Tooltip>
                     </div>
                 </div>
+
                 <Separator />
+
+                {/* Event Details */}
                 {event ? (
                     <div className="flex flex-1 flex-col">
                         <div className="flex items-start p-4">
