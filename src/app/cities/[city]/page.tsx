@@ -1,25 +1,25 @@
 "use client";
 
-{/* React Imports */}
+// React Imports
 import { useEffect, useState } from "react";
 
-{/* Next Imports */}
+// Next Imports
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
-{/* Firebase Imports */}
+// Firebase Imports
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/app/firebase";
 
-{/* Components Imports */}
+// Components Imports
 import { Event } from "@/components/types";
 
-{/* Shadcn Imports */}
+// Shadcn Imports
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button";
 import { Event as EventComponent } from "@/components/event"
 
-{/* Icon Imports */}
+// Icon Imports
 import { PlusCircledIcon } from "@radix-ui/react-icons"
 
 export default function CityPage() {
@@ -53,25 +53,25 @@ export default function CityPage() {
       }, []);
 
     return (
-        <>
-            <div className="flex h-full flex-col">
-                <div className="w-full flex items-center justify-between py-4 px-4 h-14">
-                    <h2 className="text-lg font-semibold">
-                        <Link href="/">happns</Link>
-                        /{city}
-                    </h2>
-                    <Button>
-                        <PlusCircledIcon className="mr-2 h-4 w-4" />
-                        <Link href="/event-form">
-                            Add event
-                        </Link>
-                    </Button>
-                </div>
-                <Separator />
+        <div className="h-screen flex flex-col">
+            <div className="w-full flex items-center justify-between py-4 px-4 h-14 sticky top-0 z-10 bg-white">
+                <h2 className="text-lg font-semibold">
+                    <Link href="/">happns</Link>
+                    /{city}
+                </h2>
+                <Button>
+                    <PlusCircledIcon className="mr-2 h-4 w-4" />
+                    <Link href="/event-form">
+                        Add event
+                    </Link>
+                </Button>
+            </div>
+            <Separator />
+            <div className="flex-1 overflow-y-auto">
                 <EventComponent
                     events={events}
                 />
             </div>
-        </>
+        </div>
     );
 }
