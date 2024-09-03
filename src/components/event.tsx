@@ -1,9 +1,12 @@
 "use client"
 
+{/* React Imports */}
 import * as React from "react"
-import { isWithinInterval, parse } from "date-fns"
-import { DateRange } from "react-day-picker"
 
+{/* Shadcn Imports */}
+import { Separator } from "@/components/ui/separator"
+import { Button } from "@/components/ui/button"
+import { TooltipProvider } from "@/components/ui/tooltip"
 import {
     ResizableHandle,
     ResizablePanel,
@@ -22,17 +25,20 @@ import {
     SheetTrigger,
     SheetClose
 } from "@/components/ui/sheet";
-import { TooltipProvider } from "@/components/ui/tooltip"
-import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
 
-import { CalendarDateRangePicker } from "@/components/date-range-picker"
-import { EventDisplay } from "@/components/event-display"
+{/* Components Imports */}
 import { EventList } from "@/components/event-list"
+import { EventDisplay } from "@/components/event-display"
+import { CalendarDateRangePicker } from "@/components/date-range-picker"
+
+{/* Lib Imports */}
+import { useEvent } from "@/app/use-event"
+import { type Event } from "@/components/types"
 import { categoryOptions, formatOptions, neighborhoodOptions, costOptions } from "@/lib/selectOptions";
 
-import { useEvent } from "@/app/use-event"
-import { type Event } from "@/app/types"
+{/* Other Imports */}
+import { DateRange } from "react-day-picker"
+import { isWithinInterval, parse } from "date-fns"
 
 interface EventProps {
     events: Event[]

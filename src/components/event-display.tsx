@@ -1,10 +1,7 @@
-import {
-    CalendarPlus,
-    SquareArrowOutUpRight,
-    MapPin,
-    Send
-} from "lucide-react"
+{/* Next Imports */}
+import Image from "next/image"
 
+{/* Shadcn Imports */}
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
@@ -14,7 +11,16 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip"
 
-import { Event } from "@/app/types"
+{/* Icon Imports */}
+import {
+    CalendarPlus,
+    SquareArrowOutUpRight,
+    MapPin,
+    Send
+} from "lucide-react"
+
+{/* Components Imports */}
+import { Event } from "@/components/types"
 
 interface EventDisplayProps {
     event: Event | null
@@ -109,6 +115,15 @@ export function EventDisplay({ event }: EventDisplayProps) {
                         <div className="flex items-start p-4">
                             <div className="flex items-start gap-4 text-sm">
                                 <div className="grid gap-2">
+                                    {event.image && (
+                                        <Image
+                                            src={event.image || "/tempFlyer1.svg"}
+                                            alt={event.name}
+                                            width={300}
+                                            height={300}
+                                            className="object-cover rounded-lg"
+                                        />
+                                    )}
                                     <div className="grid gap-1">
                                         <div className="text-base font-semibold">{event.name}</div>
                                         <div className="text-sm font-medium">{event.date}</div>

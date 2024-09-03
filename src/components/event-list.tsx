@@ -1,13 +1,10 @@
+{/* React Imports */}
 import { useState } from "react"
-import { format, parse } from "date-fns"
+
+{/* Next Imports */}
 import Image from "next/image"
 
-import { cn } from "@/lib/utils"
-import {
-    Plus,
-    Minus
-} from "lucide-react"
-
+{/* Shadcn Imports */}
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
@@ -17,8 +14,19 @@ import {
     CollapsibleTrigger,
 } from "@/components/ui/collapsible"
 
-import { Event } from "@/app/types"
+{/* Icon Imports */}
+import {
+    Plus,
+    Minus
+} from "lucide-react"
+
+{/* Lib Imports */}
+import { cn } from "@/lib/utils"
+import { Event } from "@/components/types"
 import { useEvent } from "@/app/use-event"
+
+{/* Other Imports */}
+import { format, parse } from "date-fns"
 
 interface EventListProps {
     items: Event[]
