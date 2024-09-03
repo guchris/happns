@@ -1,7 +1,9 @@
 "use client"
 
+{/* Next Imports */}
 import Link from "next/link";
 
+{/* Shadcn Imports */}
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button";
 import {
@@ -12,6 +14,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
+{/* Icon Imports */}
 import {
   PlusCircledIcon,
   CircleIcon as FilledCircleIcon,
@@ -61,46 +64,48 @@ export default function Home() {
 
       <Separator />
 
-      {/* Sponsored AD */}
-      <div className="w-full p-4">
-        <Link href={ad.link}>
-          <img
-            src={ad.imageUrl}
-            alt={`Ad ${ad.id}`}
-            className="w-full h-auto rounded-lg object-cover"
-          />
-        </Link>
-        <p className="text-center text-xs text-gray-500 mt-1">sponsored</p>
-      </div>
+      <div className="w-full max-w-[1192px] mx-auto p-4">
+        
+        {/* Sponsored AD */}
+        <div className="w-full p-4">
+          <Link href={ad.link}>
+            <img
+              src={ad.imageUrl}
+              alt={`Ad ${ad.id}`}
+              className="w-full h-auto rounded-lg object-cover"
+            />
+          </Link>
+          <p className="text-center text-xs text-gray-500 mt-1">sponsored</p>
+        </div>
 
-
-      {/* City Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 w-full">
-        {cities.map((city) => {
-          const citySlug = city.name.toLowerCase().replace(/ /g, "-");
-          return (
-            <Link href={`/cities/${citySlug}`} key={city.name}>
-              <Card className="w-full">
-                <CardHeader className="space-y-2">
-                  <CardTitle className="text-base w-full">{city.name}</CardTitle>
-                  <CardDescription className="w-full">{city.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex space-x-4 text-sm text-muted-foreground">
-                    <div className="flex items-center">
-                      <FilledCircleIcon className={`mr-1 h-3 w-3 ${city.color}`} />
-                      {city.nickname}
+        {/* City Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 w-full">
+          {cities.map((city) => {
+            const citySlug = city.name.toLowerCase().replace(/ /g, "-");
+            return (
+              <Link href={`/cities/${citySlug}`} key={city.name}>
+                <Card className="w-full">
+                  <CardHeader className="space-y-2">
+                    <CardTitle className="text-base w-full">{city.name}</CardTitle>
+                    <CardDescription className="w-full">{city.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex space-x-4 text-sm text-muted-foreground">
+                      <div className="flex items-center">
+                        <FilledCircleIcon className={`mr-1 h-3 w-3 ${city.color}`} />
+                        {city.nickname}
+                      </div>
+                      <div className="flex items-center">
+                        <CalendarIcon className="mr-1 h-3 w-3" />
+                        {city.events} events
+                      </div>
                     </div>
-                    <div className="flex items-center">
-                      <CalendarIcon className="mr-1 h-3 w-3" />
-                      {city.events} events
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          );
-        })}
+                  </CardContent>
+                </Card>
+              </Link>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

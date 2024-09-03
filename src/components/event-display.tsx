@@ -1,6 +1,9 @@
 {/* Next Imports */}
 import Image from "next/image"
 
+{/* Components Imports */}
+import { Event } from "@/components/types"
+
 {/* Shadcn Imports */}
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Button } from "@/components/ui/button"
@@ -18,9 +21,6 @@ import {
     MapPin,
     Send
 } from "lucide-react"
-
-{/* Components Imports */}
-import { Event } from "@/components/types"
 
 interface EventDisplayProps {
     event: Event | null

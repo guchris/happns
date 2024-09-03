@@ -4,6 +4,11 @@ import { useState } from "react"
 {/* Next Imports */}
 import Image from "next/image"
 
+{/* Lib Imports */}
+import { cn } from "@/lib/utils"
+import { Event } from "@/components/types"
+import { useEvent } from "@/app/use-event"
+
 {/* Shadcn Imports */}
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
@@ -19,11 +24,6 @@ import {
     Plus,
     Minus
 } from "lucide-react"
-
-{/* Lib Imports */}
-import { cn } from "@/lib/utils"
-import { Event } from "@/components/types"
-import { useEvent } from "@/app/use-event"
 
 {/* Other Imports */}
 import { format, parse } from "date-fns"

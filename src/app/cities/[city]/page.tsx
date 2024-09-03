@@ -1,19 +1,26 @@
 "use client";
 
+{/* React Imports */}
 import { useEffect, useState } from "react";
 
+{/* Next Imports */}
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
+{/* Firebase Imports */}
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/app/firebase";
+
+{/* Components Imports */}
+import { Event } from "@/components/types";
+
+{/* Shadcn Imports */}
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button";
 import { Event as EventComponent } from "@/components/event"
 
+{/* Icon Imports */}
 import { PlusCircledIcon } from "@radix-ui/react-icons"
-
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "@/app/firebase";
-import { Event } from "@/components/types";
 
 export default function CityPage() {
     const [events, setEvents] = useState<Event[]>([]);

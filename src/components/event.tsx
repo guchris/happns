@@ -3,6 +3,16 @@
 {/* React Imports */}
 import * as React from "react"
 
+{/* Components Imports */}
+import { EventList } from "@/components/event-list"
+import { EventDisplay } from "@/components/event-display"
+import { CalendarDateRangePicker } from "@/components/date-range-picker"
+
+{/* Lib Imports */}
+import { useEvent } from "@/app/use-event"
+import { type Event } from "@/components/types"
+import { categoryOptions, formatOptions, neighborhoodOptions, costOptions } from "@/lib/selectOptions";
+
 {/* Shadcn Imports */}
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
@@ -25,16 +35,6 @@ import {
     SheetTrigger,
     SheetClose
 } from "@/components/ui/sheet";
-
-{/* Components Imports */}
-import { EventList } from "@/components/event-list"
-import { EventDisplay } from "@/components/event-display"
-import { CalendarDateRangePicker } from "@/components/date-range-picker"
-
-{/* Lib Imports */}
-import { useEvent } from "@/app/use-event"
-import { type Event } from "@/components/types"
-import { categoryOptions, formatOptions, neighborhoodOptions, costOptions } from "@/lib/selectOptions";
 
 {/* Other Imports */}
 import { DateRange } from "react-day-picker"
