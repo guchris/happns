@@ -13,7 +13,7 @@ import { PlusCircledIcon } from "@radix-ui/react-icons"
 
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/app/firebase";
-import { Event } from "@/app/types";
+import { Event } from "@/components/types";
 
 export default function CityPage() {
     const [events, setEvents] = useState<Event[]>([]);
