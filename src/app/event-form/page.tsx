@@ -194,6 +194,7 @@ export default function EventForm() {
             const uuid = uuidv4();
             const eventData = {
                 category: data.category,
+                clicks: 0,
                 cost: data.cost,
                 description: data.description,
                 details: data.details,

@@ -32,6 +32,7 @@ export default function CityPage() {
           const eventSnapshot = await getDocs(eventsCol);
           const eventList: Event[] = eventSnapshot.docs.map((doc) => ({
             category: doc.data().category,
+            clicks: doc.data().clicks,
             cost: doc.data().cost,
             date: doc.data().date,
             description: doc.data().description,

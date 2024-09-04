@@ -1,15 +1,19 @@
-{/* React Imports */}
+// React Imports
 import { useState } from "react"
 
-{/* Next Imports */}
+// Next Imports
 import Image from "next/image"
 
-{/* Lib Imports */}
+// Firebase Imports
+import { db } from "@/app/firebase"
+import { doc, updateDoc, increment } from "firebase/firestore"
+
+// Lib Imports
 import { cn } from "@/lib/utils"
 import { Event } from "@/components/types"
 import { useEvent } from "@/app/use-event"
 
-{/* Shadcn Imports */}
+// Shadcn Imports
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
@@ -19,13 +23,13 @@ import {
     CollapsibleTrigger,
 } from "@/components/ui/collapsible"
 
-{/* Icon Imports */}
+// Icon Imports
 import {
     Plus,
     Minus
 } from "lucide-react"
 
-{/* Other Imports */}
+// Other Imports
 import { format, parse } from "date-fns"
 
 interface EventListProps {
@@ -91,6 +95,17 @@ function CollapsibleItem({ date, events, isLastItem }: CollapsibleItemProps) {
     const parsedDate = parse(date, "MMMM d, yyyy", new Date())
     const triggerDate = format(parsedDate, "EEE, MMM d") // Format as "Mon, Sep 2"
 
+    const handleEventClick = async (eventId: string) => {
+        setEvent({ ...event, selected: eventId })
+
+        // Reference the document in Firestore and increment the `clicks` field
+        const eventRef = doc(db, "events", eventId);
+
+        await updateDoc(eventRef, {
+            clicks: increment(1),
+        })
+    }
+
     return (
         <div>
             <Collapsible defaultOpen={isOpen} className="p-4" onOpenChange={() => setIsOpen(!isOpen)}>
@@ -112,12 +127,15 @@ function CollapsibleItem({ date, events, isLastItem }: CollapsibleItemProps) {
                                     "flex flex-col md:flex-row w-full items-start gap-4 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent",
                                     event.selected === item.id && "bg-muted"
                                 )}
-                                onClick={() =>
+                                onClick={async () => {
+                                    // Update the selected event locally
                                     setEvent({
                                         ...event,
                                         selected: item.id,
-                                    })
-                                }
+                                    });
+
+                                    handleEventClick(item.id);
+                                }}
                             >
                                 <Image
                                     src={item.image || "/tempFlyer1.svg"}
@@ -134,6 +152,11 @@ function CollapsibleItem({ date, events, isLastItem }: CollapsibleItemProps) {
                                     </div>
                                     <div className="line-clamp-4 text-xs text-muted-foreground">
                                         {item.description.substring(0, 300)}
+                                    </div>
+                                    <div className="inline-flex">
+                                        <Badge variant="outline" className="inline-block">
+                                            {item.clicks} clicks
+                                        </Badge>
                                     </div>
                                     <div className="inline-flex">
                                         <Badge variant="secondary" className="inline-block">
