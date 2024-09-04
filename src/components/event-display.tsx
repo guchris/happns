@@ -69,7 +69,7 @@ export function EventDisplay({ event, onBack }: EventDisplayProps) {
     };
 
     return (
-        <ScrollArea className="h-screen">
+        <ScrollArea>
             <div className="flex h-full flex-col">
                 <div className="flex items-center justify-between p-2">
 

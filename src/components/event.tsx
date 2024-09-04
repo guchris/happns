@@ -303,12 +303,14 @@ export function Event({
                     <ResizableHandle withHandle />
 
                     <ResizablePanel defaultSize={defaultLayout[2]} minSize={30} className="h-full overflow-y-auto">
-                        {filteredEvents.length > 0 && (
-                            <EventDisplay 
-                                event={events.find((item) => item.id === event.selected) || null} 
-                                onBack={() => setEvent({ ...event, selected: null })} 
-                            />
-                        )}
+                        <div className="flex flex-col h-full">
+                            {filteredEvents.length > 0 && (
+                                <EventDisplay 
+                                    event={events.find((item) => item.id === event.selected) || null} 
+                                    onBack={() => setEvent({ ...event, selected: null })} 
+                                />
+                            )}
+                        </div>
                     </ResizablePanel>
                 </ResizablePanelGroup>
             </div>
