@@ -1,10 +1,10 @@
-{/* Next Imports */}
+// Next Imports
 import Image from "next/image"
 
-{/* Components Imports */}
+// Components Imports
 import { Event } from "@/components/types"
 
-{/* Shadcn Imports */}
+// Shadcn Imports
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
@@ -14,7 +14,7 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip"
 
-{/* Icon Imports */}
+// Icon Imports
 import {
     ArrowLeft,
     CalendarPlus,
@@ -22,6 +22,10 @@ import {
     MapPin,
     Send
 } from "lucide-react"
+
+// Other Imports
+import { parse } from "date-fns";
+
 
 interface EventDisplayProps {
     event: Event | null
@@ -43,21 +47,33 @@ export function EventDisplay({ event, onBack }: EventDisplayProps) {
         }
     }
 
+    // Function to parse both single dates and date ranges
+    function parseEventDate(dateString: string) {
+        if (dateString.includes("-")) {
+            // Handle ranges like "MM/dd/yyyy - MM/dd/yyyy"
+            const [startPart, endPart] = dateString.split(" - ");
+            const startDate = parse(startPart.trim(), "MM/dd/yyyy", new Date());
+            const endDate = parse(endPart.trim(), "MM/dd/yyyy", new Date());
+            return { startDate, endDate };
+        } else {
+            // Handle single dates like "MM/dd/yyyy"
+            const date = parse(dateString, "MM/dd/yyyy", new Date());
+            return { startDate: date, endDate: date }; // Same start and end date for single-day events
+        }
+    }
+
     function getGoogleCalendarLink(event: Event) {
-        // Parse the date
-        const eventDate = new Date(`${event.date} ${event.time.split(" - ")[0]}`);
-        const eventEndTime = event.time.split(" - ")[1];
-        
-        // If the event spans multiple days, use the end date; otherwise, assume it ends the same day
-        const eventEndDate = eventEndTime 
-            ? new Date(`${event.date} ${eventEndTime}`)
-            : new Date(eventDate.getTime() + 3600000); // Default to 1 hour duration if no end time
+        // Parse the event's date using the new parse function
+        const { startDate, endDate } = parseEventDate(event.date);
     
         // Format dates for Google Calendar (YYYYMMDDTHHMMSSZ)
-        const startDate = eventDate.toISOString().replace(/-|:|\.\d\d\d/g, "");
-        const endDate = eventEndDate.toISOString().replace(/-|:|\.\d\d\d/g, "");
+        const startDateTime = new Date(`${startDate.toDateString()} ${event.time.split(" - ")[0]}`).toISOString().replace(/-|:|\.\d\d\d/g, "");
+        const endDateTime = event.time.split(" - ")[1]
+            ? new Date(`${endDate.toDateString()} ${event.time.split(" - ")[1]}`).toISOString().replace(/-|:|\.\d\d\d/g, "")
+            : new Date(startDate.getTime() + 3600000).toISOString().replace(/-|:|\.\d\d\d/g, ""); // Default to 1 hour if no end time
     
-        return `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.name)}&dates=${startDate}/${endDate}&details=${encodeURIComponent(event.description)}&location=${encodeURIComponent(event.location)}&sf=true&output=xml`;
+        // Return the Google Calendar link with the parsed dates
+        return `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.name)}&dates=${startDateTime}/${endDateTime}&details=${encodeURIComponent(event.description)}&location=${encodeURIComponent(event.location)}&sf=true&output=xml`;
     }
     
 

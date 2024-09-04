@@ -13,11 +13,11 @@ import { db } from "@/app/firebase";
 
 // Components Imports
 import { Event } from "@/components/types";
+import { Event as EventComponent } from "@/components/event"
 
 // Shadcn Imports
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button";
-import { Event as EventComponent } from "@/components/event"
 
 // Icon Imports
 import { PlusCircledIcon } from "@radix-ui/react-icons"
