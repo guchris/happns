@@ -20,7 +20,7 @@ import {
     CalendarPlus,
     SquareArrowOutUpRight,
     MapPin,
-    Send
+    Link
 } from "lucide-react"
 
 // Other Imports
@@ -75,12 +75,23 @@ export function EventDisplay({ event, onBack }: EventDisplayProps) {
         // Return the Google Calendar link with the parsed dates
         return `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.name)}&dates=${startDateTime}/${endDateTime}&details=${encodeURIComponent(event.description)}&location=${encodeURIComponent(event.location)}&sf=true&output=xml`;
     }
-    
 
     const addToCalendar = () => {
         if (event) {
             const googleCalendarLink = getGoogleCalendarLink(event);
             window.open(googleCalendarLink, "_blank");
+        }
+    };
+
+    const handleCopyEventLink = async () => {
+        if (event) {
+            const eventUrl = `${window.location.origin}/events/${event.id}`;
+
+            try {
+                await navigator.clipboard.writeText(eventUrl);
+            } catch (err) {
+                console.error("Failed to copy event URL: ", err);
+            }
         }
     };
 
@@ -90,7 +101,7 @@ export function EventDisplay({ event, onBack }: EventDisplayProps) {
                 <div className="flex items-center justify-between p-2">
 
                     {/* Back Button */}
-                    <Button variant="ghost" size="icon" onClick={onBack}>
+                    <Button variant="ghost" size="icon" disabled={!event} onClick={onBack}>
                         <ArrowLeft className="h-4 w-4" />
                         <span className="sr-only">Back to List</span>
                     </Button>
@@ -126,12 +137,12 @@ export function EventDisplay({ event, onBack }: EventDisplayProps) {
                         </Tooltip>
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" disabled={!event}>
-                                    <Send className="h-4 w-4" />
-                                    <span className="sr-only">Share</span>
+                                <Button variant="ghost" size="icon" disabled={!event} onClick={handleCopyEventLink}>
+                                    <Link className="h-4 w-4" />
+                                    <span className="sr-only">Event Link</span>
                                 </Button>
                             </TooltipTrigger>
-                            <TooltipContent>Share</TooltipContent>
+                            <TooltipContent>Event Link</TooltipContent>
                         </Tooltip>
                     </div>
                 </div>

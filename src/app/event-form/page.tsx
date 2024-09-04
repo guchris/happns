@@ -4,7 +4,7 @@ import Link from "next/link";
 import { v4 as uuidv4 } from "uuid";
 
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { addDoc, collection } from "firebase/firestore";
+import { doc, setDoc, collection } from "firebase/firestore";
 import { db } from "@/app/firebase";
 
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -191,12 +191,14 @@ export default function EventForm() {
         };
 
         uploadImage().then((imageUrl) => {
+            const uuid = uuidv4();
             const eventData = {
                 category: data.category,
                 cost: data.cost,
                 description: data.description,
                 details: data.details,
                 date,
+                id: uuid,
                 time,
                 format: data.format,
                 gmaps: data.gmaps,
@@ -206,10 +208,12 @@ export default function EventForm() {
                 name: data.name,
                 neighborhood: data.neighborhood,
             };
+
+            const eventDocRef = doc(eventsCollectionRef, uuid);
     
-            addDoc(eventsCollectionRef, eventData)
+            setDoc(eventDocRef, eventData)
                 .then(() => {
-                    console.log("Event added to Firestore:", eventData);
+                    console.log("Event added to Firestore with ID:", uuid);
                 })
                 .catch((error) => {
                     console.error("Error adding event to Firestore:", error);
