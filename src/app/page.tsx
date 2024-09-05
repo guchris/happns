@@ -10,10 +10,12 @@ import Link from "next/link";
 import { useAuthState } from "react-firebase-hooks/auth"
 import { auth, db } from "@/app/firebase"
 import { doc, getDoc } from "firebase/firestore"
+import { signOut } from "firebase/auth"
 
 // Shadcn Imports
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   Card,
   CardContent,
@@ -21,6 +23,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 // Icon Imports
 import {
@@ -79,6 +89,10 @@ export default function Home() {
     fetchUserData();
   }, [user]);
 
+  const handleSignOut = async () => {
+    await signOut(auth);
+  };
+
   return (
     <div className="flex h-full flex-col">
 
@@ -86,18 +100,40 @@ export default function Home() {
       <div className="w-full flex items-center justify-between py-4 px-4 h-14">
         <h2 className="text-lg font-semibold">happns</h2>
         {user && userData ? (
-          <div className="flex items-center space-x-4">
-            <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-white font-semibold">
-              {getInitials(userData.name)}
-            </div>
-          </div>
-        ) : (
+          <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                  <Avatar className="h-8 w-8">
+                      <AvatarFallback>{getInitials(userData.name)}</AvatarFallback>
+                  </Avatar>
+                  </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="end" forceMount>
+                  <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">{userData.name}</p>
+                      <p className="text-xs leading-none text-muted-foreground">{userData.email}</p>
+                  </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>
+                      <Link href="/profile">Profile</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                      <Link href="/settings">Settings</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>Other</DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignOut}>
+                      Log out
+                  </DropdownMenuItem>
+              </DropdownMenuContent>
+          </DropdownMenu>
+      ) : (
           <Button>
-            <Link href="/auth">
-              Log In
-            </Link>
+              <Link href="/auth">Log In</Link>
           </Button>
-        )}
+      )}
       </div>
 
       <Separator />

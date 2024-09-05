@@ -11,6 +11,7 @@ import { useParams } from "next/navigation";
 import { auth, db } from "@/app/firebase";
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { useAuthState } from "react-firebase-hooks/auth"
+import { signOut } from "firebase/auth"
 
 // Components Imports
 import { Event } from "@/components/types";
@@ -19,6 +20,15 @@ import { Event as EventComponent } from "@/components/event"
 // Shadcn Imports
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 // Icon Imports
 import { PlusCircledIcon } from "@radix-ui/react-icons"
@@ -53,9 +63,9 @@ export default function CityPage() {
 
     useEffect(() => {
         const fetchEvents = async () => {
-          const eventsCol = collection(db, "events");
-          const eventSnapshot = await getDocs(eventsCol);
-          const eventList: Event[] = eventSnapshot.docs.map((doc) => ({
+            const eventsCol = collection(db, "events");
+            const eventSnapshot = await getDocs(eventsCol);
+            const eventList: Event[] = eventSnapshot.docs.map((doc) => ({
             category: doc.data().category,
             clicks: doc.data().clicks,
             cost: doc.data().cost,
@@ -71,12 +81,16 @@ export default function CityPage() {
             name: doc.data().name,
             neighborhood: doc.data().neighborhood,
             time: doc.data().time,
-          }));
-          setEvents(eventList);
+            }));
+            setEvents(eventList);
         };
     
         fetchEvents();
       }, []);
+
+    const handleSignOut = async () => {
+        await signOut(auth);
+    };
 
     return (
         <div className="h-screen flex flex-col">
@@ -87,14 +101,40 @@ export default function CityPage() {
                 </h2>
 
                 {user && userData ? (
-                <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-white font-semibold">
-                    {getInitials(userData.name)}
-                </div>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                            <Avatar className="h-8 w-8">
+                                <AvatarFallback>{getInitials(userData.name)}</AvatarFallback>
+                            </Avatar>
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="w-56" align="end" forceMount>
+                            <DropdownMenuLabel className="font-normal">
+                            <div className="flex flex-col space-y-1">
+                                <p className="text-sm font-medium leading-none">{userData.name}</p>
+                                <p className="text-xs leading-none text-muted-foreground">{userData.email}</p>
+                            </div>
+                            </DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem>
+                                <Link href="/profile">Profile</Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                                <Link href="/settings">Settings</Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>Other</DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={handleSignOut}>
+                                Log out
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 ) : (
-                <Button>
-                    <PlusCircledIcon className="mr-2 h-4 w-4" />
-                    <Link href="/auth">Log In</Link>
-                </Button>
+                    <Button>
+                        <PlusCircledIcon className="mr-2 h-4 w-4" />
+                        <Link href="/auth">Log In</Link>
+                    </Button>
                 )}
             </div>
             <Separator />
