@@ -2,6 +2,7 @@
 
 // React Imports
 import * as React from "react"
+import { useRouter } from "next/navigation"
 
 // Firebase Imports
 import { db, auth } from "@/app/firebase"
@@ -30,29 +31,27 @@ export function UserSignupForm({ className, ...props }: UserSignupFormProps) {
     const [password, setPassword] = React.useState<string>("")
     const [error, setError] = React.useState<string | null>(null)
 
+    const router = useRouter()
+
     async function onSubmit(event: React.SyntheticEvent) {
         event.preventDefault()
         setIsLoading(true)
         setError(null)
 
         try {
-            // Firebase Authentication: Sign up the user
             const userCredential = await createUserWithEmailAndPassword(auth, email, password)
             const user = userCredential.user
-
-            // Create a user object that matches the User interface
             const newUser: User = {
-                id: user.uid,
+                uid: user.uid,
                 name: name,
                 username: username,
                 email: email,
                 createdAt: new Date(),
             }
 
-            // Save user details to Firestore
-            await setDoc(doc(db, "users", newUser.id), newUser)
+            await setDoc(doc(db, "users", newUser.uid), newUser)
 
-            console.log("User signed up and details saved:", user.email)
+            router.push("/")
         } catch (error: any) {
             console.error("Error signing up:", error.message)
             setError(error.message)

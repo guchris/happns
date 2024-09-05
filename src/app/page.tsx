@@ -1,9 +1,17 @@
 "use client"
 
-{/* Next Imports */}
+// React Imports
+import { useEffect, useState } from "react"
+
+// Next Imports
 import Link from "next/link";
 
-{/* Shadcn Imports */}
+// Firebase Imports
+import { useAuthState } from "react-firebase-hooks/auth"
+import { auth, db } from "@/app/firebase"
+import { doc, getDoc } from "firebase/firestore"
+
+// Shadcn Imports
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button";
 import {
@@ -14,12 +22,17 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
-{/* Icon Imports */}
+// Icon Imports
 import {
-  PlusCircledIcon,
   CircleIcon as FilledCircleIcon,
   CalendarIcon
 } from "@radix-ui/react-icons";
+
+// Utility Function to get initials
+function getInitials(name: string) {
+  const [firstName, lastName] = name.split(" ");
+  return firstName[0] + (lastName ? lastName[0] : "");
+}
 
 const ad = { id: 1, imageUrl: "/ads/ad1.jpg", link: "https://seattle.boo-halloween.com/" };
 const cities = [
@@ -47,17 +60,44 @@ const cities = [
 ];
 
 export default function Home() {
+  const [user] = useAuthState(auth);
+  const [userData, setUserData] = useState<{ name: string; email: string } | null>(null)
+
+  // Fetch user details from Firestore
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (user) {
+        const userDocRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userDocRef);
+
+        if (userDoc.exists()) {
+          setUserData(userDoc.data() as { name: string; email: string });
+        }
+      }
+    };
+
+    fetchUserData();
+  }, [user]);
+
   return (
     <div className="flex h-full flex-col">
 
       {/* Top Nav */}
       <div className="w-full flex items-center justify-between py-4 px-4 h-14">
-          <h2 className="text-lg font-semibold">happns</h2>
+        <h2 className="text-lg font-semibold">happns</h2>
+        {user && userData ? (
+          <div className="flex items-center space-x-4">
+            <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-white font-semibold">
+              {getInitials(userData.name)}
+            </div>
+          </div>
+        ) : (
           <Button>
             <Link href="/auth">
-              Login
+              Log In
             </Link>
           </Button>
+        )}
       </div>
 
       <Separator />
