@@ -1,22 +1,30 @@
 "use client"
 
+// Next Imports
 import Link from "next/link";
-import { v4 as uuidv4 } from "uuid";
+import { useRouter } from "next/navigation";
 
+// Firebase Imports
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { doc, setDoc, collection } from "firebase/firestore";
 import { db } from "@/app/firebase";
 
+// Zod Imports
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form";
 import { z } from "zod"
 
+// Lib Imports
 import { cn } from "@/lib/utils"
 import { categoryOptions, formatOptions, neighborhoodOptions } from "@/lib/selectOptions";
 
+// Shadcn Imports
 import { format } from "date-fns"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Calendar } from "@/components/ui/calendar"
 import {
     Form,
     FormControl,
@@ -26,9 +34,6 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Calendar } from "@/components/ui/calendar"
 import {
   Select,
   SelectContent,
@@ -41,8 +46,13 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
+import { useToast } from "@/hooks/use-toast"
 
+// Icon Imports
 import { CalendarIcon } from "@radix-ui/react-icons"
+
+// Other Imports
+import { v4 as uuidv4 } from "uuid";
 
 const eventFormSchema = z.object({
     category: z.string(),
@@ -136,6 +146,8 @@ const eventFormSchema = z.object({
 type EventFormValues = z.infer<typeof eventFormSchema>
 
 export default function EventForm() {
+    const router = useRouter();
+    const { toast } = useToast()
     const form = useForm<EventFormValues>({
         resolver: zodResolver(eventFormSchema),
         mode: "onChange",
@@ -215,6 +227,11 @@ export default function EventForm() {
             setDoc(eventDocRef, eventData)
                 .then(() => {
                     console.log("Event added to Firestore with ID:", uuid);
+                    toast({
+                        title: "Event Submitted ",
+                        description: uuid
+                    });
+                    router.push("/");
                 })
                 .catch((error) => {
                     console.error("Error adding event to Firestore:", error);

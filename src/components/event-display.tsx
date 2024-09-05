@@ -8,12 +8,12 @@ import { Event } from "@/components/types"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
-import { useToast } from "@/hooks/use-toast"
 import {
     Tooltip,
     TooltipContent,
     TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { useToast } from "@/hooks/use-toast"
 
 // Icon Imports
 import {
