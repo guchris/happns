@@ -48,7 +48,6 @@ const cities = [
 
 export default function Home() {
   return (
-
     <div className="flex h-full flex-col">
 
       {/* Top Nav */}

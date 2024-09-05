@@ -8,6 +8,7 @@ import { Event } from "@/components/types"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
+import { useToast } from "@/hooks/use-toast"
 import {
     Tooltip,
     TooltipContent,
@@ -34,6 +35,7 @@ interface EventDisplayProps {
 
 export function EventDisplay({ event, onBack }: EventDisplayProps) {
     const today = new Date()
+    const { toast } = useToast()
 
     const openExternalLink = () => {
         if (event && event.link) {
@@ -137,7 +139,17 @@ export function EventDisplay({ event, onBack }: EventDisplayProps) {
                         </Tooltip>
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" disabled={!event} onClick={handleCopyEventLink}>
+                                <Button 
+                                    variant="ghost"
+                                    size="icon"
+                                    disabled={!event}
+                                    onClick={() => {
+                                        handleCopyEventLink()
+                                        toast({
+                                          title: "Copied Event Link "
+                                        })
+                                      }}
+                                >
                                     <Link className="h-4 w-4" />
                                     <span className="sr-only">Event Link</span>
                                 </Button>
