@@ -3,6 +3,9 @@
 // React Imports
 import * as React from "react"
 
+// Next Imports
+import { useRouter } from "next/navigation"
+
 // Firebase Imports
 import { auth } from "@/app/firebase"
 import { signInWithEmailAndPassword } from "firebase/auth"
@@ -26,6 +29,8 @@ export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
     const [password, setPassword] = React.useState<string>("")
     const [error, setError] = React.useState<string | null>(null)
 
+    const router = useRouter();
+
     async function onSubmit(event: React.SyntheticEvent) {
         event.preventDefault()
         setIsLoading(true)
@@ -35,7 +40,8 @@ export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
             // Firebase Authentication
             const userCredential = await signInWithEmailAndPassword(auth, email, password)
             const user = userCredential.user
-            console.log("Signed in as:", user.email)
+
+            router.push("/")
         } catch (error: any) {
             console.error("Error signing in:", error.message)
             setError(error.message)
