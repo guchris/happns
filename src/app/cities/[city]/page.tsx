@@ -8,8 +8,9 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 
 // Firebase Imports
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "@/app/firebase";
+import { auth, db } from "@/app/firebase";
+import { collection, getDocs, doc, getDoc } from "firebase/firestore";
+import { useAuthState } from "react-firebase-hooks/auth"
 
 // Components Imports
 import { Event } from "@/components/types";
@@ -22,9 +23,33 @@ import { Button } from "@/components/ui/button";
 // Icon Imports
 import { PlusCircledIcon } from "@radix-ui/react-icons"
 
+// Utility Function to get initials
+function getInitials(name: string) {
+    const [firstName, lastName] = name.split(" ");
+    return firstName[0] + (lastName ? lastName[0] : "");
+}
+
 export default function CityPage() {
     const [events, setEvents] = useState<Event[]>([]);
+    const [user] = useAuthState(auth);
+    const [userData, setUserData] = useState<{ name: string; email: string } | null>(null);
     const { city } = useParams();
+
+    // Fetch user details from Firestore
+    useEffect(() => {
+        const fetchUserData = async () => {
+        if (user) {
+            const userDocRef = doc(db, "users", user.uid);
+            const userDoc = await getDoc(userDocRef);
+
+            if (userDoc.exists()) {
+            setUserData(userDoc.data() as { name: string; email: string });
+            }
+        }
+        };
+
+        fetchUserData();
+    }, [user]);
 
     useEffect(() => {
         const fetchEvents = async () => {
@@ -60,12 +85,17 @@ export default function CityPage() {
                     <Link href="/">happns</Link>
                     /{city}
                 </h2>
+
+                {user && userData ? (
+                <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-white font-semibold">
+                    {getInitials(userData.name)}
+                </div>
+                ) : (
                 <Button>
                     <PlusCircledIcon className="mr-2 h-4 w-4" />
-                    <Link href="/event-form">
-                        Add event
-                    </Link>
+                    <Link href="/auth">Log In</Link>
                 </Button>
+                )}
             </div>
             <Separator />
             <div className="flex-1 overflow-y-auto">
