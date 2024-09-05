@@ -15,3 +15,11 @@ export interface Event {
     neighborhood: string;
     time: string;
 }
+
+export interface User {
+    id: string;
+    name: string;
+    username: string;
+    email: string;
+    createdAt: Date;
+}

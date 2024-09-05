@@ -54,9 +54,8 @@ export default function Home() {
       <div className="w-full flex items-center justify-between py-4 px-4 h-14">
           <h2 className="text-lg font-semibold">happns</h2>
           <Button>
-            <PlusCircledIcon className="mr-2 h-4 w-4" />
-            <Link href="/event-form">
-              Add event
+            <Link href="/auth">
+              Login
             </Link>
           </Button>
       </div>

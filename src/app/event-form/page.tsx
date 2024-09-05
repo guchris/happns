@@ -201,7 +201,7 @@ export default function EventForm() {
                 return null;
             }
         };
-
+        
         uploadImage().then((imageUrl) => {
             const uuid = uuidv4();
             const eventData = {
