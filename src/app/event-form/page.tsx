@@ -16,7 +16,7 @@ import { z } from "zod"
 
 // Lib Imports
 import { cn } from "@/lib/utils"
-import { categoryOptions, formatOptions, neighborhoodOptions } from "@/lib/selectOptions";
+import { cityOptions, categoryOptions, formatOptions, neighborhoodOptions } from "@/lib/selectOptions";
 
 // Shadcn Imports
 import { format } from "date-fns"
@@ -55,7 +55,12 @@ import { CalendarIcon } from "@radix-ui/react-icons"
 import { v4 as uuidv4 } from "uuid";
 
 const eventFormSchema = z.object({
-    category: z.string(),
+    category: z.string({
+        required_error: "A category is required.",
+    }),
+    city: z.string({
+        required_error: "A city is required.",
+    }),
     cost: z
         .number({
             required_error: "Cost is required.",
@@ -206,6 +211,7 @@ export default function EventForm() {
             const uuid = uuidv4();
             const eventData = {
                 category: data.category,
+                city: data.city,
                 clicks: 0,
                 cost: data.cost,
                 description: data.description,
@@ -254,6 +260,30 @@ export default function EventForm() {
             </div>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col px-4 py-2 space-y-8">
+                    <FormField
+                        control={form.control}
+                        name="city"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>City</FormLabel>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select a city" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        {cityOptions.map((option) => (
+                                            <SelectItem key={option.value} value={option.value}>
+                                                {option.label}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
                     <FormField
                         control={form.control}
                         name="name"

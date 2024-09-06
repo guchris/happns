@@ -30,6 +30,7 @@ export const formatOptions = [
 export const neighborhoodOptions = [
     { value: "ballard", label: "Ballard" },
     { value: "belltown", label: "Belltown" },
+    { value: "bellevue", label: "Bellevue" },
     { value: "beacon-hill", label: "Beacon Hill" },
     { value: "broadway", label: "Broadway" },
     { value: "capitol-hill", label: "Capitol Hill" },
@@ -65,4 +66,12 @@ export const costOptions = [
     { value: "$25-$50", label: "$25-$50" },
     { value: "$50-$100", label: "$50-$100" },
     { value: "$100+", label: "$100+" },
+];
+
+export const cityOptions = [
+    { value: "seattle", label: "Seattle" },
+    { value: "san-francisco", label: "San Francisco" },
+    { value: "los-angeles", label: "Los Angeles" },
+    { value: "new-york-city", label: "New York City" },
+    { value: "austin", label: "Austin" },
 ];
