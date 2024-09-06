@@ -8,7 +8,7 @@ import { useParams } from "next/navigation";
 
 // Firebase Imports
 import { db } from "@/app/firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 
 // Components Imports
 import { TopBar } from "@/components/top-bar";
@@ -22,26 +22,31 @@ export default function CityPage() {
     const [events, setEvents] = useState<Event[]>([]);
     const { city } = useParams();
 
+    console.log(city)
+
     useEffect(() => {
         const fetchEvents = async () => {
             const eventsCol = collection(db, "events");
-            const eventSnapshot = await getDocs(eventsCol);
+            const cityQuery = query(eventsCol, where("city", "==", city));
+            const eventSnapshot = await getDocs(cityQuery);
+
             const eventList: Event[] = eventSnapshot.docs.map((doc) => ({
-            category: doc.data().category,
-            clicks: doc.data().clicks,
-            cost: doc.data().cost,
-            date: doc.data().date,
-            description: doc.data().description,
-            details: doc.data().details,
-            format: doc.data().format,
-            gmaps: doc.data().gmaps,
-            id: doc.id,
-            image: doc.data().image,
-            link: doc.data().link,
-            location: doc.data().location,
-            name: doc.data().name,
-            neighborhood: doc.data().neighborhood,
-            time: doc.data().time,
+                category: doc.data().category,
+                city: doc.data().city,
+                clicks: doc.data().clicks,
+                cost: doc.data().cost,
+                date: doc.data().date,
+                description: doc.data().description,
+                details: doc.data().details,
+                format: doc.data().format,
+                gmaps: doc.data().gmaps,
+                id: doc.id,
+                image: doc.data().image,
+                link: doc.data().link,
+                location: doc.data().location,
+                name: doc.data().name,
+                neighborhood: doc.data().neighborhood,
+                time: doc.data().time,
             }));
             setEvents(eventList);
         };

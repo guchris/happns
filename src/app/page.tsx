@@ -1,7 +1,14 @@
 "use client"
 
+// React Imports
+import { useEffect, useState } from "react";
+
 // Next Imports
 import Link from "next/link";
+
+// Firebase Imports
+import { db } from "@/app/firebase";
+import { collection, getDocs, query, where } from "firebase/firestore";
 
 // Components Imports
 import { TopBar } from "@/components/top-bar"
@@ -23,31 +30,34 @@ import {
 } from "@radix-ui/react-icons";
 
 const ad = { id: 1, imageUrl: "/ads/ad1.jpg", link: "https://seattle.boo-halloween.com/" };
-const cities = [
-  {
-    name: "Seattle",
-    nickname: "The Emerald City",
-    color: "text-green-500",
-    events: "345",
-    description: "Dive into SEA's dynamic events scene, where tech meets nature. From indie concerts to food festivals, connect with a community that blends urban life with outdoor adventures."
-  },
-  {
-    name: "New York City",
-    nickname: "The Big Apple",
-    color: "text-red-500",
-    events: "234",
-    description: "Explore NYC's endless events, from Broadway shows to rooftop parties. Discover the city’s vibrant culture and connect with a diverse crowd at every turn."
-  },
-  {
-    name: "San Francisco",
-    nickname: "The Golden City",
-    color: "text-yellow-500",
-    events: "123",
-    description: "Experience SF's unique mix of tech and creativity. Attend meetups, festivals, and events that showcase the city's innovative and eclectic spirit."
-  }
-];
 
 export default function Home() {
+
+  const [cities, setCities] = useState([
+    { name: "Seattle", slug: "seattle", nickname: "The Emerald City", color: "text-green-500", events: 0, description: "Dive into SEA's dynamic events scene, where tech meets nature..." },
+    { name: "New York City", slug: "new-york-city", nickname: "The Big Apple", color: "text-red-500", events: 0, description: "Explore NYC's endless events..." },
+    { name: "San Francisco", slug: "san-francisco", nickname: "The Golden City", color: "text-yellow-500", events: 0, description: "Experience SF's unique mix of tech and creativity..." }
+  ]);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      const updatedCities = await Promise.all(
+        cities.map(async (city) => {
+          const eventsCol = collection(db, "events");
+
+          const q = query(eventsCol, where("city", "==", city.slug));
+          const eventSnapshot = await getDocs(q);
+          const totalEvents = eventSnapshot.size;
+
+          return { ...city, events: totalEvents };
+        })
+      );
+
+      setCities(updatedCities);
+    };
+
+    fetchEvents();
+  }, []);
 
   return (
     <div className="flex h-full flex-col">
@@ -90,7 +100,7 @@ export default function Home() {
                       </div>
                       <div className="flex items-center">
                         <CalendarIcon className="mr-1 h-3 w-3" />
-                        {city.events} events
+                        {city.events} upcoming events
                       </div>
                     </div>
                   </CardContent>

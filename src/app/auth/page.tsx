@@ -21,11 +21,8 @@ export default function AuthPage() {
 
     return (
         <>
-            {/* Mobile View */}
-            <div className="md:hidden">
-            </div>
-
-            <div className="container relative hidden h-[800px] flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
+            {/* Main Auth Page */}
+            <div className="container relative min-h-screen flex flex-col items-center justify-center lg:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
                 <button
                     onClick={() => setIsSignUp(!isSignUp)}
                     className={cn(
@@ -35,6 +32,8 @@ export default function AuthPage() {
                 >
                     {isSignUp ? "Log In" : "Sign Up"}
                 </button>
+
+                {/* Left Section - Hidden on Mobile */}
                 <div className="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
                     <div className="absolute inset-0 bg-zinc-900" />
                     <div className="relative z-20 flex items-center text-lg font-medium">
@@ -49,14 +48,16 @@ export default function AuthPage() {
                         </blockquote>
                     </div>
                 </div>
-                <div className="lg:p-8">
+
+                {/* Right Section (Form) - Displayed on Both Mobile and Desktop */}
+                <div className="flex flex-col items-center justify-center w-full lg:p-8 min-h-screen lg:min-h-0">
                     <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
                         <div className="flex flex-col space-y-2 text-center">
                             <h1 className="text-2xl font-semibold tracking-tight">
-                                {isSignUp ? "sign up for happns" : "log in to happns"}
+                                {isSignUp ? "Sign up for happns" : "Log in to happns"}
                             </h1>
                             <p className="text-sm text-muted-foreground">
-                                {isSignUp ? "enter your details to sign up" : "enter your email and password"}
+                                {isSignUp ? "Enter your details to sign up" : "Enter your email and password"}
                             </p>
                         </div>
                         {isSignUp ? <UserSignupForm /> : <UserLoginForm />}

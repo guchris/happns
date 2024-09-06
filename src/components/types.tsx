@@ -1,5 +1,6 @@
 export interface Event {
     category: string;
+    city: string;
     clicks: number;
     cost: number;
     date: string;
