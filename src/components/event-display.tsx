@@ -9,6 +9,7 @@ import { Event } from "@/components/types"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
+import { Badge } from "@/components/ui/badge"
 import {
     Tooltip,
     TooltipContent,
@@ -233,41 +234,56 @@ export function EventDisplay({ event, onBack }: EventDisplayProps) {
                         <Separator />
                         
                         <div className="flex-1 whitespace-pre-wrap p-4 grid gap-4">
-
-                            {/* Event Format, Location, Neighborhood */}
+                            {/* Event Category, Format, Neighborhood */}
                             <div className="grid gap-1">
-                                <div className="text-sm">
-                                    <span>Format: </span>{event.format}
+                                <div className="text-sm font-medium">
+                                    <span className="text-muted-foreground">Category: </span>
+                                    <Badge variant="outline" className="inline-block">
+                                        {event.category}
+                                    </Badge>
                                 </div>
-                                <div className="text-sm">
-                                    <span>Location: </span>
-                                    <Link href={event.gmaps} passHref legacyBehavior>
-                                        <a 
-                                            target="_blank" 
-                                            rel="noopener noreferrer" 
-                                            className="text-black underline"
-                                        >
-                                            {event.location}
-                                        </a>
-                                    </Link>
+                                <div className="text-sm font-medium">
+                                    <span className="text-muted-foreground">Format: </span>
+                                    <Badge variant="outline" className="inline-block">
+                                        {event.format}
+                                    </Badge>
                                 </div>
-                                <div className="text-sm">
-                                    <span>Neighborhood: </span>{event.neighborhood}
+                                <div className="text-sm font-medium">
+                                    <span className="text-muted-foreground">Neighborhood: </span>
+                                    <Badge variant="outline" className="inline-block">
+                                        {event.neighborhood}
+                                    </Badge>
                                 </div>
                             </div>
-                            
-                            {/* Event Cost */}
-                            <div className="grid gap-1">
-                                <div className="text-sm">
-                                    <span>Cost: $</span>{event.cost}
-                                </div>
+                        </div>
+
+                        <Separator />
+                        
+                        <div className="flex items-center gap-4">
+                            {/* Event Location */}
+                            <div className="flex-1 p-4">
+                                <div className="text-sm font-medium text-muted-foreground">Location</div>
+                                <Link href={event.gmaps} passHref legacyBehavior>
+                                    <a
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-sm font-medium text-black underline"
+                                    >
+                                        {event.location}
+                                    </a>
+                                </Link>
+                            </div>
+                            <Separator orientation="vertical" className="h-auto self-stretch" />
+                            <div className="flex-1 p-4">
+                                <div className="text-sm font-medium text-muted-foreground">Cost</div>
+                                <div className="text-sm font-medium">${event.cost}</div>
                             </div>
                         </div>
 
                         <Separator />
 
                         {/* Event Description */}
-                        <div className="flex-1 whitespace-pre-wrap p-4 text-sm text-muted-foreground">{event.description}</div>
+                        <div className="flex-1 whitespace-pre-wrap p-4 text-sm">{event.description}</div>
 
                         <Separator />
 
