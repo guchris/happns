@@ -10,6 +10,9 @@ import { Analytics } from "@vercel/analytics/react"
 // Shadcn Imports
 import { Toaster } from "@/components/ui/toaster"
 
+// Context Imports
+import { AuthProvider } from "@/context/AuthContext";
+
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -25,12 +28,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        {children}
-        <Analytics />
-        <Toaster />
-      </body>
-    </html>
+    <AuthProvider>
+      <html lang="en">
+        <body className={inter.className}>
+          {children}
+          <Analytics />
+          <Toaster />
+        </body>
+      </html>
+    </AuthProvider>
   );
 }

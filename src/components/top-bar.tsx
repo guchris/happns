@@ -1,20 +1,18 @@
 "use client"
 
-// React Imports
-import { useEffect, useState } from "react"
-
 // Next Imports
 import Link from "next/link"
 
+// Context Imports
+import { useAuth } from "@/context/AuthContext"
+
 // Firebase Imports
-import { auth, db } from "@/app/firebase"
-import { doc, getDoc } from "firebase/firestore"
-import { useAuthState } from "react-firebase-hooks/auth"
+import { auth } from "@/app/firebase"
 import { signOut } from "firebase/auth"
 
 // Shadcn Imports
 import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -23,9 +21,6 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-
-// Icon Imports
-import { PlusCircledIcon } from "@radix-ui/react-icons"
 
 // Utility Function to get initials
 function getInitials(name: string) {
@@ -38,24 +33,7 @@ interface TopBarProps {
 }
 
 export const TopBar: React.FC<TopBarProps> = ({ title }) => {
-    const [user] = useAuthState(auth);
-    const [userData, setUserData] = useState<{ name: string; email: string } | null>(null);
-
-    // Fetch user details from Firestore
-    useEffect(() => {
-        const fetchUserData = async () => {
-        if (user) {
-            const userDocRef = doc(db, "users", user.uid);
-            const userDoc = await getDoc(userDocRef);
-
-            if (userDoc.exists()) {
-            setUserData(userDoc.data() as { name: string; email: string });
-            }
-        }
-        };
-
-        fetchUserData();
-    }, [user]);
+    const { user, loading, userData } = useAuth();
 
     const handleSignOut = async () => {
         await signOut(auth);

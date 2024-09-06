@@ -34,9 +34,11 @@ const ad = { id: 1, imageUrl: "/ads/ad1.jpg", link: "https://seattle.boo-hallowe
 export default function Home() {
 
   const [cities, setCities] = useState([
-    { name: "Seattle", slug: "seattle", nickname: "The Emerald City", color: "text-green-500", events: 0, description: "Dive into SEA's dynamic events scene, where tech meets nature..." },
-    { name: "New York City", slug: "new-york-city", nickname: "The Big Apple", color: "text-red-500", events: 0, description: "Explore NYC's endless events..." },
-    { name: "San Francisco", slug: "san-francisco", nickname: "The Golden City", color: "text-yellow-500", events: 0, description: "Experience SF's unique mix of tech and creativity..." }
+    { name: "Seattle", slug: "seattle", nickname: "The Emerald City", color: "text-green-500", events: 0, description: "Dive into SEA's dynamic events scene, where tech meets nature. From indie concerts to food festivals, connect with a community that blends urban life with outdoor adventures." },
+    { name: "Los Angeles", slug: "los-angeles", nickname: "City of Angels", color: "text-blue-500", events: 0, description: "Immerse yourself in LA's world-famous entertainment scene, from Hollywood premieres to music festivals. Explore diverse cultural neighborhoods and sun-soaked beaches."},
+    { name: "New York City", slug: "new-york-city", nickname: "The Big Apple", color: "text-red-500", events: 0, description: "Explore NYC's endless events, from Broadway shows to rooftop parties. Discover the city’s vibrant culture and connect with a diverse crowd at every turn." },
+    { name: "San Francisco", slug: "san-francisco", nickname: "The Golden City", color: "text-yellow-500", events: 0, description: "Experience SF's unique mix of tech and creativity. Attend meetups, festivals, and events that showcase the city's innovative and eclectic spirit." },
+    { name: "Austin", slug: "austin", nickname: "Live Music Capital", color: "text-orange-500", events: 0, description: "Discover Austin’s vibrant culture with its legendary live music, tech meetups, and food truck festivals. Connect with creative communities in the heart of Texas."}
   ]);
 
   useEffect(() => {
@@ -90,7 +92,7 @@ export default function Home() {
                 <Card className="w-full">
                   <CardHeader className="space-y-2">
                     <CardTitle className="text-base w-full">{city.name}</CardTitle>
-                    <CardDescription className="w-full">{city.description}</CardDescription>
+                    <CardDescription className="line-clamp-3 w-full">{city.description}</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="flex space-x-4 text-sm text-muted-foreground">
