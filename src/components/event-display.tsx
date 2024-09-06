@@ -1,5 +1,6 @@
 // Next Imports
 import Image from "next/image"
+import Link from "next/link"
 
 // Components Imports
 import { Event } from "@/components/types"
@@ -21,12 +22,50 @@ import {
     CalendarPlus,
     SquareArrowOutUpRight,
     MapPin,
-    Link
+    Link as LinkIcon,
 } from "lucide-react"
 
 // Other Imports
-import { parse } from "date-fns";
+import { format, parse } from "date-fns";
 
+function formatEventDate(dateString: string) {
+    if (dateString.includes(" - ")) {
+        // Handle date ranges like "09/14/2024 - 09/15/2024"
+        const [startPart, endPart] = dateString.split(" - ");
+        const startDate = parse(startPart.trim(), "MM/dd/yyyy", new Date());
+        const endDate = parse(endPart.trim(), "MM/dd/yyyy", new Date());
+
+        // Format both dates
+        const formattedStartDate = format(startDate, "EEE, MMM d"); // "Sat, Sep 14"
+        const formattedEndDate = format(endDate, "EEE, MMM d");     // "Sun, Sep 15"
+        
+        return `${formattedStartDate} - ${formattedEndDate}`;
+    } else {
+        // Handle single dates like "09/14/2024"
+        const date = parse(dateString.trim(), "MM/dd/yyyy", new Date());
+        return format(date, "EEE, MMM d"); // "Sat, Sep 14"
+    }
+}
+
+// Function to format event times
+function formatEventTime(timeString: string) {
+    if (timeString.includes(" - ")) {
+        // Handle time ranges like "09:00 AM - 05:00 PM"
+        const [startTime, endTime] = timeString.split(" - ");
+        const parsedStartTime = parse(startTime.trim(), "hh:mm a", new Date());
+        const parsedEndTime = parse(endTime.trim(), "hh:mm a", new Date());
+
+        // Format the times to remove unnecessary zeros
+        const formattedStartTime = format(parsedStartTime, "h:mm a"); // "9:00 AM"
+        const formattedEndTime = format(parsedEndTime, "h:mm a");     // "5:00 PM"
+        
+        return `${formattedStartTime} - ${formattedEndTime}`;
+    } else {
+        // Handle single time like "09:00 AM"
+        const parsedTime = parse(timeString.trim(), "hh:mm a", new Date());
+        return format(parsedTime, "h:mm a"); // "9:00 AM"
+    }
+}
 
 interface EventDisplayProps {
     event: Event | null
@@ -150,7 +189,7 @@ export function EventDisplay({ event, onBack }: EventDisplayProps) {
                                         })
                                       }}
                                 >
-                                    <Link className="h-4 w-4" />
+                                    <LinkIcon className="h-4 w-4" />
                                     <span className="sr-only">Event Link</span>
                                 </Button>
                             </TooltipTrigger>
@@ -164,10 +203,14 @@ export function EventDisplay({ event, onBack }: EventDisplayProps) {
                 {/* Event Details */}
                 {event ? (
                     <div className="flex flex-1 flex-col">
-                        <div className="flex items-start p-4">
-                            <div className="flex items-start gap-4 text-sm">
-                                <div className="grid gap-2">
-                                    {event.image && (
+
+
+                        <div className="p-4">
+                            <div className="grid gap-4 text-sm">
+
+                                {/* Event Image */}
+                                {event.image && (
+                                    <div className="flex justify-center mb-4">
                                         <Image
                                             src={event.image || "/tempFlyer1.svg"}
                                             alt={event.name}
@@ -175,26 +218,64 @@ export function EventDisplay({ event, onBack }: EventDisplayProps) {
                                             height={300}
                                             className="object-cover rounded-lg"
                                         />
-                                    )}
-                                    <div className="grid gap-1">
-                                        <div className="text-base font-semibold">{event.name}</div>
-                                        <div className="text-sm font-medium">{event.date}</div>
-                                        <div className="text-sm font-medium">{event.time}</div>
                                     </div>
-                                    <div className="grid gap-1">
-                                        <div className="text-sm">{event.location}</div>
-                                        <div className="text-sm">
-                                            <span>Cost: $</span>{event.cost}
-                                        </div>
-                                    </div>
-                                    <div className="text-sm text-muted-foreground">{event.description}</div>
+                                )}
+
+                                {/* Event Name, Date, and Time */}
+                                <div className="grid gap-1">
+                                    <div className="text-lg font-semibold">{event.name}</div>
+                                    <div className="text-base font-medium">{formatEventDate(event.date)}</div>
+                                    <div className="text-sm font-medium">{formatEventTime(event.time)}</div>
                                 </div>
                             </div>
                         </div>
+
                         <Separator />
+                        
+                        <div className="flex-1 whitespace-pre-wrap p-4 grid gap-4">
+
+                            {/* Event Format, Location, Neighborhood */}
+                            <div className="grid gap-1">
+                                <div className="text-sm">
+                                    <span>Format: </span>{event.format}
+                                </div>
+                                <div className="text-sm">
+                                    <span>Location: </span>
+                                    <Link href={event.gmaps} passHref legacyBehavior>
+                                        <a 
+                                            target="_blank" 
+                                            rel="noopener noreferrer" 
+                                            className="text-black underline"
+                                        >
+                                            {event.location}
+                                        </a>
+                                    </Link>
+                                </div>
+                                <div className="text-sm">
+                                    <span>Neighborhood: </span>{event.neighborhood}
+                                </div>
+                            </div>
+                            
+                            {/* Event Cost */}
+                            <div className="grid gap-1">
+                                <div className="text-sm">
+                                    <span>Cost: $</span>{event.cost}
+                                </div>
+                            </div>
+                        </div>
+
+                        <Separator />
+
+                        {/* Event Description */}
+                        <div className="flex-1 whitespace-pre-wrap p-4 text-sm text-muted-foreground">{event.description}</div>
+
+                        <Separator />
+
+                        {/* Event Details */}
                         <div className="flex-1 whitespace-pre-wrap p-4 text-sm">
                             {event.details}
                         </div>
+
                         <Separator className="mt-auto" />
                     </div>
                 ) : (
