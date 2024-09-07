@@ -48,7 +48,7 @@ export function Event({
     events
 }: EventProps) {
     const [event, setEvent] = useEvent()
-    const defaultLayout = [20, 40, 40]
+    const defaultLayout = [50,50]
 
     const [selectedCategory, setSelectedCategory] = React.useState<string | undefined>(undefined)
     const [selectedFormat, setSelectedFormat] = React.useState<string | undefined>(undefined)
@@ -224,85 +224,73 @@ export function Event({
                     }}
                     className="h-full items-stretch"
                 >
-                    <ResizablePanel defaultSize={defaultLayout[0]} minSize={15} maxSize={20} className="h-full overflow-y-auto">
-                        <div className="p-4">
-                            <form className="space-y-4">
+                    <ResizablePanel defaultSize={defaultLayout[0]} minSize={30} className="h-full overflow-y-auto">
+                        <div className="p-2">
+                            <form className="flex space-x-2 overflow-x-auto">
                                 <CalendarDateRangePicker
                                     selected={dateRange}
                                     onSelect={setDateRange}
                                 />
-                                <div className="space-y-2">
-                                    <Select onValueChange={setSelectedCategory}>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Category" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {categoryOptions.map(option => (
-                                                <SelectItem key={option.value} value={option.value}>
-                                                    {option.label}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                <div className="space-y-2">
-                                    <Select onValueChange={setSelectedFormat}>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Format" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {formatOptions.map(option => (
-                                                <SelectItem key={option.value} value={option.value}>
-                                                    {option.label}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                <div className="space-y-2">
-                                    <Select onValueChange={setSelectedNeighborhood}>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Neighborhood" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {neighborhoodOptions.map(option => (
-                                                <SelectItem key={option.value} value={option.value}>
-                                                    {option.label}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                <div className="space-y-2">
-                                    <Select onValueChange={setSelectedCost}>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Cost" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {costOptions.map(option => (
-                                                <SelectItem key={option.value} value={option.value}>
-                                                    {option.label}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
+                                <Select onValueChange={setSelectedCategory}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Category" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {categoryOptions.map(option => (
+                                            <SelectItem key={option.value} value={option.value}>
+                                                {option.label}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                <Select onValueChange={setSelectedFormat}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Format" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {formatOptions.map(option => (
+                                            <SelectItem key={option.value} value={option.value}>
+                                                {option.label}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                <Select onValueChange={setSelectedNeighborhood}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Neighborhood" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {neighborhoodOptions.map(option => (
+                                            <SelectItem key={option.value} value={option.value}>
+                                                {option.label}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                <Select onValueChange={setSelectedCost}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Cost" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {costOptions.map(option => (
+                                            <SelectItem key={option.value} value={option.value}>
+                                                {option.label}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
                                 <Button variant="outline" onClick={handleClearAll} className="w-full">
                                     Reset
                                 </Button>
                             </form>
                         </div>
-                    </ResizablePanel>
-
-                    <ResizableHandle withHandle />
-
-                    <ResizablePanel defaultSize={defaultLayout[1]} minSize={30} className="h-full overflow-y-auto">
+                        <Separator />
                         <EventList items={filteredEvents} />
                     </ResizablePanel>
 
                     <ResizableHandle withHandle />
 
-                    <ResizablePanel defaultSize={defaultLayout[2]} minSize={30} className="h-full overflow-y-auto">
+                    <ResizablePanel defaultSize={defaultLayout[1]} minSize={30} className="h-full overflow-y-auto">
                         <div className="flex flex-col h-full">
                             {filteredEvents.length > 0 && (
                                 <EventDisplay 
