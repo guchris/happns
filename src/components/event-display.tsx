@@ -24,6 +24,7 @@ import {
     SquareArrowOutUpRight,
     MapPin,
     Link as LinkIcon,
+    Bookmark,
 } from "lucide-react"
 
 // Other Imports
@@ -76,12 +77,6 @@ interface EventDisplayProps {
 export function EventDisplay({ event, onBack }: EventDisplayProps) {
     const today = new Date()
     const { toast } = useToast()
-
-    const openExternalLink = () => {
-        if (event && event.link) {
-            window.open(event.link, "_blank")
-        }
-    }
 
     const openGoogleMapsLink = () => {
         if (event && event.gmaps) {
@@ -152,30 +147,21 @@ export function EventDisplay({ event, onBack }: EventDisplayProps) {
                     <div className="flex items-center gap-2">
                         <Tooltip>
                             <TooltipTrigger asChild>
+                                <Button variant="ghost" size="icon" disabled={!event}>
+                                    <Bookmark className="h-4 w-4" />
+                                    <span className="sr-only">Bookmark</span>
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Bookmark</TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
                                 <Button variant="ghost" size="icon" disabled={!event} onClick={addToCalendar}>
                                     <CalendarPlus className="h-4 w-4" />
                                     <span className="sr-only">Add to Calendar</span>
                                 </Button>
                             </TooltipTrigger>
                             <TooltipContent>Add to Calendar</TooltipContent>
-                        </Tooltip>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" disabled={!event} onClick={openExternalLink}>
-                                    <SquareArrowOutUpRight className="h-4 w-4" />
-                                    <span className="sr-only">External Link</span>
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>External Link</TooltipContent>
-                        </Tooltip>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" disabled={!event} onClick={openGoogleMapsLink}>
-                                    <MapPin className="h-4 w-4" />
-                                    <span className="sr-only">Directions</span>
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>Directions</TooltipContent>
                         </Tooltip>
                         <Tooltip>
                             <TooltipTrigger asChild>
@@ -278,6 +264,22 @@ export function EventDisplay({ event, onBack }: EventDisplayProps) {
                                 <div className="text-sm font-medium text-muted-foreground">Cost</div>
                                 <div className="text-sm font-medium">${event.cost}</div>
                             </div>
+                        </div>
+
+                        <Separator />
+
+                        {/* Event Website */}
+                        <div className="flex-1 p-4">
+                            <div className="text-sm font-medium text-muted-foreground">External Website</div>
+                            <Link href={event.link} passHref legacyBehavior>
+                                <a
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-sm font-medium text-black underline"
+                                >
+                                    {event.link}
+                                </a>
+                            </Link>
                         </div>
 
                         <Separator />
