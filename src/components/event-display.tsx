@@ -1,6 +1,17 @@
+// React Imports
+import { useEffect, useState } from "react";
+
 // Next Imports
 import Image from "next/image"
 import Link from "next/link"
+
+// Context Imports
+import { useAuth } from "@/context/AuthContext";
+
+// Firebase Imports
+import { db } from "@/app/firebase";
+import { doc, getDoc, setDoc, deleteDoc } from "firebase/firestore";
+import { useToast } from "@/hooks/use-toast";
 
 // Components Imports
 import { Event } from "@/components/types"
@@ -15,7 +26,6 @@ import {
     TooltipContent,
     TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { useToast } from "@/hooks/use-toast"
 
 // Icon Imports
 import {
@@ -25,6 +35,7 @@ import {
     MapPin,
     Link as LinkIcon,
     Bookmark,
+    BookmarkCheck
 } from "lucide-react"
 
 // Other Imports
@@ -77,12 +88,73 @@ interface EventDisplayProps {
 export function EventDisplay({ event, onBack }: EventDisplayProps) {
     const today = new Date()
     const { toast } = useToast()
+    const { user } = useAuth()
+    const [isBookmarked, setIsBookmarked] = useState(false)
 
-    const openGoogleMapsLink = () => {
-        if (event && event.gmaps) {
-            window.open(event.gmaps, "_blank")
+    // Function to check if the event is already bookmarked
+    useEffect(() => {
+        if (user && event) {
+            const checkIfBookmarked = async () => {
+                const bookmarkRef = doc(db, `users/${user.uid}/user-bookmarks`, event.id);
+                const bookmarkSnap = await getDoc(bookmarkRef);
+
+                setIsBookmarked(bookmarkSnap.exists()); // Set state based on bookmark existence
+            };
+            checkIfBookmarked();
         }
-    }
+    }, [user, event]);
+
+    const addBookmark = async () => {
+        if (!user || !event) return;
+
+        try {
+            const bookmarkRef = doc(db, `users/${user.uid}/user-bookmarks`, event.id);
+            await setDoc(bookmarkRef, {});
+
+            setIsBookmarked(true)
+            toast({
+                title: "Event Bookmarked",
+                description: `You have bookmarked the event: ${event.name}`,
+            });
+        } catch (error) {
+            console.error("Error adding bookmark: ", error);
+            toast({
+                title: "Error",
+                description: "Failed to bookmark the event",
+                variant: "destructive",
+            });
+        }
+    };
+
+    const removeBookmark = async () => {
+        if (!user || !event) return;
+
+        try {
+            const bookmarkRef = doc(db, `users/${user.uid}/user-bookmarks`, event.id);
+            await deleteDoc(bookmarkRef);
+
+            setIsBookmarked(false);
+            toast({
+                title: "Bookmark Removed",
+                description: `You have removed the bookmark for: ${event.name}`,
+            });
+        } catch (error) {
+            console.error("Error removing bookmark: ", error);
+            toast({
+                title: "Error",
+                description: "Failed to remove the bookmark",
+                variant: "destructive",
+            });
+        }
+    };
+
+    const handleBookmarkClick = () => {
+        if (isBookmarked) {
+            removeBookmark();
+        } else {
+            addBookmark();
+        }
+    };
 
     // Function to parse both single dates and date ranges
     function parseEventDate(dateString: string) {
@@ -145,15 +217,30 @@ export function EventDisplay({ event, onBack }: EventDisplayProps) {
 
                     {/* Action Buttons */}
                     <div className="flex items-center gap-2">
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" disabled={!event}>
-                                    <Bookmark className="h-4 w-4" />
-                                    <span className="sr-only">Bookmark</span>
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>Bookmark</TooltipContent>
-                        </Tooltip>
+                        {user && (
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        disabled={!event}
+                                        onClick={handleBookmarkClick}
+                                    >
+                                        {isBookmarked ? (
+                                            <BookmarkCheck className="h-4 w-4" />
+                                        ) : (
+                                            <Bookmark className="h-4 w-4" />
+                                        )}
+                                        <span className="sr-only">
+                                            {isBookmarked ? "Remove Bookmark" : "Bookmark"}
+                                        </span>
+                                    </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    {isBookmarked ? "Remove Bookmark" : "Bookmark"}
+                                </TooltipContent>
+                            </Tooltip>
+                        )}
                         <Tooltip>
                             <TooltipTrigger asChild>
                                 <Button variant="ghost" size="icon" disabled={!event} onClick={addToCalendar}>
