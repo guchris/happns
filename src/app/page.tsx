@@ -97,7 +97,7 @@ export default function Home() {
                     <CardDescription className="line-clamp-2 w-full">{city.description}</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="flex space-x-4 text-sm text-muted-foreground">
+                    <div className="flex flex-col space-y-2 text-sm text-muted-foreground">
                       <div className="flex items-center">
                         <CircleIcon className={`mr-1 h-3 w-3 ${city.color}`} />
                         {city.nickname}

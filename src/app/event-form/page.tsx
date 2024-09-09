@@ -125,18 +125,8 @@ const eventFormSchema = z.object({
         .max(50, {
             message: "Name must not be longer than 50 characters.",
         }),
-    neighborhood: z.enum([
-        "ballard",
-        "beacon-hill",
-        "capitol-hill",
-        "fremont",
-        "queen-anne",
-        "seattle",
-        "tukwila",
-        "wallingford",
-        "west-seattle",
-    ], {
-        required_error: "Please select a neighborhood.",
+    neighborhood: z.string({
+        required_error: "A neighborhood is required.",
     }),
     startDate: z.date({
         required_error: "A start date is required.",

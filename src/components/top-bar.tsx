@@ -72,7 +72,6 @@ export const TopBar: React.FC<TopBarProps> = ({ title }) => {
                         <DropdownMenuItem>
                             <Link href="/settings">Settings</Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem>Other</DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={handleSignOut}>
                             Log out
