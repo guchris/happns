@@ -163,6 +163,17 @@ export function Event({
                                                 selected={dateRange}
                                                 onSelect={setDateRange}
                                             />
+                                            {user && (
+                                                <div className="flex items-center w-auto max-w-fit border border-[hsl(var(--border))] rounded-md px-2 py-1.5">
+                                                    <span className="text-sm">All</span>
+                                                    <Switch
+                                                        checked={showBookmarkedEvents}
+                                                        onCheckedChange={setShowBookmarkedEvents}
+                                                        className="mx-2"
+                                                    />
+                                                    <span className="text-sm">Bookmarked</span>
+                                                </div>
+                                            )}
                                             <div className="space-y-2">
                                                 <Select onValueChange={setSelectedCategory}>
                                                     <SelectTrigger className="w-full">
@@ -259,15 +270,17 @@ export function Event({
                                     selected={dateRange}
                                     onSelect={setDateRange}
                                 />
-                                <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2">
-                                    <span className="text-sm">All</span>
-                                    <Switch
-                                        checked={showBookmarkedEvents}
-                                        onCheckedChange={setShowBookmarkedEvents}
-                                        className="mx-2"
-                                    />
-                                    <span className="text-sm">Bookmarked</span>
-                                </div>
+                                {user && (
+                                    <div className="flex items-center border border-[hsl(var(--border))] rounded-md px-2 py-1.5">
+                                        <span className="text-sm">All</span>
+                                        <Switch
+                                            checked={showBookmarkedEvents}
+                                            onCheckedChange={setShowBookmarkedEvents}
+                                            className="mx-2"
+                                        />
+                                        <span className="text-sm">Bookmarked</span>
+                                    </div>
+                                )}
                                 <Select onValueChange={setSelectedCategory}>
                                     <SelectTrigger>
                                         <SelectValue placeholder="Category" />

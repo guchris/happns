@@ -30,36 +30,52 @@ import {
 } from "lucide-react"
 
 // Other Imports
-import { format, parse } from "date-fns"
+import { format, parse, isWithinInterval } from "date-fns"
 
 interface EventListProps {
     items: Event[]
 }
 
+// Utility function to determine the correct date for display
+const getCurrentDateForDisplay = (startDate: Date, endDate: Date) => {
+    const today = new Date();
+    // If today's date is within the range, return today
+    if (isWithinInterval(today, { start: startDate, end: endDate })) {
+        return today;
+    }
+    // Otherwise, return the start date
+    return startDate;
+};
+
 export function EventList({ items }: EventListProps) {
     const [event, setEvent] = useEvent()
 
-    // Group events by the starting date
+    // Group events by the display date (either start date or today's date if within range)
     const eventsByDate = items.reduce((acc, item) => {
-        let startDate: Date
+        let startDate: Date;
+        let endDate: Date;
 
         // Handle date ranges like "10/14/2024 - 10/15/2024"
         if (item.date.includes("-")) {
-            const [startPart] = item.date.split(" - ")
-            startDate = parse(startPart.trim(), "MM/dd/yyyy", new Date())
+            const [startPart, endPart] = item.date.split(" - ");
+            startDate = parse(startPart.trim(), "MM/dd/yyyy", new Date());
+            endDate = parse(endPart.trim(), "MM/dd/yyyy", new Date());
         } else {
             // Handle single dates like "09/14/2024"
-            startDate = parse(item.date, "MM/dd/yyyy", new Date())
+            startDate = parse(item.date, "MM/dd/yyyy", new Date());
+            endDate = startDate;
         }
 
-        const formattedDate = format(startDate, "MMMM d, yyyy")
+        // Use the new logic to determine whether to use today's date or start date
+        const displayDate = getCurrentDateForDisplay(startDate, endDate);
+        const formattedDate = format(displayDate, "MMMM d, yyyy");
 
         if (!acc[formattedDate]) {
-            acc[formattedDate] = []
+            acc[formattedDate] = [];
         }
-        acc[formattedDate].push(item)
-        return acc
-    }, {} as Record<string, Event[]>)
+        acc[formattedDate].push(item);
+        return acc;
+    }, {} as Record<string, Event[]>);
 
     // Sort dates in ascending order based on Date objects
     const sortedDates = Object.keys(eventsByDate).sort((a, b) => {
@@ -115,10 +131,19 @@ function CollapsibleItem({ date, events, isLastItem }: CollapsibleItemProps) {
                 </CollapsibleTrigger>
                 <CollapsibleContent className="space-y-2 pt-2">
                     {events.map((item) => {
-                        // Parse and format the date here
-                        const formattedDate = item.date.includes("-") 
-                            ? `${format(parse(item.date.split(" - ")[0].trim(), "MM/dd/yyyy", new Date()), "MMM d, yyyy")} - ${format(parse(item.date.split(" - ")[1].trim(), "MM/dd/yyyy", new Date()), "MMM d, yyyy")}` 
-                            : format(parse(item.date, "MM/dd/yyyy", new Date()), "MMM d, yyyy");
+                        // Parse start and end dates
+                        const startDate = item.date.includes("-")
+                            ? parse(item.date.split(" - ")[0].trim(), "MM/dd/yyyy", new Date())
+                            : parse(item.date, "MM/dd/yyyy", new Date());
+
+                        const endDate = item.date.includes("-")
+                            ? parse(item.date.split(" - ")[1].trim(), "MM/dd/yyyy", new Date())
+                            : startDate;
+
+                        // Format the display date for rendering
+                        const formattedDate = item.date.includes("-")
+                            ? `${format(startDate, "MMM d, yyyy")} - ${format(endDate, "MMM d, yyyy")}`
+                            : format(startDate, "MMM d, yyyy");
 
                         return (
                             <button
