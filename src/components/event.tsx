@@ -2,6 +2,12 @@
 
 // React Imports
 import * as React from "react"
+import { useEffect, useState } from "react";
+
+// Firebase Imports
+import { db } from "@/app/firebase";
+import { collection, getDocs } from "firebase/firestore";
+import { useAuth } from "@/context/AuthContext";
 
 // Components Imports
 import { EventList } from "@/components/event-list"
@@ -18,6 +24,7 @@ import { categoryOptions, formatOptions, neighborhoodOptions, costOptions } from
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
 import { TooltipProvider } from "@/components/ui/tooltip"
+import { Switch } from "@/components/ui/switch"
 import {
     ResizableHandle,
     ResizablePanel,
@@ -51,6 +58,10 @@ export function Event({
     const [event, setEvent] = useEvent()
     const defaultLayout = [50,50]
 
+    const { user } = useAuth();
+    const [bookmarkedEventIds, setBookmarkedEventIds] = React.useState<string[]>([]);
+    const [showBookmarkedEvents, setShowBookmarkedEvents] = React.useState(false);
+
     const [selectedCategory, setSelectedCategory] = React.useState<string | undefined>(undefined)
     const [selectedFormat, setSelectedFormat] = React.useState<string | undefined>(undefined)
     const [selectedNeighborhood, setSelectedNeighborhood] = React.useState<string | undefined>(undefined)
@@ -60,7 +71,20 @@ export function Event({
         to: undefined,
     })
 
-    React.useEffect(() => {
+    useEffect(() => {
+        if (user) {
+            const fetchBookmarkedEvents = async () => {
+                const userBookmarksRef = collection(db, `users/${user.uid}/user-bookmarks`);
+                const snapshot = await getDocs(userBookmarksRef);
+                const bookmarkedIds = snapshot.docs.map(doc => doc.id);
+                setBookmarkedEventIds(bookmarkedIds);
+            };
+
+            fetchBookmarkedEvents();
+        }
+    }, [user]);
+
+    useEffect(() => {
         setEvent((prevEvent) => ({
             ...prevEvent,
             selected: null,
@@ -92,9 +116,11 @@ export function Event({
 
     const filteredEvents = events.filter((e) => {
         const { startDate, endDate } = parseEventDate(e.date)
-        const isInDateRange =
-            dateRange?.from &&
-            isEventInRange(startDate, endDate, dateRange.from, dateRange.to)
+        const isInDateRange = dateRange?.from && isEventInRange(startDate, endDate, dateRange.from, dateRange.to)
+
+        // Filter based on switch state (false = All Events, true = Bookmarked Events)
+        const isBookmarked = bookmarkedEventIds.includes(e.id)
+        const shouldShowEvent = !showBookmarkedEvents || (showBookmarkedEvents && isBookmarked)
 
         return (
             (!dateRange?.from || isInDateRange) &&
@@ -106,7 +132,8 @@ export function Event({
                 (selectedCost === "$0-$25" && e.cost > 0 && e.cost <= 25) ||
                 (selectedCost === "$25-$50" && e.cost > 25 && e.cost <= 50) ||
                 (selectedCost === "$50-$100" && e.cost > 50 && e.cost <= 100) ||
-                (selectedCost === "$100+" && e.cost > 100))
+                (selectedCost === "$100+" && e.cost > 100)) &&
+            shouldShowEvent
         )
     })
 
@@ -232,6 +259,15 @@ export function Event({
                                     selected={dateRange}
                                     onSelect={setDateRange}
                                 />
+                                <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2">
+                                    <span className="text-sm">All</span>
+                                    <Switch
+                                        checked={showBookmarkedEvents}
+                                        onCheckedChange={setShowBookmarkedEvents}
+                                        className="mx-2"
+                                    />
+                                    <span className="text-sm">Bookmarked</span>
+                                </div>
                                 <Select onValueChange={setSelectedCategory}>
                                     <SelectTrigger>
                                         <SelectValue placeholder="Category" />
