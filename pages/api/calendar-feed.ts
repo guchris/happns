@@ -36,8 +36,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(404).json({ error: 'No events found for user' });
     }
 
-    console.log(`Found ${snapshot.size} events for user: ${userId}`);
-
     // Collect event IDs from bookmarks
     const eventIds: string[] = [];
     snapshot.forEach(doc => {
@@ -67,8 +65,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         if (!event) {
             return;  // Skip if event is null or undefined
         }
-
-        console.log("Event Data:", event);
 
         let eventStart, eventEnd;
 

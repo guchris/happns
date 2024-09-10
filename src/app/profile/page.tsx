@@ -23,7 +23,7 @@ export default function ProfilePage() {
     useEffect(() => {
         if (user?.uid) {
             // Generate the subscription link using the user's UID
-            setCalendarLink(`https://ithappns.com/api/calendar-feed?userId=${user.uid}`);
+            setCalendarLink(`webcal://ithappns.com/api/calendar-feed?userId=${user.uid}`);
         }
     }, [user]);
 

@@ -2,6 +2,7 @@
 
 // Next Imports
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 // Context Imports
 import { useAuth } from "@/context/AuthContext"
@@ -34,9 +35,11 @@ interface TopBarProps {
 
 export const TopBar: React.FC<TopBarProps> = ({ title }) => {
     const { user, loading, userData } = useAuth();
+    const router = useRouter();
 
     const handleSignOut = async () => {
         await signOut(auth);
+        router.push("/");
     };
 
     return (
