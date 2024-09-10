@@ -20,12 +20,17 @@ import { Separator } from "@/components/ui/separator"
 
 export default function CityPage() {
     const [events, setEvents] = useState<Event[]>([]);
-    const { city } = useParams();
+    const params = useParams();
+
+    // Ensure city is a string
+    const city = typeof params?.city === "string" ? params.city : "";
 
     console.log(city)
 
     useEffect(() => {
         const fetchEvents = async () => {
+            if (!city) return;
+            
             const eventsCol = collection(db, "events");
             const cityQuery = query(eventsCol, where("city", "==", city));
             const eventSnapshot = await getDocs(cityQuery);
