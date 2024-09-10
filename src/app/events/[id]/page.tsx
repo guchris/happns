@@ -32,7 +32,8 @@ const slugify = (name: string) => {
 
 const EventPage = () => {
     const [event, setEvent] = useState<Event | null>(null);
-    const { id } = useParams();
+    const params = useParams();
+    const id = typeof params?.id === "string" ? params.id : null;
     const router = useRouter();
 
     useEffect(() => {
