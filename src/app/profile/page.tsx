@@ -1,10 +1,11 @@
 "use client";
 
 // React Imports
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
+import { useAuth } from "@/context/AuthContext"
 
 // Components Imports
-import { TopBar } from "@/components/top-bar";
+import { TopBar } from "@/components/top-bar"
 
 // Hooks Imports
 import { toast } from "@/hooks/use-toast" 
@@ -16,6 +17,15 @@ import { Button } from "@/components/ui/button"
 
 export default function ProfilePage() {
     const inputRef = useRef<HTMLInputElement>(null);
+    const { user } = useAuth();
+    const [calendarLink, setCalendarLink] = useState<string>("");
+
+    useEffect(() => {
+        if (user?.uid) {
+            // Generate the subscription link using the user's UID
+            setCalendarLink(`https://happns.com/api/calendar-feed?userId=${user.uid}`);
+        }
+    }, [user]);
 
     const copyLink = () => {
         const link = inputRef.current?.value;
@@ -52,7 +62,8 @@ export default function ProfilePage() {
                         </p>
                     </div>
                     <div className="flex space-x-2">
-                        <Input ref={inputRef} value="http://happns.com/google-calendar-subscription" readOnly />
+                        {/* Generate dynamic link based on the user's ID */}
+                        <Input ref={inputRef} value={calendarLink} readOnly />
                         <Button variant="secondary" className="shrink-0" onClick={copyLink}>
                             Copy Link
                         </Button>
