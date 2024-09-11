@@ -34,6 +34,7 @@ import { format, parse, isWithinInterval } from "date-fns"
 
 interface EventListProps {
     items: Event[]
+    isVerticalLayout: boolean
 }
 
 // Utility function to determine the correct date for display
@@ -47,7 +48,7 @@ const getCurrentDateForDisplay = (startDate: Date, endDate: Date) => {
     return startDate;
 };
 
-export function EventList({ items }: EventListProps) {
+export function EventList({ items, isVerticalLayout }: EventListProps) {
     const [event, setEvent] = useEvent()
 
     // Group events by the display date (either start date or today's date if within range)
@@ -89,7 +90,7 @@ export function EventList({ items }: EventListProps) {
             <div className="flex flex-col">
                 {sortedDates.map((date, index) => (
                     <div key={date}>
-                        <CollapsibleItem date={date} events={eventsByDate[date]} isLastItem={index === sortedDates.length - 1} />
+                        <CollapsibleItem date={date} events={eventsByDate[date]} isLastItem={index === sortedDates.length - 1} isVerticalLayout={isVerticalLayout} />
                     </div>
                 ))}
             </div>
@@ -101,9 +102,10 @@ interface CollapsibleItemProps {
     date: string
     events: Event[]
     isLastItem: boolean
+    isVerticalLayout: boolean
 }
 
-function CollapsibleItem({ date, events, isLastItem }: CollapsibleItemProps) {
+function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: CollapsibleItemProps) {
     const [isOpen, setIsOpen] = useState(true)
     const [event, setEvent] = useEvent()
 
@@ -149,33 +151,26 @@ function CollapsibleItem({ date, events, isLastItem }: CollapsibleItemProps) {
                             <button
                                 key={item.id}
                                 className={cn(
-                                    "flex flex-col md:flex-row w-full items-start gap-4 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent",
+                                    "flex w-full items-start gap-4 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent",
+                                    isVerticalLayout ? "flex-col" : "flex-row",
                                     event.selected === item.id && "bg-muted"
                                 )}
-                                onClick={async () => {
-                                    // Update the selected event locally
-                                    setEvent({
-                                        ...event,
-                                        selected: item.id,
-                                    });
-
-                                    handleEventClick(item.id);
-                                }}
+                                onClick={() => handleEventClick(item.id)}
                             >
                                 <Image
                                     src={item.image || "/tempFlyer1.svg"}
                                     alt={item.name}
-                                    width={150}
-                                    height={150}
-                                    className="object-cover rounded-lg w-full md:w-48 md:h-auto"
+                                    width={isVerticalLayout ? 150 : 100}
+                                    height={isVerticalLayout ? 150 : 100}
+                                    className={cn("object-cover rounded-lg", isVerticalLayout ? "w-full" : "w-1/3")}
                                 />
-                                <div className="flex flex-col gap-2 w-full">
+                                <div className={`flex flex-col gap-2 w-full ${isVerticalLayout ? "" : "ml-4"}`}>
                                     <div className="flex flex-col gap-1">
                                         <div className="font-semibold">{item.name}</div>
                                         <div className="text-xs font-medium">{formattedDate}</div>
                                         <div className="text-xs font-medium">{item.time}</div>
                                     </div>
-                                    <div className="line-clamp-4 text-xs text-muted-foreground">
+                                    <div className="line-clamp-3 text-xs text-muted-foreground">
                                         {item.description.substring(0, 300)}
                                     </div>
                                     <div className="inline-flex">

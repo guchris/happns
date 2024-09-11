@@ -25,8 +25,6 @@ export default function CityPage() {
     // Ensure city is a string
     const city = typeof params?.city === "string" ? params.city : "";
 
-    console.log(city)
-
     useEffect(() => {
         const fetchEvents = async () => {
             if (!city) return;

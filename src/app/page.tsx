@@ -45,21 +45,21 @@ export default function Home() {
 
   useEffect(() => {
     const fetchEvents = async () => {
-      const updatedCities = await Promise.all(
-        cities.map(async (city) => {
-          const eventsCol = collection(db, "events");
-
-          const q = query(eventsCol, where("city", "==", city.slug));
-          const eventSnapshot = await getDocs(q);
-          const totalEvents = eventSnapshot.size;
-
-          return { ...city, events: totalEvents };
-        })
-      );
-
+      const eventsCol = collection(db, "events");
+      const eventSnapshot = await getDocs(eventsCol);
+  
+      const events = eventSnapshot.docs.map((doc) => ({
+        ...doc.data(),
+      }));
+  
+      const updatedCities = cities.map((city) => {
+        const totalEvents = events.filter(event => event.city === city.slug).length;
+        return { ...city, events: totalEvents };
+      });
+  
       setCities(updatedCities);
     };
-
+  
     fetchEvents();
   }, [cities]);
 

@@ -62,6 +62,8 @@ export function Event({
     const [bookmarkedEventIds, setBookmarkedEventIds] = React.useState<string[]>([]);
     const [showBookmarkedEvents, setShowBookmarkedEvents] = React.useState(false);
 
+    const [isVerticalLayout, setIsVerticalLayout] = React.useState(true);
+
     const [selectedCategory, setSelectedCategory] = React.useState<string | undefined>(undefined)
     const [selectedFormat, setSelectedFormat] = React.useState<string | undefined>(undefined)
     const [selectedNeighborhood, setSelectedNeighborhood] = React.useState<string | undefined>(undefined)
@@ -240,9 +242,16 @@ export function Event({
                                     </div>
                                 </SheetContent>
                             </Sheet>
+                            <Button
+                                variant="outline"
+                                className="ml-2"
+                                onClick={() => setIsVerticalLayout(prev => !prev)}
+                            >
+                                {isVerticalLayout ? "Horizontal" : "Vertical"}
+                            </Button>
                         </div>
                         <Separator />
-                        <EventList items={filteredEvents} />
+                        <EventList items={filteredEvents} isVerticalLayout={isVerticalLayout} />
                     </div>
                 ) : (
                     <EventDisplay 
@@ -335,7 +344,7 @@ export function Event({
                             </form>
                         </div>
                         <Separator />
-                        <EventList items={filteredEvents} />
+                        <EventList items={filteredEvents} isVerticalLayout={isVerticalLayout} />
                     </ResizablePanel>
 
                     <ResizableHandle withHandle />
