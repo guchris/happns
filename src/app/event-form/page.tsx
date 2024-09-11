@@ -4,6 +4,9 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+// Context Imports
+import { useAuth } from "@/context/AuthContext";
+
 // Firebase Imports
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { doc, setDoc, collection } from "firebase/firestore";
@@ -13,6 +16,9 @@ import { db } from "@/app/firebase";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form";
 import { z } from "zod"
+
+// Component Imports
+import { TopBar } from "@/components/top-bar";
 
 // Lib Imports
 import { cn } from "@/lib/utils"
@@ -25,6 +31,7 @@ import { Separator } from "@/components/ui/separator"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Calendar } from "@/components/ui/calendar"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import {
     Form,
     FormControl,
@@ -49,7 +56,7 @@ import {
 import { useToast } from "@/hooks/use-toast"
 
 // Icon Imports
-import { CalendarIcon } from "@radix-ui/react-icons"
+import { CalendarIcon, ExclamationTriangleIcon } from "@radix-ui/react-icons"
 
 // Other Imports
 import { v4 as uuidv4 } from "uuid";
@@ -148,6 +155,33 @@ export default function EventForm() {
         mode: "onChange",
     })
 
+    // Get the user authentication state from the context
+    const { user, loading } = useAuth();
+
+    // If still checking for login state, show a loading state
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    // If user is not logged in, show an unauthorized message
+    if (!user) {
+        return (
+            <div className="h-screen flex flex-col">
+                <TopBar title={`happns/add-event`} />
+                <Separator />
+                <div className="px-4">
+                    <Alert className="max-w-3xl my-6 mx-auto p-4">
+                        <ExclamationTriangleIcon className="h-4 w-4" />
+                        <AlertTitle>Not Authorized</AlertTitle>
+                        <AlertDescription>
+                            You must be logged in to submit an event. Please <Link href="/login" className="text-blue-500">log in</Link>.
+                        </AlertDescription>
+                    </Alert>
+                </div>
+            </div>
+        );
+    }
+
     function onSubmit(data: EventFormValues) {
         console.log("Form submitted with data:", data);
 
@@ -240,12 +274,7 @@ export default function EventForm() {
     return (
         <>
             <div className="flex h-full flex-col">
-                <div className="w-full flex items-center justify-between py-4 px-4 h-14">
-                    <h2 className="text-lg font-semibold">
-                        <Link href="/">happns</Link>
-                        /add-event
-                    </h2>
-                </div>
+                <TopBar title={`happns/add-event`} />
                 <Separator />
             </div>
             <Form {...form}>
