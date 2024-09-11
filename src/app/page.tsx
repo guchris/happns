@@ -61,7 +61,7 @@ export default function Home() {
     };
 
     fetchEvents();
-  }, []);
+  }, [cities]);
 
   return (
     <div className="flex h-full flex-col">
