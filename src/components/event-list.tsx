@@ -85,7 +85,7 @@ export function EventList({ items }: EventListProps) {
     })
 
     return (
-        <ScrollArea className="h-screen">
+        <ScrollArea className="h-full">
             <div className="flex flex-col">
                 {sortedDates.map((date, index) => (
                     <div key={date}>
