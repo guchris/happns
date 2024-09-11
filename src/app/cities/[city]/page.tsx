@@ -57,7 +57,7 @@ export default function CityPage() {
         };
     
         fetchEvents();
-      }, []);
+      }, [city]);
 
     return (
         <div className="h-screen flex flex-col">
