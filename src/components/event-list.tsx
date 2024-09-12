@@ -144,8 +144,16 @@ function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: Collaps
 
                         // Format the display date for rendering
                         const formattedDate = item.date.includes("-")
-                            ? `${format(startDate, "MMM d, yyyy")} - ${format(endDate, "MMM d, yyyy")}`
-                            : format(startDate, "MMM d, yyyy");
+                            ? `${format(startDate, "MMM d")} - ${format(endDate, "MMM d")}`
+                            : format(startDate, "MMM d");
+                        
+                        
+                        const [startTime, endTime] = item.time.split(" - ");
+                        const parsedStartTime = parse(startTime.trim(), "hh:mm a", new Date());
+                        const parsedEndTime = parse(endTime.trim(), "hh:mm a", new Date());
+                        const formattedStartTime = format(parsedStartTime, "h:mm a");
+                        const formattedEndTime = format(parsedEndTime, "h:mm a");
+                        const formattedTime = `${formattedStartTime} - ${formattedEndTime}`;
 
                         return (
                             <button
@@ -172,26 +180,26 @@ function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: Collaps
                                     height={150}
                                     className={cn(
                                         // In vertical layout on mobile, image takes full width, otherwise it is a fixed width
-                                        isVerticalLayout ? "w-full" : "w-1/3",
+                                        isVerticalLayout ? "w-full" : "w-32",
                                         "object-cover rounded-lg md:w-48 md:h-auto" // For desktop: fixed width and height adjustment
                                     )}
                                 />
                                 <div className="flex flex-col gap-2 w-full">
                                     <div className="flex flex-col gap-1">
-                                        <div className="font-semibold">{item.name}</div>
-                                        <div className="text-xs font-medium">{formattedDate}</div>
-                                        <div className="text-xs font-medium">{item.time}</div>
+                                        <div className="line-clamp-1 font-semibold">{item.name}</div>
+                                        <div className="line-clamp-1 text-xs font-medium">{formattedDate}</div>
+                                        <div className="line-clamp-1 text-xs font-medium">{formattedTime}</div>
                                     </div>
-                                    <div className="line-clamp-4 text-xs text-muted-foreground">
+                                    <div className="line-clamp-3 text-xs text-muted-foreground">
                                         {item.description.substring(0, 300)}
                                     </div>
                                     <div className="inline-flex">
-                                        <Badge variant="outline" className="inline-block">
+                                        <Badge variant="outline" className="inline-block hidden md:inline-block">
                                             {item.clicks} clicks
                                         </Badge>
                                     </div>
                                     <div className="inline-flex">
-                                        <Badge variant="secondary" className="inline-block">
+                                        <Badge variant="secondary" className="inline-block hidden md:inline-block">
                                             {item.category}
                                         </Badge>
                                     </div>
