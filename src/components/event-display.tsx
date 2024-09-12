@@ -2,8 +2,8 @@
 import { useEffect, useState } from "react";
 
 // Next Imports
-import Image from "next/image"
-import Link from "next/link"
+import Image from "next/image";
+import Link from "next/link";
 
 // Context Imports
 import { useAuth } from "@/context/AuthContext";
@@ -14,29 +14,27 @@ import { doc, getDoc, setDoc, deleteDoc } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 
 // Components Imports
-import { Event } from "@/components/types"
+import { Event } from "@/components/types";
 
 // Shadcn Imports
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
-import { Badge } from "@/components/ui/badge"
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
 import {
     Tooltip,
     TooltipContent,
     TooltipTrigger,
-} from "@/components/ui/tooltip"
+} from "@/components/ui/tooltip";
 
 // Icon Imports
 import {
     ArrowLeft,
     CalendarPlus,
-    SquareArrowOutUpRight,
-    MapPin,
     Link as LinkIcon,
     Bookmark,
     BookmarkCheck
-} from "lucide-react"
+} from "lucide-react";
 
 // Other Imports
 import { format, parse } from "date-fns";
@@ -90,6 +88,8 @@ export function EventDisplay({ event, onBack }: EventDisplayProps) {
     const { toast } = useToast()
     const { user } = useAuth()
     const [isBookmarked, setIsBookmarked] = useState(false)
+
+    const bookmarkCache: { [eventId: string]: boolean } = {};
 
     // Function to check if the event is already bookmarked
     useEffect(() => {

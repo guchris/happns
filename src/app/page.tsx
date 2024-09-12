@@ -1,14 +1,14 @@
 "use client"
 
 // React Imports
-import { useEffect, useState } from "react";
+import { useEffect, useState } from "react"
 
 // Next Imports
-import Link from "next/link";
+import Link from "next/link"
 
 // Firebase Imports
-import { db } from "@/app/firebase";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { db } from "@/app/firebase"
+import { collection, getDocs, query, where } from "firebase/firestore"
 
 // Components Imports
 import { TopBar } from "@/components/top-bar"
@@ -25,43 +25,40 @@ import {
 
 // Icon Imports
 import {
-  CircleIcon,
   CalendarIcon
-} from "@radix-ui/react-icons";
+} from "@radix-ui/react-icons"
 
-const ad = { id: 1, imageUrl: "/ads/ad1.jpg", link: "https://seattle.boo-halloween.com/" };
+const ad = { id: 1, imageUrl: "/ads/ad1.jpg", link: "https://seattle.boo-halloween.com/" }
+const initialCities = [
+  { name: "Seattle", slug: "seattle", events: 0, description: "Dive into SEA's dynamic events scene, where tech meets nature. From indie concerts to food festivals, connect with a community that blends urban life with outdoor adventures." },
+  { name: "Portland", slug: "portland", events: 0, description: "Embrace Portland's quirky charm with events ranging from craft beer festivals to indie art shows. Dive into the city’s laid-back, creative atmosphere, where nature meets culture." },
+  { name: "Vancouver", slug: "vancouver", events: 0, description: "Explore Vancouver's vibrant event scene, from film festivals to outdoor adventures. Connect with a diverse community in a city that seamlessly blends urban life with stunning nature." },
+  { name: "Los Angeles", slug: "los-angeles", events: 0, description: "Immerse yourself in LA's world-famous entertainment scene, from Hollywood premieres to music festivals. Explore diverse cultural neighborhoods and sun-soaked beaches."},
+  { name: "San Francisco", slug: "san-francisco", events: 0, description: "Experience SF's unique mix of tech and creativity. Attend meetups, festivals, and events that showcase the city's innovative and eclectic spirit." },
+]
 
 export default function Home() {
 
-  const [cities, setCities] = useState([
-    { name: "Seattle", slug: "seattle", events: 0, description: "Dive into SEA's dynamic events scene, where tech meets nature. From indie concerts to food festivals, connect with a community that blends urban life with outdoor adventures." },
-    { name: "Portland", slug: "portland", events: 0, description: "Embrace Portland's quirky charm with events ranging from craft beer festivals to indie art shows. Dive into the city’s laid-back, creative atmosphere, where nature meets culture." },
-    { name: "Vancouver", slug: "vancouver", events: 0, description: "Explore Vancouver's vibrant event scene, from film festivals to outdoor adventures. Connect with a diverse community in a city that seamlessly blends urban life with stunning nature." },
-    { name: "Los Angeles", slug: "los-angeles", events: 0, description: "Immerse yourself in LA's world-famous entertainment scene, from Hollywood premieres to music festivals. Explore diverse cultural neighborhoods and sun-soaked beaches."},
-    { name: "New York City", slug: "new-york-city", events: 0, description: "Explore NYC's endless events, from Broadway shows to rooftop parties. Discover the city’s vibrant culture and connect with a diverse crowd at every turn." },
-    { name: "San Francisco", slug: "san-francisco", events: 0, description: "Experience SF's unique mix of tech and creativity. Attend meetups, festivals, and events that showcase the city's innovative and eclectic spirit." },
-    { name: "Austin", slug: "austin", events: 0, description: "Discover Austin’s vibrant culture with its legendary live music, tech meetups, and food truck festivals. Connect with creative communities in the heart of Texas."}
-  ]);
+  const [cities, setCities] = useState(initialCities);
 
   useEffect(() => {
-    const fetchEvents = async () => {
-      const eventsCol = collection(db, "events");
-      const eventSnapshot = await getDocs(eventsCol);
+    const fetchCityEvents = async () => {
+      const updatedCities = await Promise.all(cities.map(async (city) => {
+        const eventsQuery = query(
+          collection(db, "events"),
+          where("city", "==", city.slug)
+        );
+        const eventSnapshot = await getDocs(eventsQuery);
+        const totalEvents = eventSnapshot.size;
   
-      const events = eventSnapshot.docs.map((doc) => ({
-        ...doc.data(),
-      }));
-  
-      const updatedCities = cities.map((city) => {
-        const totalEvents = events.filter(event => event.city === city.slug).length;
         return { ...city, events: totalEvents };
-      });
+      }));
   
       setCities(updatedCities);
     };
   
-    fetchEvents();
-  }, [cities]);
+    fetchCityEvents();
+  }, []);
 
   return (
     <div className="flex h-full flex-col">

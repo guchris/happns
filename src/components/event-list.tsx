@@ -1,36 +1,36 @@
 // React Imports
-import { useState } from "react"
+import { useState } from "react";
 
 // Next Imports
-import Image from "next/image"
+import Image from "next/image";
 
 // Firebase Imports
-import { db } from "@/app/firebase"
-import { doc, updateDoc, increment } from "firebase/firestore"
+import { db } from "@/app/firebase";
+import { doc, updateDoc, increment } from "firebase/firestore";
 
 // Lib Imports
-import { cn } from "@/lib/utils"
-import { Event } from "@/components/types"
-import { useEvent } from "@/app/use-event"
+import { cn } from "@/lib/utils";
+import { Event } from "@/components/types";
+import { useEvent } from "@/app/use-event";
 
 // Shadcn Imports
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Separator } from "@/components/ui/separator"
-import { Badge } from "@/components/ui/badge"
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
 import {
     Collapsible,
     CollapsibleContent,
     CollapsibleTrigger,
-} from "@/components/ui/collapsible"
+} from "@/components/ui/collapsible";
 
 // Icon Imports
 import {
     Plus,
     Minus
-} from "lucide-react"
+} from "lucide-react";
 
 // Other Imports
-import { format, parse, isWithinInterval } from "date-fns"
+import { format, parse, isWithinInterval } from "date-fns";
 
 interface EventListProps {
     items: Event[]
@@ -151,20 +151,32 @@ function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: Collaps
                             <button
                                 key={item.id}
                                 className={cn(
-                                    // Apply conditional layout: flex-col for vertical, flex-row for horizontal in mobile
-                                    `flex ${isVerticalLayout ? 'flex-col' : 'flex-row'} md:flex-row w-full items-start gap-4 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent`,
+                                    // If isVerticalLayout is true, apply flex-col (image on top, text below), else apply flex-row for mobile
+                                    `${isVerticalLayout ? 'flex-col' : 'flex-row'} md:flex-row flex w-full items-start gap-4 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent`,
                                     event.selected === item.id && "bg-muted"
                                 )}
-                                onClick={() => handleEventClick(item.id)}
+                                onClick={async () => {
+                                    // Update the selected event locally
+                                    setEvent({
+                                        ...event,
+                                        selected: item.id,
+                                    });
+                        
+                                    handleEventClick(item.id);
+                                }}
                             >
                                 <Image
                                     src={item.image || "/tempFlyer1.svg"}
                                     alt={item.name}
-                                    width={isVerticalLayout ? 150 : 100}
-                                    height={isVerticalLayout ? 150 : 100}
-                                    className={cn("object-cover rounded-lg md:w-48 md:h-auto", isVerticalLayout ? "w-full" : "w-1/3")}
+                                    width={150}
+                                    height={150}
+                                    className={cn(
+                                        // In vertical layout on mobile, image takes full width, otherwise it is a fixed width
+                                        isVerticalLayout ? "w-full" : "w-1/3",
+                                        "object-cover rounded-lg md:w-48 md:h-auto" // For desktop: fixed width and height adjustment
+                                    )}
                                 />
-                                <div className={`flex flex-col gap-2 w-full ${isVerticalLayout ? "" : "ml-4"}`}>
+                                <div className="flex flex-col gap-2 w-full">
                                     <div className="flex flex-col gap-1">
                                         <div className="font-semibold">{item.name}</div>
                                         <div className="text-xs font-medium">{formattedDate}</div>

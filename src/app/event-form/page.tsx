@@ -149,7 +149,7 @@ type EventFormValues = z.infer<typeof eventFormSchema>
 
 export default function EventForm() {
     const router = useRouter();
-    const { toast } = useToast()
+    const { toast } = useToast();
     const form = useForm<EventFormValues>({
         resolver: zodResolver(eventFormSchema),
         mode: "onChange",
@@ -183,8 +183,6 @@ export default function EventForm() {
     }
 
     function onSubmit(data: EventFormValues) {
-        console.log("Form submitted with data:", data);
-
         const storage = getStorage();
         const eventsCollectionRef = collection(db, "events");
 

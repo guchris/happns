@@ -30,6 +30,8 @@ const slugify = (name: string) => {
         .replace(/[^\w\-]+/g, '');
 };
 
+const eventCache: { [id: string]: Event } = {};
+
 const EventPage = () => {
     const [event, setEvent] = useState<Event | null>(null);
     const params = useParams();
@@ -38,17 +40,27 @@ const EventPage = () => {
 
     useEffect(() => {
         const fetchEvent = async () => {
-            if (id) {
-                const eventDoc = doc(db, "events", id as string);
-                const eventSnapshot = await getDoc(eventDoc);
-                console.log(`Fetching event with ID: ${id}`);
+            if (!id) return;
 
-                if (eventSnapshot.exists()) {
-                    const eventData = eventSnapshot.data() as Event;
-                    setEvent({
-                        ...eventData
-                    });
-                }
+             // Check if the event is cached
+             if (eventCache[id]) {
+                console.log(`Using cached event data for ID: ${id}`);
+                setEvent(eventCache[id]);
+                return;
+            }
+
+            // Fetch the event from Firestore
+            console.log(`Fetching event with ID: ${id}`);
+            const eventDoc = doc(db, "events", id as string);
+            const eventSnapshot = await getDoc(eventDoc);
+
+            if (eventSnapshot.exists()) {
+                const eventData = eventSnapshot.data() as Event;
+
+                // Cache the fetched event
+                eventCache[id] = eventData;
+
+                setEvent(eventData);
             }
         };
         fetchEvent();

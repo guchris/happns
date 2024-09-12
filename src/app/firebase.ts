@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from "firebase/firestore";
 import { getAuth, setPersistence, browserSessionPersistence } from "firebase/auth";
 
 const firebaseConfig = {
@@ -13,10 +13,18 @@ const firebaseConfig = {
     measurementId: "G-6PP7KBF1Z2"
 };
 
+// Initialize Firebase app
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
 
+// Initialize Firestore with the new persistent local cache and multi-tab support
+const db = initializeFirestore(app, {
+    localCache: persistentLocalCache({
+        tabManager: persistentMultipleTabManager() // Enables multi-tab support for offline persistence
+    })
+});
+
+// Initialize Firebase Authentication and set session persistence
+const auth = getAuth(app);
 setPersistence(auth, browserSessionPersistence);
 
 export { db, auth };
