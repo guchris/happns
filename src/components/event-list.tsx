@@ -160,9 +160,9 @@ function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: Collaps
                                 <Image
                                     src={item.image || "/tempFlyer1.svg"}
                                     alt={item.name}
-                                    width={isVerticalLayout ? 150 : 100} // Adjust size for vertical/horizontal
+                                    width={isVerticalLayout ? 150 : 100}
                                     height={isVerticalLayout ? 150 : 100}
-                                    className={cn("object-cover rounded-lg", isVerticalLayout ? "w-full" : "w-1/3")}
+                                    className={cn("object-cover rounded-lg md:w-48 md:h-auto", isVerticalLayout ? "w-full" : "w-1/3")}
                                 />
                                 <div className={`flex flex-col gap-2 w-full ${isVerticalLayout ? "" : "ml-4"}`}>
                                     <div className="flex flex-col gap-1">
