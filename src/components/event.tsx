@@ -13,7 +13,6 @@ import { useAuth } from "@/context/AuthContext";
 import { EventList } from "@/components/event-list"
 import { EventDisplay } from "@/components/event-display"
 import { CalendarDateRangePicker } from "@/components/date-range-picker"
-import { MultiSelect } from "@/components/multi-select"
 
 // Lib Imports
 import { useEvent } from "@/app/use-event"

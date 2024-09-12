@@ -151,8 +151,8 @@ function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: Collaps
                             <button
                                 key={item.id}
                                 className={cn(
-                                    "flex w-full items-start gap-4 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent",
-                                    isVerticalLayout ? "flex-col" : "flex-row",
+                                    // Apply conditional layout: flex-col for vertical, flex-row for horizontal in mobile
+                                    `flex ${isVerticalLayout ? 'flex-col' : 'flex-row'} md:flex-row w-full items-start gap-4 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent`,
                                     event.selected === item.id && "bg-muted"
                                 )}
                                 onClick={() => handleEventClick(item.id)}
@@ -160,7 +160,7 @@ function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: Collaps
                                 <Image
                                     src={item.image || "/tempFlyer1.svg"}
                                     alt={item.name}
-                                    width={isVerticalLayout ? 150 : 100}
+                                    width={isVerticalLayout ? 150 : 100} // Adjust size for vertical/horizontal
                                     height={isVerticalLayout ? 150 : 100}
                                     className={cn("object-cover rounded-lg", isVerticalLayout ? "w-full" : "w-1/3")}
                                 />
@@ -170,7 +170,7 @@ function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: Collaps
                                         <div className="text-xs font-medium">{formattedDate}</div>
                                         <div className="text-xs font-medium">{item.time}</div>
                                     </div>
-                                    <div className="line-clamp-3 text-xs text-muted-foreground">
+                                    <div className="line-clamp-4 text-xs text-muted-foreground">
                                         {item.description.substring(0, 300)}
                                     </div>
                                     <div className="inline-flex">
@@ -185,7 +185,7 @@ function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: Collaps
                                     </div>
                                 </div>
                             </button>
-                        )
+                        );
                     })}
                 </CollapsibleContent>
             </Collapsible>
