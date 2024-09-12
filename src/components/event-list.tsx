@@ -26,7 +26,7 @@ import {
 // Icon Imports
 import {
     Plus,
-    Minus
+    Minus,
 } from "lucide-react";
 
 // Other Imports

@@ -24,6 +24,8 @@ import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { Switch } from "@/components/ui/switch"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 import {
     ResizableHandle,
     ResizablePanel,
@@ -43,9 +45,12 @@ import {
     SheetClose
 } from "@/components/ui/sheet";
 
+// Icon Imports
+import { CalendarIcon, ViewHorizontalIcon, ViewVerticalIcon } from "@radix-ui/react-icons"
+
 // Other Imports
 import { DateRange } from "react-day-picker"
-import { isWithinInterval, parse } from "date-fns"
+import { isWithinInterval, parse, format } from "date-fns"
 
 interface EventProps {
     events: Event[]
@@ -61,16 +66,15 @@ export function Event({
     const [bookmarkedEventIds, setBookmarkedEventIds] = React.useState<string[]>([]);
     const [showBookmarkedEvents, setShowBookmarkedEvents] = React.useState(false);
 
-    const [isVerticalLayout, setIsVerticalLayout] = React.useState(true);
+    const [isVerticalLayout, setIsVerticalLayout] = React.useState(false);
 
     const [selectedCategory, setSelectedCategory] = React.useState<string | undefined>(undefined)
     const [selectedFormat, setSelectedFormat] = React.useState<string | undefined>(undefined)
     const [selectedNeighborhood, setSelectedNeighborhood] = React.useState<string | undefined>(undefined)
     const [selectedCost, setSelectedCost] = React.useState<string | undefined>(undefined)
-    const [dateRange, setDateRange] = React.useState<DateRange | undefined>({
-        from: new Date(),
-        to: undefined,
-    })
+
+    const [startDate, setStartDate] = useState<Date | undefined>(new Date());
+    const [endDate, setEndDate] = useState<Date | undefined>(undefined);
 
     useEffect(() => {
         if (user) {
@@ -116,15 +120,15 @@ export function Event({
     }
 
     const filteredEvents = events.filter((e) => {
-        const { startDate, endDate } = parseEventDate(e.date)
-        const isInDateRange = dateRange?.from && isEventInRange(startDate, endDate, dateRange.from, dateRange.to)
+        const { startDate: eventStart, endDate: eventEnd } = parseEventDate(e.date);
+        const isInDateRange = startDate && isEventInRange(eventStart, eventEnd, startDate, endDate);
 
         // Filter based on switch state (false = All Events, true = Bookmarked Events)
         const isBookmarked = bookmarkedEventIds.includes(e.id)
         const shouldShowEvent = !showBookmarkedEvents || (showBookmarkedEvents && isBookmarked)
 
         return (
-            (!dateRange?.from || isInDateRange) &&
+            (!startDate || isInDateRange) &&
             (!selectedCategory || e.category === selectedCategory) &&
             (!selectedFormat || e.format === selectedFormat) &&
             (!selectedNeighborhood || e.neighborhood === selectedNeighborhood) &&
@@ -143,7 +147,8 @@ export function Event({
         setSelectedFormat(undefined)
         setSelectedNeighborhood(undefined)
         setSelectedCost(undefined)
-        setDateRange({ from: new Date(), to: undefined })
+        setStartDate(new Date());
+        setEndDate(undefined);
     }
 
     return (
@@ -160,10 +165,45 @@ export function Event({
                                 <SheetContent side="bottom">
                                     <div className="p-4">
                                         <form className="space-y-4">
-                                            <CalendarDateRangePicker
-                                                selected={dateRange}
-                                                onSelect={setDateRange}
-                                            />
+                                            <div className="grid grid-cols-1 gap-4 w-full">
+                                                <Popover>
+                                                    <PopoverTrigger asChild>
+                                                        <Button
+                                                            variant="outline"
+                                                            className="pl-3 text-left font-normal"
+                                                        >
+                                                            {startDate ? format(startDate, "MMM d, yyyy") : "Start Date"}
+                                                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                        </Button>
+                                                    </PopoverTrigger>
+                                                    <PopoverContent className="w-auto p-0">
+                                                        <Calendar
+                                                            mode="single"
+                                                            selected={startDate}
+                                                            onSelect={setStartDate}
+                                                        />
+                                                    </PopoverContent>
+                                                </Popover>
+
+                                                <Popover>
+                                                    <PopoverTrigger asChild>
+                                                        <Button
+                                                            variant="outline"
+                                                            className="pl-3 text-left font-normal"
+                                                        >
+                                                            {endDate ? format(endDate, "MMM d, yyyy") : "End Date"}
+                                                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                        </Button>
+                                                    </PopoverTrigger>
+                                                    <PopoverContent className="w-auto p-0">
+                                                        <Calendar
+                                                            mode="single"
+                                                            selected={endDate}
+                                                            onSelect={setEndDate}
+                                                        />
+                                                    </PopoverContent>
+                                                </Popover>
+                                            </div>
                                             {user && (
                                                 <div className="flex items-center w-auto max-w-fit border border-[hsl(var(--border))] rounded-md px-2 py-1.5">
                                                     <span className="text-sm">All</span>
@@ -246,7 +286,7 @@ export function Event({
                                 className="ml-2"
                                 onClick={() => setIsVerticalLayout(prev => !prev)}
                             >
-                                {isVerticalLayout ? "Horizontal" : "Vertical"}
+                                {isVerticalLayout ? <ViewHorizontalIcon /> : <ViewVerticalIcon />}
                             </Button>
                         </div>
                         <Separator />
@@ -274,10 +314,44 @@ export function Event({
                     <ResizablePanel defaultSize={defaultLayout[0]} minSize={30} className="h-full overflow-y-auto">
                         <div className="p-2">
                             <form className="flex space-x-2 overflow-x-auto">
-                                <CalendarDateRangePicker
-                                    selected={dateRange}
-                                    onSelect={setDateRange}
-                                />
+                                <Popover>
+                                    <PopoverTrigger asChild>
+                                        <Button
+                                            variant="outline"
+                                            className="pl-3 text-left font-normal min-w-[144px] max-w-[144px]"
+                                        >
+                                            {startDate ? format(startDate, "MMM d, yyyy") : "Start Date"}
+                                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-auto p-0">
+                                        <Calendar
+                                            mode="single"
+                                            selected={startDate}
+                                            onSelect={setStartDate}
+                                        />
+                                    </PopoverContent>
+                                </Popover>
+
+                                <Popover>
+                                    <PopoverTrigger asChild>
+                                        <Button
+                                            variant="outline"
+                                            className="pl-3 text-left font-normal min-w-[144px] max-w-[144px]"
+                                        >
+                                            {endDate ? format(endDate, "MMM d, yyyy") : "End Date"}
+                                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-auto p-0">
+                                        <Calendar
+                                            mode="single"
+                                            selected={endDate}
+                                            onSelect={setEndDate}
+                                        />
+                                    </PopoverContent>
+                                </Popover>
+                                
                                 {user && (
                                     <div className="flex items-center border border-[hsl(var(--border))] rounded-md px-2 py-1.5">
                                         <span className="text-sm">All</span>
