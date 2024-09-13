@@ -302,6 +302,128 @@ export function Event({
 
             {/* Desktop View */}
             <div className="hidden md:flex h-full items-stretch">
+
+                {/* Filters Section */}
+                <div className="min-w-[200px] max-w-[200px] p-4 space-y-4">
+                    <form className="space-y-4">
+
+                        {/* Start Date */}
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <Button
+                                    variant="outline"
+                                    className="pl-3 text-left font-normal w-full"
+                                >
+                                    {startDate ? format(startDate, "MMM d, yyyy") : "Start Date"}
+                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0">
+                                <Calendar
+                                    mode="single"
+                                    selected={startDate}
+                                    onSelect={setStartDate}
+                                />
+                            </PopoverContent>
+                        </Popover>
+
+                        {/* End Date */}
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <Button
+                                    variant="outline"
+                                    className="pl-3 text-left font-normal w-full"
+                                >
+                                    {endDate ? format(endDate, "MMM d, yyyy") : "End Date"}
+                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0">
+                                <Calendar
+                                    mode="single"
+                                    selected={endDate}
+                                    onSelect={setEndDate}
+                                />
+                            </PopoverContent>
+                        </Popover>
+                        
+                        {/* Bookmarks Toogle */}
+                        {user && (
+                            <div className="flex items-center border border-[hsl(var(--border))] rounded-md px-2 py-1.5">
+                                <span className="text-sm">All</span>
+                                <Switch
+                                    checked={showBookmarkedEvents}
+                                    onCheckedChange={setShowBookmarkedEvents}
+                                    className="mx-2"
+                                />
+                                <span className="text-sm">Bookmarked</span>
+                            </div>
+                        )}
+
+                        {/* Category Select */}
+                        <Select onValueChange={setSelectedCategory}>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Category" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {categoryOptions.map(option => (
+                                    <SelectItem key={option.value} value={option.value}>
+                                        {option.label}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                        
+                        {/* Format Select */}
+                        <Select onValueChange={setSelectedFormat}>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Format" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {formatOptions.map(option => (
+                                    <SelectItem key={option.value} value={option.value}>
+                                        {option.label}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                        
+                        {/* Neighborhood Select */}
+                        <Select onValueChange={setSelectedNeighborhood}>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Neighborhood" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {neighborhoodOptions.map(option => (
+                                    <SelectItem key={option.value} value={option.value}>
+                                        {option.label}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                        
+                        {/* Cost Select */}
+                        <Select onValueChange={setSelectedCost}>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Cost" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {costOptions.map(option => (
+                                    <SelectItem key={option.value} value={option.value}>
+                                        {option.label}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+
+                        <Button variant="outline" onClick={handleClearAll} className="w-full">
+                            Reset
+                        </Button>
+                    </form>
+                </div>
+
+                <Separator orientation="vertical" />
+
                 <ResizablePanelGroup
                     direction="horizontal"
                     onLayout={(sizes: number[]) => {
@@ -312,111 +434,6 @@ export function Event({
                     className="h-full items-stretch"
                 >
                     <ResizablePanel defaultSize={defaultLayout[0]} minSize={30} className="h-full overflow-y-auto">
-                        <div className="p-2">
-                            <form className="flex space-x-2 overflow-x-auto">
-                                <Popover>
-                                    <PopoverTrigger asChild>
-                                        <Button
-                                            variant="outline"
-                                            className="pl-3 text-left font-normal min-w-[144px] max-w-[144px]"
-                                        >
-                                            {startDate ? format(startDate, "MMM d, yyyy") : "Start Date"}
-                                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                        </Button>
-                                    </PopoverTrigger>
-                                    <PopoverContent className="w-auto p-0">
-                                        <Calendar
-                                            mode="single"
-                                            selected={startDate}
-                                            onSelect={setStartDate}
-                                        />
-                                    </PopoverContent>
-                                </Popover>
-
-                                <Popover>
-                                    <PopoverTrigger asChild>
-                                        <Button
-                                            variant="outline"
-                                            className="pl-3 text-left font-normal min-w-[144px] max-w-[144px]"
-                                        >
-                                            {endDate ? format(endDate, "MMM d, yyyy") : "End Date"}
-                                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                        </Button>
-                                    </PopoverTrigger>
-                                    <PopoverContent className="w-auto p-0">
-                                        <Calendar
-                                            mode="single"
-                                            selected={endDate}
-                                            onSelect={setEndDate}
-                                        />
-                                    </PopoverContent>
-                                </Popover>
-                                
-                                {user && (
-                                    <div className="flex items-center border border-[hsl(var(--border))] rounded-md px-2 py-1.5">
-                                        <span className="text-sm">All</span>
-                                        <Switch
-                                            checked={showBookmarkedEvents}
-                                            onCheckedChange={setShowBookmarkedEvents}
-                                            className="mx-2"
-                                        />
-                                        <span className="text-sm">Bookmarked</span>
-                                    </div>
-                                )}
-                                <Select onValueChange={setSelectedCategory}>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Category" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {categoryOptions.map(option => (
-                                            <SelectItem key={option.value} value={option.value}>
-                                                {option.label}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                <Select onValueChange={setSelectedFormat}>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Format" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {formatOptions.map(option => (
-                                            <SelectItem key={option.value} value={option.value}>
-                                                {option.label}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                <Select onValueChange={setSelectedNeighborhood}>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Neighborhood" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {neighborhoodOptions.map(option => (
-                                            <SelectItem key={option.value} value={option.value}>
-                                                {option.label}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                <Select onValueChange={setSelectedCost}>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Cost" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {costOptions.map(option => (
-                                            <SelectItem key={option.value} value={option.value}>
-                                                {option.label}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                <Button variant="outline" onClick={handleClearAll} className="w-full">
-                                    Reset
-                                </Button>
-                            </form>
-                        </div>
-                        <Separator />
                         <EventList items={filteredEvents} isVerticalLayout={isVerticalLayout} />
                     </ResizablePanel>
 
