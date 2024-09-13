@@ -10,17 +10,18 @@ import { useAuth } from "@/context/AuthContext";
 
 // Firebase Imports
 import { db } from "@/app/firebase";
-import { doc, getDoc, setDoc, deleteDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, deleteDoc, collection, addDoc, query, orderBy, onSnapshot } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 
 // Components Imports
-import { Event } from "@/components/types";
+import { Comment, Event } from "@/components/types";
 
 // Shadcn Imports
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
 import {
     Tooltip,
     TooltipContent,
@@ -86,10 +87,48 @@ interface EventDisplayProps {
 export function EventDisplay({ event, onBack }: EventDisplayProps) {
     const today = new Date()
     const { toast } = useToast()
-    const { user } = useAuth()
+    const { user, userData } = useAuth()
+    const [comments, setComments] = useState<Comment[]>([])
+    const [newComment, setNewComment] = useState("")
+    const [loading, setLoading] = useState(false)
     const [isBookmarked, setIsBookmarked] = useState(false)
 
     const bookmarkCache: { [eventId: string]: boolean } = {};
+
+    // Fetch comments from Firestore
+    useEffect(() => {
+        if (event) {
+            const commentsRef = collection(db, `events/${event.id}/comments`);
+            const q = query(commentsRef, orderBy("timestamp", "desc"));
+            const unsubscribe = onSnapshot(q, (snapshot) => {
+                const commentsData = snapshot.docs.map((doc) => ({
+                    id: doc.id,
+                    ...doc.data(),
+                } as Comment));
+                setComments(commentsData);
+            });
+            return () => unsubscribe();
+        }
+    }, [event]);
+
+    const postComment = async () => {
+        if (!user || !newComment.trim() || !event || !userData) return;
+
+        setLoading(true);
+        try {
+            const commentRef = collection(db, `events/${event.id}/comments`);
+            await addDoc(commentRef, {
+                username: userData.username || "Anonymous",
+                content: newComment.trim(),
+                timestamp: new Date(),
+            });
+            setNewComment("");
+        } catch (error) {
+            console.error("Error posting comment: ", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     // Function to check if the event is already bookmarked
     useEffect(() => {
@@ -382,6 +421,44 @@ export function EventDisplay({ event, onBack }: EventDisplayProps) {
                         </div>
 
                         <Separator className="mt-auto" />
+
+                        {/* List of Comments */}
+                        <div className="space-y-4 p-4">
+                            {comments.length > 0 ? (
+                                comments.map((comment) => (
+                                    <div key={comment.id} className="space-y-1">
+                                        <div className="flex items-center space-x-2">
+                                            <span className="text-sm font-semibold">{comment.username}</span>
+                                            <span className="text-xs text-muted-foreground">
+                                                {format(comment.timestamp.toDate(), "MMM d, yyyy h:mm a")}
+                                            </span>
+                                        </div>
+                                        <p className="text-sm mb-2">{comment.content}</p>
+                                    </div>
+                                ))
+                            ) : (
+                                <p className="text-sm text-muted-foreground">No comments yet.</p>
+                            )}
+                        </div>
+
+                        <Separator />
+
+                        {/* Add a Comment */}
+                        {user ? (
+                            <div className="p-4 space-y-2">
+                                <Textarea
+                                    placeholder="Add a comment"
+                                    value={newComment}
+                                    onChange={(e) => setNewComment(e.target.value)}
+                                    disabled={loading}
+                                />
+                                <Button onClick={postComment} disabled={loading || !newComment.trim()}>
+                                    {loading ? "Posting..." : "Post Comment"}
+                                </Button>
+                            </div>
+                        ) : (
+                            <p className="text-sm text-muted-foreground">Log in to post a comment.</p>
+                        )}
                     </div>
                 ) : (
                     <div className="p-8 text-center text-muted-foreground">

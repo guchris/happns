@@ -24,3 +24,10 @@ export interface User {
     email: string;
     createdAt: Date;
 }
+
+export interface Comment {
+    id: string;
+    username: string;
+    content: string;
+    timestamp: any;
+}
