@@ -457,7 +457,7 @@ export function EventDisplay({ event, onBack }: EventDisplayProps) {
                                 </Button>
                             </div>
                         ) : (
-                            <p className="text-sm text-muted-foreground">Log in to post a comment.</p>
+                            <div className="p-4 text-sm text-muted-foreground">Log in to post a comment.</div>
                         )}
                     </div>
                 ) : (
