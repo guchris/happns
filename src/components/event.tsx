@@ -13,6 +13,7 @@ import { useAuth } from "@/context/AuthContext";
 import { EventList } from "@/components/event-list"
 import { EventDisplay } from "@/components/event-display"
 import { CalendarDateRangePicker } from "@/components/date-range-picker"
+import MultiSelect, { Option } from '@/components/multi-select'
 
 // Lib Imports
 import { useEvent } from "@/app/use-event"
@@ -68,10 +69,14 @@ export function Event({
 
     const [isVerticalLayout, setIsVerticalLayout] = React.useState(false);
 
-    const [selectedCategory, setSelectedCategory] = React.useState<string | undefined>(undefined)
-    const [selectedFormat, setSelectedFormat] = React.useState<string | undefined>(undefined)
-    const [selectedNeighborhood, setSelectedNeighborhood] = React.useState<string | undefined>(undefined)
-    const [selectedCost, setSelectedCost] = React.useState<string | undefined>(undefined)
+    const [selectedCategories, setSelectedCategories] = useState<Option[]>([]);
+    const selectedCategoryValues = selectedCategories.map(category => category.value);
+    const [selectedFormats, setSelectedFormats] = useState<Option[]>([]);
+    const selectedFormatValues = selectedFormats.map(format => format.value);
+    const [selectedNeighborhoods, setSelectedNeighborhoods] = useState<Option[]>([]);
+    const selectedNeighborhoodValues = selectedNeighborhoods.map(neighborhood => neighborhood.value);
+    const [selectedCosts, setSelectedCosts] = useState<Option[]>([]);
+    const selectedCostValues = selectedCosts.map(cost => cost.value);
 
     const [startDate, setStartDate] = useState<Date | undefined>(new Date());
     const [endDate, setEndDate] = useState<Date | undefined>(undefined);
@@ -127,28 +132,34 @@ export function Event({
         const isBookmarked = bookmarkedEventIds.includes(e.id)
         const shouldShowEvent = !showBookmarkedEvents || (showBookmarkedEvents && isBookmarked)
 
+        // Filter by cost using selectedCostValues
+        const isCostMatch = selectedCostValues.length === 0 || selectedCostValues.some(costValue => {
+            return (
+                (costValue === "free" && e.cost === 0) ||
+                (costValue === "$0-$25" && e.cost > 0 && e.cost <= 25) ||
+                (costValue === "$25-$50" && e.cost > 25 && e.cost <= 50) ||
+                (costValue === "$50-$100" && e.cost > 50 && e.cost <= 100) ||
+                (costValue === "$100+" && e.cost > 100)
+            );
+        });
+
         return (
             (!startDate || isInDateRange) &&
-            (!selectedCategory || e.category === selectedCategory) &&
-            (!selectedFormat || e.format === selectedFormat) &&
-            (!selectedNeighborhood || e.neighborhood === selectedNeighborhood) &&
-            (!selectedCost ||
-                (selectedCost === "free" && e.cost === 0) ||
-                (selectedCost === "$0-$25" && e.cost > 0 && e.cost <= 25) ||
-                (selectedCost === "$25-$50" && e.cost > 25 && e.cost <= 50) ||
-                (selectedCost === "$50-$100" && e.cost > 50 && e.cost <= 100) ||
-                (selectedCost === "$100+" && e.cost > 100)) &&
+            (selectedCategoryValues.length === 0 || selectedCategoryValues.includes(e.category)) &&
+            (selectedFormatValues.length === 0 || selectedFormatValues.includes(e.format)) &&
+            (selectedNeighborhoodValues.length === 0 || selectedNeighborhoodValues.includes(e.neighborhood)) &&
+            isCostMatch &&
             shouldShowEvent
         )
     })
 
     const handleClearAll = () => {
-        setSelectedCategory(undefined)
-        setSelectedFormat(undefined)
-        setSelectedNeighborhood(undefined)
-        setSelectedCost(undefined)
-        setStartDate(new Date());
-        setEndDate(undefined);
+        setSelectedCategories([])
+        setSelectedFormats([])
+        setSelectedNeighborhoods([])
+        setSelectedCosts([])
+        setStartDate(new Date())
+        setEndDate(undefined)
     }
 
     return (
@@ -214,62 +225,59 @@ export function Event({
                                                     <span className="text-sm">Bookmarked</span>
                                                 </div>
                                             )}
-                                            <div className="space-y-2">
-                                                <Select onValueChange={setSelectedCategory}>
-                                                    <SelectTrigger className="w-full">
-                                                        <SelectValue placeholder="Category" />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        {categoryOptions.map(option => (
-                                                            <SelectItem key={option.value} value={option.value}>
-                                                                {option.label}
-                                                            </SelectItem>
-                                                        ))}
-                                                    </SelectContent>
-                                                </Select>
-                                            </div>
-                                            <div className="space-y-2">
-                                                <Select onValueChange={setSelectedFormat}>
-                                                    <SelectTrigger className="w-full">
-                                                        <SelectValue placeholder="Format" />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        {formatOptions.map(option => (
-                                                            <SelectItem key={option.value} value={option.value}>
-                                                                {option.label}
-                                                            </SelectItem>
-                                                        ))}
-                                                    </SelectContent>
-                                                </Select>
-                                            </div>
-                                            <div className="space-y-2">
-                                                <Select onValueChange={setSelectedNeighborhood}>
-                                                    <SelectTrigger className="w-full">
-                                                        <SelectValue placeholder="Neighborhood" />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        {neighborhoodOptions.map(option => (
-                                                            <SelectItem key={option.value} value={option.value}>
-                                                                {option.label}
-                                                            </SelectItem>
-                                                        ))}
-                                                    </SelectContent>
-                                                </Select>
-                                            </div>
-                                            <div className="space-y-2">
-                                                <Select onValueChange={setSelectedCost}>
-                                                    <SelectTrigger className="w-full">
-                                                        <SelectValue placeholder="Cost" />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        {costOptions.map(option => (
-                                                            <SelectItem key={option.value} value={option.value}>
-                                                                {option.label}
-                                                            </SelectItem>
-                                                        ))}
-                                                    </SelectContent>
-                                                </Select>
-                                            </div>
+
+                                            {/* Category MultiSelect */}
+                                            <MultiSelect
+                                                options={categoryOptions}
+                                                value={selectedCategories}
+                                                onChange={setSelectedCategories}
+                                                placeholder="Category"
+                                                emptyIndicator={
+                                                <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                                                    no results found
+                                                </p>
+                                                }
+                                            />
+
+                                            {/* Format MultiSelect */}
+                                            <MultiSelect
+                                                options={formatOptions}
+                                                value={selectedFormats}
+                                                onChange={setSelectedFormats}
+                                                placeholder="Format"
+                                                emptyIndicator={
+                                                <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                                                    no results found
+                                                </p>
+                                                }
+                                            />
+
+                                            {/* Neighborhood MultiSelect */}
+                                            <MultiSelect
+                                                options={neighborhoodOptions}
+                                                value={selectedNeighborhoods}
+                                                onChange={setSelectedNeighborhoods}
+                                                placeholder="Neighborhood"
+                                                emptyIndicator={
+                                                <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                                                    no results found
+                                                </p>
+                                                }
+                                            />
+
+                                            {/* Cost MultiSelect */}
+                                            <MultiSelect
+                                                options={costOptions}
+                                                value={selectedCosts}
+                                                onChange={setSelectedCosts}
+                                                placeholder="Cost"
+                                                emptyIndicator={
+                                                <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                                                    no results found
+                                                </p>
+                                                }
+                                            />
+
                                             <Button variant="outline" onClick={handleClearAll} className="w-full">
                                                 Reset
                                             </Button>
@@ -303,7 +311,7 @@ export function Event({
             <div className="hidden md:flex h-full items-stretch">
 
                 {/* Filters Section */}
-                <div className="min-w-[200px] max-w-[200px] p-4 space-y-4">
+                <div className="min-w-[250px] max-w-[250px] p-4 space-y-4">
                     <form className="space-y-4">
 
                         {/* Start Date */}
@@ -358,61 +366,57 @@ export function Event({
                             </div>
                         )}
 
-                        {/* Category Select */}
-                        <Select onValueChange={setSelectedCategory}>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Category" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {categoryOptions.map(option => (
-                                    <SelectItem key={option.value} value={option.value}>
-                                        {option.label}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                        {/* Category MultiSelect */}
+                        <MultiSelect
+                            options={categoryOptions}
+                            value={selectedCategories}
+                            onChange={setSelectedCategories}
+                            placeholder="Category"
+                            emptyIndicator={
+                            <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                                no results found
+                            </p>
+                            }
+                        />
+
+                        {/* Format MultiSelect */}
+                        <MultiSelect
+                            options={formatOptions}
+                            value={selectedFormats}
+                            onChange={setSelectedFormats}
+                            placeholder="Format"
+                            emptyIndicator={
+                            <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                                no results found
+                            </p>
+                            }
+                        />
+
+                        {/* Neighborhood MultiSelect */}
+                        <MultiSelect
+                            options={neighborhoodOptions}
+                            value={selectedNeighborhoods}
+                            onChange={setSelectedNeighborhoods}
+                            placeholder="Neighborhood"
+                            emptyIndicator={
+                            <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                                no results found
+                            </p>
+                            }
+                        />
                         
-                        {/* Format Select */}
-                        <Select onValueChange={setSelectedFormat}>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Format" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {formatOptions.map(option => (
-                                    <SelectItem key={option.value} value={option.value}>
-                                        {option.label}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                        
-                        {/* Neighborhood Select */}
-                        <Select onValueChange={setSelectedNeighborhood}>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Neighborhood" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {neighborhoodOptions.map(option => (
-                                    <SelectItem key={option.value} value={option.value}>
-                                        {option.label}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                        
-                        {/* Cost Select */}
-                        <Select onValueChange={setSelectedCost}>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Cost" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {costOptions.map(option => (
-                                    <SelectItem key={option.value} value={option.value}>
-                                        {option.label}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                        {/* Cost MultiSelect */}
+                        <MultiSelect
+                            options={costOptions}
+                            value={selectedCosts}
+                            onChange={setSelectedCosts}
+                            placeholder="Cost"
+                            emptyIndicator={
+                            <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                                no results found
+                            </p>
+                            }
+                        />
 
                         <Button variant="outline" onClick={handleClearAll} className="w-full">
                             Reset
