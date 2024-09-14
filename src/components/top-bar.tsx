@@ -62,22 +62,23 @@ export const TopBar: React.FC<TopBarProps> = ({ title }) => {
                         <DropdownMenuLabel className="font-normal">
                             <div className="flex flex-col space-y-1">
                                 <p className="text-sm font-medium leading-none">{userData.name}</p>
+                                <p className="text-xs leading-none text-muted-foreground">{userData.username}</p>
                                 <p className="text-xs leading-none text-muted-foreground">{userData.email}</p>
                             </div>
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem>
-                            <Link href="/event-form">Add Event</Link>
+                            <Link href="/event-form" className="w-full">Add Event</Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem>
-                            <Link href="/profile">Profile</Link>
+                            <Link href="/profile" className="w-full">Profile</Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem>
-                            <Link href="/settings">Settings</Link>
+                            <Link href="/settings" className="w-full">Settings</Link>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={handleSignOut}>
-                            Log out
+                            <Link href="/" className="w-full">Log Out</Link>
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

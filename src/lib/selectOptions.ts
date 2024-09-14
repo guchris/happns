@@ -76,7 +76,4 @@ export const cityOptions = [
     { value: "portland", label: "Portland" },
     { value: "vancouver", label: "Vancouver" },
     { value: "san-francisco", label: "San Francisco" },
-    { value: "los-angeles", label: "Los Angeles" },
-    { value: "new-york-city", label: "New York City" },
-    { value: "austin", label: "Austin" },
 ];

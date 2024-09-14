@@ -276,7 +276,8 @@ export default function EventForm() {
                 <Separator />
             </div>
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col px-4 py-2 space-y-8">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col px-4 py-2 space-y-8 max-w-[800px] mx-auto">
+
                     <FormField
                         control={form.control}
                         name="city"
@@ -297,48 +298,6 @@ export default function EventForm() {
                                         ))}
                                     </SelectContent>
                                 </Select>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="name"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Name</FormLabel>
-                                <FormControl>
-                                    <Input {...field} />
-                                </FormControl>
-                                <FormDescription>
-                                    This is the name of the event.
-                                </FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="description"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Description</FormLabel>
-                                <FormControl>
-                                    <Input {...field} placeholder="Enter a description" />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="details"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Details</FormLabel>
-                                <FormControl>
-                                    <Textarea {...field} placeholder="Enter the details" />
-                                </FormControl>
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -391,6 +350,68 @@ export default function EventForm() {
                             </FormItem>
                         )}
                     />
+
+                    <Separator />
+                    
+                    <FormField
+                        control={form.control}
+                        name="name"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Event Name</FormLabel>
+                                <FormControl>
+                                    <Input {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="description"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Description</FormLabel>
+                                <FormControl>
+                                    <Input {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="details"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Details</FormLabel>
+                                <FormControl>
+                                    <Textarea {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="cost"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Cost</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        type="number"
+                                        {...field}
+                                        onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
+                    <Separator />
+
                     <div className="grid grid-cols-2 gap-4 w-full">
                         <FormField
                             control={form.control}
@@ -501,7 +522,7 @@ export default function EventForm() {
                                         <Input
                                             type="text"
                                             {...field}
-                                            placeholder="Enter end time (HH:mm AM/PM)"
+                                            placeholder="Enter end time"
                                             pattern="(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)"
                                         />
                                     </FormControl>
@@ -513,23 +534,29 @@ export default function EventForm() {
                             )}
                         />
                     </div>
+
+                    <Separator />
+
                     <FormField
                         control={form.control}
-                        name="cost"
+                        name="neighborhood"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Cost</FormLabel>
-                                <FormControl>
-                                    <Input
-                                        type="number"
-                                        {...field}
-                                        onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                                        placeholder="Enter the cost"
-                                    />
-                                </FormControl>
-                                <FormDescription>
-                                    This is the cost of attending the event (in USD).
-                                </FormDescription>
+                                <FormLabel>Neighborhood</FormLabel>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select a neighborhood" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        {neighborhoodOptions.map((option) => (
+                                            <SelectItem key={option.value} value={option.value}>
+                                                {option.label}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -566,30 +593,10 @@ export default function EventForm() {
                             </FormItem>
                         )}
                     />
-                    <FormField
-                        control={form.control}
-                        name="neighborhood"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Neighborhood</FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                    <FormControl>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select a neighborhood" />
-                                        </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                        {neighborhoodOptions.map((option) => (
-                                            <SelectItem key={option.value} value={option.value}>
-                                                {option.label}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                    
+
+                    <Separator />
+
                     <FormField
                         control={form.control}
                         name="link"
@@ -600,7 +607,7 @@ export default function EventForm() {
                                     <Input {...field} placeholder="https://example.com" />
                                 </FormControl>
                                 <FormDescription>
-                                    This is the URL link to the event.
+                                    This is the website to the event.
                                 </FormDescription>
                                 <FormMessage />
                             </FormItem>

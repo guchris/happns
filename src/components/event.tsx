@@ -206,7 +206,6 @@ export function Event({
                                             </div>
                                             {user && (
                                                 <div className="flex items-center w-auto max-w-fit border border-[hsl(var(--border))] rounded-md px-2 py-1.5">
-                                                    <span className="text-sm">All</span>
                                                     <Switch
                                                         checked={showBookmarkedEvents}
                                                         onCheckedChange={setShowBookmarkedEvents}
@@ -350,7 +349,6 @@ export function Event({
                         {/* Bookmarks Toogle */}
                         {user && (
                             <div className="flex items-center border border-[hsl(var(--border))] rounded-md px-2 py-1.5">
-                                <span className="text-sm">All</span>
                                 <Switch
                                     checked={showBookmarkedEvents}
                                     onCheckedChange={setShowBookmarkedEvents}

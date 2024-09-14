@@ -74,7 +74,7 @@ export default function ProfilePage() {
                             <CardTitle className="text-lg font-semibold">Google Calendar Subscription Link</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            <p className="text-sm text-gray-600">
+                            <p className="text-sm">
                                 Subscribe to your bookmarked events by adding this link to your Google Calendar.
                             </p>
                             <div className="flex space-x-2">
@@ -89,10 +89,10 @@ export default function ProfilePage() {
                     {/* Step-by-step guide */}
                     <Card>
                         <CardHeader>
-                            <CardTitle className="text-md font-semibold">How to Add This Calendar to Google Calendar</CardTitle>
+                            <CardTitle className="text-base font-semibold">How to Add This Calendar to Google Calendar</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            <ol className="list-decimal list-inside text-gray-600 space-y-2">
+                            <ol className="list-decimal list-inside text-sm space-y-2">
                                 <li>Copy the link above by clicking the &quot;Copy Link&quot; button.</li>
                                 <li>
                                     Open <a href="https://calendar.google.com" target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">Google Calendar</a> in your browser.

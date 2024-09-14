@@ -33,7 +33,6 @@ const initialCities = [
   { name: "Seattle", slug: "seattle", events: 0, description: "Dive into SEA's dynamic events scene, where tech meets nature. From indie concerts to food festivals, connect with a community that blends urban life with outdoor adventures." },
   { name: "Portland", slug: "portland", events: 0, description: "Embrace Portland's quirky charm with events ranging from craft beer festivals to indie art shows. Dive into the city’s laid-back, creative atmosphere, where nature meets culture." },
   { name: "Vancouver", slug: "vancouver", events: 0, description: "Explore Vancouver's vibrant event scene, from film festivals to outdoor adventures. Connect with a diverse community in a city that seamlessly blends urban life with stunning nature." },
-  { name: "Los Angeles", slug: "los-angeles", events: 0, description: "Immerse yourself in LA's world-famous entertainment scene, from Hollywood premieres to music festivals. Explore diverse cultural neighborhoods and sun-soaked beaches."},
   { name: "San Francisco", slug: "san-francisco", events: 0, description: "Experience SF's unique mix of tech and creativity. Attend meetups, festivals, and events that showcase the city's innovative and eclectic spirit." },
 ]
 
