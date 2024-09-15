@@ -7,8 +7,9 @@ import * as React from "react"
 import { useRouter } from "next/navigation"
 
 // Firebase Imports
-import { auth } from "@/app/firebase"
-import { signInWithEmailAndPassword } from "firebase/auth"
+import { db, auth } from "@/app/firebase"
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth"
+import { doc, setDoc, getDoc } from "firebase/firestore"
 
 // Lib Imports
 import { cn } from "@/lib/utils"
@@ -19,17 +20,59 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
 // Component Imports
+import { User } from "@/components/types"
 import { Icons } from "@/components/icons"
+import { useToast } from "@/hooks/use-toast"
 
 interface UserLoginFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
+    const router = useRouter()
+    const { toast } = useToast()
+
     const [isLoading, setIsLoading] = React.useState<boolean>(false)
     const [email, setEmail] = React.useState<string>("")
     const [password, setPassword] = React.useState<string>("")
     const [error, setError] = React.useState<string | null>(null)
 
-    const router = useRouter();
+    async function handleGoogleSignIn() {
+        setIsLoading(true)
+        setError(null)
+    
+        const provider = new GoogleAuthProvider()
+    
+        try {
+            const result = await signInWithPopup(auth, provider)
+            const user = result.user
+    
+            // Check if user already exists in Firestore
+            const userRef = doc(db, "users", user.uid)
+            const userSnap = await getDoc(userRef)
+    
+            if (!userSnap.exists()) {
+                // If user does not exist, create a new record
+                const newUser: User = {
+                    uid: user.uid,
+                    name: user.displayName || "Anonymous",
+                    username: user.email?.split("@")[0] || "user",
+                    email: user.email || "",
+                    createdAt: new Date(),
+                }
+                await setDoc(userRef, newUser)
+            }
+            
+            toast({
+                title: "Account Successfully Created!",
+                description: "Account data updates are located in the settings."
+            })
+            router.push("/")
+        } catch (error: any) {
+            console.error("Error signing in with Google:", error.message)
+            setError(error.message)
+        } finally {
+            setIsLoading(false)
+        }
+    }
 
     async function onSubmit(event: React.SyntheticEvent) {
         event.preventDefault()
@@ -95,6 +138,28 @@ export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
                     </Button>
                 </div>
             </form>
+            <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-background px-2 text-muted-foreground">
+                        Or continue with
+                    </span>
+                </div>
+            </div>
+            <Button
+                onClick={handleGoogleSignIn}
+                disabled={isLoading}
+                variant="outline"
+            >
+                {isLoading ? (
+                    <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                    <Icons.google className="mr-2 h-4 w-4" />
+                )}
+                Sign in with Google
+            </Button>
         </div>
     )
 }
