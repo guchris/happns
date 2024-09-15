@@ -491,7 +491,8 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
             <CommandPrimitive.Input
               {...inputProps}
               ref={inputRef}
-              value={inputValue}
+              value=""
+              readOnly
               disabled={disabled}
               onValueChange={(value) => {
                 setInputValue(value);

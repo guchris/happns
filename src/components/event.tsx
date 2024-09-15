@@ -2,43 +2,36 @@
 
 // React Imports
 import * as React from "react"
-import { useEffect, useState } from "react";
+import { useEffect, useState } from "react"
 
 // Firebase Imports
 import { db } from "@/app/firebase";
-import { collection, getDocs } from "firebase/firestore";
-import { useAuth } from "@/context/AuthContext";
+import { collection, getDocs } from "firebase/firestore"
+import { useAuth } from "@/context/AuthContext"
 
 // Components Imports
 import { EventList } from "@/components/event-list"
 import { EventDisplay } from "@/components/event-display"
-import { CalendarDateRangePicker } from "@/components/date-range-picker"
 import MultiSelect, { Option } from '@/components/multi-select'
 
 // Lib Imports
 import { useEvent } from "@/app/use-event"
 import { type Event } from "@/components/types"
-import { categoryOptions, formatOptions, neighborhoodOptions, costOptions } from "@/lib/selectOptions";
+import { categoryOptions, formatOptions, neighborhoodOptions, costOptions } from "@/lib/selectOptions"
 
 // Shadcn Imports
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { Switch } from "@/components/ui/switch"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Calendar } from "@/components/ui/calendar"
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import {
     ResizableHandle,
     ResizablePanel,
     ResizablePanelGroup,
 } from "@/components/ui/resizable"
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
 import {
     Sheet,
     SheetContent,
@@ -47,10 +40,16 @@ import {
 } from "@/components/ui/sheet";
 
 // Icon Imports
-import { CalendarIcon, ViewHorizontalIcon, ViewVerticalIcon } from "@radix-ui/react-icons"
+import {
+    CalendarIcon,
+    ViewHorizontalIcon,
+    ViewVerticalIcon,
+    FontBoldIcon,
+    FontItalicIcon,
+    UnderlineIcon
+} from "@radix-ui/react-icons"
 
 // Other Imports
-import { DateRange } from "react-day-picker"
 import { isWithinInterval, parse, format } from "date-fns"
 
 interface EventProps {
@@ -313,6 +312,22 @@ export function Event({
                 {/* Filters Section */}
                 <div className="min-w-[250px] max-w-[250px] p-4 space-y-4">
                     <form className="space-y-4">
+
+                        {/* Date Options */}
+                        {/* <ToggleGroup type="single" defaultValue="today" className="flex flex-col w-full">
+                            <ToggleGroupItem value="today" className="w-full px-4 py-2">
+                                Today
+                            </ToggleGroupItem>
+                            <ToggleGroupItem value="tomorrow" className="w-full px-4 py-2">
+                                Tomorrow
+                            </ToggleGroupItem>
+                            <ToggleGroupItem value="this-weekend" className="w-full px-4 py-2">
+                                This Weekend
+                            </ToggleGroupItem>
+                            <ToggleGroupItem value="custom" className="w-full px-4 py-2">
+                                Custom
+                            </ToggleGroupItem>
+                        </ToggleGroup> */}
 
                         {/* Start Date */}
                         <Popover>
