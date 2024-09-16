@@ -69,7 +69,7 @@ export default function ExploreCityPage() {
 
     return (
         <div className="h-screen flex flex-col">
-            <TopBar title={`happns/${city}`} />
+            <TopBar title={`happns/${city}/explore`} />
             <Separator />
             <div className="flex-1 overflow-y-auto">
                 <EventComponent

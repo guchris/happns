@@ -112,6 +112,11 @@ export default function CityPage() {
         return isInDateRange && isInCurrentMonth;
     });
 
+    // Sort the events by clicks in descending order and take the top 5
+    const topEvents = upcomingEvents
+        .sort((a, b) => (b.clicks || 0) - (a.clicks || 0))
+        .slice(0, 5);
+
     return (
         <div className="h-screen flex flex-col">
             <TopBar title={`happns/${city}`} />
@@ -147,10 +152,10 @@ export default function CityPage() {
                     {/* Grid of Event Cards */}
                     <div className="overflow-x-auto scrollbar-none">
                         <div className="flex space-x-4 min-w-full">
-                            {upcomingEvents.length > 0 ? (
-                                upcomingEvents.slice(0, 5).map((event) => (
+                            {topEvents.length > 0 ? (
+                                topEvents.map((event) => (
                                     <Card key={event.id} className="min-w-[200px] max-w-[250px]">
-                                        <Link href={event.link}>
+                                        <Link href={`/events/${event.id}`}>
                                             <CardHeader className="p-2">
                                                 <div className="aspect-w-1 aspect-h-1 w-full">
                                                     <img
