@@ -46,7 +46,9 @@ import {
     ViewVerticalIcon,
     FontBoldIcon,
     FontItalicIcon,
-    UnderlineIcon
+    UnderlineIcon,
+    SectionIcon,
+    ContainerIcon
 } from "@radix-ui/react-icons"
 
 // Other Imports
@@ -231,11 +233,6 @@ export function Event({
                                                 value={selectedCategories}
                                                 onChange={setSelectedCategories}
                                                 placeholder="Category"
-                                                emptyIndicator={
-                                                <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
-                                                    no results found
-                                                </p>
-                                                }
                                             />
 
                                             {/* Format MultiSelect */}
@@ -244,11 +241,6 @@ export function Event({
                                                 value={selectedFormats}
                                                 onChange={setSelectedFormats}
                                                 placeholder="Format"
-                                                emptyIndicator={
-                                                <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
-                                                    no results found
-                                                </p>
-                                                }
                                             />
 
                                             {/* Neighborhood MultiSelect */}
@@ -257,11 +249,6 @@ export function Event({
                                                 value={selectedNeighborhoods}
                                                 onChange={setSelectedNeighborhoods}
                                                 placeholder="Neighborhood"
-                                                emptyIndicator={
-                                                <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
-                                                    no results found
-                                                </p>
-                                                }
                                             />
 
                                             {/* Cost MultiSelect */}
@@ -270,11 +257,6 @@ export function Event({
                                                 value={selectedCosts}
                                                 onChange={setSelectedCosts}
                                                 placeholder="Cost"
-                                                emptyIndicator={
-                                                <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
-                                                    no results found
-                                                </p>
-                                                }
                                             />
 
                                             <Button variant="outline" onClick={handleClearAll} className="w-full">
@@ -292,7 +274,7 @@ export function Event({
                                 className="ml-2"
                                 onClick={() => setIsVerticalLayout(prev => !prev)}
                             >
-                                {isVerticalLayout ? <ViewHorizontalIcon /> : <ViewVerticalIcon />}
+                                {isVerticalLayout ? <SectionIcon /> : <ContainerIcon />}
                             </Button>
                         </div>
                         <Separator />
@@ -391,11 +373,6 @@ export function Event({
                             value={selectedCategories}
                             onChange={setSelectedCategories}
                             placeholder="Category"
-                            emptyIndicator={
-                            <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
-                                no results found
-                            </p>
-                            }
                         />
 
                         {/* Format MultiSelect */}
@@ -404,11 +381,6 @@ export function Event({
                             value={selectedFormats}
                             onChange={setSelectedFormats}
                             placeholder="Format"
-                            emptyIndicator={
-                            <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
-                                no results found
-                            </p>
-                            }
                         />
 
                         {/* Neighborhood MultiSelect */}
@@ -417,11 +389,6 @@ export function Event({
                             value={selectedNeighborhoods}
                             onChange={setSelectedNeighborhoods}
                             placeholder="Neighborhood"
-                            emptyIndicator={
-                            <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
-                                no results found
-                            </p>
-                            }
                         />
                         
                         {/* Cost MultiSelect */}
@@ -430,11 +397,6 @@ export function Event({
                             value={selectedCosts}
                             onChange={setSelectedCosts}
                             placeholder="Cost"
-                            emptyIndicator={
-                            <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
-                                no results found
-                            </p>
-                            }
                         />
 
                         <Button variant="outline" onClick={handleClearAll} className="w-full">
