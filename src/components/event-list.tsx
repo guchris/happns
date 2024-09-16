@@ -12,6 +12,7 @@ import { doc, updateDoc, increment } from "firebase/firestore";
 import { cn } from "@/lib/utils";
 import { Event } from "@/components/types";
 import { useEvent } from "@/app/use-event";
+import { categoryOptions } from "@/lib/selectOptions";
 
 // Shadcn Imports
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -155,6 +156,8 @@ function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: Collaps
                         const formattedEndTime = format(parsedEndTime, "h:mm a");
                         const formattedTime = `${formattedStartTime} - ${formattedEndTime}`;
 
+                        const categoryLabel = categoryOptions.find(option => option.value === item.category)?.label || "Unknown";
+
                         return (
                             <button
                                 key={item.id}
@@ -200,7 +203,7 @@ function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: Collaps
                                     </div>
                                     <div className="inline-flex">
                                         <Badge variant="secondary" className="inline-block hidden md:inline-block">
-                                            {item.category}
+                                            {categoryLabel}
                                         </Badge>
                                     </div>
                                 </div>

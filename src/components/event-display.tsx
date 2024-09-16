@@ -39,6 +39,7 @@ import {
 
 // Other Imports
 import { format, parse } from "date-fns";
+import { categoryOptions, formatOptions, neighborhoodOptions } from "@/lib/selectOptions";
 
 function formatEventDate(dateString: string) {
     if (dateString.includes(" - ")) {
@@ -93,7 +94,9 @@ export function EventDisplay({ event, onBack }: EventDisplayProps) {
     const [loading, setLoading] = useState(false)
     const [isBookmarked, setIsBookmarked] = useState(false)
 
-    const bookmarkCache: { [eventId: string]: boolean } = {};
+    const categoryLabel = categoryOptions.find(option => option.value === event?.category)?.label || "Unknown";
+    const formatLabel = formatOptions.find(option => option.value === event?.format)?.label || "Unknown";
+    const neighborhoodLabel = neighborhoodOptions.find(option => option.value === event?.neighborhood)?.label || "Unknown";
 
     // Fetch comments from Firestore
     useEffect(() => {
@@ -351,19 +354,19 @@ export function EventDisplay({ event, onBack }: EventDisplayProps) {
                                 <div className="text-sm font-medium">
                                     <span className="text-muted-foreground">Category: </span>
                                     <Badge variant="outline" className="inline-block">
-                                        {event.category}
+                                        {categoryLabel}
                                     </Badge>
                                 </div>
                                 <div className="text-sm font-medium">
                                     <span className="text-muted-foreground">Format: </span>
                                     <Badge variant="outline" className="inline-block">
-                                        {event.format}
+                                        {formatLabel}
                                     </Badge>
                                 </div>
                                 <div className="text-sm font-medium">
                                     <span className="text-muted-foreground">Neighborhood: </span>
                                     <Badge variant="outline" className="inline-block">
-                                        {event.neighborhood}
+                                        {neighborhoodLabel}
                                     </Badge>
                                 </div>
                             </div>

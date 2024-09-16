@@ -52,6 +52,7 @@ export const neighborhoodOptions = [
     { value: "mount-baker", label: "Mount Baker" },
     { value: "northgate", label: "Northgate" },
     { value: "pioneer-square", label: "Pioneer Square" },
+    { value: "puyallup", label: "Puyallup" },
     { value: "queen-anne", label: "Queen Anne" },
     { value: "rainier-valley", label: "Rainier Valley" },
     { value: "ravenna", label: "Ravenna" },
