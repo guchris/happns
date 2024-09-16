@@ -42,15 +42,38 @@ export default function Home() {
 
   useEffect(() => {
     const fetchCityEvents = async () => {
+      const today = new Date();
+
       const updatedCities = await Promise.all(cities.map(async (city) => {
         const eventsQuery = query(
           collection(db, "events"),
           where("city", "==", city.slug)
         );
+
         const eventSnapshot = await getDocs(eventsQuery);
-        const totalEvents = eventSnapshot.size;
-  
-        return { ...city, events: totalEvents };
+
+        const totalUpcomingEvents = eventSnapshot.docs.filter(doc => {
+          const eventData = doc.data();
+          const eventDateStr = eventData.date;
+
+          let eventDate;
+
+          // Check if it's a date range (MM/dd/yyyy - MM/dd/yyyy)
+          if (eventDateStr.includes("-")) {
+            const dateRangeParts = eventDateStr.split(" - ");
+            // Use the second date in the range (end date) for comparison
+            const endDateStr = dateRangeParts[1];
+            eventDate = new Date(endDateStr);
+          } else {
+            // Single date format
+            eventDate = new Date(eventDateStr);
+          }
+
+          // Compare the event date with today
+          return eventDate >= today;
+        }).length;
+
+        return { ...city, events: totalUpcomingEvents };
       }));
   
       setCities(updatedCities);
