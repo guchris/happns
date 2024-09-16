@@ -296,7 +296,11 @@ export function Event({
                             </Button>
                         </div>
                         <Separator />
-                        <EventList items={filteredEvents} isVerticalLayout={isVerticalLayout} />
+                        {filteredEvents.length === 0 ? (
+                            <div className="p-8 text-center text-muted-foreground">No events</div>
+                        ) : (
+                            <EventList items={filteredEvents} isVerticalLayout={isVerticalLayout} />
+                        )}
                     </div>
                 ) : (
                     <EventDisplay 
@@ -451,7 +455,11 @@ export function Event({
                     className="h-full items-stretch"
                 >
                     <ResizablePanel defaultSize={defaultLayout[0]} minSize={30} className="h-full overflow-y-auto">
-                        <EventList items={filteredEvents} isVerticalLayout={isVerticalLayout} />
+                        {filteredEvents.length === 0 ? (
+                            <div className="p-8 text-center text-muted-foreground">No events</div>
+                        ) : (
+                            <EventList items={filteredEvents} isVerticalLayout={isVerticalLayout} />
+                        )}
                     </ResizablePanel>
 
                     <ResizableHandle withHandle />
