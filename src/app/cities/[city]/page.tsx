@@ -32,7 +32,7 @@ import {
 import { cityOptions } from "@/lib/selectOptions";
 
 // Other Imports
-import { isAfter, isSameMonth, parse, isWithinInterval } from "date-fns";
+import { isAfter, isSameMonth, parse, isWithinInterval, isToday } from "date-fns";
 
 const eventCache: { [key: string]: Event[] } = {};
 
@@ -112,6 +112,13 @@ export default function CityPage() {
         return isInDateRange && isInCurrentMonth;
     });
 
+    // Filter events happening today
+    const eventsHappeningToday = events.filter((event) => {
+        const { startDate, endDate } = parseEventDate(event.date);
+        return isToday(startDate) || isToday(endDate);
+    });
+
+
     // Sort the events by clicks in descending order and take the top 5
     const topEvents = upcomingEvents
         .sort((a, b) => (b.clicks || 0) - (a.clicks || 0))
@@ -123,7 +130,7 @@ export default function CityPage() {
             <Separator />
             <div className="flex-1 overflow-y-auto p-4">
 
-                <div className="flex flex-col max-w-[800px] mx-auto space-y-4">
+                <div className="flex flex-col max-w-[800px] mx-auto space-y-8">
                     
                     {/* City Cover Photo */}
                     <Link href={`/cities/${city}/explore`}>
@@ -139,42 +146,84 @@ export default function CityPage() {
                         <Button>Explore {cityLabel} Events</Button>
                     </Link>
 
-                    {/* Events Happening Today */}
-                    <div className="space-y-1">
-                        <h2 className="text-lg font-semibold tracking-tight">
-                            Happening This Month
-                        </h2>
-                        <p className="text-sm text-muted-foreground">
-                            Top events in {cityLabel} happening this month.
-                        </p>
-                    </div>
+                    <div className="space-y-2">
+                        {/* Events Happening Today */}
+                        <div className="space-y-1">
+                            <h2 className="text-lg font-semibold tracking-tight">
+                                Happening Today
+                            </h2>
+                            <p className="text-sm">
+                                Top events in {cityLabel} happening today.
+                            </p>
+                        </div>
 
-                    {/* Grid of Event Cards */}
-                    <div className="overflow-x-auto scrollbar-none">
-                        <div className="flex space-x-4 min-w-full">
-                            {topEvents.length > 0 ? (
-                                topEvents.map((event) => (
-                                    <Card key={event.id} className="min-w-[200px] max-w-[250px]">
-                                        <Link href={`/events/${event.id}`}>
-                                            <CardHeader className="p-2">
-                                                <div className="aspect-w-1 aspect-h-1 w-full">
-                                                    <img
-                                                        src={event.image || "/default-event.png"}
-                                                        alt={event.name}
-                                                        className="object-cover w-full h-full rounded-lg"
-                                                    />
-                                                </div>
-                                                <CardTitle className="text-sm font-semibold mt-2">{event.name}</CardTitle>
-                                                <CardDescription className="text-xs text-muted-foreground">{event.date}</CardDescription>
-                                            </CardHeader>
-                                        </Link>
-                                    </Card>
-                                ))
-                                ) : (
-                                    <p className="text-sm text-muted-foreground">No upcoming events this month</p>
-                                )}
+                        {/* Grid of Event Cards for Happening Today */}
+                        <div className="overflow-x-auto scrollbar-none">
+                            <div className="flex space-x-4 min-w-full">
+                                {eventsHappeningToday.length > 0 ? (
+                                    eventsHappeningToday.map((event) => (
+                                        <Card key={event.id} className="min-w-[200px] max-w-[250px]">
+                                            <Link href={`/events/${event.id}`}>
+                                                <CardHeader className="p-2">
+                                                    <div className="aspect-w-1 aspect-h-1 w-full">
+                                                        <img
+                                                            src={event.image || "/default-event.png"}
+                                                            alt={event.name}
+                                                            className="object-cover w-full h-full rounded-lg"
+                                                        />
+                                                    </div>
+                                                    <CardTitle className="text-sm font-semibold mt-2">{event.name}</CardTitle>
+                                                    <CardDescription className="text-xs text-muted-foreground">{event.date}</CardDescription>
+                                                </CardHeader>
+                                            </Link>
+                                        </Card>
+                                    ))
+                                    ) : (
+                                        <p className="text-sm text-muted-foreground">No events happening today</p>
+                                    )}
+                            </div>
                         </div>
                     </div>
+
+                    <div className="space-y-2">
+                        {/* Events Happening This Month */}
+                        <div className="space-y-1">
+                            <h2 className="text-lg font-semibold tracking-tight">
+                                Happening This Month
+                            </h2>
+                            <p className="text-sm">
+                                Top events in {cityLabel} happening this month.
+                            </p>
+                        </div>
+
+                        {/* Grid of Event Cards */}
+                        <div className="overflow-x-auto scrollbar-none">
+                            <div className="flex space-x-4 min-w-full">
+                                {topEvents.length > 0 ? (
+                                    topEvents.map((event) => (
+                                        <Card key={event.id} className="min-w-[200px] max-w-[250px]">
+                                            <Link href={`/events/${event.id}`}>
+                                                <CardHeader className="p-2">
+                                                    <div className="aspect-w-1 aspect-h-1 w-full">
+                                                        <img
+                                                            src={event.image || "/default-event.png"}
+                                                            alt={event.name}
+                                                            className="object-cover w-full h-full rounded-lg"
+                                                        />
+                                                    </div>
+                                                    <CardTitle className="text-sm font-semibold mt-2">{event.name}</CardTitle>
+                                                    <CardDescription className="text-xs text-muted-foreground">{event.date}</CardDescription>
+                                                </CardHeader>
+                                            </Link>
+                                        </Card>
+                                    ))
+                                    ) : (
+                                        <p className="text-sm text-muted-foreground">No upcoming events this month</p>
+                                    )}
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>

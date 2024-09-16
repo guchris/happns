@@ -307,11 +307,11 @@ export function Event({
                             <ToggleGroupItem value="tomorrow" className="w-full px-4 py-2">
                                 Tomorrow
                             </ToggleGroupItem>
+                            <ToggleGroupItem value="this-week" className="w-full px-4 py-2">
+                                This Week
+                            </ToggleGroupItem>
                             <ToggleGroupItem value="this-weekend" className="w-full px-4 py-2">
                                 This Weekend
-                            </ToggleGroupItem>
-                            <ToggleGroupItem value="custom" className="w-full px-4 py-2">
-                                Custom
                             </ToggleGroupItem>
                         </ToggleGroup> */}
 
