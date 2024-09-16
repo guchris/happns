@@ -109,7 +109,7 @@ export default function Home() {
           {cities.map((city) => {
             const citySlug = city.name.toLowerCase().replace(/ /g, "-");
             return (
-              <Link href={`/cities/${citySlug}`} key={city.name}>
+              <Link href={`/${citySlug}`} key={city.name}>
                 <Card className="w-full">
                   <CardHeader className="space-y-2">
                     <CardTitle className="text-base w-full">{city.name}</CardTitle>

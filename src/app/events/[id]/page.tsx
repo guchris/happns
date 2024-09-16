@@ -14,14 +14,11 @@ import { db } from "@/app/firebase";
 // Components Imports
 import { Event } from "@/components/types";
 import { EventDisplay } from "@/components/event-display";
+import { TopBar } from "@/components/top-bar"
 
 // Shadcn Imports
 import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
 import { TooltipProvider } from "@/components/ui/tooltip";
-
-// Icon Imports
-import { PlusCircledIcon } from "@radix-ui/react-icons"
 
 const slugify = (name: string) => {
     return name
@@ -73,18 +70,7 @@ const EventPage = () => {
     return (
         <TooltipProvider>
             <div className="h-screen flex flex-col">
-                <div className="w-full flex items-center justify-between py-4 px-4 h-14 sticky top-0 z-10 bg-white">
-                    <h2 className="text-lg font-semibold">
-                        <Link href="/">happns</Link>
-                        /{slugify(event.name)}
-                    </h2>
-                    <Button>
-                        <PlusCircledIcon className="mr-2 h-4 w-4" />
-                        <Link href="/event-form">
-                            Add event
-                        </Link>
-                    </Button>
-                </div>
+                <TopBar title={`happns/${slugify(event.name)}`} />
                 <Separator />
                 <div className="flex-1 overflow-y-auto">
                     <EventDisplay event={event} onBack={() => router.back()} />

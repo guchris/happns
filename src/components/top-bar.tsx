@@ -42,13 +42,33 @@ export const TopBar: React.FC<TopBarProps> = ({ title }) => {
         router.push("/");
     };
 
+    const titleParts = title.split("/");
+
     return (
         <div className="w-full flex items-center justify-between py-4 px-4 h-14">
-            <Link href="/">
-                <h2 className="text-lg font-semibold cursor-pointer">
-                    {title}
-                </h2>
-            </Link>
+            <div className="text-lg font-semibold">
+
+                <Link href="/" className="cursor-pointer">
+                    {titleParts[0]}/
+                </Link>
+
+                {titleParts[1] && (
+                    <>
+                        {titleParts.length > 2 ? (
+                            <Link href={`/${titleParts[1]}`} className="cursor-pointer">
+                                {titleParts[1]}
+                            </Link>
+                        ) : (
+                            <span>{titleParts[1]}</span>
+                        )}
+                        {titleParts.length > 2 && (
+                            <>
+                                /<span>{titleParts[2]}</span>
+                            </>
+                        )}
+                    </>
+                )}
+            </div>
             {user && userData ? (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>

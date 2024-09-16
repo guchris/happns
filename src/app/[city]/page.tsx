@@ -133,7 +133,7 @@ export default function CityPage() {
                 <div className="flex flex-col max-w-[800px] mx-auto space-y-8">
                     
                     {/* City Cover Photo */}
-                    <Link href={`/cities/${city}/explore`}>
+                    <Link href={`/${city}/explore`}>
                         <img
                             src={`/covers/cover-${city}.png`}
                             alt={`${city} Cover Photo`}
@@ -142,7 +142,7 @@ export default function CityPage() {
                     </Link>
 
                     {/* Explore City Button */}
-                    <Link href={`/cities/${city}/explore`}>
+                    <Link href={`/${city}/explore`}>
                         <Button>Explore {cityLabel} Events</Button>
                     </Link>
 
