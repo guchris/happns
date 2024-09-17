@@ -103,9 +103,11 @@ export const TopBar: React.FC<TopBarProps> = ({ title }) => {
                     </DropdownMenuContent>
                 </DropdownMenu>
             ) : (
-                <Button>
-                    <Link href="/auth">Log In</Link>
-                </Button>
+                <Link href="/auth" passHref>
+                    <Button asChild>
+                        <div>Log In</div>
+                    </Button>
+                </Link>
             )}
         </div>
     )

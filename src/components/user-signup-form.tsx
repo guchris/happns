@@ -192,7 +192,7 @@ export function UserSignupForm({ className, ...props }: UserSignupFormProps) {
                 ) : (
                     <Icons.google className="mr-2 h-4 w-4" />
                 )}
-                Sign in with Google
+                Sign up with Google
             </Button>
         </div>
     )
