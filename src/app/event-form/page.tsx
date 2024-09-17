@@ -257,7 +257,7 @@ export default function EventForm() {
                     console.log("Event added to Firestore with ID:", uuid);
                     toast({
                         title: "Event Submitted ",
-                        description: uuid
+                        description: data.name
                     });
                     router.push("/");
                 })

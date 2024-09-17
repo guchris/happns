@@ -50,6 +50,7 @@ export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
             const userSnap = await getDoc(userRef)
     
             if (!userSnap.exists()) {
+
                 // If user does not exist, create a new record
                 const newUser: User = {
                     uid: user.uid,
@@ -58,13 +59,22 @@ export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
                     email: user.email || "",
                     createdAt: new Date(),
                 }
+
                 await setDoc(userRef, newUser)
+
+                toast({
+                    title: "Account Successfully Created!",
+                    description: "Account data updates are located in the settings."
+                })
+            } else {
+
+                // If user exists, show signed-in message
+                toast({
+                    title: "Signed In",
+                    description: "Welcome back!"
+                })
             }
             
-            toast({
-                title: "Account Successfully Created!",
-                description: "Account data updates are located in the settings."
-            })
             router.push("/")
         } catch (error: any) {
             console.error("Error signing in with Google:", error.message)
