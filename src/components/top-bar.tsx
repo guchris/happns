@@ -23,6 +23,9 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
+// Hook Imports
+import { useToast } from "@/hooks/use-toast"
+
 // Utility Function to get initials
 function getInitials(name: string) {
     const [firstName, lastName] = name.split(" ");
@@ -36,10 +39,14 @@ interface TopBarProps {
 export const TopBar: React.FC<TopBarProps> = ({ title }) => {
     const { user, loading, userData } = useAuth();
     const router = useRouter();
+    const { toast } = useToast();
 
     const handleSignOut = async () => {
         await signOut(auth);
         router.push("/");
+        toast({
+            title: "Logged Out"
+        });
     };
 
     const titleParts = title.split("/");

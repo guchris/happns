@@ -37,11 +37,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             if (userDoc.exists()) {
               setUserData(userDoc.data() as AppUser);
             }
-          }
+          } else {
+            setUserData(null);
+        }
         };
     
         if (user) {
           fetchUserData();
+        } else {
+          setUserData(null);
         }
       }, [user]);
 
