@@ -142,7 +142,7 @@ export default function CityPage() {
                                 <h1 className="text-4xl font-black">{cityLabel}</h1>
                             </div>
                             <p className="text-base text-muted-foreground">
-                                Explore a curated selection of {cityLabel}'s best events and easily plan outings with your friends or discover new connections along the way. From exclusive experiences to hidden gems, happns helps you find the perfect events.
+                                Explore a curated selection of {cityLabel}&#39;s best events and easily plan outings with your friends or discover new connections along the way. From exclusive experiences to hidden gems, happns helps you find the perfect events.
                             </p>
                             <Link href={`/${city}/explore`}>
                                 <Button variant="outline" className="mt-4">Explore {cityLabel} Events</Button>
