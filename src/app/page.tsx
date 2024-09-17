@@ -90,7 +90,7 @@ export default function Home() {
 
       <Separator />
 
-      <div className="w-full max-w-[1192px] mx-auto p-4">
+      <div className="w-full max-w-[880px] mx-auto p-4">
         
         {/* Sponsored AD */}
         <div className="w-full p-4">

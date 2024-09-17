@@ -128,23 +128,40 @@ export default function CityPage() {
         <div className="h-screen flex flex-col">
             <TopBar title={`happns/${city}`} />
             <Separator />
-            <div className="flex-1 overflow-y-auto p-4">
 
-                <div className="flex flex-col max-w-[800px] mx-auto space-y-8">
-                    
-                    {/* City Cover Photo */}
-                    <Link href={`/${city}/explore`}>
-                        <img
-                            src={`/covers/cover-${city}.png`}
-                            alt={`${city} Cover Photo`}
-                            className="w-full h-auto rounded-lg object-cover"
-                        />
-                    </Link>
+            <div className="flex-1 overflow-y-auto">
 
-                    {/* Explore City Button */}
-                    <Link href={`/${city}/explore`}>
-                        <Button>Explore {cityLabel} Events</Button>
-                    </Link>
+                {/* Hero Section */}
+                <div className="bg-gray-100 py-24">
+                    <div className="flex flex-col max-w-[1000px] mx-auto space-y-8 px-4 py-8 lg:flex-row lg:space-x-12 items-center">
+                        
+                        {/* Left Section: City Title and Description */}
+                        <div className="lg:w-1/2 space-y-4">
+                            <div>
+                                <h2 className="text-lg font-bold">Events in</h2>
+                                <h1 className="text-4xl font-black">{cityLabel}</h1>
+                            </div>
+                            <p className="text-base text-muted-foreground">
+                                Explore a curated selection of {cityLabel}'s best events and easily plan outings with your friends or discover new connections along the way. From exclusive experiences to hidden gems, happns helps you find the perfect events.
+                            </p>
+                            <Link href={`/${city}/explore`}>
+                                <Button variant="outline" className="mt-4">Explore {cityLabel} Events</Button>
+                            </Link>
+                        </div>
+
+                        {/* Right Section: City Image */}
+                        <div className="lg:w-1/2">
+                            <img
+                                src={`/covers/cover-${city}.png`} 
+                                alt={`${cityLabel} cover image`} 
+                                className="rounded-lg object-cover w-full h-auto"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Events Section */}
+                <div className="flex flex-col max-w-[1000px] mx-auto space-y-8 px-4 py-16">
 
                     <div className="space-y-2">
                         {/* Events Happening Today */}
@@ -178,9 +195,9 @@ export default function CityPage() {
                                             </Link>
                                         </Card>
                                     ))
-                                    ) : (
-                                        <p className="text-sm text-muted-foreground">No events happening today</p>
-                                    )}
+                                ) : (
+                                    <p className="text-sm text-muted-foreground">No events happening today</p>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -217,13 +234,12 @@ export default function CityPage() {
                                             </Link>
                                         </Card>
                                     ))
-                                    ) : (
-                                        <p className="text-sm text-muted-foreground">No upcoming events this month</p>
-                                    )}
+                                ) : (
+                                    <p className="text-sm text-muted-foreground">No upcoming events this month</p>
+                                )}
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
