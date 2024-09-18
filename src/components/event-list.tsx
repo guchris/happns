@@ -148,7 +148,6 @@ function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: Collaps
                             ? `${format(startDate, "MMM d")} - ${format(endDate, "MMM d")}`
                             : format(startDate, "MMM d");
                         
-                        
                         const [startTime, endTime] = item.time.split(" - ");
                         const parsedStartTime = parse(startTime.trim(), "hh:mm a", new Date());
                         const parsedEndTime = parse(endTime.trim(), "hh:mm a", new Date());
@@ -193,7 +192,7 @@ function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: Collaps
                                         <div className="line-clamp-1 text-xs font-medium">{formattedDate}</div>
                                         <div className="line-clamp-1 text-xs font-medium">{formattedTime}</div>
                                     </div>
-                                    <div className="line-clamp-3 text-xs text-muted-foreground">
+                                    <div className="line-clamp-2 text-xs text-muted-foreground">
                                         {item.description.substring(0, 300)}
                                     </div>
                                     <div className="inline-flex">

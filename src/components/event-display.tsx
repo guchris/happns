@@ -38,7 +38,7 @@ import {
 } from "lucide-react";
 
 // Other Imports
-import { format, parse } from "date-fns";
+import { format, parse, differenceInDays } from "date-fns";
 import { categoryOptions, formatOptions, neighborhoodOptions } from "@/lib/selectOptions";
 
 function formatEventDate(dateString: string) {
@@ -97,6 +97,21 @@ export function EventDisplay({ event, onBack }: EventDisplayProps) {
     const categoryLabel = categoryOptions.find(option => option.value === event?.category)?.label || "Unknown";
     const formatLabel = formatOptions.find(option => option.value === event?.format)?.label || "Unknown";
     const neighborhoodLabel = neighborhoodOptions.find(option => option.value === event?.neighborhood)?.label || "Unknown";
+
+    // Calculate the number of days away from the event start date
+    const { startDate } = parseEventDate(event?.date || "");
+    const daysAway = startDate ? differenceInDays(startDate, today) : null;
+
+    let daysAwayLabel = "";
+    if (daysAway === 0) {
+        daysAwayLabel = "0";
+    } else if (daysAway && daysAway < 0) {
+        daysAwayLabel = "0";
+    } else if (daysAway !== null) {
+        daysAwayLabel = `${daysAway}`;
+    } else {
+        daysAwayLabel = "Date not available";
+    }
 
     // Fetch comments from Firestore
     useEffect(() => {
@@ -367,6 +382,12 @@ export function EventDisplay({ event, onBack }: EventDisplayProps) {
                                     <span className="text-muted-foreground">Neighborhood: </span>
                                     <Badge variant="outline" className="inline-block">
                                         {neighborhoodLabel}
+                                    </Badge>
+                                </div>
+                                <div className="text-sm font-medium">
+                                    <span className="text-muted-foreground">Days Away: </span>
+                                    <Badge variant="outline" className="inline-block">
+                                        {daysAwayLabel}
                                     </Badge>
                                 </div>
                             </div>
