@@ -184,7 +184,7 @@ function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: Collaps
                                     className={cn(
                                         // In vertical layout on mobile, image takes full width, otherwise it is a fixed width
                                         isVerticalLayout ? "w-full" : "w-32",
-                                        "object-cover rounded-lg md:w-48 md:h-auto" // For desktop: fixed width and height adjustment
+                                        "object-cover rounded-lg md:w-40 md:h-auto" // For desktop: fixed width and height adjustment
                                     )}
                                 />
                                 <div className="flex flex-col gap-2 w-full">
