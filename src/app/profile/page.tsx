@@ -61,7 +61,7 @@ export default function ProfilePage() {
     };
 
     return (
-        <div className="h-screen flex flex-col">
+        <div className="min-h-screen flex flex-col">
             <TopBar title={`happns/profile`} />
             <Separator />
 

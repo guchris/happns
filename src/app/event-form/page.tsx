@@ -166,7 +166,7 @@ export default function EventForm() {
     // If user is not logged in, show an unauthorized message
     if (!user) {
         return (
-            <div className="h-screen flex flex-col">
+            <div className="min-h-screen flex flex-col">
                 <TopBar title={`happns/add-event`} />
                 <Separator />
                 <div className="px-4">

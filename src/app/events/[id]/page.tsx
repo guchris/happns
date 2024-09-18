@@ -69,7 +69,7 @@ const EventPage = () => {
 
     return (
         <TooltipProvider>
-            <div className="h-screen flex flex-col">
+            <div className="min-h-screen flex flex-col">
                 <TopBar title={`happns/${slugify(event.name)}`} />
                 <Separator />
                 <div className="flex-1 overflow-y-auto">

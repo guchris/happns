@@ -6,7 +6,7 @@ import { Separator } from "@/components/ui/separator"
 
 export default function SettingsPage() {
     return (
-        <div className="h-screen flex flex-col">
+        <div className="min-h-screen flex flex-col">
             <TopBar title={`happns/settings`} />
             <Separator />
         </div>
