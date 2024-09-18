@@ -134,7 +134,7 @@ export default function CityPage() {
       : topEvents; // For "this month" tab
 
     return (
-        <div className="h-screen flex flex-col">
+        <div className="min-h-screen flex flex-col">
             <TopBar title={`happns/${city}`} />
             <Separator />
 
