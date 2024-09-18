@@ -62,9 +62,10 @@ export function UserSignupForm({ className, ...props }: UserSignupFormProps) {
             }
             
             toast({
-                title: "Account Successfully Created!",
-                description: "Account data updates are located in the settings."
+                title: "Account Created",
+                description: `Welcome to happns.`
             })
+
             router.push("/")
         } catch (error: any) {
             console.error("Error signing in with Google:", error.message)

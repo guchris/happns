@@ -71,10 +71,10 @@ export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
                 // If user exists, show signed-in message
                 toast({
                     title: "Signed In",
-                    description: "Welcome back!"
+                    description: `Welcome back.`
                 })
             }
-            
+
             router.push("/")
         } catch (error: any) {
             console.error("Error signing in with Google:", error.message)
@@ -93,6 +93,11 @@ export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
             // Firebase Authentication
             const userCredential = await signInWithEmailAndPassword(auth, email, password)
             const user = userCredential.user
+
+            toast({
+                title: "Signed In",
+                description: `Welcome back.`
+            })
 
             router.push("/")
         } catch (error: any) {
