@@ -18,6 +18,7 @@ import { Event } from "@/components/types";
 // Shadcn Imports
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
     Card,
     CardContent,
@@ -32,12 +33,13 @@ import {
 import { cityOptions } from "@/lib/selectOptions";
 
 // Other Imports
-import { isAfter, isSameMonth, parse, isWithinInterval, isToday } from "date-fns";
+import { isAfter, isSameDay, isSameMonth, addDays, parse } from "date-fns";
 
 const eventCache: { [key: string]: Event[] } = {};
 
 export default function CityPage() {
     const [events, setEvents] = useState<Event[]>([]);
+    const [activeTab, setActiveTab] = useState('today');
     const params = useParams();
 
     const city = typeof params?.city === "string" ? params.city : "";
@@ -104,25 +106,32 @@ export default function CityPage() {
     // Filter events happening today or later, and within the current month
     const upcomingEvents = events.filter((event) => {
         const { startDate, endDate } = parseEventDate(event.date);
-
-        // Check if the event happens today or later, and if it's in the current month
-        const isInDateRange = isAfter(endDate, today) || isWithinInterval(today, { start: startDate, end: endDate });
-        const isInCurrentMonth = isSameMonth(startDate, today);
-
-        return isInDateRange && isInCurrentMonth;
+        return isAfter(endDate, today) && isSameMonth(startDate, today);
     });
 
     // Filter events happening today
     const eventsHappeningToday = events.filter((event) => {
-        const { startDate, endDate } = parseEventDate(event.date);
-        return isToday(startDate) || isToday(endDate);
+        const { startDate } = parseEventDate(event.date);
+        return isSameDay(startDate, today);
     });
 
+    // Filter events happening tomorrow
+    const eventsHappeningTomorrow = events.filter((event) => {
+        const { startDate } = parseEventDate(event.date);
+        return isSameDay(startDate, addDays(today, 1));
+    });
 
-    // Sort the events by clicks in descending order and take the top 5
+    // Sort the events by clicks in descending order and take the top 5 for the month
     const topEvents = upcomingEvents
         .sort((a, b) => (b.clicks || 0) - (a.clicks || 0))
-        .slice(0, 5);
+        .slice(0, 6);
+
+    // Filter events based on the active tab
+    const filteredEvents = activeTab === 'today'
+      ? eventsHappeningToday
+      : activeTab === 'tomorrow'
+      ? eventsHappeningTomorrow
+      : topEvents; // For "this month" tab
 
     return (
         <div className="h-screen flex flex-col">
@@ -133,7 +142,7 @@ export default function CityPage() {
 
                 {/* Hero Section */}
                 <div className="bg-gray-100 py-24">
-                    <div className="flex flex-col max-w-[1000px] mx-auto space-y-8 px-4 py-8 lg:flex-row lg:space-x-12 items-center">
+                    <div className="flex flex-col max-w-[1000px] mx-auto space-y-8 px-4 lg:flex-row lg:space-x-12 items-center">
                         
                         {/* Left Section: City Title and Description */}
                         <div className="lg:w-1/2 space-y-4">
@@ -166,79 +175,99 @@ export default function CityPage() {
                     <div className="space-y-2">
                         {/* Events Happening Today */}
                         <div className="space-y-1">
-                            <h2 className="text-lg font-semibold tracking-tight">
-                                Happening Today
-                            </h2>
-                            <p className="text-sm">
-                                Top events in {cityLabel} happening today.
-                            </p>
+                            <h2 className="text-lg font-semibold tracking-tight">happnings</h2>
                         </div>
 
-                        {/* Grid of Event Cards for Happening Today */}
-                        <div className="overflow-x-auto scrollbar-none">
-                            <div className="flex space-x-4 min-w-full">
-                                {eventsHappeningToday.length > 0 ? (
-                                    eventsHappeningToday.map((event) => (
-                                        <Card key={event.id} className="min-w-[200px] max-w-[250px]">
-                                            <Link href={`/events/${event.id}`}>
-                                                <CardHeader className="p-2">
-                                                    <div className="aspect-w-1 aspect-h-1 w-full">
-                                                        <img
-                                                            src={event.image || "/default-event.png"}
-                                                            alt={event.name}
-                                                            className="object-cover w-full h-full rounded-lg"
-                                                        />
-                                                    </div>
-                                                    <CardTitle className="text-sm font-semibold mt-2">{event.name}</CardTitle>
-                                                    <CardDescription className="text-xs text-muted-foreground">{event.date}</CardDescription>
-                                                </CardHeader>
-                                            </Link>
-                                        </Card>
-                                    ))
-                                ) : (
-                                    <p className="text-sm text-muted-foreground">No events happening today</p>
-                                )}
+                        <Tabs defaultValue="today" onValueChange={setActiveTab}>
+                            <div className="mb-4">
+                                <TabsList>
+                                    <TabsTrigger value="today">Today</TabsTrigger>
+                                    <TabsTrigger value="tomorrow">Tomorrow</TabsTrigger>
+                                    <TabsTrigger value="month">This Month</TabsTrigger>
+                                </TabsList>
                             </div>
-                        </div>
-                    </div>
 
-                    <div className="space-y-2">
-                        {/* Events Happening This Month */}
-                        <div className="space-y-1">
-                            <h2 className="text-lg font-semibold tracking-tight">
-                                Happening This Month
-                            </h2>
-                            <p className="text-sm">
-                                Top events in {cityLabel} happening this month.
-                            </p>
-                        </div>
+                            <TabsContent value="today">
+                                {/* Grid of Events for Today */}
+                                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                                    {filteredEvents.length > 0 ? (
+                                        filteredEvents.map((event) => (
+                                            <Card key={event.id} className="w-full">
+                                                <Link href={`/events/${event.id}`}>
+                                                    <CardHeader className="p-2">
+                                                        <div className="aspect-w-1 aspect-h-1 w-full">
+                                                            <img
+                                                                src={event.image}
+                                                                alt={event.name}
+                                                                className="object-cover w-full h-full rounded-lg"
+                                                            />
+                                                        </div>
+                                                        <CardTitle className="text-sm font-semibold mt-2">{event.name}</CardTitle>
+                                                        <CardDescription className="text-xs text-muted-foreground">{event.date}</CardDescription>
+                                                    </CardHeader>
+                                                </Link>
+                                            </Card>
+                                        ))
+                                    ) : (
+                                        <p className="text-sm text-muted-foreground">No events</p>
+                                    )}
+                                </div>
+                            </TabsContent>
 
-                        {/* Grid of Event Cards */}
-                        <div className="overflow-x-auto scrollbar-none">
-                            <div className="flex space-x-4 min-w-full">
-                                {topEvents.length > 0 ? (
-                                    topEvents.map((event) => (
-                                        <Card key={event.id} className="min-w-[200px] max-w-[250px]">
-                                            <Link href={`/events/${event.id}`}>
-                                                <CardHeader className="p-2">
-                                                    <div className="aspect-w-1 aspect-h-1 w-full">
-                                                        <img
-                                                            src={event.image || "/default-event.png"}
-                                                            alt={event.name}
-                                                            className="object-cover w-full h-full rounded-lg"
-                                                        />
-                                                    </div>
-                                                    <CardTitle className="text-sm font-semibold mt-2">{event.name}</CardTitle>
-                                                    <CardDescription className="text-xs text-muted-foreground">{event.date}</CardDescription>
-                                                </CardHeader>
-                                            </Link>
-                                        </Card>
-                                    ))
-                                ) : (
-                                    <p className="text-sm text-muted-foreground">No upcoming events this month</p>
-                                )}
-                            </div>
-                        </div>
+                            <TabsContent value="tomorrow">
+                                {/* Grid of Events for Tomorrow */}
+                                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                                    {filteredEvents.length > 0 ? (
+                                        filteredEvents.map((event) => (
+                                            <Card key={event.id} className="w-full">
+                                                <Link href={`/events/${event.id}`}>
+                                                    <CardHeader className="p-2">
+                                                        <div className="aspect-w-1 aspect-h-1 w-full">
+                                                            <img
+                                                                src={event.image}
+                                                                alt={event.name}
+                                                                className="object-cover w-full h-full rounded-lg"
+                                                            />
+                                                        </div>
+                                                        <CardTitle className="text-sm font-semibold mt-2">{event.name}</CardTitle>
+                                                        <CardDescription className="text-xs text-muted-foreground">{event.date}</CardDescription>
+                                                    </CardHeader>
+                                                </Link>
+                                            </Card>
+                                        ))
+                                    ) : (
+                                        <p className="text-sm text-muted-foreground">No events</p>
+                                    )}
+                                </div>
+                            </TabsContent>
+
+                            <TabsContent value="month">
+                                {/* Grid of Events for This Month */}
+                                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                                    {filteredEvents.length > 0 ? (
+                                        filteredEvents.map((event) => (
+                                            <Card key={event.id} className="w-full">
+                                                <Link href={`/events/${event.id}`}>
+                                                    <CardHeader className="p-2">
+                                                        <div className="aspect-w-1 aspect-h-1 w-full">
+                                                            <img
+                                                                src={event.image}
+                                                                alt={event.name}
+                                                                className="object-cover w-full h-full rounded-lg"
+                                                            />
+                                                        </div>
+                                                        <CardTitle className="text-sm font-semibold mt-2">{event.name}</CardTitle>
+                                                        <CardDescription className="text-xs text-muted-foreground">{event.date}</CardDescription>
+                                                    </CardHeader>
+                                                </Link>
+                                            </Card>
+                                        ))
+                                    ) : (
+                                        <p className="text-sm text-muted-foreground">No events</p>
+                                    )}
+                                </div>
+                            </TabsContent>
+                        </Tabs>
                     </div>
                 </div>
             </div>
