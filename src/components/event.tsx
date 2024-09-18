@@ -166,7 +166,7 @@ export function Event({
     return (
         <TooltipProvider delayDuration={0}>
             {/* Mobile View */}
-            <div className="md:hidden">
+            <div className="min-h-screen md:hidden">
                 {!event.selected ? (
                     <div>
                         <div className="flex items-center px-4 py-2">
