@@ -68,7 +68,7 @@ export default function ExploreCityPage() {
       }, [city]);
 
     return (
-        <div className="min-h-screen flex flex-col">
+        <div className="md:h-screen min-h-screen flex flex-col">
             <TopBar title={`happns/${city}/explore`} />
             <Separator />
             <div className="flex-1 overflow-y-auto">

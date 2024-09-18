@@ -293,7 +293,7 @@ export function Event({
             </div>
 
             {/* Desktop View */}
-            <div className="hidden md:flex h-screen items-stretch">
+            <div className="hidden md:flex h-full items-stretch">
 
                 {/* Filters Section */}
                 <div className="min-w-[250px] max-w-[250px] p-4 space-y-4">
