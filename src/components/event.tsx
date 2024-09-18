@@ -166,7 +166,7 @@ export function Event({
     return (
         <TooltipProvider delayDuration={0}>
             {/* Mobile View */}
-            <div className="min-h-screen md:hidden">
+            <div className="md:hidden">
                 {!event.selected ? (
                     <div>
                         <div className="flex items-center px-4 py-2">
@@ -293,7 +293,7 @@ export function Event({
             </div>
 
             {/* Desktop View */}
-            <div className="hidden md:flex h-full items-stretch">
+            <div className="hidden md:flex h-screen items-stretch">
 
                 {/* Filters Section */}
                 <div className="min-w-[250px] max-w-[250px] p-4 space-y-4">
