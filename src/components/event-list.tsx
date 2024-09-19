@@ -155,7 +155,10 @@ function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: Collaps
                         const formattedEndTime = format(parsedEndTime, "h:mm a");
                         const formattedTime = `${formattedStartTime} - ${formattedEndTime}`;
 
-                        const categoryLabel = categoryOptions.find(option => option.value === item.category)?.label || "Unknown";
+                        const categoryLabels = item.category.map(cat => {
+                            const foundOption = categoryOptions.find(option => option.value === cat);
+                            return foundOption ? foundOption.label : "Unknown";
+                        }).join(", ");
 
                         return (
                             <button
@@ -200,10 +203,15 @@ function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: Collaps
                                             {item.clicks} clicks
                                         </Badge>
                                     </div>
-                                    <div className="inline-flex">
-                                        <Badge variant="secondary" className="inline-block hidden md:inline-block">
-                                            {categoryLabel}
-                                        </Badge>
+                                    <div className="inline-flex gap-1 flex-wrap">
+                                        {item.category.map((cat, index) => {
+                                            const categoryLabel = categoryOptions.find(option => option.value === cat)?.label || "Unknown";
+                                            return (
+                                                <Badge key={index} variant="secondary" className="inline-block">
+                                                    {categoryLabel}
+                                                </Badge>
+                                            );
+                                        })}
                                     </div>
                                 </div>
                             </button>
