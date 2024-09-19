@@ -149,8 +149,14 @@ function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: Collaps
         <div>
             <Collapsible defaultOpen={isOpen} className="p-4" onOpenChange={() => setIsOpen(!isOpen)}>
                 <CollapsibleTrigger className="flex w-full justify-between text-left text-sm font-semibold py-0.5 gap-1">
-                    <span>{triggerDate}</span>
-                    {isOpen ? <Minus className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                    {/* Left-aligned date */}
+                        <span>{triggerDate}</span>
+
+                    {/* Right-aligned number of events */}
+                    <div className="flex items-center">
+                        <span className="text-muted-foreground">{`(${events.length})`}</span>
+                        {isOpen ? <Minus className="w-4 h-4 ml-2" /> : <Plus className="w-4 h-4 ml-2" />}
+                    </div>
                 </CollapsibleTrigger>
                 <CollapsibleContent className="space-y-2 pt-2">
                     {events.map((item) => {
