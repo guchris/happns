@@ -2,6 +2,7 @@ export const categoryOptions = [
     { value: "other", label: "Other" },
     { value: "arts", label: "Arts" },
     { value: "charity", label: "Charity" },
+    { value: "cinema-film", label: "Cinema & Film"},
     { value: "crafts", label: "Crafts" },
     { value: "culture", label: "Culture" },
     { value: "education", label: "Education" },

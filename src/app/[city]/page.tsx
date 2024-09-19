@@ -124,7 +124,7 @@ export default function CityPage() {
     // Sort the events by clicks in descending order and take the top 5 for the month
     const topEvents = upcomingEvents
         .sort((a, b) => (b.clicks || 0) - (a.clicks || 0))
-        .slice(0, 6);
+        .slice(0, 8);
 
     // Filter events based on the active tab
     const filteredEvents = activeTab === 'today'
