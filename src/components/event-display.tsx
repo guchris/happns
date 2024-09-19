@@ -80,6 +80,22 @@ function formatEventTime(timeString: string) {
     }
 }
 
+function formatEventCost(cost: { type: "single" | "range" | "minimum"; value: number | [number, number] }) {
+    switch (cost.type) {
+        case "single":
+            return `$${cost.value}`;
+        case "range":
+            if (Array.isArray(cost.value)) {
+                return `$${cost.value[0]} - $${cost.value[1]}`;
+            }
+            return "";
+        case "minimum":
+            return `$${cost.value}+`;
+        default:
+            return "N/A";
+    }
+}
+
 interface EventDisplayProps {
     event: Event | null
     onBack: () => void
@@ -412,7 +428,9 @@ export function EventDisplay({ event, onBack }: EventDisplayProps) {
                             <Separator orientation="vertical" className="h-auto self-stretch" />
                             <div className="flex-1 p-4">
                                 <div className="text-sm font-medium text-muted-foreground">Cost</div>
-                                <div className="text-sm font-medium">${event.cost}</div>
+                                <div className="text-sm font-medium">
+                                    {event?.cost ? formatEventCost(event.cost) : "N/A"}
+                                </div>
                             </div>
                         </div>
 

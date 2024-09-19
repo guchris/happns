@@ -2,7 +2,10 @@ export interface Event {
     category: string;
     city: string;
     clicks: number;
-    cost: number;
+    cost: {
+        type: "single" | "range" | "minimum";
+        value: number | [number, number]
+    };
     date: string;
     description: string;
     details: string;

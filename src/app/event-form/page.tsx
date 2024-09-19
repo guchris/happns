@@ -32,6 +32,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Calendar } from "@/components/ui/calendar"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import {
     Form,
     FormControl,
@@ -61,6 +62,14 @@ import { CalendarIcon, ExclamationTriangleIcon } from "@radix-ui/react-icons"
 // Other Imports
 import { v4 as uuidv4 } from "uuid";
 
+const costSchema = z.object({
+    type: z.enum(["single", "range", "minimum"]),
+    value: z.union([
+        z.number().nonnegative(), // for single value or minimum
+        z.tuple([z.number().nonnegative(), z.number().nonnegative()]), // for range
+    ]),
+});
+
 const eventFormSchema = z.object({
     category: z.string({
         required_error: "A category is required.",
@@ -68,14 +77,7 @@ const eventFormSchema = z.object({
     city: z.string({
         required_error: "A city is required.",
     }),
-    cost: z
-        .number({
-            required_error: "Cost is required.",
-            invalid_type_error: "Cost must be a number.",
-        })
-        .nonnegative({
-            message: "Cost must be a non-negative number.",
-        }),
+    cost: costSchema,
     description: z
         .string()
         .min(4, {
@@ -153,6 +155,11 @@ export default function EventForm() {
     const form = useForm<EventFormValues>({
         resolver: zodResolver(eventFormSchema),
         mode: "onChange",
+        defaultValues: {
+            cost: {
+                type: "single",
+            },
+        },
     })
 
     // Get the user authentication state from the context
@@ -399,11 +406,71 @@ export default function EventForm() {
                             <FormItem>
                                 <FormLabel>Cost</FormLabel>
                                 <FormControl>
-                                    <Input
-                                        type="number"
-                                        {...field}
-                                        onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                                    />
+                                    <div className="space-y-2">
+                                        {/* Cost Type Toggle Group */}
+                                        <ToggleGroup
+                                            type="single"
+                                            value={field.value?.type ?? "single"}
+                                            onValueChange={(value) => field.onChange({ ...field.value, type: value })} // Update cost type
+                                            className="flex space-x-2 justify-start"
+                                        >
+                                            <ToggleGroupItem value="single" className="px-4 py-2 text-sm font-medium bg-gray-200 hover:bg-gray-300">
+                                                Single Value
+                                            </ToggleGroupItem>
+                                            <ToggleGroupItem value="range" className="px-4 py-2 text-sm font-medium bg-gray-200 hover:bg-gray-300">
+                                                Range
+                                            </ToggleGroupItem>
+                                            <ToggleGroupItem value="minimum" className="px-4 py-2 text-sm font-medium bg-gray-200 hover:bg-gray-300">
+                                                Minimum
+                                            </ToggleGroupItem>
+                                        </ToggleGroup>
+
+                                        {/* Single Value Input */}
+                                        {field.value?.type === "single" && (
+                                            <Input
+                                                type="number"
+                                                placeholder="Enter cost"
+                                                value={typeof field.value?.value === 'number' ? field.value.value : 0}
+                                                onChange={(e) => field.onChange({ ...field.value, value: parseFloat(e.target.value) })}
+                                            />
+                                        )}
+
+                                        {/* Range Inputs */}
+                                        {field.value?.type === "range" && (
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <Input
+                                                    type="number"
+                                                    placeholder="Min cost"
+                                                    onChange={(e) => {
+                                                        // Check if field.value.value is a tuple before updating it
+                                                        const currentValue = Array.isArray(field.value.value) ? field.value.value : [0, 0];
+                                                        field.onChange({ ...field.value, value: [parseFloat(e.target.value), currentValue[1]] });
+                                                    }}
+                                                />
+                                                <Input
+                                                    type="number"
+                                                    placeholder="Max cost"
+                                                    onChange={(e) => {
+                                                        // Check if field.value.value is a tuple before updating it
+                                                        const currentValue = Array.isArray(field.value.value) ? field.value.value : [0, 0];
+                                                        field.onChange({ ...field.value, value: [currentValue[0], parseFloat(e.target.value)] });
+                                                    }}
+                                                />
+                                            </div>
+                                        )}
+
+                                        {/* Minimum Value Input */}
+                                        {field.value?.type === "minimum" && (
+                                            <div className="flex items-center">
+                                                <Input
+                                                    type="number"
+                                                    placeholder="Min cost"
+                                                    onChange={(e) => field.onChange({ ...field.value, value: parseFloat(e.target.value) })}
+                                                />
+                                                <span className="ml-2">+</span>
+                                            </div>
+                                        )}
+                                    </div>
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>

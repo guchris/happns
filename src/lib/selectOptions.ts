@@ -1,6 +1,5 @@
 export const categoryOptions = [
     { value: "other", label: "Other" },
-    { value: "arts", label: "Arts" },
     { value: "charity", label: "Charity" },
     { value: "cinema-film", label: "Cinema & Film"},
     { value: "crafts", label: "Crafts" },
@@ -14,6 +13,7 @@ export const categoryOptions = [
     { value: "holiday-seasonal", label: "Holiday & Seasonal" },
     { value: "music", label: "Music" },
     { value: "nightlife", label: "Nightlife" },
+    { value: "performing-arts", label: "Performing Arts" },
     { value: "politics", label: "Politics" },
     { value: "professional", label: "Professional" },
     { value: "religion", label: "Religion" },
