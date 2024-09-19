@@ -133,16 +133,34 @@ export function Event({
         const isBookmarked = bookmarkedEventIds.includes(e.id)
         const shouldShowEvent = !showBookmarkedEvents || (showBookmarkedEvents && isBookmarked)
 
-        // Filter by cost using selectedCostValues
         const isCostMatch = selectedCostValues.length === 0 || selectedCostValues.some(costValue => {
-            return (
-                (costValue === "free" && e.cost === 0) ||
-                (costValue === "$0-$25" && e.cost > 0 && e.cost <= 25) ||
-                (costValue === "$25-$50" && e.cost > 25 && e.cost <= 50) ||
-                (costValue === "$50-$100" && e.cost > 50 && e.cost <= 100) ||
-                (costValue === "$100+" && e.cost > 100)
-            );
+            if (!e.cost) return false; // No cost information, so no match
+        
+            switch (e.cost.type) {
+                case "single":
+                case "minimum":
+                    if (typeof e.cost.value !== 'number') return false;
+                    return (
+                        (costValue === "free" && e.cost.value === 0) ||
+                        (costValue === "$0-$25" && e.cost.value > 0 && e.cost.value <= 25) ||
+                        (costValue === "$25-$50" && e.cost.value > 25 && e.cost.value <= 50) ||
+                        (costValue === "$50-$100" && e.cost.value > 50 && e.cost.value <= 100) ||
+                        (costValue === "$100+" && e.cost.value > 100)
+                    );
+                case "range":
+                    if (!Array.isArray(e.cost.value)) return false;
+                    const [min, max] = e.cost.value;
+                    return (
+                        (costValue === "$0-$25" && min <= 25) ||
+                        (costValue === "$25-$50" && min <= 50 && max >= 25) ||
+                        (costValue === "$50-$100" && min <= 100 && max >= 50) ||
+                        (costValue === "$100+" && max >= 100)
+                    );
+                default:
+                    return false;
+            }
         });
+        
 
         return (
             (!startDate || isInDateRange) &&
