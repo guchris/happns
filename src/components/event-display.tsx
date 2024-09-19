@@ -110,7 +110,7 @@ export function EventDisplay({ event, onBack }: EventDisplayProps) {
     const [loading, setLoading] = useState(false)
     const [isBookmarked, setIsBookmarked] = useState(false)
 
-    const categoryLabel = categoryOptions.find(option => option.value === event?.category)?.label || "Unknown";
+    const categoryLabels = event?.category?.map(cat => categoryOptions.find(option => option.value === cat)?.label || "Unknown") || [];
     const formatLabel = formatOptions.find(option => option.value === event?.format)?.label || "Unknown";
     const neighborhoodLabel = neighborhoodOptions.find(option => option.value === event?.neighborhood)?.label || "Unknown";
 
@@ -383,10 +383,12 @@ export function EventDisplay({ event, onBack }: EventDisplayProps) {
                             {/* Event Category, Format, Neighborhood */}
                             <div className="grid gap-1">
                                 <div className="text-sm font-medium">
-                                    <span className="text-muted-foreground">Category: </span>
-                                    <Badge variant="outline" className="inline-block">
-                                        {categoryLabel}
-                                    </Badge>
+                                    <span className="text-muted-foreground">Categories: </span>
+                                    {categoryLabels.map((label, index) => (
+                                        <Badge key={index} variant="outline" className="inline-block mr-1">
+                                            {label}
+                                        </Badge>
+                                    ))}
                                 </div>
                                 <div className="text-sm font-medium">
                                     <span className="text-muted-foreground">Format: </span>

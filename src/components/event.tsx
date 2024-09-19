@@ -136,7 +136,7 @@ export function Event({
         const isCostMatch = selectedCostValues.length === 0 || selectedCostValues.some(costValue => {
             if (!e.cost) return false; // No cost information, so no match
         
-            switch (e.cost.type) {
+            switch (e.cost.type) { 
                 case "single":
                 case "minimum":
                     if (typeof e.cost.value !== 'number') return false;
@@ -160,11 +160,15 @@ export function Event({
                     return false;
             }
         });
-        
+
+        // Updated category matching logic to handle array of categories
+        const isCategoryMatch = selectedCategoryValues.length === 0 || 
+        selectedCategoryValues.some(selectedCategory => e.category.includes(selectedCategory));
+    
 
         return (
             (!startDate || isInDateRange) &&
-            (selectedCategoryValues.length === 0 || selectedCategoryValues.includes(e.category)) &&
+            isCategoryMatch &&
             (selectedFormatValues.length === 0 || selectedFormatValues.includes(e.format)) &&
             (selectedNeighborhoodValues.length === 0 || selectedNeighborhoodValues.includes(e.neighborhood)) &&
             isCostMatch &&

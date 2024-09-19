@@ -19,6 +19,7 @@ import { z } from "zod"
 
 // Component Imports
 import { TopBar } from "@/components/top-bar";
+import MultiSelect, { Option } from '@/components/multi-select'
 
 // Lib Imports
 import { cn } from "@/lib/utils"
@@ -71,9 +72,7 @@ const costSchema = z.object({
 });
 
 const eventFormSchema = z.object({
-    category: z.string({
-        required_error: "A category is required.",
-    }),
+    category: z.array(z.string()).min(1, { message: "At least 1 category is required." }).max(3, { message: "You can select up to 3 categories." }),
     city: z.string({
         required_error: "A city is required.",
     }),
@@ -315,20 +314,19 @@ export default function EventForm() {
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Category</FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                    <FormControl>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select a category" />
-                                        </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                        {categoryOptions.map((option) => (
-                                            <SelectItem key={option.value} value={option.value}>
-                                                {option.label}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                                <FormControl>
+                                    <MultiSelect
+                                        options={categoryOptions}
+                                        value={categoryOptions.filter(option => (field.value || []).includes(option.value))}
+                                        onChange={(selectedOptions: Option[]) => {
+                                            field.onChange(selectedOptions.map(option => option.value));
+                                        }}
+                                        maxSelected={3}
+                                    />
+                                </FormControl>
+                                <FormDescription>
+                                    Select up to 3
+                                </FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}

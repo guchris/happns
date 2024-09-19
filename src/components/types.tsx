@@ -1,5 +1,5 @@
 export interface Event {
-    category: string;
+    category: string[];
     city: string;
     clicks: number;
     cost: {
