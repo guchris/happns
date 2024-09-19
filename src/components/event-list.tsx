@@ -31,7 +31,8 @@ import {
 } from "lucide-react";
 
 // Other Imports
-import { format, parse, isWithinInterval } from "date-fns";
+import { format, parse, isWithinInterval, eachDayOfInterval } from "date-fns";
+
 
 interface EventListProps {
     items: Event[]
@@ -79,12 +80,30 @@ export function EventList({ items, isVerticalLayout }: EventListProps) {
         return acc;
     }, {} as Record<string, Event[]>);
 
-    // Sort dates in ascending order based on Date objects
+    // Get the range of dates between the first and last event
+    const sortedEventDates = Object.keys(eventsByDate)
+        .sort((a, b) => parse(a, "MMMM d, yyyy", new Date()).getTime() - parse(b, "MMMM d, yyyy", new Date()).getTime());
+
+    if (sortedEventDates.length > 0) {
+        const firstEventDate = parse(sortedEventDates[0], "MMMM d, yyyy", new Date());
+        const lastEventDate = parse(sortedEventDates[sortedEventDates.length - 1], "MMMM d, yyyy", new Date());
+
+        // Fill in missing dates between the first and last event date
+        const allDates = eachDayOfInterval({ start: firstEventDate, end: lastEventDate });
+        allDates.forEach((date) => {
+            const formattedDate = format(date, "MMMM d, yyyy");
+            if (!eventsByDate[formattedDate]) {
+                eventsByDate[formattedDate] = []; // Add empty array for dates with no events
+            }
+        });
+    }
+
+    // Sort dates again after filling missing dates
     const sortedDates = Object.keys(eventsByDate).sort((a, b) => {
-        const dateA = parse(a, "MMMM d, yyyy", new Date())
-        const dateB = parse(b, "MMMM d, yyyy", new Date())
-        return dateA.getTime() - dateB.getTime()
-    })
+        const dateA = parse(a, "MMMM d, yyyy", new Date());
+        const dateB = parse(b, "MMMM d, yyyy", new Date());
+        return dateA.getTime() - dateB.getTime();
+    });
 
     return (
         <ScrollArea className="h-full">
@@ -107,7 +126,8 @@ interface CollapsibleItemProps {
 }
 
 function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: CollapsibleItemProps) {
-    const [isOpen, setIsOpen] = useState(true)
+    // Default to collapsed if there are no events
+    const [isOpen, setIsOpen] = useState(events.length > 0);
     const [event, setEvent] = useEvent()
 
     // Parse the date for display in the trigger
