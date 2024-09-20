@@ -36,6 +36,10 @@ const EventPage = () => {
     const router = useRouter();
 
     useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
+    useEffect(() => {
         const fetchEvent = async () => {
             if (!id) return;
 
