@@ -36,7 +36,12 @@ const EventPage = () => {
     const router = useRouter();
 
     useEffect(() => {
-        window.scrollTo(0, 0);
+        const scrollContainer = document.querySelector('.scrollable-container'); // Replace with your container's selector
+        if (scrollContainer) {
+            scrollContainer.scrollTo(0, 0);
+        } else {
+            window.scrollTo(0, 0);
+        }
     }, []);
 
     useEffect(() => {
