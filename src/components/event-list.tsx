@@ -1,8 +1,9 @@
 // React Imports
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // Next Imports
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 // Firebase Imports
 import { db } from "@/app/firebase";
@@ -126,24 +127,39 @@ interface CollapsibleItemProps {
 }
 
 function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: CollapsibleItemProps) {
-    // Default to collapsed if there are no events
-    const [isOpen, setIsOpen] = useState(events.length > 0);
+    const [isOpen, setIsOpen] = useState(events.length > 0)
     const [event, setEvent] = useEvent()
+    const router = useRouter()
+    const [isMobile, setIsMobile] = useState(false)
 
     // Parse the date for display in the trigger
     const parsedDate = parse(date, "MMMM d, yyyy", new Date())
     const triggerDate = format(parsedDate, "EEE, MMM d") // Format as "Mon, Sep 2"
 
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth <= 768); // Adjust the breakpoint as needed
+        };
+        handleResize(); // Check on mount
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
     const handleEventClick = async (eventId: string) => {
-        setEvent({ ...event, selected: eventId })
-
-        // Reference the document in Firestore and increment the `clicks` field
+        // Increment the clicks in Firestore
         const eventRef = doc(db, "events", eventId);
-
         await updateDoc(eventRef, {
             clicks: increment(1),
-        })
-    }
+        });
+
+        // If on mobile, navigate directly to the event page without changing the selected state
+        if (isMobile) {
+            router.push(`/events/${eventId}`);
+        } else {
+            // If not on mobile, update the selected event locally
+            setEvent({ ...event, selected: eventId });
+        }
+    };
 
     return (
         <div>
@@ -194,15 +210,7 @@ function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: Collaps
                                     `${isVerticalLayout ? 'flex-col' : 'flex-row'} md:flex-row flex w-full items-start gap-4 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent`,
                                     event.selected === item.id && "bg-muted"
                                 )}
-                                onClick={async () => {
-                                    // Update the selected event locally
-                                    setEvent({
-                                        ...event,
-                                        selected: item.id,
-                                    });
-                        
-                                    handleEventClick(item.id);
-                                }}
+                                onClick={() => handleEventClick(item.id)}
                             >
                                 <Image
                                     src={item.image || "/tempFlyer1.svg"}

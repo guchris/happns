@@ -64,7 +64,17 @@ const EventPage = () => {
     }, [id]);
 
     if (!event) {
-        return <div>Loading event...</div>; 
+        return (
+            <TooltipProvider>
+                <div className="min-h-screen flex flex-col">
+                    <TopBar title={`happns/`} />
+                    <Separator />
+                    <div className="flex-1 overflow-y-auto p-4">
+                        Loading event...
+                    </div>
+                </div>
+            </TooltipProvider>
+        )
     }
 
     return (
