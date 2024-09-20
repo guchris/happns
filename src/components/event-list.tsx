@@ -154,7 +154,7 @@ function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: Collaps
 
                     {/* Right-aligned number of events */}
                     <div className="flex items-center">
-                        <span className="text-muted-foreground">{`(${events.length})`}</span>
+                        <span className="text-muted-foreground">{`${events.length}`}</span>
                         {isOpen ? <Minus className="w-4 h-4 ml-2" /> : <Plus className="w-4 h-4 ml-2" />}
                     </div>
                 </CollapsibleTrigger>

@@ -445,7 +445,7 @@ export function EventDisplay({ event, onBack }: EventDisplayProps) {
                                 <a
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-sm font-medium text-black underline"
+                                    className="text-sm font-medium text-black underline break-words"
                                 >
                                     {event.link}
                                 </a>

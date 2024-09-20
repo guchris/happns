@@ -42,11 +42,6 @@ import {
 // Icon Imports
 import {
     CalendarIcon,
-    ViewHorizontalIcon,
-    ViewVerticalIcon,
-    FontBoldIcon,
-    FontItalicIcon,
-    UnderlineIcon,
     SectionIcon,
     ContainerIcon
 } from "@radix-ui/react-icons"
