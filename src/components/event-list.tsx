@@ -163,96 +163,105 @@ function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: Collaps
 
     return (
         <div>
-            <Collapsible defaultOpen={isOpen} className="p-4" onOpenChange={() => setIsOpen(!isOpen)}>
-                <CollapsibleTrigger className="flex w-full justify-between text-left text-sm font-semibold py-0.5 gap-1">
-                    {/* Left-aligned date */}
-                        <span>{triggerDate}</span>
+            {events.length > 0 ? (
+                <Collapsible defaultOpen={isOpen} className="p-4" onOpenChange={() => setIsOpen(!isOpen)}>
+                    <CollapsibleTrigger className="flex w-full justify-between text-left text-sm font-semibold py-0.5 gap-1">
+                        {/* Left-aligned date */}
+                            <span>{triggerDate}</span>
 
-                    {/* Right-aligned number of events */}
-                    <div className="flex items-center">
-                        <span className="text-muted-foreground">{`${events.length}`}</span>
-                        {isOpen ? <Minus className="w-4 h-4 ml-2" /> : <Plus className="w-4 h-4 ml-2" />}
-                    </div>
-                </CollapsibleTrigger>
-                <CollapsibleContent className="space-y-2 pt-2">
-                    {events.map((item) => {
-                        // Parse start and end dates
-                        const startDate = item.date.includes("-")
-                            ? parse(item.date.split(" - ")[0].trim(), "MM/dd/yyyy", new Date())
-                            : parse(item.date, "MM/dd/yyyy", new Date());
+                        {/* Right-aligned number of events */}
+                        <div className="flex items-center">
+                            <span className="text-muted-foreground">{`${events.length}`}</span>
+                            {isOpen ? <Minus className="w-4 h-4 ml-2" /> : <Plus className="w-4 h-4 ml-2" />}
+                        </div>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="space-y-2 pt-2">
+                        {events.map((item) => {
+                            // Parse start and end dates
+                            const startDate = item.date.includes("-")
+                                ? parse(item.date.split(" - ")[0].trim(), "MM/dd/yyyy", new Date())
+                                : parse(item.date, "MM/dd/yyyy", new Date());
 
-                        const endDate = item.date.includes("-")
-                            ? parse(item.date.split(" - ")[1].trim(), "MM/dd/yyyy", new Date())
-                            : startDate;
+                            const endDate = item.date.includes("-")
+                                ? parse(item.date.split(" - ")[1].trim(), "MM/dd/yyyy", new Date())
+                                : startDate;
 
-                        // Format the display date for rendering
-                        const formattedDate = item.date.includes("-")
-                            ? `${format(startDate, "MMM d")} - ${format(endDate, "MMM d")}`
-                            : format(startDate, "MMM d");
-                        
-                        const [startTime, endTime] = item.time.split(" - ");
-                        const parsedStartTime = parse(startTime.trim(), "hh:mm a", new Date());
-                        const parsedEndTime = parse(endTime.trim(), "hh:mm a", new Date());
-                        const formattedStartTime = format(parsedStartTime, "h:mm a");
-                        const formattedEndTime = format(parsedEndTime, "h:mm a");
-                        const formattedTime = `${formattedStartTime} - ${formattedEndTime}`;
+                            // Format the display date for rendering
+                            const formattedDate = item.date.includes("-")
+                                ? `${format(startDate, "MMM d")} - ${format(endDate, "MMM d")}`
+                                : format(startDate, "MMM d");
+                            
+                            const [startTime, endTime] = item.time.split(" - ");
+                            const parsedStartTime = parse(startTime.trim(), "hh:mm a", new Date());
+                            const parsedEndTime = parse(endTime.trim(), "hh:mm a", new Date());
+                            const formattedStartTime = format(parsedStartTime, "h:mm a");
+                            const formattedEndTime = format(parsedEndTime, "h:mm a");
+                            const formattedTime = `${formattedStartTime} - ${formattedEndTime}`;
 
-                        const categoryLabels = item.category.map(cat => {
-                            const foundOption = categoryOptions.find(option => option.value === cat);
-                            return foundOption ? foundOption.label : "Unknown";
-                        }).join(", ");
+                            const categoryLabels = item.category.map(cat => {
+                                const foundOption = categoryOptions.find(option => option.value === cat);
+                                return foundOption ? foundOption.label : "Unknown";
+                            }).join(", ");
 
-                        return (
-                            <button
-                                key={item.id}
-                                className={cn(
-                                    // If isVerticalLayout is true, apply flex-col (image on top, text below), else apply flex-row for mobile
-                                    `${isVerticalLayout ? 'flex-col' : 'flex-row'} md:flex-row flex w-full items-start gap-4 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent`,
-                                    event.selected === item.id && "bg-muted"
-                                )}
-                                onClick={() => handleEventClick(item.id)}
-                            >
-                                <Image
-                                    src={item.image || "/tempFlyer1.svg"}
-                                    alt={item.name}
-                                    width={150}
-                                    height={150}
+                            return (
+                                <button
+                                    key={item.id}
                                     className={cn(
-                                        // In vertical layout on mobile, image takes full width, otherwise it is a fixed width
-                                        isVerticalLayout ? "w-full" : "w-32",
-                                        "object-cover rounded-lg md:w-40 md:h-auto" // For desktop: fixed width and height adjustment
+                                        // If isVerticalLayout is true, apply flex-col (image on top, text below), else apply flex-row for mobile
+                                        `${isVerticalLayout ? 'flex-col' : 'flex-row'} md:flex-row flex w-full items-start gap-4 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent`,
+                                        event.selected === item.id && "bg-muted"
                                     )}
-                                />
-                                <div className="flex flex-col gap-2 w-full">
-                                    <div className="flex flex-col gap-1">
-                                        <div className="line-clamp-1 font-semibold">{item.name}</div>
-                                        <div className="line-clamp-1 text-xs font-medium">{formattedDate}</div>
-                                        <div className="line-clamp-1 text-xs font-medium">{formattedTime}</div>
+                                    onClick={() => handleEventClick(item.id)}
+                                >
+                                    <Image
+                                        src={item.image || "/tempFlyer1.svg"}
+                                        alt={item.name}
+                                        width={150}
+                                        height={150}
+                                        className={cn(
+                                            // In vertical layout on mobile, image takes full width, otherwise it is a fixed width
+                                            isVerticalLayout ? "w-full" : "w-32",
+                                            "object-cover rounded-lg md:w-40 md:h-auto" // For desktop: fixed width and height adjustment
+                                        )}
+                                    />
+                                    <div className="flex flex-col gap-2 w-full">
+                                        <div className="flex flex-col gap-1">
+                                            <div className="line-clamp-1 font-semibold">{item.name}</div>
+                                            <div className="line-clamp-1 text-xs font-medium hidden md:inline-flex">{formattedDate}</div>
+                                            <div className="line-clamp-1 text-xs font-medium">{formattedTime}</div>
+                                        </div>
+                                        <div className="line-clamp-2 text-xs text-muted-foreground">
+                                            {item.details}
+                                        </div>
+                                        <div className="hidden md:inline-flex">
+                                            <Badge variant="outline" className="inline-block">
+                                                {item.clicks} clicks
+                                            </Badge>
+                                        </div>
+                                        <div className="inline-flex gap-1 flex-wrap">
+                                            {item.category.map((cat, index) => {
+                                                const categoryLabel = categoryOptions.find(option => option.value === cat)?.label || "Unknown";
+                                                return (
+                                                    <Badge key={index} variant="secondary" className="inline-block">
+                                                        {categoryLabel}
+                                                    </Badge>
+                                                );
+                                            })}
+                                        </div>
                                     </div>
-                                    <div className="line-clamp-2 text-xs text-muted-foreground">
-                                        {item.details}
-                                    </div>
-                                    <div className="hidden md:inline-flex">
-                                        <Badge variant="outline" className="inline-block">
-                                            {item.clicks} clicks
-                                        </Badge>
-                                    </div>
-                                    <div className="inline-flex gap-1 flex-wrap">
-                                        {item.category.map((cat, index) => {
-                                            const categoryLabel = categoryOptions.find(option => option.value === cat)?.label || "Unknown";
-                                            return (
-                                                <Badge key={index} variant="secondary" className="inline-block">
-                                                    {categoryLabel}
-                                                </Badge>
-                                            );
-                                        })}
-                                    </div>
-                                </div>
-                            </button>
-                        );
-                    })}
-                </CollapsibleContent>
-            </Collapsible>
+                                </button>
+                            );
+                        })}
+                    </CollapsibleContent>
+                </Collapsible>
+            ) : (
+                <div className="p-4 text-muted-foreground text-sm">
+                    {/* Display date without being clickable if no events */}
+                    <div className="flex justify-between">
+                        <span>{triggerDate}</span>
+                    </div>
+                </div>
+            )}
             {!isLastItem && <Separator />}
         </div>
     )
