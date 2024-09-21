@@ -427,9 +427,6 @@ export function Event({
                 <ResizablePanelGroup
                     direction="horizontal"
                     onLayout={(sizes: number[]) => {
-                        document.cookie = `react-resizable-panels:layout:mail=${JSON.stringify(
-                            sizes
-                        )}`
                     }}
                     className="h-full items-stretch"
                 >
