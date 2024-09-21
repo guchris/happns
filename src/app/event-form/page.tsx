@@ -162,15 +162,23 @@ export default function EventForm() {
     })
 
     // Get the user authentication state from the context
-    const { user, loading } = useAuth();
+    const { user, loading, userData } = useAuth();
 
     // If still checking for login state, show a loading state
     if (loading) {
-        return <div>Loading...</div>;
+        return (
+            <div className="min-h-screen flex flex-col">
+                <TopBar title={`happns/`} />
+                <Separator />
+                <div className="flex-1 overflow-y-auto p-4">
+                    Loading event...
+                </div>
+            </div>
+        )
     }
 
-    // If user is not logged in, show an unauthorized message
-    if (!user) {
+    // If user is not logged in or does not have "curator" role, show an unauthorized message
+    if (!user || userData?.role !== "curator") {
         return (
             <div className="min-h-screen flex flex-col">
                 <TopBar title={`happns/add-event`} />
@@ -180,7 +188,7 @@ export default function EventForm() {
                         <ExclamationTriangleIcon className="h-4 w-4" />
                         <AlertTitle>Not Authorized</AlertTitle>
                         <AlertDescription>
-                            You must be logged in to submit an event. Please <Link href="/login" className="text-blue-500">log in</Link>.
+                            You do not have permission to submit an event. Please <Link href="/" className="text-blue-500">return to the homepage</Link>.
                         </AlertDescription>
                     </Alert>
                 </div>

@@ -57,6 +57,7 @@ export function UserSignupForm({ className, ...props }: UserSignupFormProps) {
                     username: user.email?.split("@")[0] || "user",
                     email: user.email || "",
                     createdAt: new Date(),
+                    role: "general"
                 }
                 await setDoc(userRef, newUser)
             }
@@ -89,6 +90,7 @@ export function UserSignupForm({ className, ...props }: UserSignupFormProps) {
                 username: username,
                 email: email,
                 createdAt: new Date(),
+                role: "general"
             }
 
             await setDoc(doc(db, "users", newUser.uid), newUser)

@@ -94,9 +94,13 @@ export const TopBar: React.FC<TopBarProps> = ({ title }) => {
                             </div>
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>
-                            <Link href="/event-form" className="w-full">Add Event</Link>
-                        </DropdownMenuItem>
+
+                        {userData.role === "curator" && (
+                            <DropdownMenuItem>
+                                <Link href="/event-form" className="w-full">Add Event</Link>
+                            </DropdownMenuItem>
+                        )}
+                        
                         <DropdownMenuItem>
                             <Link href="/profile" className="w-full">Profile</Link>
                         </DropdownMenuItem>
