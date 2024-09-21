@@ -37,7 +37,7 @@ export default function CuratorsPage() {
                         </CardHeader>
                         <CardContent className="text-sm space-y-4">
                             <p>
-                                Curators are vital members of the happns community who play a key role in managing the "Explore" section for their city. As a curator, you have the privilege of adding events to the platform and ensuring that the best events get highlighted.
+                                Curators are vital members of the happns community who play a key role in managing the &quot;Explore&quot; section for their city. As a curator, you have the privilege of adding events to the platform and ensuring that the best events get highlighted.
                             </p>
                             <p>
                                 Curators are compensated for their efforts. You will earn $2 for every valid event you submit, with a maximum of $100 per day.
@@ -72,7 +72,7 @@ export default function CuratorsPage() {
                         </CardHeader>
                         <CardContent className="text-sm space-y-4">
                             <p>
-                                If you’re passionate about events and want to contribute to the happns community, apply to become a curator today! Click the link below to get started.
+                                If you&rsquo;re passionate about events and want to contribute to the happns community, apply to become a curator today! Click the link below to get started.
                             </p>
                             <div className="flex justify-left">
                                 <Link href="/" passHref>
