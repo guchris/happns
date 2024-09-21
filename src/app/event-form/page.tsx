@@ -63,20 +63,18 @@ import { CalendarIcon, ExclamationTriangleIcon } from "@radix-ui/react-icons"
 // Other Imports
 import { v4 as uuidv4 } from "uuid";
 
-const costSchema = z.object({
-    type: z.enum(["single", "range", "minimum"]),
-    value: z.union([
-        z.number().nonnegative(), // for single value or minimum
-        z.tuple([z.number().nonnegative(), z.number().nonnegative()]), // for range
-    ]),
-});
-
 const eventFormSchema = z.object({
     category: z.array(z.string()).min(1, { message: "At least 1 category is required." }).max(3, { message: "You can select up to 3 categories." }),
     city: z.string({
         required_error: "A city is required.",
     }),
-    cost: costSchema,
+    cost: z.object({
+        type: z.enum(["single", "range", "minimum"]),
+        value: z.union([
+            z.number().nonnegative(), // for single value or minimum
+            z.tuple([z.number().nonnegative(), z.number().nonnegative()]), // for range
+        ]),
+    }).default({ type: "single", value: 0 }),
     description: z
         .string()
         .min(4, {
@@ -157,7 +155,9 @@ export default function EventForm() {
         defaultValues: {
             cost: {
                 type: "single",
+                value: 0,
             },
+            format: "in-person",
         },
     })
 
