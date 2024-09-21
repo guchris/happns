@@ -14,6 +14,7 @@ import { signOut } from "firebase/auth"
 // Shadcn Imports
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Badge } from "@/components/ui/badge"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -88,11 +89,15 @@ export const TopBar: React.FC<TopBarProps> = ({ title }) => {
                     <DropdownMenuContent className="w-56" align="end" forceMount>
                         <DropdownMenuLabel className="font-normal">
                             <div className="flex flex-col space-y-1">
-                                <p className="text-sm font-medium leading-none">{userData.name}</p>
-                                <p className="text-xs leading-none text-muted-foreground">{userData.username}</p>
-                                <p className="text-xs leading-none text-muted-foreground">{userData.email}</p>
+                                <p className="text-sm font-bold leading-none">{userData.name}</p>
+                                <p className="text-sm leading-none text-muted-foreground">{userData.username}</p>
                             </div>
                         </DropdownMenuLabel>
+                        <div className="px-2 py-2 flex justify-left">
+                            <Badge variant="outline" className="text-xs capitalize">
+                                {userData.role}
+                            </Badge>
+                        </div>
                         <DropdownMenuSeparator />
 
                         {userData.role === "curator" && (
@@ -100,7 +105,7 @@ export const TopBar: React.FC<TopBarProps> = ({ title }) => {
                                 <Link href="/event-form" className="w-full">Add Event</Link>
                             </DropdownMenuItem>
                         )}
-                        
+
                         <DropdownMenuItem>
                             <Link href="/profile" className="w-full">Profile</Link>
                         </DropdownMenuItem>
