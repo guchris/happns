@@ -1,24 +1,24 @@
 "use client";
 
 // React Imports
-import { useEffect, useState } from "react";
+import { useEffect, useState } from "react"
 
 // Next Imports
-import { useParams, useRouter } from "next/navigation";
-import Link from "next/link";
+import { useParams, useRouter } from "next/navigation"
 
 // Firebase Imports
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/app/firebase";
+import { doc, getDoc } from "firebase/firestore"
+import { db } from "@/app/firebase"
 
 // Components Imports
-import { Event } from "@/components/types";
-import { EventDisplay } from "@/components/event-display";
+import { Event } from "@/components/types"
+import { EventDisplay } from "@/components/event-display"
 import { TopBar } from "@/components/top-bar"
+import { Footer } from "@/components/footer"
 
 // Shadcn Imports
-import { Separator } from "@/components/ui/separator";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import { Separator } from "@/components/ui/separator"
+import { TooltipProvider } from "@/components/ui/tooltip"
 
 const slugify = (name: string) => {
     return name
@@ -94,6 +94,7 @@ const EventPage = () => {
                 <div className="flex-1 overflow-y-auto">
                     <EventDisplay event={event} onBack={() => router.back()} />
                 </div>
+                <Footer />
             </div>
         </TooltipProvider>
     );

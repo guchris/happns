@@ -1,23 +1,24 @@
 "use client";
 
 // React Imports
-import { useEffect, useState } from "react";
+import { useEffect, useState } from "react"
 
 // Next Imports
-import { useParams } from "next/navigation";
-import Link from "next/link";
+import { useParams } from "next/navigation"
+import Link from "next/link"
 
 // Firebase Imports
-import { db } from "@/app/firebase";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { db } from "@/app/firebase"
+import { collection, getDocs, query, where } from "firebase/firestore"
 
 // Components Imports
-import { TopBar } from "@/components/top-bar";
-import { Event } from "@/components/types";
+import { TopBar } from "@/components/top-bar"
+import { Footer } from "@/components/footer"
+import { Event } from "@/components/types"
 
 // Shadcn Imports
-import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator"
+import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
     Card,
@@ -30,10 +31,10 @@ import {
   
 
 // Lib Imports
-import { cityOptions } from "@/lib/selectOptions";
+import { cityOptions } from "@/lib/selectOptions"
 
 // Other Imports
-import { isAfter, isSameDay, isSameMonth, addDays, parse } from "date-fns";
+import { isAfter, isSameDay, isSameMonth, addDays, parse } from "date-fns"
 
 const eventCache: { [key: string]: Event[] } = {};
 
@@ -271,6 +272,8 @@ export default function CityPage() {
                     </div>
                 </div>
             </div>
+            
+            <Footer />
         </div>
     );
 }

@@ -12,6 +12,7 @@ import { collection, getDocs, query, where } from "firebase/firestore"
 
 // Components Imports
 import { TopBar } from "@/components/top-bar"
+import { Footer } from "@/components/footer"
 
 // Shadcn Imports
 import { Separator } from "@/components/ui/separator"
@@ -83,14 +84,14 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex flex-col min-h-screen">
 
       {/* Top Bar */}
       <TopBar title="happns" />
 
       <Separator />
 
-      <div className="w-full max-w-[880px] mx-auto p-4">
+      <div className="flex-grow w-full max-w-[880px] mx-auto p-4">
         
         {/* Sponsored AD */}
         <div className="w-full p-4">
@@ -129,6 +130,8 @@ export default function Home() {
           })}
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }
