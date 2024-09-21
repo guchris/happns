@@ -47,7 +47,6 @@ export default function ExploreCityPage() {
                 clicks: doc.data().clicks,
                 cost: doc.data().cost,
                 date: doc.data().date,
-                description: doc.data().description,
                 details: doc.data().details,
                 format: doc.data().format,
                 gmaps: doc.data().gmaps,

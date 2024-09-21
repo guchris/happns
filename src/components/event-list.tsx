@@ -230,10 +230,10 @@ function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: Collaps
                                         <div className="line-clamp-1 text-xs font-medium">{formattedTime}</div>
                                     </div>
                                     <div className="line-clamp-2 text-xs text-muted-foreground">
-                                        {item.description.substring(0, 300)}
+                                        {item.details}
                                     </div>
-                                    <div className="inline-flex">
-                                        <Badge variant="outline" className="inline-block hidden md:inline-block">
+                                    <div className="hidden md:inline-flex">
+                                        <Badge variant="outline" className="inline-block">
                                             {item.clicks} clicks
                                         </Badge>
                                     </div>

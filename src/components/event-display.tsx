@@ -255,7 +255,7 @@ export function EventDisplay({ event, onBack }: EventDisplayProps) {
             : new Date(startDate.getTime() + 3600000).toISOString().replace(/-|:|\.\d\d\d/g, ""); // Default to 1 hour if no end time
     
         // Return the Google Calendar link with the parsed dates
-        return `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.name)}&dates=${startDateTime}/${endDateTime}&details=${encodeURIComponent(event.description)}&location=${encodeURIComponent(event.location)}&sf=true&output=xml`;
+        return `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.name)}&dates=${startDateTime}/${endDateTime}&details=${encodeURIComponent(event.details)}&location=${encodeURIComponent(event.location)}&sf=true&output=xml`;
     }
 
     const addToCalendar = () => {
@@ -451,11 +451,6 @@ export function EventDisplay({ event, onBack }: EventDisplayProps) {
                                 </a>
                             </Link>
                         </div>
-
-                        <Separator />
-
-                        {/* Event Description */}
-                        <div className="flex-1 whitespace-pre-wrap p-4 text-sm">{event.description}</div>
 
                         <Separator />
 

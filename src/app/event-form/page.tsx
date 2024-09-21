@@ -75,14 +75,6 @@ const eventFormSchema = z.object({
             z.tuple([z.number().nonnegative(), z.number().nonnegative()]), // for range
         ]),
     }).default({ type: "single", value: 0 }),
-    description: z
-        .string()
-        .min(4, {
-            message: "Description must be at least 4 characters.",
-        })
-        .max(320, {
-            message: "Description must not be longer than 320 characters.",
-        }),
     details: z
         .string()
         .min(4, {
@@ -250,7 +242,6 @@ export default function EventForm() {
                 city: data.city,
                 clicks: 0,
                 cost: data.cost,
-                description: data.description,
                 details: data.details,
                 date,
                 id: uuid,
@@ -372,19 +363,6 @@ export default function EventForm() {
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Event Name</FormLabel>
-                                <FormControl>
-                                    <Input {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="description"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Description</FormLabel>
                                 <FormControl>
                                     <Input {...field} />
                                 </FormControl>

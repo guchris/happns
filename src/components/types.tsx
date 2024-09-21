@@ -7,7 +7,6 @@ export interface Event {
         value: number | [number, number]
     };
     date: string;
-    description: string;
     details: string;
     format: string;
     gmaps: string;
