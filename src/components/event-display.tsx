@@ -112,7 +112,9 @@ export function EventDisplay({ event, onBack }: EventDisplayProps) {
 
     const categoryLabels = event?.category?.map(cat => categoryOptions.find(option => option.value === cat)?.label || "Unknown") || [];
     const formatLabel = formatOptions.find(option => option.value === event?.format)?.label || "Unknown";
-    const neighborhoodLabel = neighborhoodOptions.find(option => option.value === event?.neighborhood)?.label || "Unknown";
+    const city = event?.city || "";
+    const neighborhoodsForCity = neighborhoodOptions[city] || [];
+    const neighborhoodLabel = neighborhoodsForCity.find(option => option.value === event?.neighborhood)?.label || "Unknown";
 
     // Calculate the number of days away from the event start date
     const { startDate } = parseEventDate(event?.date || "");

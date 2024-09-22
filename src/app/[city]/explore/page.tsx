@@ -73,6 +73,7 @@ export default function ExploreCityPage() {
             <div className="flex-1 overflow-y-auto">
                 <EventComponent
                     events={events}
+                    city={city}
                 />
             </div>
         </div>

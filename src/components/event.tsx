@@ -51,10 +51,12 @@ import { isWithinInterval, parse, format } from "date-fns"
 
 interface EventProps {
     events: Event[]
+    city: string
 }
 
 export function Event({
-    events
+    events,
+    city
 }: EventProps) {
     const [event, setEvent] = useEvent()
     const defaultLayout = [50,50]
@@ -70,6 +72,7 @@ export function Event({
     const [selectedFormats, setSelectedFormats] = useState<Option[]>([]);
     const selectedFormatValues = selectedFormats.map(format => format.value);
     const [selectedNeighborhoods, setSelectedNeighborhoods] = useState<Option[]>([]);
+    const neighborhoodsForCity = neighborhoodOptions[city] || [];
     const selectedNeighborhoodValues = selectedNeighborhoods.map(neighborhood => neighborhood.value);
     const [selectedCosts, setSelectedCosts] = useState<Option[]>([]);
     const selectedCostValues = selectedCosts.map(cost => cost.value);
@@ -262,7 +265,7 @@ export function Event({
 
                                             {/* Neighborhood MultiSelect */}
                                             <MultiSelect
-                                                options={neighborhoodOptions}
+                                                options={neighborhoodsForCity}
                                                 value={selectedNeighborhoods}
                                                 onChange={setSelectedNeighborhoods}
                                                 placeholder="Neighborhood"
@@ -402,7 +405,7 @@ export function Event({
 
                         {/* Neighborhood MultiSelect */}
                         <MultiSelect
-                            options={neighborhoodOptions}
+                            options={neighborhoodsForCity}
                             value={selectedNeighborhoods}
                             onChange={setSelectedNeighborhoods}
                             placeholder="Neighborhood"
