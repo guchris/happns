@@ -159,6 +159,11 @@ export default function EventForm() {
     // Get the user authentication state from the context
     const { user, loading, userData } = useAuth();
 
+    const [selectedCity, setSelectedCity] = useState<string | null>(null);
+    const neighborhoodsForCity = selectedCity ? neighborhoodOptions[selectedCity] : [];
+
+    const hasPermission = !loading && user && userData?.role === "curator";
+
     // If still checking for login state, show a loading state
     if (loading) {
         return (
@@ -173,7 +178,7 @@ export default function EventForm() {
     }
 
     // If user is not logged in or does not have "curator" role, show an unauthorized message
-    if (!user || userData?.role !== "curator") {
+    if (!hasPermission) {
         return (
             <div className="min-h-screen flex flex-col">
                 <TopBar title={`happns/add-event`} />
@@ -190,9 +195,6 @@ export default function EventForm() {
             </div>
         );
     }
-
-    const [selectedCity, setSelectedCity] = useState<string | null>(null);
-    const neighborhoodsForCity = selectedCity ? neighborhoodOptions[selectedCity] : [];
 
     function onSubmit(data: EventFormValues) {
         const storage = getStorage();
