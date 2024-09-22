@@ -26,7 +26,8 @@ import { TooltipProvider } from "@/components/ui/tooltip"
 import { Switch } from "@/components/ui/switch"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
+import { Input } from "@/components/ui/input"
+
 import {
     ResizableHandle,
     ResizablePanel,
@@ -79,6 +80,8 @@ export function Event({
 
     const [startDate, setStartDate] = useState<Date | undefined>(new Date());
     const [endDate, setEndDate] = useState<Date | undefined>(undefined);
+
+    const [searchQuery, setSearchQuery] = useState("");
 
     useEffect(() => {
         if (user) {
@@ -159,9 +162,12 @@ export function Event({
             }
         });
 
-        // Updated category matching logic to handle array of categories
         const isCategoryMatch = selectedCategoryValues.length === 0 || 
         selectedCategoryValues.some(selectedCategory => e.category.includes(selectedCategory));
+
+        
+        const isSearchMatch = e.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                              e.details.toLowerCase().includes(searchQuery.toLowerCase());
     
 
         return (
@@ -170,7 +176,8 @@ export function Event({
             (selectedFormatValues.length === 0 || selectedFormatValues.includes(e.format)) &&
             (selectedNeighborhoodValues.length === 0 || selectedNeighborhoodValues.includes(e.neighborhood)) &&
             isCostMatch &&
-            shouldShowEvent
+            shouldShowEvent &&
+            isSearchMatch
         )
     })
 
@@ -181,6 +188,7 @@ export function Event({
         setSelectedCosts([])
         setStartDate(new Date())
         setEndDate(undefined)
+        setSearchQuery("")
     }
 
     return (
@@ -236,6 +244,8 @@ export function Event({
                                                     </PopoverContent>
                                                 </Popover>
                                             </div>
+
+                                            {/* Bookmarks Toogle */}
                                             {user && (
                                                 <div className="flex items-center w-auto max-w-fit border border-[hsl(var(--border))] rounded-md px-2 py-1.5">
                                                     <Switch
@@ -246,6 +256,15 @@ export function Event({
                                                     <span className="text-sm">Bookmarked</span>
                                                 </div>
                                             )}
+
+                                            {/* Search Input */}
+                                            <Input
+                                                type="text"
+                                                placeholder="Search"
+                                                value={searchQuery}
+                                                onChange={(e) => setSearchQuery(e.target.value)}
+                                                className="w-full"
+                                            />
 
                                             {/* Category MultiSelect */}
                                             <MultiSelect
@@ -386,6 +405,15 @@ export function Event({
                                 <span className="text-sm">Bookmarked</span>
                             </div>
                         )}
+
+                        {/* Search Input */}
+                        <Input
+                            type="text"
+                            placeholder="Search"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="w-full"
+                        />
 
                         {/* Category MultiSelect */}
                         <MultiSelect
