@@ -1,5 +1,8 @@
 "use client"
 
+// React Imports
+import { useState } from "react";
+
 // Next Imports
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -188,6 +191,9 @@ export default function EventForm() {
         );
     }
 
+    const [selectedCity, setSelectedCity] = useState<string | null>(null);
+    const neighborhoodsForCity = selectedCity ? neighborhoodOptions[selectedCity] : [];
+
     function onSubmit(data: EventFormValues) {
         const storage = getStorage();
         const eventsCollectionRef = collection(db, "events");
@@ -289,7 +295,13 @@ export default function EventForm() {
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>City</FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <Select
+                                    onValueChange={(value) => {
+                                        field.onChange(value);
+                                        setSelectedCity(value);
+                                    }}
+                                    defaultValue={field.value}
+                                >
                                     <FormControl>
                                         <SelectTrigger>
                                             <SelectValue placeholder="Select a city" />
@@ -601,7 +613,7 @@ export default function EventForm() {
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                        {neighborhoodOptions.map((option) => (
+                                        {neighborhoodsForCity.map((option) => (
                                             <SelectItem key={option.value} value={option.value}>
                                                 {option.label}
                                             </SelectItem>
