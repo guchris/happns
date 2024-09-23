@@ -110,7 +110,7 @@ export function UserLoginForm({ className, onSuccess, ...props }: UserLoginFormP
             }
         } catch (error: any) {
             console.error("Error signing in:", error.message)
-            setError(error.message)
+            setError("Invalid credentials. Have you signed up yet?");
         } finally {
             setIsLoading(false)
         }
