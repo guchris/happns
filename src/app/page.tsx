@@ -1,10 +1,5 @@
-"use client"
-
-// React Imports
-import { useEffect, useState } from "react"
-
 // Next Imports
-import Head from "next/head"
+import { Metadata } from "next"
 import Link from "next/link"
 
 // Firebase Imports
@@ -26,9 +21,7 @@ import {
 } from "@/components/ui/card"
 
 // Icon Imports
-import {
-  CalendarIcon
-} from "@radix-ui/react-icons"
+import { CalendarIcon } from "@radix-ui/react-icons"
 
 const ad = { id: 1, imageUrl: "/ads/ad1.jpg", link: "https://seattle.boo-halloween.com/" }
 const initialCities = [
@@ -38,76 +31,71 @@ const initialCities = [
   { name: "San Francisco", slug: "san-francisco", events: 0, description: "Experience SF's unique mix of tech and creativity. Attend meetups, festivals, and events that showcase the city's innovative and eclectic spirit." },
 ]
 
-export default function Home() {
+// Helper function to get metadata
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: "happns | events in your city",
+    description: "discover curated events happening in your city with happn",
+    openGraph: {
+      title: "happns | events in your city",
+      description: "discover curated events happening in your city with happn",
+      images: ["https://ithappns.com/logo.png"],
+      url: "https://ithappns.com",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "happns | events in your city",
+      description: "discover curated events happening in your city with happn",
+      images: ["https://ithappns.com/logo.png"],
+    },
+  };
+}
 
-  const [cities, setCities] = useState(initialCities);
+// Server-side function to fetch city events
+async function fetchCityEvents() {
+  const today = new Date();
+  const updatedCities = await Promise.all(
+    initialCities.map(async (city) => {
+      const eventsQuery = query(collection(db, "events"), where("city", "==", city.slug));
+      const eventSnapshot = await getDocs(eventsQuery);
 
-  useEffect(() => {
-    const fetchCityEvents = async () => {
-      const today = new Date();
+      // Filter for events happening today or later
+      const totalUpcomingEvents = eventSnapshot.docs.filter((doc) => {
+        const eventData = doc.data();
+        const eventDateStr = eventData.date;
 
-      const updatedCities = await Promise.all(cities.map(async (city) => {
-        const eventsQuery = query(
-          collection(db, "events"),
-          where("city", "==", city.slug)
-        );
+        let eventDate;
+        if (eventDateStr.includes("-")) {
+          // Handle date ranges like "MM/dd/yyyy - MM/dd/yyyy"
+          const endDateStr = eventDateStr.split(" - ")[1];
+          eventDate = new Date(endDateStr);
+        } else {
+          eventDate = new Date(eventDateStr);
+        }
 
-        const eventSnapshot = await getDocs(eventsQuery);
+        return eventDate >= today;
+      }).length;
 
-        const totalUpcomingEvents = eventSnapshot.docs.filter(doc => {
-          const eventData = doc.data();
-          const eventDateStr = eventData.date;
+      return { ...city, events: totalUpcomingEvents };
+    })
+  );
 
-          let eventDate;
+  return updatedCities;
+}
 
-          // Check if it's a date range (MM/dd/yyyy - MM/dd/yyyy)
-          if (eventDateStr.includes("-")) {
-            const dateRangeParts = eventDateStr.split(" - ");
-            // Use the second date in the range (end date) for comparison
-            const endDateStr = dateRangeParts[1];
-            eventDate = new Date(endDateStr);
-          } else {
-            // Single date format
-            eventDate = new Date(eventDateStr);
-          }
+export default async function Home() {
 
-          // Compare the event date with today
-          return eventDate >= today;
-        }).length;
-
-        return { ...city, events: totalUpcomingEvents };
-      }));
-  
-      setCities(updatedCities);
-    };
-  
-    fetchCityEvents();
-  }, []);
+  // Fetch updated cities with event counts
+  const cities = await fetchCityEvents();
 
   return (
     <div className="flex flex-col min-h-screen">
-
-    <Head>
-        <title>happns | events in your city</title>
-        <meta name="description" content="discover curated events happening in your city with happns" />
-        <meta property="og:title" content="happns | events in your city" />
-        <meta property="og:description" content="discover curated events happening in your city with happns" />
-        <meta property="og:image" content="https://ithappns.com/logo.png" />
-        <meta property="og:url" content="https://ithappns.com" />
-        <meta property="og:type" content="website" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="happns | events in your city" />
-        <meta name="twitter:description" content="discover curated events happening in your city with happns" />
-        <meta name="twitter:image" content="https://ithappns.com/logo.png" />
-      </Head>
-
       {/* Top Bar */}
       <TopBar title="happns" />
-
       <Separator />
 
       <div className="flex-grow w-full max-w-[880px] mx-auto p-4">
-        
         {/* Sponsored AD */}
         <div className="w-full p-4">
           <Link href={ad.link}>
