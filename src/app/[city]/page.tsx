@@ -5,6 +5,7 @@ import { useEffect, useState } from "react"
 
 // Next Imports
 import { useParams } from "next/navigation"
+import Head from "next/head"
 import Link from "next/link"
 
 // Firebase Imports
@@ -135,6 +136,20 @@ export default function CityPage() {
 
     return (
         <div className="min-h-screen flex flex-col">
+            <Head>
+                <title>{`happns | events in ${cityLabel}`}</title>
+                <meta name="description" content={`explore curated events happening in ${cityLabel}`} />
+                <meta property="og:title" content={`happns | events in ${cityLabel}`} />
+                <meta property="og:description" content={`explore curated events happening in ${cityLabel}`} />
+                <meta property="og:image" content={`https://ithappns.com/covers/cover-${city}.png`} /> {/* Replace with your image URL */}
+                <meta property="og:url" content={`https://ithappns.com/${city}`} />
+                <meta property="og:type" content="website" />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content={`happns | events in ${cityLabel}`} />
+                <meta name="twitter:description" content={`explore curated events happening in ${cityLabel}`} />
+                <meta name="twitter:image" content={`https://ithappns.com/covers/cover-${city}.png`} /> {/* Replace with your image URL */}
+            </Head>
+
             <TopBar title={`happns/${city}`} />
             <Separator />
 

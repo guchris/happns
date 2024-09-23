@@ -4,6 +4,7 @@
 import { useEffect, useState } from "react"
 
 // Next Imports
+import Head from "next/head"
 import Link from "next/link"
 
 // Firebase Imports
@@ -85,6 +86,20 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen">
+
+    <Head>
+        <title>happns | events in your city</title>
+        <meta name="description" content="discover curated events happening in your city with happns" />
+        <meta property="og:title" content="happns | events in your city" />
+        <meta property="og:description" content="discover curated events happening in your city with happns" />
+        <meta property="og:image" content="https://ithappns.com/logo.png" />
+        <meta property="og:url" content="https://ithappns.com" />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="happns | events in your city" />
+        <meta name="twitter:description" content="discover curated events happening in your city with happns" />
+        <meta name="twitter:image" content="https://ithappns.com/logo.png" />
+      </Head>
 
       {/* Top Bar */}
       <TopBar title="happns" />

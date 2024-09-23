@@ -4,6 +4,7 @@
 import { useEffect, useState } from "react"
 
 // Next Imports
+import Head from "next/head"
 import { useParams, useRouter } from "next/navigation"
 
 // Firebase Imports
@@ -89,6 +90,18 @@ const EventPage = () => {
     return (
         <TooltipProvider>
             <div className="min-h-screen flex flex-col">
+                <Head>
+                    <title>happns | {event.name}</title>
+                    <meta property="og:title" content={event.name} />
+                    <meta property="og:description" content={event.details} />
+                    <meta property="og:image" content={event.image} />
+                    <meta property="og:url" content={`https://ithappns.com/events/${id}`} />
+                    <meta property="og:type" content="website" />
+                    <meta property="twitter:card" content="summary_large_image" />
+                    <meta name="twitter:title" content={event.name} />
+                    <meta name="twitter:description" content={event.details} />
+                    <meta name="twitter:image" content={event.image} />
+                </Head>
                 <TopBar title={`happns/${slugify(event.name)}`} />
                 <Separator />
                 <div className="flex-1 overflow-y-auto">
