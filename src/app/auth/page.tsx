@@ -1,7 +1,7 @@
 "use client"
 
 // React Imports
-import { useEffect, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 
 // Next Imports
 import Link from "next/link"
@@ -141,11 +141,13 @@ export default function AuthPage() {
                                 {isSignUp ? "Enter your details to sign up" : "Enter your email and password"}
                             </p>
                         </div>
-                        {isSignUp ? (
-                            <UserSignupForm onSuccess={handleSuccessfulLogin} />
-                        ) : (
-                            <UserLoginForm onSuccess={handleSuccessfulLogin} />
-                        )}
+                        <Suspense fallback={<div>Loading form...</div>}>
+                            {isSignUp ? (
+                                <UserSignupForm onSuccess={handleSuccessfulLogin} />
+                            ) : (
+                                <UserLoginForm onSuccess={handleSuccessfulLogin} />
+                            )}
+                        </Suspense>
                         <p className="px-8 text-center text-sm text-muted-foreground">
                             By continuing, you agree to our{" "}
                             <Link
