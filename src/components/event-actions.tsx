@@ -3,16 +3,14 @@
 // Next and React Imports
 import { useState, useEffect } from "react";
 
-// Context Imports
+// App Imports
 import { useAuth } from "@/context/AuthContext";
+import { Event } from "@/components/types";
+import { useToast } from "@/hooks/use-toast";
 
 // Firebase Imports
 import { db } from "@/app/firebase";
 import { doc, getDoc, setDoc, deleteDoc } from "firebase/firestore";
-
-// Component and Hook Imports
-import { Event } from "@/components/types";
-import { useToast } from "@/hooks/use-toast";
 
 // Shadcn Imports
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";

@@ -108,7 +108,7 @@ const EventComments = ({ eventId }: EventCommentsProps) => {
                     </Button>
                 </div>
             ) : (
-                <div className="text-sm text-muted-foreground">
+                <div className="p-4 text-sm text-muted-foreground">
                     Please <a href="/auth" className="underline">log in</a> to post a comment.
                 </div>
             )}

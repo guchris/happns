@@ -127,8 +127,6 @@ export function EventDisplay({ event }: EventDisplayProps) {
                 {/* Event Details */}
                 {event ? (
                     <div className="flex flex-1 flex-col">
-
-
                         <div className="p-4">
                             <div className="grid gap-4 text-sm">
 
@@ -156,9 +154,9 @@ export function EventDisplay({ event }: EventDisplayProps) {
                         </div>
 
                         <Separator />
-                        
+
+                        {/* Event Category, Format, Neighborhood */}
                         <div className="flex-1 whitespace-pre-wrap p-4 grid gap-4">
-                            {/* Event Category, Format, Neighborhood */}
                             <div className="grid gap-1">
                                 <div className="text-sm font-medium">
                                     <span className="text-muted-foreground">Categories: </span>
@@ -191,8 +189,8 @@ export function EventDisplay({ event }: EventDisplayProps) {
 
                         <Separator />
                         
+                        {/* Event Location and Cost */}
                         <div className="flex items-center gap-4">
-                            {/* Event Location */}
                             <div className="flex-1 p-4">
                                 <div className="text-sm font-medium text-muted-foreground">Location</div>
                                 <Link href={event.gmaps} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-black underline">
@@ -232,7 +230,8 @@ export function EventDisplay({ event }: EventDisplayProps) {
                         </div>
 
                         <Separator className="mt-auto" />
-
+                        
+                        {/* Event Comments */}
                         <EventComments eventId={event.id} />
                     </div>
                 ) : (

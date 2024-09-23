@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from "firebase/firestore";
+import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, Firestore } from "firebase/firestore";
 import { getAuth, setPersistence, browserSessionPersistence } from "firebase/auth";
 
 const firebaseConfig = {
@@ -16,15 +16,27 @@ const firebaseConfig = {
 // Initialize Firebase app
 const app = initializeApp(firebaseConfig);
 
-// Initialize Firestore with the new persistent local cache and multi-tab support
-const db = initializeFirestore(app, {
-    localCache: persistentLocalCache({
-        tabManager: persistentMultipleTabManager() // Enables multi-tab support for offline persistence
-    })
-});
+let db: Firestore;
+if (typeof window !== "undefined") {
+    // Only initialize Firestore persistence in the browser
+    db = initializeFirestore(app, {
+        localCache: persistentLocalCache({
+            tabManager: persistentMultipleTabManager() // Enables multi-tab support for offline persistence
+        })
+    });
+} else {
+    // Initialize Firestore without persistence for server environments
+    db = initializeFirestore(app, {});
+}
 
 // Initialize Firebase Authentication and set session persistence
 const auth = getAuth(app);
-setPersistence(auth, browserSessionPersistence);
+
+// Set session persistence only in client environment
+if (typeof window !== "undefined") {
+    setPersistence(auth, browserSessionPersistence).catch((error) => {
+        console.error("Failed to set session persistence:", error);
+    });
+}
 
 export { db, auth };
