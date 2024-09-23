@@ -2,7 +2,6 @@
 
 // React Imports
 import * as React from "react"
-import { useRouter, useSearchParams } from "next/navigation"
 
 // Firebase Imports
 import { db, auth } from "@/app/firebase"

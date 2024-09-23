@@ -3,9 +3,6 @@
 // React Imports
 import * as React from "react"
 
-// Next Imports
-import { useRouter, useSearchParams } from "next/navigation"
-
 // Firebase Imports
 import { db, auth } from "@/app/firebase"
 import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth"
