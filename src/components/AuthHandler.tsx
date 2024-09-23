@@ -13,18 +13,17 @@ import { useAuth } from "@/context/AuthContext";
 export default function AuthHandler() {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const { user } = useAuth();
+    const { isAuthenticated } = useAuth();
 
     // Capture the callback URL or use a default value
     const callbackUrl = searchParams?.get("callbackUrl") || "/";
 
     useEffect(() => {
-        // Check if the user is already authenticated
-        if (user) {
+        if (isAuthenticated) {
             // Redirect the user to the callback URL if authenticated
             router.push(callbackUrl);
         }
-    }, [user, callbackUrl, router]);
+    }, [isAuthenticated, callbackUrl, router]);
 
     return (
         <div></div>

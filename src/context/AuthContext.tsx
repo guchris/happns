@@ -16,6 +16,8 @@ interface AuthContextType {
     user: FirebaseUser | null | undefined;
     loading: boolean;
     userData: AppUser | null;
+    isAuthenticated: boolean;
+    setIsAuthenticated: (status: boolean) => void;
 }
 
 interface AuthProviderProps {
@@ -27,6 +29,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [user, loading] = useAuthState(auth);
     const [userData, setUserData] = useState<AppUser | null>(null);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -44,15 +47,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     
         if (user) {
           fetchUserData();
+          setIsAuthenticated(true);
         } else {
           setUserData(null);
+          setIsAuthenticated(false);
         }
       }, [user]);
 
     return (
-        <AuthContext.Provider value={{ user, loading, userData }}>
-            {children}
-        </AuthContext.Provider>
+      <AuthContext.Provider value={{ user, loading, userData, isAuthenticated, setIsAuthenticated }}>
+          {children}
+      </AuthContext.Provider>
     )
 }
 

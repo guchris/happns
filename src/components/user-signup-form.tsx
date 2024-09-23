@@ -21,17 +21,15 @@ import { Label } from "@/components/ui/label"
 import { User } from "@/components/types"
 import { Icons } from "@/components/icons"
 import { useToast } from "@/hooks/use-toast"
+import { useAuth } from "@/context/AuthContext"
 
 interface UserSignupFormProps extends React.HTMLAttributes<HTMLDivElement> {
     onSuccess?: () => void;
 }
 
 export function UserSignupForm({ className, onSuccess, ...props }: UserSignupFormProps) {
-    const router = useRouter()
-    const searchParams = useSearchParams()
+    const { setIsAuthenticated } = useAuth()
     const { toast } = useToast()
-
-    const callbackUrl = searchParams?.get("callbackUrl") || "/"
 
     const [isLoading, setIsLoading] = React.useState<boolean>(false)
     const [name, setName] = React.useState<string>("")
@@ -72,10 +70,9 @@ export function UserSignupForm({ className, onSuccess, ...props }: UserSignupFor
                 description: `Welcome to happns.`
             })
 
+            setIsAuthenticated(true);
             if (onSuccess) {
                 onSuccess();
-            } else {
-                router.push(callbackUrl);
             }
         } catch (error: any) {
             console.error("Error signing in with Google:", error.message)
@@ -104,7 +101,10 @@ export function UserSignupForm({ className, onSuccess, ...props }: UserSignupFor
 
             await setDoc(doc(db, "users", newUser.uid), newUser)
 
-            router.push("/")
+            setIsAuthenticated(true);
+            if (onSuccess) {
+                onSuccess();
+            }
         } catch (error: any) {
             console.error("Error signing up:", error.message)
             setError(error.message)

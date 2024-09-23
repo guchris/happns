@@ -23,17 +23,15 @@ import { Label } from "@/components/ui/label"
 import { User } from "@/components/types"
 import { Icons } from "@/components/icons"
 import { useToast } from "@/hooks/use-toast"
+import { useAuth } from "@/context/AuthContext"
 
 interface UserLoginFormProps extends React.HTMLAttributes<HTMLDivElement> {
     onSuccess?: () => void;
 }
 
 export function UserLoginForm({ className, onSuccess, ...props }: UserLoginFormProps) {
-    const router = useRouter()
-    const searchParams = useSearchParams()
+    const { setIsAuthenticated } = useAuth()
     const { toast } = useToast()
-
-    const callbackUrl = searchParams?.get("callbackUrl") || "/"
 
     const [isLoading, setIsLoading] = React.useState<boolean>(false)
     const [email, setEmail] = React.useState<string>("")
@@ -81,11 +79,11 @@ export function UserLoginForm({ className, onSuccess, ...props }: UserLoginFormP
                 })
             }
 
+            setIsAuthenticated(true);
             if (onSuccess) {
                 onSuccess();
-            } else {
-                router.push(callbackUrl);
             }
+
         } catch (error: any) {
             console.error("Error signing in with Google:", error.message)
             setError(error.message)
@@ -109,10 +107,9 @@ export function UserLoginForm({ className, onSuccess, ...props }: UserLoginFormP
                 description: `Welcome back.`
             })
 
+            setIsAuthenticated(true);
             if (onSuccess) {
                 onSuccess();
-            } else {
-                router.push(callbackUrl);
             }
         } catch (error: any) {
             console.error("Error signing in:", error.message)
