@@ -23,7 +23,7 @@ import { Bookmark, BookmarkCheck, CalendarPlus, Link as LinkIcon } from "lucide-
 import { parse } from "date-fns";
 
 interface EventActionsProps {
-    event: Event;
+    event: Event | null;
 }
 
 function parseEventDate(dateString: string) {
@@ -42,6 +42,8 @@ const EventActions = ({ event }: EventActionsProps) => {
     const { toast } = useToast();
     const { user } = useAuth();
     const [isBookmarked, setIsBookmarked] = useState(false);
+
+    const isDisabled = !event;
 
     useEffect(() => {
         if (user && event) {
@@ -143,6 +145,7 @@ const EventActions = ({ event }: EventActionsProps) => {
                         <Button
                             variant="ghost"
                             size="icon"
+                            disabled={isDisabled}
                             onClick={handleBookmarkClick}
                         >
                             {isBookmarked ? (
@@ -162,7 +165,7 @@ const EventActions = ({ event }: EventActionsProps) => {
             )}
             <Tooltip>
                 <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" onClick={addToCalendar}>
+                    <Button variant="ghost" size="icon" disabled={isDisabled} onClick={addToCalendar}>
                         <CalendarPlus className="h-4 w-4" />
                         <span className="sr-only">Add to Calendar</span>
                     </Button>
@@ -171,7 +174,7 @@ const EventActions = ({ event }: EventActionsProps) => {
             </Tooltip>
             <Tooltip>
                 <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" onClick={handleCopyEventLink}>
+                    <Button variant="ghost" size="icon" disabled={isDisabled} onClick={handleCopyEventLink}>
                         <LinkIcon className="h-4 w-4" />
                         <span className="sr-only">Event Link</span>
                     </Button>

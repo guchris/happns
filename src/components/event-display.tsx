@@ -18,7 +18,7 @@ import { categoryOptions, formatOptions, neighborhoodOptions } from "@/lib/selec
 import { format, parse, differenceInDays } from "date-fns";
 
 interface EventDisplayProps {
-    event: Event;
+    event: Event | null;
 }
 
 function formatEventDate(dateString: string) {
@@ -118,7 +118,10 @@ export function EventDisplay({ event }: EventDisplayProps) {
         <ScrollArea>
             <div className="flex h-full flex-col">
                 <div className="flex items-center justify-between p-2">
-                    <ClientButton />
+                    <div className="md:hidden">
+                        <ClientButton />
+                    </div>
+                    <div></div>
                     <EventActions event={event} />
                 </div>
 
