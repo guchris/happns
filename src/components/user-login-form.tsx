@@ -4,7 +4,7 @@
 import * as React from "react"
 
 // Next Imports
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 
 // Firebase Imports
 import { db, auth } from "@/app/firebase"
@@ -24,11 +24,16 @@ import { User } from "@/components/types"
 import { Icons } from "@/components/icons"
 import { useToast } from "@/hooks/use-toast"
 
-interface UserLoginFormProps extends React.HTMLAttributes<HTMLDivElement> {}
+interface UserLoginFormProps extends React.HTMLAttributes<HTMLDivElement> {
+    onSuccess?: () => void;
+}
 
-export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
+export function UserLoginForm({ className, onSuccess, ...props }: UserLoginFormProps) {
     const router = useRouter()
+    const searchParams = useSearchParams()
     const { toast } = useToast()
+
+    const callbackUrl = searchParams?.get("callbackUrl") || "/"
 
     const [isLoading, setIsLoading] = React.useState<boolean>(false)
     const [email, setEmail] = React.useState<string>("")
@@ -76,7 +81,11 @@ export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
                 })
             }
 
-            router.push("/")
+            if (onSuccess) {
+                onSuccess();
+            } else {
+                router.push(callbackUrl);
+            }
         } catch (error: any) {
             console.error("Error signing in with Google:", error.message)
             setError(error.message)
@@ -100,7 +109,11 @@ export function UserLoginForm({ className, ...props }: UserLoginFormProps) {
                 description: `Welcome back.`
             })
 
-            router.push("/")
+            if (onSuccess) {
+                onSuccess();
+            } else {
+                router.push(callbackUrl);
+            }
         } catch (error: any) {
             console.error("Error signing in:", error.message)
             setError(error.message)

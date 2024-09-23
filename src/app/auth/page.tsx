@@ -1,10 +1,11 @@
 "use client"
 
 // React Imports
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 // Next Imports
 import Link from "next/link"
+import { useRouter, useSearchParams } from "next/navigation"
 
 // Lib Imports
 import { cn } from "@/lib/utils"
@@ -29,6 +30,19 @@ import {
 
 export default function AuthPage() {
     const [isSignUp, setIsSignUp] = useState<boolean>(false)
+    const router = useRouter()
+    const searchParams = useSearchParams()
+
+    // Capture the callbackUrl from search parameters or use a default value
+    const callbackUrl = searchParams?.get("callbackUrl") || "/"
+
+    useEffect(() => {
+        console.log("Received callbackUrl:", callbackUrl);
+    }, [callbackUrl]);
+
+    const handleSuccessfulLogin = () => {
+        router.push(callbackUrl); // Redirect to the callbackUrl
+    };
 
     return (
         <>
@@ -127,7 +141,11 @@ export default function AuthPage() {
                                 {isSignUp ? "Enter your details to sign up" : "Enter your email and password"}
                             </p>
                         </div>
-                        {isSignUp ? <UserSignupForm /> : <UserLoginForm />}
+                        {isSignUp ? (
+                            <UserSignupForm onSuccess={handleSuccessfulLogin} />
+                        ) : (
+                            <UserLoginForm onSuccess={handleSuccessfulLogin} />
+                        )}
                         <p className="px-8 text-center text-sm text-muted-foreground">
                             By continuing, you agree to our{" "}
                             <Link

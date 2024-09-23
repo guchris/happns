@@ -2,7 +2,7 @@
 
 // React Imports
 import * as React from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 
 // Firebase Imports
 import { db, auth } from "@/app/firebase"
@@ -22,11 +22,16 @@ import { User } from "@/components/types"
 import { Icons } from "@/components/icons"
 import { useToast } from "@/hooks/use-toast"
 
-interface UserSignupFormProps extends React.HTMLAttributes<HTMLDivElement> {}
+interface UserSignupFormProps extends React.HTMLAttributes<HTMLDivElement> {
+    onSuccess?: () => void;
+}
 
-export function UserSignupForm({ className, ...props }: UserSignupFormProps) {
+export function UserSignupForm({ className, onSuccess, ...props }: UserSignupFormProps) {
     const router = useRouter()
+    const searchParams = useSearchParams()
     const { toast } = useToast()
+
+    const callbackUrl = searchParams?.get("callbackUrl") || "/"
 
     const [isLoading, setIsLoading] = React.useState<boolean>(false)
     const [name, setName] = React.useState<string>("")
@@ -67,7 +72,11 @@ export function UserSignupForm({ className, ...props }: UserSignupFormProps) {
                 description: `Welcome to happns.`
             })
 
-            router.push("/")
+            if (onSuccess) {
+                onSuccess();
+            } else {
+                router.push(callbackUrl);
+            }
         } catch (error: any) {
             console.error("Error signing in with Google:", error.message)
             setError(error.message)

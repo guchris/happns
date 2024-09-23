@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 // Next Imports
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 
 // Context Imports
 import { useAuth } from "@/context/AuthContext";
@@ -105,6 +106,11 @@ export function EventDisplay({ event, onBack }: EventDisplayProps) {
     const today = new Date()
     const { toast } = useToast()
     const { user, userData } = useAuth()
+
+    const router = useRouter()
+    const pathname = usePathname()
+    const searchParams = useSearchParams()
+    
     const [comments, setComments] = useState<Comment[]>([])
     const [newComment, setNewComment] = useState("")
     const [loading, setLoading] = useState(false)
@@ -498,7 +504,15 @@ export function EventDisplay({ event, onBack }: EventDisplayProps) {
                                 </Button>
                             </div>
                         ) : (
-                            <div className="p-4 text-sm text-muted-foreground">Log in to post a comment.</div>
+                            <div className="p-4 text-sm text-muted-foreground">
+                                <Link 
+                                    href={`/auth?callbackUrl=${encodeURIComponent(`${pathname}${searchParams ? '?' + searchParams.toString() : ''}`)}`} 
+                                    className="underline"
+                                >
+                                    Log in
+                                </Link>{" "}
+                                to post a comment.
+                            </div>
                         )}
                     </div>
                 ) : (
