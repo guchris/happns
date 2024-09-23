@@ -1,11 +1,6 @@
-"use client";
-
-// React Imports
-import { useEffect, useState } from "react"
-
 // Next Imports
-import Head from "next/head"
-import { useParams, useRouter } from "next/navigation"
+import { Metadata } from "next"
+import { notFound } from "next/navigation"
 
 // Firebase Imports
 import { doc, getDoc } from "firebase/firestore"
@@ -21,97 +16,79 @@ import { Footer } from "@/components/footer"
 import { Separator } from "@/components/ui/separator"
 import { TooltipProvider } from "@/components/ui/tooltip"
 
+type EventPageProps = {
+    params: {
+        id: string;
+    };
+};
+
 const slugify = (name: string) => {
     return name
         .toLowerCase()
-        .replace(/\s+/g, '-')
-        .replace(/[^\w\-]+/g, '');
+        .replace(/[^a-z0-9\s]+/g, '')
+        .replace(/\s+/g, '-');
 };
 
-const eventCache: { [id: string]: Event } = {};
+// Define metadata for SEO
+export async function generateMetadata({ params }: EventPageProps): Promise<Metadata> {
+    const id = params.id;
+    const eventDoc = doc(db, "events", id);
+    const eventSnapshot = await getDoc(eventDoc);
 
-const EventPage = () => {
-    const [event, setEvent] = useState<Event | null>(null);
-    const params = useParams();
-    const id = typeof params?.id === "string" ? params.id : null;
-    const router = useRouter();
-
-    useEffect(() => {
-        const scrollContainer = document.querySelector('.scrollable-container');
-        if (scrollContainer) {
-            scrollContainer.scrollTo(0, 0);
-        } else {
-            window.scrollTo(0, 0);
-        }
-    }, []);
-
-    useEffect(() => {
-        const fetchEvent = async () => {
-            if (!id) return;
-
-             // Check if the event is cached
-             if (eventCache[id]) {
-                console.log(`Using cached event data for ID: ${id}`);
-                setEvent(eventCache[id]);
-                return;
-            }
-
-            // Fetch the event from Firestore
-            console.log(`Fetching event with ID: ${id}`);
-            const eventDoc = doc(db, "events", id as string);
-            const eventSnapshot = await getDoc(eventDoc);
-
-            if (eventSnapshot.exists()) {
-                const eventData = eventSnapshot.data() as Event;
-
-                // Cache the fetched event
-                eventCache[id] = eventData;
-
-                setEvent(eventData);
-            }
+    if (!eventSnapshot.exists()) {
+        return {
+            title: "Event Not Found",
+            description: "The event you are looking for does not exist."
         };
-        fetchEvent();
-    }, [id]);
-
-    if (!event) {
-        return (
-            <TooltipProvider>
-                <div className="min-h-screen flex flex-col">
-                    <TopBar title={`happns/`} />
-                    <Separator />
-                    <div className="flex-1 overflow-y-auto p-4">
-                        Loading event...
-                    </div>
-                </div>
-            </TooltipProvider>
-        )
     }
+
+    const event = eventSnapshot.data() as Event;
+
+    return {
+        title: `happns | ${event.name}`,
+        description: event.details,
+        openGraph: {
+            title: event.name,
+            description: event.details,
+            images: event.image,
+            url: `https://ithappns.com/events/${id}`,
+            type: "website"
+        },
+        twitter: {
+            card: "summary_large_image",
+            title: event.name,
+            description: event.details,
+            images: event.image
+        }
+    };
+}
+
+export default async function EventPage({ params }: EventPageProps) {
+    const id = params.id;
+
+    if (!id) {
+        notFound();
+    }
+
+    const eventDoc = doc(db, "events", id);
+    const eventSnapshot = await getDoc(eventDoc);
+
+    if (!eventSnapshot.exists()) {
+        notFound();
+    }
+
+    const event = eventSnapshot.data() as Event;
 
     return (
         <TooltipProvider>
             <div className="min-h-screen flex flex-col">
-                <Head>
-                    <title>happns | {event.name}</title>
-                    <meta property="og:title" content={event.name} />
-                    <meta property="og:description" content={event.details} />
-                    <meta property="og:image" content={event.image} />
-                    <meta property="og:url" content={`https://ithappns.com/events/${id}`} />
-                    <meta property="og:type" content="website" />
-                    <meta property="twitter:card" content="summary_large_image" />
-                    <meta name="twitter:title" content={event.name} />
-                    <meta name="twitter:description" content={event.details} />
-                    <meta name="twitter:image" content={event.image} />
-                </Head>
                 <TopBar title={`happns/${slugify(event.name)}`} />
                 <Separator />
                 <div className="flex-1 overflow-y-auto">
-                    <EventDisplay event={event} onBack={() => router.back()} />
+                    <EventDisplay event={event} />
                 </div>
                 <Footer />
             </div>
         </TooltipProvider>
     );
-
 };
-
-export default EventPage;
