@@ -1,6 +1,3 @@
-// Next Imports
-import type { Metadata } from "next";
-
 // Google Imports
 import { Inter } from "next/font/google";
 
