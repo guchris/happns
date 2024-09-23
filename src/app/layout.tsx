@@ -18,11 +18,6 @@ import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
-  title: "happns",
-  description: "happenings in your city",
-};
-
 export default function RootLayout({
   children,
 }: Readonly<{
