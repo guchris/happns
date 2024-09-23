@@ -1,16 +1,16 @@
 "use client"
 
 // React Imports
-import { Suspense, useEffect, useState } from "react"
+import { Suspense, useState } from "react"
 
 // Next Imports
 import Link from "next/link"
-import { useRouter, useSearchParams } from "next/navigation"
 
 // Lib Imports
 import { cn } from "@/lib/utils"
 
 // Component Imports
+import AuthHandler from "@/components/AuthHandler"
 import { UserLoginForm } from "@/components/user-login-form"
 import { UserSignupForm } from "@/components/user-signup-form"
 
@@ -30,19 +30,6 @@ import {
 
 export default function AuthPage() {
     const [isSignUp, setIsSignUp] = useState<boolean>(false)
-    const router = useRouter()
-    const searchParams = useSearchParams()
-
-    // Capture the callbackUrl from search parameters or use a default value
-    const callbackUrl = searchParams?.get("callbackUrl") || "/"
-
-    useEffect(() => {
-        console.log("Received callbackUrl:", callbackUrl);
-    }, [callbackUrl]);
-
-    const handleSuccessfulLogin = () => {
-        router.push(callbackUrl); // Redirect to the callbackUrl
-    };
 
     return (
         <>
@@ -141,13 +128,11 @@ export default function AuthPage() {
                                 {isSignUp ? "Enter your details to sign up" : "Enter your email and password"}
                             </p>
                         </div>
-                        <Suspense fallback={<div>Loading form...</div>}>
-                            {isSignUp ? (
-                                <UserSignupForm onSuccess={handleSuccessfulLogin} />
-                            ) : (
-                                <UserLoginForm onSuccess={handleSuccessfulLogin} />
-                            )}
-                        </Suspense>
+                        {isSignUp ? (
+                            <UserSignupForm />
+                        ) : (
+                            <UserLoginForm />
+                        )}
                         <p className="px-8 text-center text-sm text-muted-foreground">
                             By continuing, you agree to our{" "}
                             <Link
@@ -162,10 +147,12 @@ export default function AuthPage() {
                                 className="underline underline-offset-4 hover:text-primary"
                             >
                                 Privacy Policy
-                            </Link>
-                            .
+                            </Link>.
                         </p>
                     </div>
+                    <Suspense fallback={<div>Loading...</div>}>
+                        <AuthHandler />
+                    </Suspense>
                 </div>
             </div>
         </>
