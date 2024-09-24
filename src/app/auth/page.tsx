@@ -1,35 +1,36 @@
 "use client"
 
-// React Imports
-import { Suspense, useState } from "react"
-
-// Next Imports
+// Next and React Imports
+import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
+import { Suspense, useState, useEffect } from "react"
 
-// Lib Imports
-import { cn } from "@/lib/utils"
-
-// Component Imports
-import AuthHandler from "@/components/AuthHandler"
+// App Imports
+import AuthHandler from "@/context/AuthHandler"
+import { useAuth } from "@/context/AuthContext"
 import { UserLoginForm } from "@/components/user-login-form"
 import { UserSignupForm } from "@/components/user-signup-form"
+import { cn } from "@/lib/utils"
 
 // Shadcn Imports
 import { Button } from "@/components/ui/button"
 import { buttonVariants } from "@/components/ui/button"
-import {
-    Sheet,
-    SheetClose,
-    SheetContent,
-    SheetDescription,
-    SheetFooter,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger,
-} from "@/components/ui/sheet"
+import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 
 export default function AuthPage() {
-    const [isSignUp, setIsSignUp] = useState<boolean>(false)
+    const { user } = useAuth();
+    const router = useRouter();
+    const searchParams = useSearchParams() || new URLSearchParams();
+
+    const [isSignUp, setIsSignUp] = useState<boolean>(false);
+
+    useEffect(() => {
+        // If user is already logged in, redirect to the specified page or home
+        if (user) {
+            const redirectTo = searchParams.get('redirect') || '/';
+            router.push(redirectTo);
+        }
+    }, [user, router, searchParams]);
 
     return (
         <>

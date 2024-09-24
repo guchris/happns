@@ -1,6 +1,7 @@
 "use client"
 
-// React Imports
+// Next and React Imports
+import { useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
 
 // App Imports
@@ -27,7 +28,9 @@ interface EventCommentsProps {
 
 const EventComments = ({ eventId }: EventCommentsProps) => {
     const { toast } = useToast();
+    const router = useRouter();
     const { user, userData } = useAuth();
+
     const [comments, setComments] = useState<Comment[]>([]);
     const [newComment, setNewComment] = useState("");
     const [loading, setLoading] = useState(false);
@@ -109,7 +112,7 @@ const EventComments = ({ eventId }: EventCommentsProps) => {
                 </div>
             ) : (
                 <div className="p-4 text-sm text-muted-foreground">
-                    Please <a href="/auth" className="underline">log in</a> to post a comment.
+                    Please <a href={`/auth?redirect=${encodeURIComponent(window.location.href)}`} className="underline">log in</a> to post a comment.
                 </div>
             )}
         </>
