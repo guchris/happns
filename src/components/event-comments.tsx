@@ -32,6 +32,14 @@ const EventComments = ({ eventId }: EventCommentsProps) => {
     const [comments, setComments] = useState<Comment[]>([]);
     const [newComment, setNewComment] = useState("");
     const [loading, setLoading] = useState(false);
+    const [redirectUrl, setRedirectUrl] = useState<string | null>(null);
+
+    useEffect(() => {
+        // Set the redirect URL only on the client side
+        if (typeof window !== "undefined") {
+            setRedirectUrl(window.location.href);
+        }
+    }, []);
 
     useEffect(() => {
         if (eventId) {
@@ -110,7 +118,13 @@ const EventComments = ({ eventId }: EventCommentsProps) => {
                 </div>
             ) : (
                 <div className="p-4 text-sm text-muted-foreground">
-                    Please <a href={`/auth?redirect=${encodeURIComponent(window.location.href)}`} className="underline">log in</a> to post a comment.
+                    {redirectUrl ? (
+                        <a href={`/auth?redirect=${encodeURIComponent(redirectUrl)}`} className="underline">
+                            log in
+                        </a>
+                    ) : (
+                        "Loading..."
+                    )}
                 </div>
             )}
         </>
