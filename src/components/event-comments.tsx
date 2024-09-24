@@ -118,13 +118,9 @@ const EventComments = ({ eventId }: EventCommentsProps) => {
                 </div>
             ) : (
                 <div className="p-4 text-sm text-muted-foreground">
-                    {redirectUrl ? (
-                        <a href={`/auth?redirect=${encodeURIComponent(redirectUrl)}`} className="underline">
-                            log in
-                        </a>
-                    ) : (
-                        "Loading..."
-                    )}
+                    Please <a href={`/auth?redirect=${encodeURIComponent(redirectUrl || "/")}`} className="underline">
+                        log in
+                    </a> to post a comment.
                 </div>
             )}
         </>
