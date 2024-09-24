@@ -21,7 +21,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 
 // Other Imports
 import { Plus, Minus } from "lucide-react"
-import { format, parseISO, isWithinInterval, eachDayOfInterval } from "date-fns"
+import { format, parse, parseISO, isWithinInterval, eachDayOfInterval, isValid } from "date-fns"
 
 
 interface EventListProps {
@@ -41,7 +41,6 @@ const getCurrentDateForDisplay = (startDate: Date, endDate: Date) => {
 };
 
 export function EventList({ items, isVerticalLayout }: EventListProps) {
-    const [event, setEvent] = useEvent()
 
     // Group events by the display date (either start date or today's date if within range)
     const eventsByDate = items.reduce((acc, item) => {
@@ -50,12 +49,12 @@ export function EventList({ items, isVerticalLayout }: EventListProps) {
 
         // Use the new logic to determine whether to use today's date or start date
         const displayDate = getCurrentDateForDisplay(startDate, endDate);
-        const formattedDate = format(displayDate, "MMMM d, yyyy");
+        const isoDate = displayDate.toISOString().split("T")[0];
 
-        if (!acc[formattedDate]) {
-            acc[formattedDate] = [];
+        if (!acc[isoDate]) {
+            acc[isoDate] = [];
         }
-        acc[formattedDate].push(item);
+        acc[isoDate].push(item);
         return acc;
     }, {} as Record<string, Event[]>);
 
@@ -70,9 +69,9 @@ export function EventList({ items, isVerticalLayout }: EventListProps) {
         // Fill in missing dates between the first and last event date
         const allDates = eachDayOfInterval({ start: firstEventDate, end: lastEventDate });
         allDates.forEach((date) => {
-            const formattedDate = format(date, "MMMM d, yyyy");
-            if (!eventsByDate[formattedDate]) {
-                eventsByDate[formattedDate] = []; // Add empty array for dates with no events
+            const isoDate = date.toISOString().split("T")[0]; // "YYYY-MM-DD" format
+            if (!eventsByDate[isoDate]) {
+                eventsByDate[isoDate] = []; // Add empty array for dates with no events
             }
         });
     }
@@ -161,13 +160,24 @@ function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: Collaps
                             const formattedDate = startDate.getTime() === endDate.getTime()
                                 ? format(startDate, "MMM d")
                                 : `${format(startDate, "MMM d")} - ${format(endDate, "MMM d")}`;
-                            
-                            const [startTime, endTime] = item.time.split(" - ");
-                            const parsedStartTime = parseISO(`${item.startDate}T${startTime}`);
-                            const parsedEndTime = parseISO(`${item.startDate}T${endTime}`);
-                            const formattedStartTime = format(parsedStartTime, "h:mm a");
-                            const formattedEndTime = format(parsedEndTime, "h:mm a");
-                            const formattedTime = `${formattedStartTime} - ${formattedEndTime}`;
+
+                            // Parse and format time strings separately from dates
+                            let formattedTime = "Time not available";
+                            if (item.time && item.time.includes(" - ")) {
+                                const [startTime, endTime] = item.time.split(" - ");
+                                try {
+                                    // Parse and format time separately from dates
+                                    const parsedStartTime = parse(startTime.trim(), "hh:mm a", new Date());
+                                    const parsedEndTime = parse(endTime.trim(), "hh:mm a", new Date());
+                                    if (isValid(parsedStartTime) && isValid(parsedEndTime)) {
+                                        const formattedStartTime = format(parsedStartTime, "h:mm a");
+                                        const formattedEndTime = format(parsedEndTime, "h:mm a");
+                                        formattedTime = `${formattedStartTime} - ${formattedEndTime}`;
+                                    }
+                                } catch (error) {
+                                    console.error("Error parsing time for event:", item, error);
+                                }
+                            }
 
                             return (
                                 <button
