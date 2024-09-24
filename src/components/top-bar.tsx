@@ -4,8 +4,9 @@
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 
-// Context Imports
+// App Imports
 import { useAuth } from "@/context/AuthContext"
+import { useToast } from "@/hooks/use-toast"
 
 // Firebase Imports
 import { auth } from "@/app/firebase"
@@ -23,9 +24,6 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-
-// Hook Imports
-import { useToast } from "@/hooks/use-toast"
 
 // Utility Function to get initials
 function getInitials(name: string) {
