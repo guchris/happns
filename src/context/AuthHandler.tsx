@@ -15,17 +15,15 @@ export default function AuthHandler() {
     const searchParams = useSearchParams();
     const { isAuthenticated } = useAuth();
 
-    // Capture the callback URL or use a default value
-    const callbackUrl = searchParams?.get("callbackUrl") || "/";
+    // Capture the redirect URL or use a default value
+    const redirectUrl = searchParams?.get("redirect") || "/";
 
     useEffect(() => {
         if (isAuthenticated) {
-            // Redirect the user to the callback URL if authenticated
-            router.push(callbackUrl);
+            // Redirect the user to the redirect URL if authenticated
+            router.push(redirectUrl);
         }
-    }, [isAuthenticated, callbackUrl, router]);
+    }, [isAuthenticated, redirectUrl, router]);
 
-    return (
-        <div></div>
-    );
+    return null;
 }

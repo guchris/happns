@@ -1,9 +1,8 @@
 "use client"
 
 // Next and React Imports
-import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
-import { Suspense, useState, useEffect } from "react"
+import { Suspense, useState } from "react"
 
 // App Imports
 import AuthHandler from "@/context/AuthHandler"
@@ -19,18 +18,7 @@ import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHe
 
 export default function AuthPage() {
     const { user } = useAuth();
-    const router = useRouter();
-    const searchParams = useSearchParams() || new URLSearchParams();
-
     const [isSignUp, setIsSignUp] = useState<boolean>(false);
-
-    useEffect(() => {
-        // If user is already logged in, redirect to the specified page or home
-        if (user) {
-            const redirectTo = searchParams.get('redirect') || '/';
-            router.push(redirectTo);
-        }
-    }, [user, router, searchParams]);
 
     return (
         <>
