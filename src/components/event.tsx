@@ -4,20 +4,18 @@
 import * as React from "react"
 import { useEffect, useState } from "react"
 
-// Firebase Imports
-import { db } from "@/app/firebase";
-import { collection, getDocs } from "firebase/firestore"
-import { useAuth } from "@/context/AuthContext"
-
-// Components Imports
+// App Imports
 import { EventList } from "@/components/event-list"
 import { EventDisplay } from "@/components/event-display"
 import MultiSelect, { Option } from '@/components/multi-select'
-
-// Lib Imports
-import { useEvent } from "@/app/use-event"
+import { useEvent } from "@/hooks/use-event"
 import { type Event } from "@/components/types"
 import { categoryOptions, formatOptions, neighborhoodOptions, costOptions } from "@/lib/selectOptions"
+
+// Firebase Imports
+import { db } from "@/lib/firebase"
+import { collection, getDocs } from "firebase/firestore"
+import { useAuth } from "@/context/AuthContext"
 
 // Shadcn Imports
 import { Separator } from "@/components/ui/separator"
@@ -27,27 +25,11 @@ import { Switch } from "@/components/ui/switch"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
 import { Input } from "@/components/ui/input"
-
-import {
-    ResizableHandle,
-    ResizablePanel,
-    ResizablePanelGroup,
-} from "@/components/ui/resizable"
-import {
-    Sheet,
-    SheetContent,
-    SheetTrigger,
-    SheetClose
-} from "@/components/ui/sheet";
-
-// Icon Imports
-import {
-    CalendarIcon,
-    SectionIcon,
-    ContainerIcon
-} from "@radix-ui/react-icons"
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable"
+import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet"
 
 // Other Imports
+import { CalendarIcon, SectionIcon, ContainerIcon } from "@radix-ui/react-icons"
 import { isWithinInterval, parse, format } from "date-fns"
 
 interface EventProps {

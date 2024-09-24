@@ -2,15 +2,15 @@
 import { Metadata } from "next"
 import { notFound } from "next/navigation"
 
-// Firebase Imports
-import { doc, getDoc } from "firebase/firestore"
-import { db } from "@/app/firebase"
-
-// Components Imports
+// App Imports
 import { Event } from "@/components/types"
 import { EventDisplay } from "@/components/event-display"
 import { TopBar } from "@/components/top-bar"
 import { Footer } from "@/components/footer"
+
+// Firebase Imports
+import { doc, getDoc } from "firebase/firestore"
+import { db } from "@/lib/firebase"
 
 // Shadcn Imports
 import { Separator } from "@/components/ui/separator"
@@ -48,7 +48,7 @@ export async function generateMetadata({ params }: EventPageProps): Promise<Meta
         title: `happns | ${event.name}`,
         description: event.details,
         openGraph: {
-            title: event.name,
+            title: `happns | ${event.name}`,
             description: event.details,
             images: event.image,
             url: `https://ithappns.com/events/${id}`,
@@ -56,7 +56,7 @@ export async function generateMetadata({ params }: EventPageProps): Promise<Meta
         },
         twitter: {
             card: "summary_large_image",
-            title: event.name,
+            title: `happns | ${event.name}`,
             description: event.details,
             images: event.image
         }

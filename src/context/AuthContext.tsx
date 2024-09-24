@@ -1,16 +1,17 @@
 "use client"
 
 // React Imports
-import React, { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import React, { createContext, useContext, useEffect, useState, ReactNode } from "react"
+
+// App Imports
+import { User as AppUser } from "@/components/types"
 
 // Firebase Imports
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth, db } from "@/app/firebase";
-import { doc, getDoc } from "firebase/firestore";
-import { User as FirebaseUser } from "firebase/auth";
+import { useAuthState } from "react-firebase-hooks/auth"
+import { auth, db } from "@/lib/firebase"
+import { doc, getDoc } from "firebase/firestore"
+import { User as FirebaseUser } from "firebase/auth"
 
-// Component Imports
-import { User as AppUser } from "@/components/types";
 
 interface AuthContextType {
     user: FirebaseUser | null | undefined;

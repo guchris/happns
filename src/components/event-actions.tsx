@@ -1,26 +1,24 @@
-"use client";
+"use client"
 
 // Next and React Imports
-import { useState, useEffect } from "react";
+import { useState, useEffect } from "react"
 
 // App Imports
-import { useAuth } from "@/context/AuthContext";
-import { Event } from "@/components/types";
-import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/context/AuthContext"
+import { Event } from "@/components/types"
+import { useToast } from "@/hooks/use-toast"
 
 // Firebase Imports
-import { db } from "@/app/firebase";
-import { doc, getDoc, setDoc, deleteDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase"
+import { doc, getDoc, setDoc, deleteDoc } from "firebase/firestore"
 
 // Shadcn Imports
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { Button } from "@/components/ui/button";
-
-// Icon Imports
-import { Bookmark, BookmarkCheck, CalendarPlus, Link as LinkIcon } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+import { Button } from "@/components/ui/button"
 
 // Other Imports
-import { parse } from "date-fns";
+import { Bookmark, BookmarkCheck, CalendarPlus, Link as LinkIcon } from "lucide-react"
+import { parse } from "date-fns"
 
 interface EventActionsProps {
     event: Event | null;

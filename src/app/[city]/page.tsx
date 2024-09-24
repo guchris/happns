@@ -3,16 +3,16 @@ import { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 
-// Firebase Imports
-import { db } from "@/app/firebase"
-import { collection, getDocs, query, where } from "firebase/firestore"
-
 // App Imports
 import { TopBar } from "@/components/top-bar"
 import { Footer } from "@/components/footer"
 import { Event } from "@/components/types"
 import EventGrid from "@/components/event-grid"
 import { cityOptions } from "@/lib/selectOptions"
+
+// Firebase Imports
+import { db } from "@/lib/firebase"
+import { collection, getDocs, query, where } from "firebase/firestore"
 
 // Shadcn Imports
 import { Separator } from "@/components/ui/separator"

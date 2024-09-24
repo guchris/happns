@@ -3,24 +3,23 @@
 // React Imports
 import * as React from "react"
 
+// App Imports
+import { User } from "@/components/types"
+import { Icons } from "@/components/icons"
+import { useToast } from "@/hooks/use-toast"
+import { useAuth } from "@/context/AuthContext"
+import { cn } from "@/lib/utils"
+
 // Firebase Imports
-import { db, auth } from "@/app/firebase"
+import { db, auth } from "@/lib/firebase"
 import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth"
 import { doc, setDoc, getDoc } from "firebase/firestore"
-
-// Lib Imports
-import { cn } from "@/lib/utils"
 
 // Shadcn Imports
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
-// Component Imports
-import { User } from "@/components/types"
-import { Icons } from "@/components/icons"
-import { useToast } from "@/hooks/use-toast"
-import { useAuth } from "@/context/AuthContext"
 
 interface UserLoginFormProps extends React.HTMLAttributes<HTMLDivElement> {
     onSuccess?: () => void;

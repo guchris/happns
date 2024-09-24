@@ -1,32 +1,27 @@
 "use client"
 
-// React Imports
-import { useState } from "react";
+// Next and React Imports
+import { useState } from "react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
 
-// Next Imports
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-
-// Context Imports
-import { useAuth } from "@/context/AuthContext";
+// App Imports
+import { useAuth } from "@/context/AuthContext"
+import { TopBar } from "@/components/top-bar"
+import MultiSelect, { Option } from "@/components/multi-select"
+import { cn } from "@/lib/utils"
+import { cityOptions, categoryOptions, formatOptions, neighborhoodOptions } from "@/lib/selectOptions"
+import { useToast } from "@/hooks/use-toast"
 
 // Firebase Imports
-import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { doc, setDoc, collection } from "firebase/firestore";
-import { db } from "@/app/firebase";
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"
+import { doc, setDoc, collection } from "firebase/firestore"
+import { db } from "@/lib/firebase"
 
 // Zod Imports
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form";
 import { z } from "zod"
-
-// Component Imports
-import { TopBar } from "@/components/top-bar";
-import MultiSelect, { Option } from '@/components/multi-select'
-
-// Lib Imports
-import { cn } from "@/lib/utils"
-import { cityOptions, categoryOptions, formatOptions, neighborhoodOptions } from "@/lib/selectOptions";
 
 // Shadcn Imports
 import { format } from "date-fns"
@@ -37,33 +32,12 @@ import { Textarea } from "@/components/ui/textarea"
 import { Calendar } from "@/components/ui/calendar"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
-import {
-    Form,
-    FormControl,
-    FormDescription,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover"
-import { useToast } from "@/hooks/use-toast"
-
-// Icon Imports
-import { CalendarIcon, ExclamationTriangleIcon } from "@radix-ui/react-icons"
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 
 // Other Imports
+import { CalendarIcon, ExclamationTriangleIcon } from "@radix-ui/react-icons"
 import { v4 as uuidv4 } from "uuid";
 
 const eventFormSchema = z.object({

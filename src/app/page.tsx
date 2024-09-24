@@ -2,25 +2,19 @@
 import { Metadata } from "next"
 import Link from "next/link"
 
-// Firebase Imports
-import { db } from "@/app/firebase"
-import { collection, getDocs, query, where } from "firebase/firestore"
-
-// Components Imports
+// App Imports
 import { TopBar } from "@/components/top-bar"
 import { Footer } from "@/components/footer"
 
+// Firebase Imports
+import { db } from "@/lib/firebase"
+import { collection, getDocs, query, where } from "firebase/firestore"
+
 // Shadcn Imports
 import { Separator } from "@/components/ui/separator"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
-// Icon Imports
+// Other Imports
 import { CalendarIcon } from "@radix-ui/react-icons"
 
 const ad = { id: 1, imageUrl: "/ads/ad1.jpg", link: "https://seattle.boo-halloween.com/" }
@@ -91,7 +85,6 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Top Bar */}
       <TopBar title="happns" />
       <Separator />
 

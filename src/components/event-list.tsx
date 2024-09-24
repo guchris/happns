@@ -1,38 +1,27 @@
-// React Imports
-import { useState, useEffect } from "react";
+// Next and React Imports
+import Image from "next/image"
+import { useRouter } from "next/navigation"
+import { useState, useEffect } from "react"
 
-// Next Imports
-import Image from "next/image";
-import { useRouter } from "next/navigation";
+// App Imports
+import { cn } from "@/lib/utils"
+import { Event } from "@/components/types"
+import { useEvent } from "@/hooks/use-event"
+import { categoryOptions } from "@/lib/selectOptions"
 
 // Firebase Imports
-import { db } from "@/app/firebase";
-import { doc, updateDoc, increment } from "firebase/firestore";
-
-// Lib Imports
-import { cn } from "@/lib/utils";
-import { Event } from "@/components/types";
-import { useEvent } from "@/app/use-event";
-import { categoryOptions } from "@/lib/selectOptions";
+import { db } from "@/lib/firebase"
+import { doc, updateDoc, increment } from "firebase/firestore"
 
 // Shadcn Imports
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
-import {
-    Collapsible,
-    CollapsibleContent,
-    CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-
-// Icon Imports
-import {
-    Plus,
-    Minus,
-} from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Separator } from "@/components/ui/separator"
+import { Badge } from "@/components/ui/badge"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 
 // Other Imports
-import { format, parse, isWithinInterval, eachDayOfInterval } from "date-fns";
+import { Plus, Minus } from "lucide-react"
+import { format, parse, isWithinInterval, eachDayOfInterval } from "date-fns"
 
 
 interface EventListProps {

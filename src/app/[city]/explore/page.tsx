@@ -1,19 +1,19 @@
 // Next Imports
-import { Metadata } from "next";
-import { notFound } from "next/navigation";
-
-// Firebase Imports
-import { db } from "@/app/firebase";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { Metadata } from "next"
+import { notFound } from "next/navigation"
 
 // App Imports
-import { TopBar } from "@/components/top-bar";
-import { Event as EventType } from "@/components/types";
-import { Event as EventComponent } from "@/components/event";
-import { cityOptions } from "@/lib/selectOptions";
+import { TopBar } from "@/components/top-bar"
+import { Event as EventType } from "@/components/types"
+import { Event as EventComponent } from "@/components/event"
+import { cityOptions } from "@/lib/selectOptions"
+
+// Firebase Imports
+import { db } from "@/lib/firebase"
+import { collection, getDocs, query, where } from "firebase/firestore"
 
 // Shadcn Imports
-import { Separator } from "@/components/ui/separator";
+import { Separator } from "@/components/ui/separator"
 
 type ExploreCityPageProps = {
     params: {

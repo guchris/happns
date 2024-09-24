@@ -1,24 +1,24 @@
-"use client";
+"use client"
 
 // React Imports
-import { useState, useEffect } from "react";
+import { useState, useEffect } from "react"
 
 // App Imports
-import { useAuth } from "@/context/AuthContext";
-import { Comment } from "@/components/types";
-import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/context/AuthContext"
+import { Comment } from "@/components/types"
+import { useToast } from "@/hooks/use-toast"
 
 // Firebase Imports
-import { db } from "@/app/firebase";
-import { collection, addDoc, query, orderBy, onSnapshot } from "firebase/firestore";
+import { db } from "@/lib/firebase"
+import { collection, addDoc, query, orderBy, onSnapshot } from "firebase/firestore"
 
 // Shadcn Imports
-import { Separator } from "@/components/ui/separator";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator"
+import { Textarea } from "@/components/ui/textarea"
+import { Button } from "@/components/ui/button"
 
 // Other Imports
-import { format } from "date-fns";
+import { format } from "date-fns"
 
 
 interface EventCommentsProps {

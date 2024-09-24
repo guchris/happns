@@ -1,15 +1,15 @@
-"use client";
+"use client"
 
 // Next and React Imports
-import { useState } from "react";
-import Link from "next/link";
+import { useState } from "react"
+import Link from "next/link"
 
 // App Imports
-import { Event } from "@/components/types";
+import { Event } from "@/components/types"
 
 // Shadcn Imports
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 
 type EventGridProps = {
     eventsHappeningToday: Event[];
