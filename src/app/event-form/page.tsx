@@ -173,21 +173,11 @@ export default function EventForm() {
     function onSubmit(data: EventFormValues) {
         const storage = getStorage();
         const eventsCollectionRef = collection(db, "events");
-
-        const startDate = data.startDate;
-        const endDate = data.endDate;
+        
+        const startDate = data.startDate.toISOString();
+        const endDate = data.endDate.toISOString();
         const startTime = data.startTime;
         const endTime = data.endTime;
-
-        // Format the dates as MM/dd/yyyy
-        const formattedStartDate = format(startDate, "MM/dd/yyyy");
-        const formattedEndDate = format(endDate, "MM/dd/yyyy");
-
-        // Construct the date field
-        const date = formattedStartDate === formattedEndDate
-            ? formattedStartDate
-            : `${formattedStartDate} - ${formattedEndDate}`;
-
         const time = startTime === endTime
             ? startTime
             : `${startTime} - ${endTime}`;
@@ -220,13 +210,14 @@ export default function EventForm() {
         uploadImage().then((imageUrl) => {
             const uuid = uuidv4();
             const eventData = {
+                id: uuid,
                 category: data.category,
                 city: data.city,
                 clicks: 0,
                 cost: data.cost,
                 details: data.details,
-                date,
-                id: uuid,
+                startDate,
+                endDate,
                 time,
                 format: data.format,
                 gmaps: data.gmaps,

@@ -21,7 +21,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 
 // Other Imports
 import { Plus, Minus } from "lucide-react"
-import { format, parse, isWithinInterval, eachDayOfInterval } from "date-fns"
+import { format, parseISO, isWithinInterval, eachDayOfInterval } from "date-fns"
 
 
 interface EventListProps {
@@ -45,19 +45,8 @@ export function EventList({ items, isVerticalLayout }: EventListProps) {
 
     // Group events by the display date (either start date or today's date if within range)
     const eventsByDate = items.reduce((acc, item) => {
-        let startDate: Date;
-        let endDate: Date;
-
-        // Handle date ranges like "10/14/2024 - 10/15/2024"
-        if (item.date.includes("-")) {
-            const [startPart, endPart] = item.date.split(" - ");
-            startDate = parse(startPart.trim(), "MM/dd/yyyy", new Date());
-            endDate = parse(endPart.trim(), "MM/dd/yyyy", new Date());
-        } else {
-            // Handle single dates like "09/14/2024"
-            startDate = parse(item.date, "MM/dd/yyyy", new Date());
-            endDate = startDate;
-        }
+        const startDate = parseISO(item.startDate);
+        const endDate = parseISO(item.endDate);
 
         // Use the new logic to determine whether to use today's date or start date
         const displayDate = getCurrentDateForDisplay(startDate, endDate);
@@ -72,11 +61,11 @@ export function EventList({ items, isVerticalLayout }: EventListProps) {
 
     // Get the range of dates between the first and last event
     const sortedEventDates = Object.keys(eventsByDate)
-        .sort((a, b) => parse(a, "MMMM d, yyyy", new Date()).getTime() - parse(b, "MMMM d, yyyy", new Date()).getTime());
+        .sort((a, b) => parseISO(a).getTime() - parseISO(b).getTime());
 
     if (sortedEventDates.length > 0) {
-        const firstEventDate = parse(sortedEventDates[0], "MMMM d, yyyy", new Date());
-        const lastEventDate = parse(sortedEventDates[sortedEventDates.length - 1], "MMMM d, yyyy", new Date());
+        const firstEventDate = parseISO(sortedEventDates[0]);
+        const lastEventDate = parseISO(sortedEventDates[sortedEventDates.length - 1]);
 
         // Fill in missing dates between the first and last event date
         const allDates = eachDayOfInterval({ start: firstEventDate, end: lastEventDate });
@@ -90,9 +79,7 @@ export function EventList({ items, isVerticalLayout }: EventListProps) {
 
     // Sort dates again after filling missing dates
     const sortedDates = Object.keys(eventsByDate).sort((a, b) => {
-        const dateA = parse(a, "MMMM d, yyyy", new Date());
-        const dateB = parse(b, "MMMM d, yyyy", new Date());
-        return dateA.getTime() - dateB.getTime();
+        return parseISO(a).getTime() - parseISO(b).getTime();
     });
 
     return (
@@ -122,8 +109,8 @@ function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: Collaps
     const [isMobile, setIsMobile] = useState(false)
 
     // Parse the date for display in the trigger
-    const parsedDate = parse(date, "MMMM d, yyyy", new Date())
-    const triggerDate = format(parsedDate, "EEE, MMM d") // Format as "Mon, Sep 2"
+    const parsedDate = parseISO(date);
+    const triggerDate = format(parsedDate, "EEE, MMM d"); // Format as "Mon, Sep 2"
 
     useEffect(() => {
         const handleResize = () => {
@@ -166,31 +153,21 @@ function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: Collaps
                     </CollapsibleTrigger>
                     <CollapsibleContent className="space-y-2 pt-2">
                         {events.map((item) => {
-                            // Parse start and end dates
-                            const startDate = item.date.includes("-")
-                                ? parse(item.date.split(" - ")[0].trim(), "MM/dd/yyyy", new Date())
-                                : parse(item.date, "MM/dd/yyyy", new Date());
-
-                            const endDate = item.date.includes("-")
-                                ? parse(item.date.split(" - ")[1].trim(), "MM/dd/yyyy", new Date())
-                                : startDate;
+                            // Parse start and end dates using ISO strings
+                            const startDate = parseISO(item.startDate);
+                            const endDate = parseISO(item.endDate);
 
                             // Format the display date for rendering
-                            const formattedDate = item.date.includes("-")
-                                ? `${format(startDate, "MMM d")} - ${format(endDate, "MMM d")}`
-                                : format(startDate, "MMM d");
+                            const formattedDate = startDate.getTime() === endDate.getTime()
+                                ? format(startDate, "MMM d")
+                                : `${format(startDate, "MMM d")} - ${format(endDate, "MMM d")}`;
                             
                             const [startTime, endTime] = item.time.split(" - ");
-                            const parsedStartTime = parse(startTime.trim(), "hh:mm a", new Date());
-                            const parsedEndTime = parse(endTime.trim(), "hh:mm a", new Date());
+                            const parsedStartTime = parseISO(`${item.startDate}T${startTime}`);
+                            const parsedEndTime = parseISO(`${item.startDate}T${endTime}`);
                             const formattedStartTime = format(parsedStartTime, "h:mm a");
                             const formattedEndTime = format(parsedEndTime, "h:mm a");
                             const formattedTime = `${formattedStartTime} - ${formattedEndTime}`;
-
-                            const categoryLabels = item.category.map(cat => {
-                                const foundOption = categoryOptions.find(option => option.value === cat);
-                                return foundOption ? foundOption.label : "Unknown";
-                            }).join(", ");
 
                             return (
                                 <button

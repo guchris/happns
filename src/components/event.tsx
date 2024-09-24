@@ -30,17 +30,14 @@ import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/s
 
 // Other Imports
 import { CalendarIcon, SectionIcon, ContainerIcon } from "@radix-ui/react-icons"
-import { isWithinInterval, parse, format } from "date-fns"
+import { isWithinInterval, parse, parseISO, format } from "date-fns"
 
 interface EventProps {
     events: Event[]
     city: string
 }
 
-export function Event({
-    events,
-    city
-}: EventProps) {
+export function Event({ events, city }: EventProps) {
     const [event, setEvent] = useEvent()
     const defaultLayout = [50,50]
 
@@ -85,20 +82,6 @@ export function Event({
         }))
     }, [setEvent])
 
-    const parseEventDate = (dateString: string) => {
-        if (dateString.includes("-")) {
-            // Handle ranges like "10/27/2024 - 10/29/2024"
-            const [startPart, endPart] = dateString.split(" - ")
-            const startDate = parse(startPart.trim(), "MM/dd/yyyy", new Date())
-            const endDate = parse(endPart.trim(), "MM/dd/yyyy", startDate)
-            return { startDate, endDate }
-        } else {
-            // Handle single dates like "10/27/2024"
-            const date = parse(dateString, "MM/dd/yyyy", new Date())
-            return { startDate: date, endDate: date }
-        }
-    }
-
     const isEventInRange = (eventStart: Date, eventEnd: Date, rangeStart: Date, rangeEnd?: Date) => {
         const effectiveRangeEnd = rangeEnd || new Date(9999, 11, 31); // Use far-future date if rangeEnd is undefined
         return (
@@ -108,8 +91,10 @@ export function Event({
         )
     }
 
+    // Filtered events based on selected filters
     const filteredEvents = events.filter((e) => {
-        const { startDate: eventStart, endDate: eventEnd } = parseEventDate(e.date);
+        const eventStart = parseISO(e.startDate);
+        const eventEnd = parseISO(e.endDate);
         const isInDateRange = startDate && isEventInRange(eventStart, eventEnd, startDate, endDate);
 
         // Filter based on switch state (false = All Events, true = Bookmarked Events)

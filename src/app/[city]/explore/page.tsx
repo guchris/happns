@@ -7,6 +7,7 @@ import { TopBar } from "@/components/top-bar"
 import { Event as EventType } from "@/components/types"
 import { Event as EventComponent } from "@/components/event"
 import { cityOptions } from "@/lib/selectOptions"
+import { mapFirestoreEvent } from "@/lib/eventUtils"
 
 // Firebase Imports
 import { db } from "@/lib/firebase"
@@ -20,19 +21,6 @@ type ExploreCityPageProps = {
         city: string;
     };
 };
-
-// Helper function to parse the event date string
-function parseEventDate(dateString: string) {
-    if (dateString.includes("-")) {
-        const [startPart, endPart] = dateString.split(" - ");
-        const startDate = new Date(startPart.trim());
-        const endDate = new Date(endPart.trim());
-        return { startDate, endDate };
-    } else {
-        const date = new Date(dateString.trim());
-        return { startDate: date, endDate: date };
-    }
-}
 
 // Metadata for SEO
 export async function generateMetadata({ params }: ExploreCityPageProps): Promise<Metadata> {
@@ -60,7 +48,6 @@ export async function generateMetadata({ params }: ExploreCityPageProps): Promis
 
 export default async function ExploreCityPage({ params }: ExploreCityPageProps) {
     const city = params.city || "";
-    const cityLabel = cityOptions.find(option => option.value === city)?.label || "City";
 
     if (!city) {
         notFound();
@@ -71,23 +58,8 @@ export default async function ExploreCityPage({ params }: ExploreCityPageProps) 
     const cityQuery = query(eventsCol, where("city", "==", city));
     const eventSnapshot = await getDocs(cityQuery);
 
-    const events: EventType[] = eventSnapshot.docs.map((doc) => ({
-        category: doc.data().category,
-        city: doc.data().city,
-        clicks: doc.data().clicks,
-        cost: doc.data().cost,
-        date: doc.data().date,
-        details: doc.data().details,
-        format: doc.data().format,
-        gmaps: doc.data().gmaps,
-        id: doc.id,
-        image: doc.data().image,
-        link: doc.data().link,
-        location: doc.data().location,
-        name: doc.data().name,
-        neighborhood: doc.data().neighborhood,
-        time: doc.data().time,
-    }));
+    // Map Firestore data to EventType using the utility function
+    const events: EventType[] = eventSnapshot.docs.map(mapFirestoreEvent);
 
     return (
         <div className="md:h-screen min-h-screen flex flex-col">

@@ -3,10 +3,36 @@ import { Event } from "@/components/types"
 
 // Firebase Imports
 import { db } from "@/lib/firebase"
-import { collection, getCountFromServer, query, where } from "firebase/firestore"
+import { DocumentData, QueryDocumentSnapshot, collection, getCountFromServer, query, where } from "firebase/firestore"
 
 // Other Imports
 import { format, parse, isAfter, isSameDay, isSameMonth, addDays, parseISO } from "date-fns"
+
+/**
+ * Maps Firestore document data to an Event type.
+ * @param doc - The Firestore document snapshot.
+ * @returns {Event} - The mapped event object.
+ */
+export function mapFirestoreEvent(doc: QueryDocumentSnapshot<DocumentData>): Event {
+    return {
+        id: doc.id,
+        category: doc.data().category,
+        city: doc.data().city,
+        clicks: doc.data().clicks,
+        cost: doc.data().cost,
+        details: doc.data().details,
+        endDate: doc.data().endDate,
+        format: doc.data().format,
+        gmaps: doc.data().gmaps,
+        image: doc.data().image,
+        link: doc.data().link,
+        location: doc.data().location,
+        name: doc.data().name,
+        neighborhood: doc.data().neighborhood,
+        startDate: doc.data().startDate,
+        time: doc.data().time,
+    };
+}
 
 
 /**
@@ -23,6 +49,7 @@ export function getUpcomingEvents(events: Event[], today: Date): Event[] {
     });
 }
 
+
 /**
  * Filters events happening today.
  * @param events - Array of Event objects.
@@ -35,6 +62,7 @@ export function getEventsHappeningToday(events: Event[], today: Date): Event[] {
         return isSameDay(startDate, today);
     });
 }
+
 
 /**
  * Filters events happening tomorrow.
@@ -49,6 +77,7 @@ export function getEventsHappeningTomorrow(events: Event[], today: Date): Event[
     });
 }
 
+
 /**
  * Sorts events by clicks in descending order.
  * @param events - Array of Event objects.
@@ -59,6 +88,12 @@ export function sortEventsByClicks(events: Event[], limit: number = 8): Event[] 
     return events.sort((a, b) => (b.clicks || 0) - (a.clicks || 0)).slice(0, limit);
 }
 
+
+/**
+ * Fetches the total number of upcoming events for a specific city.
+ * @param citySlug - The slug of the city.
+ * @returns {Promise<number>} - Total number of upcoming events.
+ */
 export async function getTotalUpcomingEvents(citySlug: string): Promise<number> {
     const today = new Date().toISOString();
 
@@ -71,6 +106,7 @@ export async function getTotalUpcomingEvents(citySlug: string): Promise<number> 
     const countSnapshot = await getCountFromServer(eventsQuery);
     return countSnapshot.data().count;
 }
+
 
 /**
  * Formats event start and end dates into a readable string.
@@ -92,6 +128,7 @@ export function formatEventDate(startDateString: string, endDateString: string) 
         return `${formattedStartDate} - ${formattedEndDate}`;
     }
 }
+
 
 /**
  * Formats event time.
@@ -116,6 +153,7 @@ export function formatEventTime(timeString: string) {
         return format(parsedTime, "h:mm a"); // "9:00 AM"
     }
 }
+
 
 /**
  * Formats event cost.

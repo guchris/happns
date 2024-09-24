@@ -9,7 +9,7 @@ import { Footer } from "@/components/footer"
 import { Event } from "@/components/types"
 import EventGrid from "@/components/event-grid"
 import { cityOptions } from "@/lib/selectOptions"
-import { getUpcomingEvents, getEventsHappeningToday, getEventsHappeningTomorrow, sortEventsByClicks } from "@/lib/eventUtils"
+import { mapFirestoreEvent, getUpcomingEvents, getEventsHappeningToday, getEventsHappeningTomorrow, sortEventsByClicks } from "@/lib/eventUtils"
 
 // Firebase Imports
 import { db } from "@/lib/firebase"
@@ -62,29 +62,11 @@ export default async function CityPage({ params }: CityPageProps) {
     const cityQuery = query(eventsCol, where("city", "==", city));
     const eventSnapshot = await getDocs(cityQuery);
 
-    const events: Event[] = eventSnapshot.docs.map((doc) => ({
-        category: doc.data().category,
-        city: doc.data().city,
-        clicks: doc.data().clicks,
-        cost: doc.data().cost,
-        details: doc.data().details,
-        endDate: doc.data().endDate,
-        format: doc.data().format,
-        gmaps: doc.data().gmaps,
-        id: doc.id,
-        image: doc.data().image,
-        link: doc.data().link,
-        location: doc.data().location,
-        name: doc.data().name,
-        neighborhood: doc.data().neighborhood,
-        startDate: doc.data().startDate,
-        time: doc.data().time,
-    }));
-
-    // Get today's date
-    const today = new Date();
+    // Map Firestore data to EventType using the utility function
+    const events: Event[] = eventSnapshot.docs.map(mapFirestoreEvent);
 
     // Use utility functions for filtering and sorting events
+    const today = new Date();
     const upcomingEvents = getUpcomingEvents(events, today);
     const eventsHappeningToday = getEventsHappeningToday(events, today);
     const eventsHappeningTomorrow = getEventsHappeningTomorrow(events, today);

@@ -24,18 +24,6 @@ interface EventActionsProps {
     event: Event | null;
 }
 
-function parseEventDate(dateString: string) {
-    if (dateString.includes("-")) {
-        const [startPart, endPart] = dateString.split(" - ");
-        const startDate = parse(startPart.trim(), "MM/dd/yyyy", new Date());
-        const endDate = parse(endPart.trim(), "MM/dd/yyyy", new Date());
-        return { startDate, endDate };
-    } else {
-        const date = parse(dateString, "MM/dd/yyyy", new Date());
-        return { startDate: date, endDate: date };
-    }
-}
-
 const EventActions = ({ event }: EventActionsProps) => {
     const { toast } = useToast();
     const { user } = useAuth();
@@ -105,11 +93,10 @@ const EventActions = ({ event }: EventActionsProps) => {
     };
 
     function getGoogleCalendarLink(event: Event) {
-        const { startDate, endDate } = parseEventDate(event.date);
-        const startDateTime = new Date(`${startDate.toDateString()} ${event.time.split(" - ")[0]}`).toISOString().replace(/-|:|\.\d\d\d/g, "");
+        const startDateTime = new Date(`${event.startDate}T${event.time.split(" - ")[0]}`).toISOString().replace(/-|:|\.\d\d\d/g, "");
         const endDateTime = event.time.split(" - ")[1]
-            ? new Date(`${endDate.toDateString()} ${event.time.split(" - ")[1]}`).toISOString().replace(/-|:|\.\d\d\d/g, "")
-            : new Date(startDate.getTime() + 3600000).toISOString().replace(/-|:|\.\d\d\d/g, "");
+            ? new Date(`${event.endDate}T${event.time.split(" - ")[1]}`).toISOString().replace(/-|:|\.\d\d\d/g, "")
+            : new Date(new Date(event.startDate).getTime() + 3600000).toISOString().replace(/-|:|\.\d\d\d/g, "");
         return `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.name)}&dates=${startDateTime}/${endDateTime}&details=${encodeURIComponent(event.details)}&location=${encodeURIComponent(event.location)}&sf=true&output=xml`;
     }
 

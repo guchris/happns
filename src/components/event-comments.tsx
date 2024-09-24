@@ -1,7 +1,6 @@
 "use client"
 
 // Next and React Imports
-import { useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
 
 // App Imports
@@ -28,7 +27,6 @@ interface EventCommentsProps {
 
 const EventComments = ({ eventId }: EventCommentsProps) => {
     const { toast } = useToast();
-    const router = useRouter();
     const { user, userData } = useAuth();
 
     const [comments, setComments] = useState<Comment[]>([]);
