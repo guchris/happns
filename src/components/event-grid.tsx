@@ -6,6 +6,7 @@ import Link from "next/link"
 
 // App Imports
 import { Event } from "@/components/types"
+import { formatEventDate } from "@/lib/eventUtils"
 
 // Shadcn Imports
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -71,7 +72,7 @@ const EventList = ({ events }: { events: Event[] }) => {
                                     />
                                 </div>
                                 <CardTitle className="text-sm font-semibold mt-2">{event.name}</CardTitle>
-                                <CardDescription className="text-xs text-muted-foreground">{event.date}</CardDescription>
+                                <CardDescription className="text-xs text-muted-foreground">{formatEventDate(event.startDate, event.endDate)}</CardDescription>
                             </CardHeader>
                         </Link>
                     </Card>

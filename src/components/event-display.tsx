@@ -1,78 +1,25 @@
 // Next Imports
-import Link from "next/link";
-import Image from "next/image";
+import Link from "next/link"
+import Image from "next/image"
 
 // Shadcn Imports
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Separator } from "@/components/ui/separator"
+import { Badge } from "@/components/ui/badge"
 
 // App Imports
-import { Event } from "@/components/types";
-import EventActions from "@/components/event-actions";
-import EventComments from "@/components/event-comments";
-import ClientButton from "@/components/client-button";
-import { categoryOptions, formatOptions, neighborhoodOptions } from "@/lib/selectOptions";
+import { Event } from "@/components/types"
+import EventActions from "@/components/event-actions"
+import EventComments from "@/components/event-comments"
+import ClientButton from "@/components/client-button"
+import { categoryOptions, formatOptions, neighborhoodOptions } from "@/lib/selectOptions"
+import { formatEventDate, formatEventTime, formatEventCost } from "@/lib/eventUtils"
 
 // Other Imports
-import { format, parse, differenceInDays } from "date-fns";
+import { differenceInDays, parseISO } from "date-fns"
 
 interface EventDisplayProps {
     event: Event | null;
-}
-
-function formatEventDate(dateString: string) {
-    if (dateString.includes(" - ")) {
-        // Handle date ranges like "09/14/2024 - 09/15/2024"
-        const [startPart, endPart] = dateString.split(" - ");
-        const startDate = parse(startPart.trim(), "MM/dd/yyyy", new Date());
-        const endDate = parse(endPart.trim(), "MM/dd/yyyy", new Date());
-
-        // Format both dates
-        const formattedStartDate = format(startDate, "EEE, MMM d"); // "Sat, Sep 14"
-        const formattedEndDate = format(endDate, "EEE, MMM d");     // "Sun, Sep 15"
-        
-        return `${formattedStartDate} - ${formattedEndDate}`;
-    } else {
-        // Handle single dates like "09/14/2024"
-        const date = parse(dateString.trim(), "MM/dd/yyyy", new Date());
-        return format(date, "EEE, MMM d"); // "Sat, Sep 14"
-    }
-}
-
-function formatEventTime(timeString: string) {
-    if (timeString.includes(" - ")) {
-        // Handle time ranges like "09:00 AM - 05:00 PM"
-        const [startTime, endTime] = timeString.split(" - ");
-        const parsedStartTime = parse(startTime.trim(), "hh:mm a", new Date());
-        const parsedEndTime = parse(endTime.trim(), "hh:mm a", new Date());
-
-        // Format the times to remove unnecessary zeros
-        const formattedStartTime = format(parsedStartTime, "h:mm a"); // "9:00 AM"
-        const formattedEndTime = format(parsedEndTime, "h:mm a");     // "5:00 PM"
-        
-        return `${formattedStartTime} - ${formattedEndTime}`;
-    } else {
-        // Handle single time like "09:00 AM"
-        const parsedTime = parse(timeString.trim(), "hh:mm a", new Date());
-        return format(parsedTime, "h:mm a"); // "9:00 AM"
-    }
-}
-
-function formatEventCost(cost: { type: "single" | "range" | "minimum"; value: number | [number, number] }) {
-    switch (cost.type) {
-        case "single":
-            return `$${cost.value}`;
-        case "range":
-            if (Array.isArray(cost.value)) {
-                return `$${cost.value[0]} - $${cost.value[1]}`;
-            }
-            return "";
-        case "minimum":
-            return `$${cost.value}+`;
-        default:
-            return "N/A";
-    }
 }
 
 export function EventDisplay({ event }: EventDisplayProps) {
@@ -85,7 +32,7 @@ export function EventDisplay({ event }: EventDisplayProps) {
     const neighborhoodLabel = neighborhoodsForCity.find(option => option.value === event?.neighborhood)?.label || "Unknown";
 
     // Calculate the number of days away from the event start date
-    const { startDate } = parseEventDate(event?.date || "");
+    const startDate = event?.startDate ? parseISO(event.startDate) : null;
     const daysAway = startDate ? differenceInDays(startDate, today) : null;
 
     let daysAwayLabel = "";
@@ -97,21 +44,6 @@ export function EventDisplay({ event }: EventDisplayProps) {
         daysAwayLabel = `${daysAway}`;
     } else {
         daysAwayLabel = "Date not available";
-    }
-
-    // Function to parse both single dates and date ranges
-    function parseEventDate(dateString: string) {
-        if (dateString.includes("-")) {
-            // Handle ranges like "MM/dd/yyyy - MM/dd/yyyy"
-            const [startPart, endPart] = dateString.split(" - ");
-            const startDate = parse(startPart.trim(), "MM/dd/yyyy", new Date());
-            const endDate = parse(endPart.trim(), "MM/dd/yyyy", new Date());
-            return { startDate, endDate };
-        } else {
-            // Handle single dates like "MM/dd/yyyy"
-            const date = parse(dateString, "MM/dd/yyyy", new Date());
-            return { startDate: date, endDate: date }; // Same start and end date for single-day events
-        }
     }
 
     return (
@@ -150,7 +82,7 @@ export function EventDisplay({ event }: EventDisplayProps) {
                                 {/* Event Name, Date, and Time */}
                                 <div className="grid gap-1">
                                     <div className="text-lg font-semibold">{event.name}</div>
-                                    <div className="text-base font-medium">{formatEventDate(event.date)}</div>
+                                    <div className="text-base font-medium">{formatEventDate(event.startDate, event.endDate)}</div>
                                     <div className="text-sm font-medium">{formatEventTime(event.time)}</div>
                                 </div>
                             </div>

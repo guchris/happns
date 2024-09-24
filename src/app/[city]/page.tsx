@@ -9,6 +9,7 @@ import { Footer } from "@/components/footer"
 import { Event } from "@/components/types"
 import EventGrid from "@/components/event-grid"
 import { cityOptions } from "@/lib/selectOptions"
+import { getUpcomingEvents, getEventsHappeningToday, getEventsHappeningTomorrow, sortEventsByClicks } from "@/lib/eventUtils"
 
 // Firebase Imports
 import { db } from "@/lib/firebase"
@@ -18,27 +19,11 @@ import { collection, getDocs, query, where } from "firebase/firestore"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
 
-// Other Imports
-import { isAfter, isSameDay, isSameMonth, addDays, parse } from "date-fns"
-
 type CityPageProps = {
     params: {
         city: string;
     };
 };
-
-// Helper function to parse the event date string
-function parseEventDate(dateString: string) {
-    if (dateString.includes("-")) {
-        const [startPart, endPart] = dateString.split(" - ");
-        const startDate = parse(startPart.trim(), "MM/dd/yyyy", new Date());
-        const endDate = parse(endPart.trim(), "MM/dd/yyyy", startDate);
-        return { startDate, endDate };
-    } else {
-        const date = parse(dateString, "MM/dd/yyyy", new Date());
-        return { startDate: date, endDate: date };
-    }
-}
 
 // Metadata for SEO
 export async function generateMetadata({ params }: CityPageProps): Promise<Metadata> {
@@ -82,8 +67,8 @@ export default async function CityPage({ params }: CityPageProps) {
         city: doc.data().city,
         clicks: doc.data().clicks,
         cost: doc.data().cost,
-        date: doc.data().date,
         details: doc.data().details,
+        endDate: doc.data().endDate,
         format: doc.data().format,
         gmaps: doc.data().gmaps,
         id: doc.id,
@@ -92,32 +77,18 @@ export default async function CityPage({ params }: CityPageProps) {
         location: doc.data().location,
         name: doc.data().name,
         neighborhood: doc.data().neighborhood,
+        startDate: doc.data().startDate,
         time: doc.data().time,
     }));
 
     // Get today's date
     const today = new Date();
 
-    // Filter events happening today or later, and within the current month
-    const upcomingEvents = events.filter((event) => {
-        const { startDate, endDate } = parseEventDate(event.date);
-        return isAfter(endDate, today) && isSameMonth(startDate, today);
-    });
-
-    // Filter events happening today
-    const eventsHappeningToday = events.filter((event) => {
-        const { startDate } = parseEventDate(event.date);
-        return isSameDay(startDate, today);
-    });
-
-    // Filter events happening tomorrow
-    const eventsHappeningTomorrow = events.filter((event) => {
-        const { startDate } = parseEventDate(event.date);
-        return isSameDay(startDate, addDays(today, 1));
-    });
-
-    // Sort the events by clicks in descending order and take the top 8 for the month
-    const topEvents = upcomingEvents.sort((a, b) => (b.clicks || 0) - (a.clicks || 0)).slice(0, 8);
+    // Use utility functions for filtering and sorting events
+    const upcomingEvents = getUpcomingEvents(events, today);
+    const eventsHappeningToday = getEventsHappeningToday(events, today);
+    const eventsHappeningTomorrow = getEventsHappeningTomorrow(events, today);
+    const topEvents = sortEventsByClicks(upcomingEvents, 8);
 
     return (
         <div className="min-h-screen flex flex-col">

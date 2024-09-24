@@ -6,8 +6,8 @@ export interface Event {
         type: "single" | "range" | "minimum";
         value: number | [number, number]
     };
-    date: string;
     details: string;
+    endDate: string;
     format: string;
     gmaps: string;
     id: string;
@@ -16,6 +16,7 @@ export interface Event {
     location: string;
     name: string;
     neighborhood: string;
+    startDate: string;
     time: string;
 }
 
