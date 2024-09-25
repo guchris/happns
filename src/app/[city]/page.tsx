@@ -1,6 +1,7 @@
 // Next Imports
 import { Metadata } from "next"
 import Link from "next/link"
+import Image from "next/image"
 import { notFound } from "next/navigation"
 
 // App Imports
@@ -99,10 +100,13 @@ export default async function CityPage({ params }: CityPageProps) {
 
                         {/* Right Section: City Image */}
                         <div className="lg:w-1/2">
-                            <img
+                            <Image
                                 src={`/covers/cover-${city}.png`} 
                                 alt={`${cityLabel} cover image`} 
                                 className="rounded-lg object-cover w-full h-auto"
+                                width={500}
+                                height={300}
+                                priority
                             />
                         </div>
                     </div>

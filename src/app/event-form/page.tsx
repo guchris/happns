@@ -140,38 +140,6 @@ export default function EventForm() {
 
     const hasPermission = !loading && user && userData?.role === "curator";
 
-    // If still checking for login state, show a loading state
-    if (loading) {
-        return (
-            <div className="min-h-screen flex flex-col">
-                <TopBar title={`happns/`} />
-                <Separator />
-                <div className="flex-1 overflow-y-auto p-4">
-                    Loading event...
-                </div>
-            </div>
-        )
-    }
-
-    // If user is not logged in or does not have "curator" role, show an unauthorized message
-    if (!hasPermission) {
-        return (
-            <div className="min-h-screen flex flex-col">
-                <TopBar title={`happns/add-event`} />
-                <Separator />
-                <div className="px-4">
-                    <Alert className="max-w-3xl my-6 mx-auto p-4">
-                        <ExclamationTriangleIcon className="h-4 w-4" />
-                        <AlertTitle>Not Authorized</AlertTitle>
-                        <AlertDescription>
-                            You do not have permission to submit an event. Please <Link href="/" className="text-blue-500">return to the homepage</Link>.
-                        </AlertDescription>
-                    </Alert>
-                </div>
-            </div>
-        );
-    }
-
     useEffect(() => {
         if (selectedCity) {
             // Update neighborhoods based on the selected city
@@ -299,6 +267,38 @@ export default function EventForm() {
                 variant: "destructive",
             });
         }
+    }
+
+    // If still checking for login state, show a loading state
+    if (loading) {
+        return (
+            <div className="min-h-screen flex flex-col">
+                <TopBar title={`happns/`} />
+                <Separator />
+                <div className="flex-1 overflow-y-auto p-4">
+                    Loading event...
+                </div>
+            </div>
+        )
+    }
+
+    // If user is not logged in or does not have "curator" role, show an unauthorized message
+    if (!hasPermission) {
+        return (
+            <div className="min-h-screen flex flex-col">
+                <TopBar title={`happns/add-event`} />
+                <Separator />
+                <div className="px-4">
+                    <Alert className="max-w-3xl my-6 mx-auto p-4">
+                        <ExclamationTriangleIcon className="h-4 w-4" />
+                        <AlertTitle>Not Authorized</AlertTitle>
+                        <AlertDescription>
+                            You do not have permission to submit an event. Please <Link href="/" className="text-blue-500">return to the homepage</Link>.
+                        </AlertDescription>
+                    </Alert>
+                </div>
+            </div>
+        );
     }
     
     return (
