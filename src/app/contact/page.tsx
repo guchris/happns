@@ -90,7 +90,7 @@ export default function ContactForm() {
                         <div className="space-y-2">
                             <h1 className="text-lg font-medium">Contact Us</h1>
                             <p className="text-sm text-muted-foreground">
-                                Need to reach us? Please fill out the form below with your contact info and message, and we'll get back to you as soon as possible. Let's make it happn!
+                                Need to reach us? Please fill out the form below with your contact info and message, and we&apos;ll get back to you as soon as possible. Let&apos;s make it happn!
                             </p>
                         </div>
 
