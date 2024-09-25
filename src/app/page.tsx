@@ -20,6 +20,8 @@ import { CalendarIcon } from "@radix-ui/react-icons"
 
 const ad = { id: 1, imageUrl: "/ads/ad1.jpg", link: "https://seattle.boo-halloween.com/" }
 
+export const dynamic = 'force-dynamic';
+
 // Helper function to get metadata
 export async function generateMetadata(): Promise<Metadata> {
   return {

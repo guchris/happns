@@ -104,7 +104,6 @@ export async function getTotalUpcomingEvents(citySlug: string): Promise<number> 
     );
 
     const countSnapshot = await getCountFromServer(eventsQuery);
-    console.log("Count Snapshot: ", countSnapshot.data().count);
     return countSnapshot.data().count;
 }
 
