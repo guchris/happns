@@ -304,7 +304,7 @@ export default function EventForm() {
     return (
         <>
             <div className="flex h-full flex-col">
-                <TopBar title={`happns/add-event`} />
+                <TopBar title={`happns/event-form`} />
                 <Separator />
             </div>
             <Form {...form}>
