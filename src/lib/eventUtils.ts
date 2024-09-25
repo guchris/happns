@@ -95,7 +95,7 @@ export function sortEventsByClicks(events: Event[], limit: number = 8): Event[] 
  * @returns {Promise<number>} - Total number of upcoming events.
  */
 export async function getTotalUpcomingEvents(citySlug: string): Promise<number> {
-    const today = new Date().toISOString();
+    const today = new Date().toISOString().split('T')[0];
 
     const eventsQuery = query(
         collection(db, "events"),

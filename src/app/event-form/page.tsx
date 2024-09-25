@@ -174,8 +174,8 @@ export default function EventForm() {
         const storage = getStorage();
         const eventsCollectionRef = collection(db, "events");
         
-        const startDate = data.startDate.toISOString();
-        const endDate = data.endDate.toISOString();
+        const startDate = data.startDate.toISOString().split('T')[0];
+        const endDate = data.endDate.toISOString().split('T')[0];
         const startTime = data.startTime;
         const endTime = data.endTime;
         const time = startTime === endTime
