@@ -71,7 +71,7 @@ const EventList = ({ events }: { events: Event[] }) => {
                                         className="object-cover w-full h-full rounded-lg"
                                     />
                                 </div>
-                                <CardTitle className="text-sm font-semibold mt-2">{event.name}</CardTitle>
+                                <CardTitle className="line-clamp-1 text-sm font-semibold mt-2">{event.name}</CardTitle>
                                 <CardDescription className="text-xs text-muted-foreground">{formatEventDate(event.startDate, event.endDate)}</CardDescription>
                             </CardHeader>
                         </Link>

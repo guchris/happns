@@ -15,8 +15,8 @@ export function Footer() {
                 {/* Right-aligned links */}
                 <div className="flex justify-center md:justify-end space-x-4">
                     <Link href="/about" className="text-sm font-medium">about</Link>
+                    <Link href="/contact" className="text-sm font-medium">contact</Link>
                     <Link href="https://discord.gg/uQdvmgmQYY" className="text-sm font-medium">discord</Link>
-                    <Link href="mailto:cleegu+happns@gmail.com" className="text-sm font-medium">email</Link>
                     <Link href="https://instagram.com/happnsapp" target="_blank" className="text-sm font-medium">insta</Link>
                 </div>
             </div>

@@ -58,28 +58,23 @@ export function EventList({ items, isVerticalLayout }: EventListProps) {
         return acc;
     }, {} as Record<string, Event[]>);
 
-    // Get the range of dates between the first and last event
-    const sortedEventDates = Object.keys(eventsByDate)
-        .sort((a, b) => parseISO(a).getTime() - parseISO(b).getTime());
+    const firstEventDate = parseISO(new Date().toISOString().split("T")[0]);
+    const lastEventDate = parseISO(
+        items.reduce((latest, item) => {
+            const endDate = parseISO(item.endDate);
+            return endDate > latest ? endDate : latest;
+        }, new Date(0)).toISOString().split("T")[0]
+    );
 
-    if (sortedEventDates.length > 0) {
-        const firstEventDate = parseISO(sortedEventDates[0]);
-        const lastEventDate = parseISO(sortedEventDates[sortedEventDates.length - 1]);
-
-        // Fill in missing dates between the first and last event date
-        const allDates = eachDayOfInterval({ start: firstEventDate, end: lastEventDate });
-        allDates.forEach((date) => {
-            const isoDate = date.toISOString().split("T")[0]; // "YYYY-MM-DD" format
-            if (!eventsByDate[isoDate]) {
-                eventsByDate[isoDate] = []; // Add empty array for dates with no events
-            }
-        });
-    }
-
-    // Sort dates again after filling missing dates
-    const sortedDates = Object.keys(eventsByDate).sort((a, b) => {
-        return parseISO(a).getTime() - parseISO(b).getTime();
+    const allDates = eachDayOfInterval({ start: firstEventDate, end: lastEventDate });
+    allDates.forEach((date) => {
+        const isoDate = date.toISOString().split("T")[0];
+        if (!eventsByDate[isoDate]) {
+            eventsByDate[isoDate] = [];
+        }
     });
+
+    const sortedDates = Object.keys(eventsByDate).sort((a, b) => parseISO(a).getTime() - parseISO(b).getTime());
 
     return (
         <ScrollArea className="h-full">
@@ -194,6 +189,7 @@ function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: Collaps
                                         alt={item.name}
                                         width={150}
                                         height={150}
+                                        loading="lazy"
                                         className={cn(
                                             // In vertical layout on mobile, image takes full width, otherwise it is a fixed width
                                             isVerticalLayout ? "w-full" : "w-32",
