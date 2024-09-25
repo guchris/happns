@@ -2,6 +2,7 @@
 
 // Components Imports
 import { TopBar } from "@/components/top-bar"
+import { Footer } from "@/components/footer"
 
 // Shadcn Imports
 import { Separator } from "@/components/ui/separator"
@@ -79,84 +80,83 @@ export default function ContactForm() {
     }
 
     return (
-        <>
-            <div className="flex h-full flex-col">
-                <TopBar title={`happns/contact`} />
-                <Separator />
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col px-4 pt-8 space-y-8 max-w-[800px] mx-auto">
+        <div className="min-h-screen flex flex-col">
+            <TopBar title={`happns/contact`} />
+            <Separator />
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col px-4 py-8 space-y-8 max-w-[800px] mx-auto">
 
-                        {/* Title and Description */}
-                        <div className="space-y-2">
-                            <h1 className="text-lg font-medium">Contact Us</h1>
-                            <p className="text-sm text-muted-foreground">
-                                Need to reach us? Please fill out the form below with your contact info and message, and we&apos;ll get back to you as soon as possible. Let&apos;s make it happn!
-                            </p>
-                        </div>
+                    {/* Title and Description */}
+                    <div className="space-y-2">
+                        <h1 className="text-lg font-medium">Contact Us</h1>
+                        <p className="text-sm text-muted-foreground">
+                            Need to reach us? Please fill out the form below with your contact info and message, and we&apos;ll get back to you as soon as possible. Let&apos;s make it happn!
+                        </p>
+                    </div>
 
-                        {/* Name Field */}
-                        <FormField
-                            control={form.control}
-                            name="name"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Name</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} placeholder="Name" />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                    {/* Name Field */}
+                    <FormField
+                        control={form.control}
+                        name="name"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Name</FormLabel>
+                                <FormControl>
+                                    <Input {...field} placeholder="Name" />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
 
-                        {/* Email Field */}
-                        <FormField
-                            control={form.control}
-                            name="email"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Email</FormLabel>
-                                    <FormControl>
-                                        <Input type="email" {...field} placeholder="Email" />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                    {/* Email Field */}
+                    <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Email</FormLabel>
+                                <FormControl>
+                                    <Input type="email" {...field} placeholder="Email" />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
 
-                        {/* Phone Number Field */}
-                        <FormField
-                            control={form.control}
-                            name="phone"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Phone Number</FormLabel>
-                                    <FormControl>
-                                        <Input type="tel" {...field} placeholder="Phone Number" />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                    {/* Phone Number Field */}
+                    <FormField
+                        control={form.control}
+                        name="phone"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Phone Number</FormLabel>
+                                <FormControl>
+                                    <Input type="tel" {...field} placeholder="Phone Number" />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
 
-                        {/* Message Field */}
-                        <FormField
-                            control={form.control}
-                            name="message"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Message</FormLabel>
-                                    <FormControl>
-                                        <Textarea {...field} placeholder="Your message" />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <Button type="submit">Submit</Button>
-                    </form>
-                </Form>
-            </div>
-        </>
+                    {/* Message Field */}
+                    <FormField
+                        control={form.control}
+                        name="message"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Message</FormLabel>
+                                <FormControl>
+                                    <Textarea {...field} placeholder="Your message" />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <Button type="submit">Submit</Button>
+                </form>
+            </Form>
+            <Footer className="mt-auto" />
+        </div>
     )
 }

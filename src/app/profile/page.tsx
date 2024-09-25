@@ -6,6 +6,7 @@ import { useAuth } from "@/context/AuthContext"
 
 // Components Imports
 import { TopBar } from "@/components/top-bar"
+import { Footer } from "@/components/footer"
 
 // Hooks Imports
 import { toast } from "@/hooks/use-toast" 
@@ -65,8 +66,8 @@ export default function ProfilePage() {
             <TopBar title={`happns/profile`} />
             <Separator />
 
-            <div className="flex justify-center mt-4">
-                <div className="w-full max-w-[800px] p-4 flex flex-col space-y-4">
+            <div className="flex justify-center">
+                <div className="w-full max-w-[800px] p-4 py-8 flex flex-col space-y-4">
 
                     {/* Generate dynamic link based on the user's ID */}
                     <Card>
@@ -114,6 +115,8 @@ export default function ProfilePage() {
                     </Card>
                 </div>
             </div>
+
+            <Footer className="mt-auto" />
         </div>
     )
 }

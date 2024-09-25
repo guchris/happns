@@ -1,5 +1,6 @@
-// Components Imports
-import { TopBar } from "@/components/top-bar";
+// App Imports
+import { TopBar } from "@/components/top-bar"
+import { Footer } from "@/components/footer"
 
 // Shadcn Imports
 import { Separator } from "@/components/ui/separator"
@@ -10,7 +11,7 @@ export default function AboutPage() {
         <div className="min-h-screen flex flex-col">
             <TopBar title={`happns/about`} />
             <Separator />
-            <div className="flex-1 p-6 max-w-3xl mx-auto space-y-4">
+            <div className="flex-1 px-4 py-8 max-w-3xl mx-auto space-y-4">
                 <h1 className="text-lg font-medium">about happns</h1>
                 <p className="text-sm">
                     <b>happns</b> was created by Christopher Gu in Seattle out of a desire to solve a personal problem: he found it difficult to discover what was happening in his city. As someone who loves exploring local events and connecting with the community, Christopher was frustrated by the lack of a centralized platform that aggregated all the interesting happenings around town.
@@ -25,6 +26,7 @@ export default function AboutPage() {
                     Today, happns is filled with handpicked events, making it easier than ever for Seattleites to find out what&apos;s happening around them. Christopher hopes to expand happns to more cities, helping communities everywhere stay connected and engaged.
                 </p>
             </div>
+            <Footer className="mt-auto" />
         </div>
     )
 }
