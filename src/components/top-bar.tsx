@@ -44,8 +44,8 @@ export const TopBar: React.FC<TopBarProps> = ({ title }) => {
     const titleParts = title.split("/");
 
     return (
-        <div className="w-full flex items-center justify-between py-4 px-4 h-14">
-            <div className="text-lg font-semibold">
+        <div className="w-full flex items-center justify-between space-x-4 py-4 px-4 h-14">
+            <div className="flex-grow truncate text-lg font-semibold">
 
                 <Link href="/" className="cursor-pointer">
                     {titleParts[0]}/

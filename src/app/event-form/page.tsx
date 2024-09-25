@@ -1,9 +1,9 @@
 "use client"
 
 // Next and React Imports
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 
 // App Imports
 import { useAuth } from "@/context/AuthContext"
@@ -15,7 +15,7 @@ import { useToast } from "@/hooks/use-toast"
 
 // Firebase Imports
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"
-import { doc, setDoc, collection } from "firebase/firestore"
+import { doc, setDoc, getDoc, updateDoc, collection } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 
 // Zod Imports
@@ -130,11 +130,13 @@ export default function EventForm() {
         },
     })
 
-    // Get the user authentication state from the context
     const { user, loading, userData } = useAuth();
+    const searchParams = useSearchParams();
+    const eventId = searchParams ? searchParams.get("id") : null;
 
     const [selectedCity, setSelectedCity] = useState<string | null>(null);
-    const neighborhoodsForCity = selectedCity ? neighborhoodOptions[selectedCity] : [];
+    const [neighborhoodsForCity, setNeighborhoodsForCity] = useState<Option[]>([]);
+    const [clicks, setClicks] = useState(0);
 
     const hasPermission = !loading && user && userData?.role === "curator";
 
@@ -170,9 +172,52 @@ export default function EventForm() {
         );
     }
 
-    function onSubmit(data: EventFormValues) {
+    useEffect(() => {
+        if (selectedCity) {
+            // Update neighborhoods based on the selected city
+            setNeighborhoodsForCity(neighborhoodOptions[selectedCity] || []);
+        }
+    }, [selectedCity]);
+
+    useEffect(() => {
+        if (eventId) {
+            // If there's an event ID, load the event data for editing
+            const fetchEvent = async () => {
+                const eventDoc = await getDoc(doc(db, "events", eventId));
+                if (eventDoc.exists()) {
+                    const eventData = eventDoc.data();
+
+                    setSelectedCity(eventData.city);
+                    setClicks(eventData.clicks || 0);
+
+                    setTimeout(() => {
+                        const transformedData = {
+                            ...eventData,
+                            startDate: new Date(eventData.startDate),
+                            endDate: new Date(eventData.endDate),
+                            category: eventData.category,
+                            image: eventData.image,
+                            startTime: eventData.time.split(" - ")[0],
+                            endTime: eventData.time.split(" - ")[1],
+                        };
+                        form.reset(transformedData);
+                    }, 50);
+                } else {
+                    toast({
+                        title: "Error",
+                        description: "Event not found.",
+                        variant: "destructive",
+                    });
+                    router.push("/");
+                }
+            };
+            fetchEvent();
+        }
+    }, [eventId]);
+
+    const onSubmit = async (data: EventFormValues) => {
         const storage = getStorage();
-        const eventsCollectionRef = collection(db, "events");
+        const eventsCollectionRef = doc(db, "events", eventId || uuidv4());
         
         const startDate = data.startDate.toISOString().split('T')[0];
         const endDate = data.endDate.toISOString().split('T')[0];
@@ -183,7 +228,7 @@ export default function EventForm() {
             : `${startTime} - ${endTime}`;
 
         const uploadImage = async () => {
-            if (data.image) {
+            if (data.image && typeof data.image !== "string") {
                 const uuid = uuidv4();
                 const storageRef = ref(storage, `event_images/${uuid}`);
                 const uploadTask = uploadBytesResumable(storageRef, data.image);
@@ -191,7 +236,7 @@ export default function EventForm() {
                 return new Promise<string>((resolve, reject) => {
                     uploadTask.on(
                         "state_changed",
-                        () => {}, // You can track progress here if needed
+                        () => {},
                         (error) => {
                             console.error("Upload failed:", error);
                             reject(error);
@@ -202,50 +247,59 @@ export default function EventForm() {
                         }
                     );
                 });
+            } else if (typeof data.image === "string") {
+                return data.image; // Use existing URL if already a string
             } else {
-                return null;
+                return null; // If no image provided, return null
             }
         };
-        
-        uploadImage().then((imageUrl) => {
-            const uuid = uuidv4();
-            const eventData = {
-                id: uuid,
-                category: data.category,
-                city: data.city,
-                clicks: 0,
-                cost: data.cost,
-                details: data.details,
-                startDate,
-                endDate,
-                time,
-                format: data.format,
-                gmaps: data.gmaps,
-                image: imageUrl,
-                link: data.link,
-                location: data.location,
-                name: data.name,
-                neighborhood: data.neighborhood,
-            };
 
-            const eventDocRef = doc(eventsCollectionRef, uuid);
-    
-            setDoc(eventDocRef, eventData)
-                .then(() => {
-                    console.log("Event added to Firestore with ID:", uuid);
-                    toast({
-                        title: "Event Submitted ",
-                        description: data.name
-                    });
-                    router.push("/");
-                })
-                .catch((error) => {
-                    console.error("Error adding event to Firestore:", error);
+        const imageUrl = await uploadImage();
+
+        const eventData = {
+            category: data.category,
+            city: data.city,
+            clicks: clicks,
+            cost: data.cost,
+            details: data.details,
+            startDate,
+            endDate,
+            time,
+            format: data.format,
+            gmaps: data.gmaps,
+            image: imageUrl,
+            link: data.link,
+            location: data.location,
+            name: data.name,
+            neighborhood: data.neighborhood,
+        };
+
+        try {
+            if (eventId) {
+                // If eventId exists, update the existing event
+                await updateDoc(eventsCollectionRef, eventData);
+                toast({
+                    title: "Event Updated",
+                    description: data.name,
                 });
-            }).catch((error) => {
-                console.error("Error uploading image:", error);
+            } else {
+                // If no eventId, create a new event
+                await setDoc(eventsCollectionRef, eventData);
+                toast({
+                    title: "Event Created",
+                    description: data.name,
+                });
+            }
+            router.push("/"); // Navigate to the previous or home page after saving
+        } catch (error) {
+            console.error("Error saving event:", error);
+            toast({
+                title: "Error",
+                description: "Failed to save the event.",
+                variant: "destructive",
             });
         }
+    }
     
     return (
         <>
@@ -267,7 +321,7 @@ export default function EventForm() {
                                         field.onChange(value);
                                         setSelectedCity(value);
                                     }}
-                                    defaultValue={field.value}
+                                    value={field.value}
                                 >
                                     <FormControl>
                                         <SelectTrigger>
@@ -404,6 +458,7 @@ export default function EventForm() {
                                                 <Input
                                                     type="number"
                                                     placeholder="Min cost"
+                                                    value={Array.isArray(field.value?.value) ? field.value.value[0] : 0}
                                                     onChange={(e) => {
                                                         // Check if field.value.value is a tuple before updating it
                                                         const currentValue = Array.isArray(field.value.value) ? field.value.value : [0, 0];
@@ -413,6 +468,7 @@ export default function EventForm() {
                                                 <Input
                                                     type="number"
                                                     placeholder="Max cost"
+                                                    value={Array.isArray(field.value?.value) ? field.value.value[1] : 0}
                                                     onChange={(e) => {
                                                         // Check if field.value.value is a tuple before updating it
                                                         const currentValue = Array.isArray(field.value.value) ? field.value.value : [0, 0];
@@ -428,6 +484,7 @@ export default function EventForm() {
                                                 <Input
                                                     type="number"
                                                     placeholder="Min cost"
+                                                    value={typeof field.value?.value === 'number' ? field.value.value : 0}
                                                     onChange={(e) => field.onChange({ ...field.value, value: parseFloat(e.target.value) })}
                                                 />
                                                 <span className="ml-2">+</span>
@@ -573,7 +630,7 @@ export default function EventForm() {
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Neighborhood</FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <Select onValueChange={field.onChange} value={field.value}>
                                     <FormControl>
                                         <SelectTrigger>
                                             <SelectValue placeholder="Select a neighborhood" />
@@ -650,7 +707,21 @@ export default function EventForm() {
                             <FormItem>
                                 <FormLabel>Event Image / Flyer</FormLabel>
                                 <FormControl>
-                                    <Input type="file" accept="image/*" onChange={(e) => field.onChange(e.target.files?.[0])} />
+                                    <div>
+                                        {/* Display existing image if it's a string (URL) */}
+                                        {typeof field.value === "string" && field.value && (
+                                            <div className="mb-4">
+                                                <img src={field.value} alt="Event Image" className="w-64 h-auto rounded-lg" />
+                                            </div>
+                                        )}
+
+                                        {/* File input for new image */}
+                                        <Input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={(e) => field.onChange(e.target.files?.[0])}
+                                        />
+                                    </div>
                                 </FormControl>
                                 <FormDescription>
                                     Upload an image for the event (JPG, PNG, etc.).
@@ -659,7 +730,7 @@ export default function EventForm() {
                             </FormItem>
                         )}
                     />
-                    <Button type="submit">Submit</Button>
+                    <Button type="submit">{eventId ? "Save" : "Submit"}</Button>
                 </form>
             </Form>
         </>

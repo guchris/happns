@@ -1,6 +1,7 @@
 "use client"
 
 // Next and React Imports
+import { useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
 
 // App Imports
@@ -17,18 +18,18 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { Button } from "@/components/ui/button"
 
 // Other Imports
-import { Bookmark, BookmarkCheck, CalendarPlus, Link as LinkIcon } from "lucide-react"
-import { parse } from "date-fns"
+import { Bookmark, BookmarkCheck, CalendarPlus, Link as LinkIcon, Pencil } from "lucide-react"
 
 interface EventActionsProps {
     event: Event | null;
 }
 
 const EventActions = ({ event }: EventActionsProps) => {
+    const router = useRouter();
+    const { user, userData } = useAuth();
     const { toast } = useToast();
-    const { user } = useAuth();
-    const [isBookmarked, setIsBookmarked] = useState(false);
 
+    const [isBookmarked, setIsBookmarked] = useState(false);
     const isDisabled = !event;
 
     useEffect(() => {
@@ -124,6 +125,26 @@ const EventActions = ({ event }: EventActionsProps) => {
 
     return (
         <div className="flex items-center gap-2">
+            {user && userData?.role === "curator" && (
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            disabled={isDisabled}
+                            onClick={() => {
+                                if (event) {
+                                    router.push(`/event-form?id=${event.id}`);
+                                }
+                            }}
+                        >
+                            <Pencil className="h-4 w-4" />
+                            <span className="sr-only">Edit Event</span>
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Edit Event</TooltipContent>
+                </Tooltip>
+            )}
             {user && (
                 <Tooltip>
                     <TooltipTrigger asChild>
