@@ -1,7 +1,7 @@
 "use client"
 
 // Next and React Imports
-import { useState, useEffect } from "react"
+import { Suspense, useState, useEffect } from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 
@@ -132,13 +132,20 @@ export default function EventForm() {
 
     const { user, loading, userData } = useAuth();
     const searchParams = useSearchParams();
-    const eventId = searchParams ? searchParams.get("id") : null;
+    const [eventId, setEventId] = useState<string | null>(null);
 
     const [selectedCity, setSelectedCity] = useState<string | null>(null);
     const [neighborhoodsForCity, setNeighborhoodsForCity] = useState<Option[]>([]);
     const [clicks, setClicks] = useState(0);
 
     const hasPermission = !loading && user && userData?.role === "curator";
+
+    useEffect(() => {
+        if (searchParams) {
+            const id = searchParams.get("id");
+            setEventId(id); // Set eventId from searchParams
+        }
+    }, [searchParams]);
 
     useEffect(() => {
         if (selectedCity) {
