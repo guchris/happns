@@ -310,297 +310,363 @@ export default function EventForm() {
     
     return (
         <>
-            <div className="flex h-full flex-col">
-                <TopBar title={`happns/add-event`} />
-                <Separator />
-            </div>
-            <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col px-4 py-2 space-y-8 max-w-[800px] mx-auto">
-
-                    <FormField
-                        control={form.control}
-                        name="city"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>City</FormLabel>
-                                <Select
-                                    onValueChange={(value) => {
-                                        field.onChange(value);
-                                        setSelectedCity(value);
-                                    }}
-                                    value={field.value}
-                                >
-                                    <FormControl>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select a city" />
-                                        </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                        {cityOptions.map((option) => (
-                                            <SelectItem key={option.value} value={option.value}>
-                                                {option.label}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="category"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Category</FormLabel>
-                                <FormControl>
-                                    <MultiSelect
-                                        options={categoryOptions}
-                                        value={categoryOptions.filter(option => (field.value || []).includes(option.value))}
-                                        onChange={(selectedOptions: Option[]) => {
-                                            field.onChange(selectedOptions.map(option => option.value));
-                                        }}
-                                        maxSelected={3}
-                                    />
-                                </FormControl>
-                                <FormDescription>
-                                    Select up to 3
-                                </FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="format"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Event Format</FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                    <FormControl>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select a format" />
-                                        </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                        {formatOptions.map((option) => (
-                                            <SelectItem key={option.value} value={option.value}>
-                                                {option.label}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
+            <Suspense>
+                <div className="flex h-full flex-col">
+                    <TopBar title={`happns/add-event`} />
                     <Separator />
-                    
-                    <FormField
-                        control={form.control}
-                        name="name"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Event Name</FormLabel>
-                                <FormControl>
-                                    <Input {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="details"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Details</FormLabel>
-                                <FormControl>
-                                    <Textarea {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="cost"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Cost</FormLabel>
-                                <FormControl>
-                                    <div className="space-y-2">
-                                        {/* Cost Type Toggle Group */}
-                                        <ToggleGroup
-                                            type="single"
-                                            value={field.value?.type ?? "single"}
-                                            onValueChange={(value) => field.onChange({ ...field.value, type: value })} // Update cost type
-                                            className="flex space-x-2 justify-start"
-                                        >
-                                            <ToggleGroupItem value="single" className="px-4 py-2 text-sm font-medium bg-gray-200 hover:bg-gray-300">
-                                                Single Value
-                                            </ToggleGroupItem>
-                                            <ToggleGroupItem value="range" className="px-4 py-2 text-sm font-medium bg-gray-200 hover:bg-gray-300">
-                                                Range
-                                            </ToggleGroupItem>
-                                            <ToggleGroupItem value="minimum" className="px-4 py-2 text-sm font-medium bg-gray-200 hover:bg-gray-300">
-                                                Minimum
-                                            </ToggleGroupItem>
-                                        </ToggleGroup>
+                </div>
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col px-4 py-2 space-y-8 max-w-[800px] mx-auto">
 
-                                        {/* Single Value Input */}
-                                        {field.value?.type === "single" && (
-                                            <Input
-                                                type="number"
-                                                placeholder="Enter cost"
-                                                value={typeof field.value?.value === 'number' ? field.value.value : 0}
-                                                onChange={(e) => field.onChange({ ...field.value, value: parseFloat(e.target.value) })}
-                                            />
-                                        )}
+                        <FormField
+                            control={form.control}
+                            name="city"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>City</FormLabel>
+                                    <Select
+                                        onValueChange={(value) => {
+                                            field.onChange(value);
+                                            setSelectedCity(value);
+                                        }}
+                                        value={field.value}
+                                    >
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select a city" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            {cityOptions.map((option) => (
+                                                <SelectItem key={option.value} value={option.value}>
+                                                    {option.label}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="category"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Category</FormLabel>
+                                    <FormControl>
+                                        <MultiSelect
+                                            options={categoryOptions}
+                                            value={categoryOptions.filter(option => (field.value || []).includes(option.value))}
+                                            onChange={(selectedOptions: Option[]) => {
+                                                field.onChange(selectedOptions.map(option => option.value));
+                                            }}
+                                            maxSelected={3}
+                                        />
+                                    </FormControl>
+                                    <FormDescription>
+                                        Select up to 3
+                                    </FormDescription>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="format"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Event Format</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select a format" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            {formatOptions.map((option) => (
+                                                <SelectItem key={option.value} value={option.value}>
+                                                    {option.label}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
-                                        {/* Range Inputs */}
-                                        {field.value?.type === "range" && (
-                                            <div className="grid grid-cols-2 gap-4">
+                        <Separator />
+                        
+                        <FormField
+                            control={form.control}
+                            name="name"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Event Name</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="details"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Details</FormLabel>
+                                    <FormControl>
+                                        <Textarea {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="cost"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Cost</FormLabel>
+                                    <FormControl>
+                                        <div className="space-y-2">
+                                            {/* Cost Type Toggle Group */}
+                                            <ToggleGroup
+                                                type="single"
+                                                value={field.value?.type ?? "single"}
+                                                onValueChange={(value) => field.onChange({ ...field.value, type: value })} // Update cost type
+                                                className="flex space-x-2 justify-start"
+                                            >
+                                                <ToggleGroupItem value="single" className="px-4 py-2 text-sm font-medium bg-gray-200 hover:bg-gray-300">
+                                                    Single Value
+                                                </ToggleGroupItem>
+                                                <ToggleGroupItem value="range" className="px-4 py-2 text-sm font-medium bg-gray-200 hover:bg-gray-300">
+                                                    Range
+                                                </ToggleGroupItem>
+                                                <ToggleGroupItem value="minimum" className="px-4 py-2 text-sm font-medium bg-gray-200 hover:bg-gray-300">
+                                                    Minimum
+                                                </ToggleGroupItem>
+                                            </ToggleGroup>
+
+                                            {/* Single Value Input */}
+                                            {field.value?.type === "single" && (
                                                 <Input
                                                     type="number"
-                                                    placeholder="Min cost"
-                                                    value={Array.isArray(field.value?.value) ? field.value.value[0] : 0}
-                                                    onChange={(e) => {
-                                                        // Check if field.value.value is a tuple before updating it
-                                                        const currentValue = Array.isArray(field.value.value) ? field.value.value : [0, 0];
-                                                        field.onChange({ ...field.value, value: [parseFloat(e.target.value), currentValue[1]] });
-                                                    }}
-                                                />
-                                                <Input
-                                                    type="number"
-                                                    placeholder="Max cost"
-                                                    value={Array.isArray(field.value?.value) ? field.value.value[1] : 0}
-                                                    onChange={(e) => {
-                                                        // Check if field.value.value is a tuple before updating it
-                                                        const currentValue = Array.isArray(field.value.value) ? field.value.value : [0, 0];
-                                                        field.onChange({ ...field.value, value: [currentValue[0], parseFloat(e.target.value)] });
-                                                    }}
-                                                />
-                                            </div>
-                                        )}
-
-                                        {/* Minimum Value Input */}
-                                        {field.value?.type === "minimum" && (
-                                            <div className="flex items-center">
-                                                <Input
-                                                    type="number"
-                                                    placeholder="Min cost"
+                                                    placeholder="Enter cost"
                                                     value={typeof field.value?.value === 'number' ? field.value.value : 0}
                                                     onChange={(e) => field.onChange({ ...field.value, value: parseFloat(e.target.value) })}
                                                 />
-                                                <span className="ml-2">+</span>
-                                            </div>
-                                        )}
-                                    </div>
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                                            )}
 
-                    <Separator />
+                                            {/* Range Inputs */}
+                                            {field.value?.type === "range" && (
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <Input
+                                                        type="number"
+                                                        placeholder="Min cost"
+                                                        value={Array.isArray(field.value?.value) ? field.value.value[0] : 0}
+                                                        onChange={(e) => {
+                                                            // Check if field.value.value is a tuple before updating it
+                                                            const currentValue = Array.isArray(field.value.value) ? field.value.value : [0, 0];
+                                                            field.onChange({ ...field.value, value: [parseFloat(e.target.value), currentValue[1]] });
+                                                        }}
+                                                    />
+                                                    <Input
+                                                        type="number"
+                                                        placeholder="Max cost"
+                                                        value={Array.isArray(field.value?.value) ? field.value.value[1] : 0}
+                                                        onChange={(e) => {
+                                                            // Check if field.value.value is a tuple before updating it
+                                                            const currentValue = Array.isArray(field.value.value) ? field.value.value : [0, 0];
+                                                            field.onChange({ ...field.value, value: [currentValue[0], parseFloat(e.target.value)] });
+                                                        }}
+                                                    />
+                                                </div>
+                                            )}
 
-                    <div className="grid grid-cols-2 gap-4 w-full">
-                        <FormField
-                            control={form.control}
-                            name="startDate"
-                            render={({ field }) => (
-                                <FormItem className="flex flex-col">
-                                    <FormLabel>Start Date</FormLabel>
-                                    <Popover>
-                                        <PopoverTrigger asChild>
-                                            <FormControl>
-                                                <Button
-                                                    variant={"outline"}
-                                                    className={cn(
-                                                        "pl-3 text-left font-normal",
-                                                        !field.value && "text-muted-foreground"
-                                                    )}
-                                                >
-                                                    {field.value ? (
-                                                        format(field.value, "PPP")
-                                                    ) : (
-                                                        <span>Pick a start date</span>
-                                                    )}
-                                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                                </Button>
-                                            </FormControl>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="w-auto p-0" align="start">
-                                            <Calendar
-                                                mode="single"
-                                                selected={field.value}
-                                                onSelect={field.onChange}
-                                                initialFocus
-                                            />
-                                        </PopoverContent>
-                                    </Popover>
+                                            {/* Minimum Value Input */}
+                                            {field.value?.type === "minimum" && (
+                                                <div className="flex items-center">
+                                                    <Input
+                                                        type="number"
+                                                        placeholder="Min cost"
+                                                        value={typeof field.value?.value === 'number' ? field.value.value : 0}
+                                                        onChange={(e) => field.onChange({ ...field.value, value: parseFloat(e.target.value) })}
+                                                    />
+                                                    <span className="ml-2">+</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
-                        <FormField
-                            control={form.control}
-                            name="endDate"
-                            render={({ field }) => (
-                                <FormItem className="flex flex-col">
-                                    <FormLabel>End Date</FormLabel>
-                                    <Popover>
-                                        <PopoverTrigger asChild>
-                                            <FormControl>
-                                                <Button
-                                                    variant={"outline"}
-                                                    className={cn(
-                                                        "pl-3 text-left font-normal",
-                                                        !field.value && "text-muted-foreground"
-                                                    )}
-                                                >
-                                                    {field.value ? (
-                                                        format(field.value, "PPP")
-                                                    ) : (
-                                                        <span>Pick an end date</span>
-                                                    )}
-                                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                                </Button>
-                                            </FormControl>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="w-auto p-0" align="start">
-                                            <Calendar
-                                                mode="single"
-                                                selected={field.value}
-                                                onSelect={field.onChange}
-                                                initialFocus
+
+                        <Separator />
+
+                        <div className="grid grid-cols-2 gap-4 w-full">
+                            <FormField
+                                control={form.control}
+                                name="startDate"
+                                render={({ field }) => (
+                                    <FormItem className="flex flex-col">
+                                        <FormLabel>Start Date</FormLabel>
+                                        <Popover>
+                                            <PopoverTrigger asChild>
+                                                <FormControl>
+                                                    <Button
+                                                        variant={"outline"}
+                                                        className={cn(
+                                                            "pl-3 text-left font-normal",
+                                                            !field.value && "text-muted-foreground"
+                                                        )}
+                                                    >
+                                                        {field.value ? (
+                                                            format(field.value, "PPP")
+                                                        ) : (
+                                                            <span>Pick a start date</span>
+                                                        )}
+                                                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                    </Button>
+                                                </FormControl>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-auto p-0" align="start">
+                                                <Calendar
+                                                    mode="single"
+                                                    selected={field.value}
+                                                    onSelect={field.onChange}
+                                                    initialFocus
+                                                />
+                                            </PopoverContent>
+                                        </Popover>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="endDate"
+                                render={({ field }) => (
+                                    <FormItem className="flex flex-col">
+                                        <FormLabel>End Date</FormLabel>
+                                        <Popover>
+                                            <PopoverTrigger asChild>
+                                                <FormControl>
+                                                    <Button
+                                                        variant={"outline"}
+                                                        className={cn(
+                                                            "pl-3 text-left font-normal",
+                                                            !field.value && "text-muted-foreground"
+                                                        )}
+                                                    >
+                                                        {field.value ? (
+                                                            format(field.value, "PPP")
+                                                        ) : (
+                                                            <span>Pick an end date</span>
+                                                        )}
+                                                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                    </Button>
+                                                </FormControl>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-auto p-0" align="start">
+                                                <Calendar
+                                                    mode="single"
+                                                    selected={field.value}
+                                                    onSelect={field.onChange}
+                                                    initialFocus
+                                                />
+                                            </PopoverContent>
+                                        </Popover>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4 w-full">
+                            <FormField
+                                control={form.control}
+                                name="startTime"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Start Time</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="text"
+                                                {...field}
+                                                placeholder="Enter start time"
+                                                pattern="(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)"
                                             />
-                                        </PopoverContent>
-                                    </Popover>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4 w-full">
+                                        </FormControl>
+                                        <FormDescription>
+                                            HH:mm AM/PM
+                                        </FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="endTime"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>End Time</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="text"
+                                                {...field}
+                                                placeholder="Enter end time"
+                                                pattern="(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)"
+                                            />
+                                        </FormControl>
+                                        <FormDescription>
+                                            HH:mm AM/PM
+                                        </FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+
+                        <Separator />
+
                         <FormField
                             control={form.control}
-                            name="startTime"
+                            name="neighborhood"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Start Time</FormLabel>
+                                    <FormLabel>Neighborhood</FormLabel>
+                                    <Select onValueChange={field.onChange} value={field.value}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select a neighborhood" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            {neighborhoodsForCity.map((option) => (
+                                                <SelectItem key={option.value} value={option.value}>
+                                                    {option.label}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="location"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Location</FormLabel>
                                     <FormControl>
-                                        <Input
-                                            type="text"
-                                            {...field}
-                                            placeholder="Enter start time"
-                                            pattern="(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)"
-                                        />
+                                        <Input {...field} placeholder="Enter the location name" />
                                     </FormControl>
                                     <FormDescription>
-                                        HH:mm AM/PM
+                                        This is the name of the location where the event will take place.
                                     </FormDescription>
                                     <FormMessage />
                                 </FormItem>
@@ -608,138 +674,74 @@ export default function EventForm() {
                         />
                         <FormField
                             control={form.control}
-                            name="endTime"
+                            name="gmaps"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>End Time</FormLabel>
+                                    <FormLabel>Google Maps Link</FormLabel>
                                     <FormControl>
-                                        <Input
-                                            type="text"
-                                            {...field}
-                                            placeholder="Enter end time"
-                                            pattern="(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)"
-                                        />
+                                        <Input {...field} placeholder="https://maps.app.goo.gl/abc" />
                                     </FormControl>
                                     <FormDescription>
-                                        HH:mm AM/PM
+                                        This is the Google Maps link to the event location.
                                     </FormDescription>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
-                    </div>
+                        
 
-                    <Separator />
+                        <Separator />
 
-                    <FormField
-                        control={form.control}
-                        name="neighborhood"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Neighborhood</FormLabel>
-                                <Select onValueChange={field.onChange} value={field.value}>
+                        <FormField
+                            control={form.control}
+                            name="link"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Event Link</FormLabel>
                                     <FormControl>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select a neighborhood" />
-                                        </SelectTrigger>
+                                        <Input {...field} placeholder="https://example.com" />
                                     </FormControl>
-                                    <SelectContent>
-                                        {neighborhoodsForCity.map((option) => (
-                                            <SelectItem key={option.value} value={option.value}>
-                                                {option.label}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="location"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Location</FormLabel>
-                                <FormControl>
-                                    <Input {...field} placeholder="Enter the location name" />
-                                </FormControl>
-                                <FormDescription>
-                                    This is the name of the location where the event will take place.
-                                </FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="gmaps"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Google Maps Link</FormLabel>
-                                <FormControl>
-                                    <Input {...field} placeholder="https://maps.app.goo.gl/abc" />
-                                </FormControl>
-                                <FormDescription>
-                                    This is the Google Maps link to the event location.
-                                </FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    
+                                    <FormDescription>
+                                        This is the website to the event.
+                                    </FormDescription>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="image"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Event Image / Flyer</FormLabel>
+                                    <FormControl>
+                                        <div>
+                                            {/* Display existing image if it's a string (URL) */}
+                                            {typeof field.value === "string" && field.value && (
+                                                <div className="mb-4">
+                                                    <img src={field.value} alt="Event Image" className="w-64 h-auto rounded-lg" />
+                                                </div>
+                                            )}
 
-                    <Separator />
-
-                    <FormField
-                        control={form.control}
-                        name="link"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Event Link</FormLabel>
-                                <FormControl>
-                                    <Input {...field} placeholder="https://example.com" />
-                                </FormControl>
-                                <FormDescription>
-                                    This is the website to the event.
-                                </FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="image"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Event Image / Flyer</FormLabel>
-                                <FormControl>
-                                    <div>
-                                        {/* Display existing image if it's a string (URL) */}
-                                        {typeof field.value === "string" && field.value && (
-                                            <div className="mb-4">
-                                                <img src={field.value} alt="Event Image" className="w-64 h-auto rounded-lg" />
-                                            </div>
-                                        )}
-
-                                        {/* File input for new image */}
-                                        <Input
-                                            type="file"
-                                            accept="image/*"
-                                            onChange={(e) => field.onChange(e.target.files?.[0])}
-                                        />
-                                    </div>
-                                </FormControl>
-                                <FormDescription>
-                                    Upload an image for the event (JPG, PNG, etc.).
-                                </FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <Button type="submit">{eventId ? "Save" : "Submit"}</Button>
-                </form>
-            </Form>
+                                            {/* File input for new image */}
+                                            <Input
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={(e) => field.onChange(e.target.files?.[0])}
+                                            />
+                                        </div>
+                                    </FormControl>
+                                    <FormDescription>
+                                        Upload an image for the event (JPG, PNG, etc.).
+                                    </FormDescription>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <Button type="submit">{eventId ? "Save" : "Submit"}</Button>
+                    </form>
+                </Form>
+            </Suspense>
         </>
     );
 }
