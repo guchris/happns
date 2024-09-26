@@ -4,38 +4,68 @@
 import { useRef, useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext"
 
-// Components Imports
+// App Imports
 import { TopBar } from "@/components/top-bar"
 import { Footer } from "@/components/footer"
-
-// Hooks Imports
 import { toast } from "@/hooks/use-toast" 
 
+// Firebase Imports
+import { db } from "@/lib/firebase"
+import { doc, getDoc, collection, getDocs } from "firebase/firestore"
+
 // Shadcn Imports
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 
 // Icon Imports
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons"
+
+// Utility Function to get initials
+function getInitials(name: string) {
+    const [firstName, lastName] = name.split(" ");
+    return firstName[0] + (lastName ? lastName[0] : "");
+}
   
 
 export default function ProfilePage() {
     const inputRef = useRef<HTMLInputElement>(null);
     const { user } = useAuth();
     const [calendarLink, setCalendarLink] = useState<string>("");
+    const [userInfo, setUserInfo] = useState<any>(null);
+    const [bookmarkCount, setBookmarkCount] = useState<number>(0);
 
     useEffect(() => {
         if (user?.uid) {
             // Generate the subscription link using the user's UID
             setCalendarLink(`webcal://ithappns.com/api/calendar-feed?userId=${user.uid}`);
+
+            // Fetch user information from Firestore
+            const fetchUserInfo = async () => {
+                try {
+                    const userRef = doc(db, "users", user.uid);
+                    const userDoc = await getDoc(userRef);
+
+                    if (userDoc.exists()) {
+                        setUserInfo(userDoc.data());
+                    } else {
+                        console.error("No such user document!");
+                    }
+
+                    // Fetch user bookmarks count
+                    const bookmarksRef = collection(userRef, "user-bookmarks");
+                    const bookmarksSnapshot = await getDocs(bookmarksRef);
+                    setBookmarkCount(bookmarksSnapshot.size);
+                } catch (error) {
+                    console.error("Error fetching user data: ", error);
+                }
+            };
+
+            fetchUserInfo();
         }
     }, [user]);
 
@@ -66,15 +96,71 @@ export default function ProfilePage() {
             <TopBar title={`happns/profile`} />
             <Separator />
 
-            <div className="flex justify-center">
-                <div className="w-full max-w-[800px] p-4 py-8 flex flex-col space-y-4">
+            {userInfo && (
+                <div className="flex flex-1 flex-col">
+                    <div className="p-4">
+                        <div className="grid gap-4 text-sm">
 
-                    {/* Generate dynamic link based on the user's ID */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="text-lg font-semibold">Google Calendar Subscription Link</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
+                            {/* User Avatar */}
+                            <div className="flex justify-center mb-4">
+                                <Avatar className="h-48 w-48">
+                                    <AvatarFallback>{getInitials(userInfo.name)}</AvatarFallback>
+                                </Avatar>
+                            </div>
+
+                            {/* User Name, Username, and Email */}
+                            <div className="grid gap-1">
+                                <div className="text-lg font-semibold">{userInfo.name}</div>
+                                <div className="text-base font-medium">{userInfo.username}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <Separator />
+
+                    {/* User Role */}
+                    <div className="flex whitespace-pre-wrap p-4 grid gap-4">
+                        <div className="grid gap-2">
+                            <div className="text-sm font-medium">
+                                <span className="text-muted-foreground">Email: </span>
+                                <Badge variant="outline" className="inline-block">
+                                    {userInfo.email}
+                                </Badge>
+                            </div>
+                            <div className="text-sm font-medium">
+                                <span className="text-muted-foreground">Role: </span>
+                                <Badge variant="outline" className="inline-block">
+                                    {userInfo.role}
+                                </Badge>
+                            </div>
+                        </div>
+                    </div>
+
+                    <Separator />
+                    
+                    {/* User Stats */}
+                    <div className="flex items-center gap-4">
+                        <div className="flex-1 p-4">
+                            <div className="text-sm font-medium text-muted-foreground">Bookmarked</div>
+                            <div className="text-sm font-medium">
+                                {bookmarkCount} events bookmarked
+                            </div>
+                        </div>
+                        <Separator orientation="vertical" className="h-auto self-stretch" />
+                        <div className="flex-1 p-4">
+                            <div className="text-sm font-medium text-muted-foreground">Attended</div>
+                            <div className="text-sm font-medium">
+                                0 events attended
+                            </div>
+                        </div>
+                    </div>
+
+                    <Separator />
+
+                    {/* User Calendar Link */}
+                    <div className="flex-col p-4 space-y-2">
+                        <div className="text-sm font-medium text-muted-foreground">Google Calendar Subscription Link</div>
+                        <div className="space-y-2">
                             <p className="text-sm">
                                 Subscribe to your bookmarked events by adding this link to your Google Calendar.
                             </p>
@@ -84,37 +170,37 @@ export default function ProfilePage() {
                                     Copy Link
                                 </Button>
                             </div>
-                        </CardContent>
-                    </Card>
-                    
-                    {/* Step-by-step guide */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="text-base font-semibold">How to Add This Calendar to Google Calendar</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            <ol className="list-decimal list-inside text-sm space-y-2">
-                                <li>Copy the link above by clicking the &quot;Copy Link&quot; button.</li>
-                                <li>
-                                    Open <a href="https://calendar.google.com" target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">Google Calendar</a> in your browser.
-                                </li>
-                                <li>On the left-hand sidebar, find the section labeled &quot;Other calendars&quot; and click the plus (<b>+</b>) icon next to it.</li>
-                                <li>Select <b>&quot;From URL&quot;</b> from the menu.</li>
-                                <li>Paste the link you copied earlier (starting with <b>webcal://</b>) into the field provided.</li>
-                                <li>Click the <b>&quot;Add calendar&quot;</b> button.</li>
-                                <li>Your bookmarked events will now appear in your Google Calendar. Google Calendar will automatically update with any changes you make to your bookmarks.</li>
-                            </ol>
-                            <Alert>
-                                <ExclamationTriangleIcon className="h-4 w-4" />
-                                <AlertTitle>Note</AlertTitle>
-                                <AlertDescription>
-                                    It may take some time for Google Calendar to refresh and sync new events. If you don&apos;t see changes immediately, give it a few minutes.
-                                </AlertDescription>
-                            </Alert>
-                        </CardContent>
-                    </Card>
+                            <Collapsible>
+                                <CollapsibleTrigger asChild>
+                                    <Button variant="outline">Show Instructions</Button>
+                                </CollapsibleTrigger>
+                                <CollapsibleContent>
+                                    <ol className="list-decimal list-inside text-sm space-y-2">
+                                        <li>Copy the link above by clicking the &quot;Copy Link&quot; button.</li>
+                                        <li>
+                                            Open <a href="https://calendar.google.com" target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">Google Calendar</a> in your browser.
+                                        </li>
+                                        <li>On the left-hand sidebar, find the section labeled &quot;Other calendars&quot; and click the plus (<b>+</b>) icon next to it.</li>
+                                        <li>Select <b>&quot;From URL&quot;</b> from the menu.</li>
+                                        <li>Paste the link you copied earlier (starting with <b>webcal://</b>) into the field provided.</li>
+                                        <li>Click the <b>&quot;Add calendar&quot;</b> button.</li>
+                                        <li>Your bookmarked events will now appear in your Google Calendar. Google Calendar will automatically update with any changes you make to your bookmarks.</li>
+                                    </ol>
+                                    <Alert>
+                                        <ExclamationTriangleIcon className="h-4 w-4" />
+                                        <AlertTitle>Note</AlertTitle>
+                                        <AlertDescription>
+                                            It may take some time for Google Calendar to refresh and sync new events. If you don&apos;t see changes immediately, give it a few minutes.
+                                        </AlertDescription>
+                                    </Alert>
+                                </CollapsibleContent>
+                            </Collapsible>
+                        </div>
+                    </div>
+
+                    <Separator />
                 </div>
-            </div>
+            )}
 
             <Footer className="mt-auto" />
         </div>

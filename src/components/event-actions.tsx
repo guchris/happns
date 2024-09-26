@@ -35,9 +35,13 @@ const EventActions = ({ event }: EventActionsProps) => {
     useEffect(() => {
         if (user && event) {
             const checkIfBookmarked = async () => {
-                const bookmarkRef = doc(db, `users/${user.uid}/user-bookmarks`, event.id);
-                const bookmarkSnap = await getDoc(bookmarkRef);
-                setIsBookmarked(bookmarkSnap.exists());
+                try {
+                    const bookmarkRef = doc(db, `users/${user.uid}/user-bookmarks`, event.id);
+                    const bookmarkSnap = await getDoc(bookmarkRef);
+                    setIsBookmarked(bookmarkSnap.exists());
+                } catch (error) {
+                    console.error("Error checking bookmark: ", error);
+                }
             };
             checkIfBookmarked();
         }
