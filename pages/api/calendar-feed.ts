@@ -7,7 +7,7 @@ import { initializeApp, getApps, cert } from 'firebase-admin/app'
 
 // Other Imports
 import ical from 'ical-generator'
-import { parse, isValid } from 'date-fns';
+import { parseISO, parse, isValid } from 'date-fns';
 
 // Service account credentials (You need to add these credentials)
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY!);
@@ -66,40 +66,52 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return;  // Skip if event is null or undefined
         }
 
-        let eventStart, eventEnd;
-
-        // Ensure date exists and split it
-        if (!event.date) {
-            console.error("Missing date for event:", event);
-            return;  // Skip this event if the date is missing
+        // Ensure startDate, endDate, and time exist
+        if (!event.startDate || !event.endDate || !event.time) {
+            console.error("Missing startDate, endDate, or time for event:", event);
+            return;  // Skip this event if any of the required fields are missing
         }
 
-        // Safely split the date field
-        const dateParts = event.date ? event.date.split(" - ") : [];
+        // Parse startDate and endDate
+        const eventStartDate = parseISO(event.startDate);
+        const eventEndDate = parseISO(event.endDate);
 
-        if (dateParts.length === 2) {
-            // It's a date range (e.g., "MM/dd/yyyy - MM/dd/yyyy")
-            eventStart = parse(dateParts[0], "MM/dd/yyyy", new Date());
-            eventEnd = parse(dateParts[1], "MM/dd/yyyy", new Date());
-        } else if (dateParts.length === 1) {
-            // It's a single date (e.g., "MM/dd/yyyy")
-            eventStart = parse(event.date, "MM/dd/yyyy", new Date());
-            eventEnd = new Date(eventStart.getTime() + 60 * 60 * 1000);  // Default to 1 hour after start
-        } else {
+        // Check if the parsed dates are valid
+        if (!isValid(eventStartDate) || !isValid(eventEndDate)) {
             console.error("Invalid date format for event:", event);
             return;  // Skip this event if the date format is invalid
         }
 
-        // Parse event time (since time field always exists)
+        // Parse time
         const timeParts = event.time.split(" - ");
+        let eventStart, eventEnd;
+
         if (timeParts.length === 2) {
             const [startTime, endTime] = timeParts;
-            const startTimeDate = parse(startTime, "hh:mm a", eventStart);
-            const endTimeDate = parse(endTime, "hh:mm a", eventEnd);
-            
-            // Overwrite eventStart and eventEnd if valid times are provided
-            if (isValid(startTimeDate)) eventStart = startTimeDate;
-            if (isValid(endTimeDate)) eventEnd = endTimeDate;
+
+            // Parse start time and end time using startDate and endDate as bases
+            eventStart = parse(startTime, "h:mm a", eventStartDate);
+            eventEnd = parse(endTime, "h:mm a", eventEndDate);
+
+            // If the end time is earlier than the start time, it means it spans midnight
+            if (eventEnd < eventStart) {
+                eventEnd = new Date(eventEnd.getTime() + 24 * 60 * 60 * 1000); // Add one day
+            }
+
+            // Overwrite eventEnd with eventEndDate if it's a multi-day event
+            if (event.startDate !== event.endDate) {
+                eventEnd = new Date(eventEndDate.setHours(eventEnd.getHours(), eventEnd.getMinutes()));
+            }
+
+        } else {
+            console.error("Invalid time format for event:", event);
+            return; // Skip this event if the time format is invalid
+        }
+
+        // Check if the parsed times are valid
+        if (!isValid(eventStart) || !isValid(eventEnd)) {
+            console.error("Invalid time format for event:", event);
+            return; // Skip if the time format is invalid
         }
 
         // Create an iCal event
@@ -107,7 +119,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             start: eventStart,
             end: eventEnd,
             summary: event.name || "No Title",
-            description: `${event.description || "No Description"}`,
+            description: `${event.details || "No Details"}`,
             location: event.location || "Location not specified",
             url: event.link,
             timezone: 'America/Los_Angeles'
