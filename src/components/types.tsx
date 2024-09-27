@@ -26,6 +26,7 @@ export interface User {
     username: string;
     email: string;
     createdAt: Date;
+    profilePicture?: string;
     role: "general" | "curator";
 }
 

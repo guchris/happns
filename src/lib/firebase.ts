@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, Firestore } from "firebase/firestore";
 import { getAuth, setPersistence, browserSessionPersistence } from "firebase/auth";
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
     apiKey: "AIzaSyDKsebP5_GFk6JqHO0uLCQ5EHckNJnV1U0",
@@ -39,4 +40,7 @@ if (typeof window !== "undefined") {
     });
 }
 
-export { db, auth };
+// Initialize Firebase Storage
+const storage = getStorage(app);
+
+export { db, auth, storage };

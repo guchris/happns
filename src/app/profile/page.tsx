@@ -10,8 +10,9 @@ import { Footer } from "@/components/footer"
 import { toast } from "@/hooks/use-toast" 
 
 // Firebase Imports
-import { db } from "@/lib/firebase"
+import { db, storage } from "@/lib/firebase"
 import { doc, getDoc, updateDoc, collection, getDocs } from "firebase/firestore"
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
 
 // Shadcn Imports
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -22,16 +23,6 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
-import {
-    Drawer,
-    DrawerClose,
-    DrawerContent,
-    DrawerDescription,
-    DrawerFooter,
-    DrawerHeader,
-    DrawerTitle,
-    DrawerTrigger,
-} from "@/components/ui/drawer"
 import {
     Dialog,
     DialogContent,
@@ -64,6 +55,8 @@ export default function ProfilePage() {
     const [editName, setEditName] = useState<string>("");
     const [editUsername, setEditUsername] = useState<string>("");
     const [editEmail, setEditEmail] = useState<string>("");
+    const [editProfilePicture, setEditProfilePicture] = useState<string | null>(null);
+    const [profilePictureFile, setProfilePictureFile] = useState<File | null>(null);
 
     useEffect(() => {
         if (user?.uid) {
@@ -122,14 +115,50 @@ export default function ProfilePage() {
         }
     };
 
+    // Handle profile picture upload and preview
+    const handleProfilePictureUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            setProfilePictureFile(file);
+            const reader = new FileReader();
+            reader.onload = () => {
+                setEditProfilePicture(reader.result as string); // Preview the image
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
     const handleProfileUpdate = async () => {
         if (user?.uid) {
             const userRef = doc(db, "users", user.uid);
+            let updatedProfilePictureURL = userInfo?.profilePicture || null;
+
+            // If there's a new profile picture to upload
+            if (profilePictureFile) {
+                const storageRef = ref(storage, `profile_pictures/${user.uid}`);
+                try {
+                    // Upload the new profile picture to Firebase Storage
+                    await uploadBytes(storageRef, profilePictureFile);
+                    // Get the new profile picture URL
+                    updatedProfilePictureURL = await getDownloadURL(storageRef);
+                } catch (error) {
+                    console.error("Error uploading profile picture: ", error);
+                    toast({
+                        title: "Error",
+                        description: "There was an error uploading your profile picture. Please try again.",
+                        variant: "destructive",
+                    });
+                    return;
+                }
+            }
+
             try {
+                // Update user information in Firestore
                 await updateDoc(userRef, {
                     name: editName,
                     username: editUsername,
                     email: editEmail,
+                    profilePicture: updatedProfilePictureURL,
                 });
                 toast({
                     title: "Profile Updated",
@@ -140,7 +169,9 @@ export default function ProfilePage() {
                     name: editName,
                     username: editUsername,
                     email: editEmail,
+                    profilePicture: updatedProfilePictureURL,
                 });
+                setIsDialogOpen(false); // Close the dialog after saving changes
             } catch (error) {
                 console.error("Error updating profile: ", error);
                 toast({
@@ -165,7 +196,15 @@ export default function ProfilePage() {
                             {/* User Avatar */}
                             <div className="flex justify-left mb-4">
                                 <Avatar className="h-24 w-24">
-                                    <AvatarFallback>{getInitials(userInfo.name)}</AvatarFallback>
+                                    {userInfo.profilePicture ? (
+                                        <img
+                                            src={userInfo.profilePicture}
+                                            alt="Profile Picture"
+                                            className="h-full w-full object-cover rounded-full"
+                                        />
+                                    ) : (
+                                        <AvatarFallback>{getInitials(userInfo.name)}</AvatarFallback>
+                                    )}
                                 </Avatar>
                             </div>
 
@@ -191,6 +230,38 @@ export default function ProfilePage() {
                                     </DialogDescription>
                                     </DialogHeader>
                                         <div className="grid gap-4 py-4">
+
+                                            {/* Profile Picture Preview */}
+                                            <div className="grid grid-cols-4 items-center gap-4">
+                                                <Label htmlFor="profile-picture-preview" className="text-right">
+                                                    Profile Picture
+                                                </Label>
+                                                <div className="col-span-3">
+                                                    <Avatar className="h-24 w-24 mb-2">
+                                                        {editProfilePicture ? (
+                                                            <img
+                                                                src={editProfilePicture}
+                                                                alt="Profile Picture Preview"
+                                                                className="h-full w-full object-cover rounded-full"
+                                                            />
+                                                        ) : userInfo?.profilePicture ? (
+                                                            <img
+                                                                src={userInfo.profilePicture}
+                                                                alt="Profile Picture"
+                                                                className="h-full w-full object-cover rounded-full"
+                                                            />
+                                                        ) : (
+                                                            <AvatarFallback>{getInitials(userInfo.name)}</AvatarFallback>
+                                                        )}
+                                                    </Avatar>
+                                                    <Input
+                                                        type="file"
+                                                        id="profile-picture-upload"
+                                                        accept="image/*"
+                                                        onChange={handleProfilePictureUpload}
+                                                    />
+                                                </div>
+                                            </div>
 
                                             {/* Name Field */}
                                             <div className="grid grid-cols-4 items-center gap-4">
