@@ -1,7 +1,7 @@
 "use client"
 
 // Next and React Imports
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import Link from "next/link"
 
 // App Imports
@@ -20,6 +20,27 @@ type EventGridProps = {
 
 const EventGrid = ({ eventsHappeningToday, eventsHappeningTomorrow, topEvents }: EventGridProps) => {
     const [activeTab, setActiveTab] = useState("today");
+    const tabsRef = useRef<HTMLDivElement | null>(null);
+    const [userInteracted, setUserInteracted] = useState(false);
+
+    // Scroll the tabs list into view when the active tab changes, if needed
+    useEffect(() => {
+        if (userInteracted && tabsRef.current) {
+            const { top } = tabsRef.current.getBoundingClientRect();
+            if (top < 0 || top > 100) { // Adjust threshold as needed
+                window.scrollTo({
+                    top: window.scrollY + top - 45, // Scroll to tabs position with a small offset
+                    behavior: "smooth",
+                });
+            }
+        }
+    }, [activeTab, userInteracted]);
+
+    useEffect(() => {
+        if (userInteracted) {
+            setUserInteracted(false); // Reset after scrolling
+        }
+    }, [userInteracted]);
 
     // Select events based on the active tab
     const filteredEvents = activeTab === "today"
@@ -30,8 +51,14 @@ const EventGrid = ({ eventsHappeningToday, eventsHappeningTomorrow, topEvents }:
 
     return (
         <div className="space-y-4">
-            <Tabs defaultValue="today" onValueChange={setActiveTab}>
-                <div className="mb-4">
+            <Tabs
+                defaultValue="today"
+                onValueChange={(value) => {
+                    setActiveTab(value);
+                    setUserInteracted(true);
+                }}
+            >
+                <div ref={tabsRef} className="mb-4">
                     <TabsList>
                         <TabsTrigger value="today">Today</TabsTrigger>
                         <TabsTrigger value="tomorrow">Tomorrow</TabsTrigger>
