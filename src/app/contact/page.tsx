@@ -88,7 +88,7 @@ export default function ContactForm() {
 
                     {/* Title and Description */}
                     <div className="space-y-2">
-                        <h1 className="text-lg font-medium">Contact Us</h1>
+                        <h1 className="text-lg font-medium">contact us</h1>
                         <p className="text-sm text-muted-foreground">
                             Need to reach us? Please fill out the form below with your contact info and message, and we&apos;ll get back to you as soon as possible. Let&apos;s make it happn!
                         </p>
