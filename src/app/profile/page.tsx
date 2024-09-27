@@ -11,7 +11,7 @@ import { toast } from "@/hooks/use-toast"
 
 // Firebase Imports
 import { db } from "@/lib/firebase"
-import { doc, getDoc, collection, getDocs } from "firebase/firestore"
+import { doc, getDoc, updateDoc, collection, getDocs } from "firebase/firestore"
 
 // Shadcn Imports
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -41,7 +41,6 @@ import {
     DialogTrigger,
     DialogFooter
 } from "@/components/ui/dialog"
-  
 
 // Icon Imports
 import { ExclamationTriangleIcon, CopyIcon } from "@radix-ui/react-icons"
@@ -59,6 +58,12 @@ export default function ProfilePage() {
     const [calendarLink, setCalendarLink] = useState<string>("");
     const [userInfo, setUserInfo] = useState<any>(null);
     const [bookmarkCount, setBookmarkCount] = useState<number>(0);
+    const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+
+    // States for form inputs
+    const [editName, setEditName] = useState<string>("");
+    const [editUsername, setEditUsername] = useState<string>("");
+    const [editEmail, setEditEmail] = useState<string>("");
 
     useEffect(() => {
         if (user?.uid) {
@@ -72,7 +77,12 @@ export default function ProfilePage() {
                     const userDoc = await getDoc(userRef);
 
                     if (userDoc.exists()) {
-                        setUserInfo(userDoc.data());
+                        const userData = userDoc.data();
+                        setUserInfo(userData);
+
+                        setEditName(userData.name || "");
+                        setEditUsername(userData.username || "");
+                        setEditEmail(userData.email || "");
                     } else {
                         console.error("No such user document!");
                     }
@@ -112,6 +122,37 @@ export default function ProfilePage() {
         }
     };
 
+    const handleProfileUpdate = async () => {
+        if (user?.uid) {
+            const userRef = doc(db, "users", user.uid);
+            try {
+                await updateDoc(userRef, {
+                    name: editName,
+                    username: editUsername,
+                    email: editEmail,
+                });
+                toast({
+                    title: "Profile Updated",
+                    description: "Your profile information has been updated.",
+                });
+                setUserInfo({
+                    ...userInfo,
+                    name: editName,
+                    username: editUsername,
+                    email: editEmail,
+                });
+            } catch (error) {
+                console.error("Error updating profile: ", error);
+                toast({
+                    title: "Error",
+                    description: "There was an error updating your profile. Please try again.",
+                    variant: "destructive",
+                });
+            }
+            setIsDialogOpen(false);
+        }
+    };
+
     return (
         <div className="min-h-screen flex flex-col">
             <TopBar title={`happns/profile`} />
@@ -133,6 +174,70 @@ export default function ProfilePage() {
                                 <div className="text-lg font-semibold">{userInfo.name}</div>
                                 <div className="text-base font-medium">@{userInfo.username}</div>
                             </div>
+                        </div>
+
+                        <div className="flex justify-end">
+                            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                                <DialogTrigger asChild>
+                                    <Button variant="outline" onClick={() => setIsDialogOpen(true)}>
+                                        Edit Profile
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent className="sm:max-w-[425px]">
+                                    <DialogHeader>
+                                        <DialogTitle>Edit profile</DialogTitle>
+                                    <DialogDescription>
+                                        Make changes to your profile here. Click save when you're done.
+                                    </DialogDescription>
+                                    </DialogHeader>
+                                        <div className="grid gap-4 py-4">
+
+                                            {/* Name Field */}
+                                            <div className="grid grid-cols-4 items-center gap-4">
+                                                <Label htmlFor="name" className="text-right">
+                                                    Name
+                                                </Label>
+                                                <Input
+                                                    id="name"
+                                                    value={editName}
+                                                    onChange={(e) => setEditName(e.target.value)}
+                                                    className="col-span-3"
+                                                />
+                                            </div>
+
+                                            {/* Username Field */}
+                                            <div className="grid grid-cols-4 items-center gap-4">
+                                                <Label htmlFor="username" className="text-right">
+                                                    Username
+                                                </Label>
+                                                <Input
+                                                    id="username"
+                                                    value={editUsername}
+                                                    onChange={(e) => setEditUsername(e.target.value)}
+                                                    className="col-span-3"
+                                                />
+                                            </div>
+                                            
+                                            {/* Email Field */}
+                                            <div className="grid grid-cols-4 items-center gap-4">
+                                                <Label htmlFor="email" className="text-right">
+                                                    Email
+                                                </Label>
+                                                <Input
+                                                    id="email"
+                                                    value={editEmail}
+                                                    onChange={(e) => setEditEmail(e.target.value)}
+                                                    className="col-span-3"
+                                                />
+                                            </div>
+                                        </div>
+                                    <DialogFooter>
+                                        <Button type="submit" onClick={handleProfileUpdate}>
+                                            Save changes
+                                        </Button>
+                                    </DialogFooter>
+                                </DialogContent>
+                            </Dialog>
                         </div>
                     </div>
 
