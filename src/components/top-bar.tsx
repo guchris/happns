@@ -2,6 +2,7 @@
 
 // Next Imports
 import Link from "next/link"
+import Image from "next/image"
 import { useRouter } from "next/navigation"
 
 // App Imports
@@ -73,7 +74,17 @@ export const TopBar: React.FC<TopBarProps> = ({ title }) => {
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                             <Avatar className="h-8 w-8">
-                                <AvatarFallback>{getInitials(userData.name)}</AvatarFallback>
+                                {userData.profilePicture ? (
+                                    <Image
+                                        src={userData.profilePicture}
+                                        alt="Profile Picture"
+                                        width={32}
+                                        height={32}
+                                        className="h-full w-full object-cover rounded-full"
+                                    />
+                                ) : (
+                                    <AvatarFallback>{getInitials(userData.name)}</AvatarFallback>
+                                )}
                             </Avatar>
                         </Button>
                     </DropdownMenuTrigger>

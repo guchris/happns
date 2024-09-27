@@ -1,7 +1,8 @@
 "use client";
 
-// React Imports
-import { useRef, useEffect, useState } from "react";
+// Next and React Imports
+import Image from "next/image"
+import { useRef, useEffect, useState } from "react"
 import { useAuth } from "@/context/AuthContext"
 
 // App Imports
@@ -197,9 +198,11 @@ export default function ProfilePage() {
                             <div className="flex justify-left mb-4">
                                 <Avatar className="h-24 w-24">
                                     {userInfo.profilePicture ? (
-                                        <img
+                                        <Image
                                             src={userInfo.profilePicture}
                                             alt="Profile Picture"
+                                            width={96} // Use appropriate size for your avatar
+                                            height={96}
                                             className="h-full w-full object-cover rounded-full"
                                         />
                                     ) : (
@@ -239,15 +242,19 @@ export default function ProfilePage() {
                                                 <div className="col-span-3">
                                                     <Avatar className="h-24 w-24 mb-2">
                                                         {editProfilePicture ? (
-                                                            <img
+                                                            <Image
                                                                 src={editProfilePicture}
                                                                 alt="Profile Picture Preview"
+                                                                width={96} // Use appropriate size for your preview avatar
+                                                                height={96}
                                                                 className="h-full w-full object-cover rounded-full"
                                                             />
                                                         ) : userInfo?.profilePicture ? (
-                                                            <img
+                                                            <Image
                                                                 src={userInfo.profilePicture}
                                                                 alt="Profile Picture"
+                                                                width={96}
+                                                                height={96}
                                                                 className="h-full w-full object-cover rounded-full"
                                                             />
                                                         ) : (

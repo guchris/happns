@@ -4,6 +4,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
+import Image from "next/image"
 
 // App Imports
 import { useAuth } from "@/context/AuthContext"
@@ -710,8 +711,14 @@ export default function EventForm() {
                                     <div>
                                         {/* Display existing image if it's a string (URL) */}
                                         {typeof field.value === "string" && field.value && (
-                                            <div className="mb-4">
-                                                <img src={field.value} alt="Event Image" className="w-64 h-auto rounded-lg" />
+                                            <div className="mb-4 relative w-64 h-auto">
+                                                <Image
+                                                    src={field.value}
+                                                    alt="Event Image"
+                                                    width={256} // Use appropriate width
+                                                    height={160} // Use appropriate height
+                                                    className="rounded-lg object-cover"
+                                                />
                                             </div>
                                         )}
 

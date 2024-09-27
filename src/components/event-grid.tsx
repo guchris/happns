@@ -3,6 +3,7 @@
 // Next and React Imports
 import { useState, useRef, useEffect } from "react"
 import Link from "next/link"
+import Image from "next/image"
 
 // App Imports
 import { Event } from "@/components/types"
@@ -91,10 +92,11 @@ const EventList = ({ events }: { events: Event[] }) => {
                     <Card key={event.id} className="w-full">
                         <Link href={`/events/${event.id}`} className="no-underline">
                             <CardHeader className="p-2">
-                                <div className="aspect-w-1 aspect-h-1 w-full">
-                                    <img
+                                <div className="aspect-w-1 aspect-h-1 w-full relative">
+                                    <Image
                                         src={event.image || "/tempFlyer1.svg"}
                                         alt={event.name}
+                                        fill
                                         className="object-cover w-full h-full rounded-lg"
                                     />
                                 </div>
