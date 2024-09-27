@@ -18,12 +18,33 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+import {
+    Drawer,
+    DrawerClose,
+    DrawerContent,
+    DrawerDescription,
+    DrawerFooter,
+    DrawerHeader,
+    DrawerTitle,
+    DrawerTrigger,
+} from "@/components/ui/drawer"
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+    DialogFooter
+} from "@/components/ui/dialog"
+  
 
 // Icon Imports
-import { ExclamationTriangleIcon } from "@radix-ui/react-icons"
+import { ExclamationTriangleIcon, CopyIcon } from "@radix-ui/react-icons"
 
 // Utility Function to get initials
 function getInitials(name: string) {
@@ -99,19 +120,18 @@ export default function ProfilePage() {
             {userInfo && (
                 <div className="flex flex-1 flex-col">
                     <div className="p-4">
-                        <div className="grid gap-4 text-sm">
-
+                        <div className="flex items-center gap-4">
                             {/* User Avatar */}
-                            <div className="flex justify-center mb-4">
-                                <Avatar className="h-48 w-48">
+                            <div className="flex justify-left mb-4">
+                                <Avatar className="h-24 w-24">
                                     <AvatarFallback>{getInitials(userInfo.name)}</AvatarFallback>
                                 </Avatar>
                             </div>
 
-                            {/* User Name, Username, and Email */}
+                            {/* User Name and Username */}
                             <div className="grid gap-1">
                                 <div className="text-lg font-semibold">{userInfo.name}</div>
-                                <div className="text-base font-medium">{userInfo.username}</div>
+                                <div className="text-base font-medium">@{userInfo.username}</div>
                             </div>
                         </div>
                     </div>
@@ -121,14 +141,14 @@ export default function ProfilePage() {
                     {/* User Role */}
                     <div className="flex whitespace-pre-wrap p-4 grid gap-4">
                         <div className="grid gap-2">
-                            <div className="text-sm font-medium">
-                                <span className="text-muted-foreground">Email: </span>
+                            <div className="text-sm font-medium flex items-center space-x-2">
+                                <span className="text-muted-foreground w-10">Email</span>
                                 <Badge variant="outline" className="inline-block">
                                     {userInfo.email}
                                 </Badge>
                             </div>
-                            <div className="text-sm font-medium">
-                                <span className="text-muted-foreground">Role: </span>
+                            <div className="text-sm font-medium flex items-center space-x-2">
+                                <span className="text-muted-foreground w-10">Role</span>
                                 <Badge variant="outline" className="inline-block">
                                     {userInfo.role}
                                 </Badge>
@@ -166,15 +186,17 @@ export default function ProfilePage() {
                             </p>
                             <div className="flex space-x-2">
                                 <Input ref={inputRef} value={calendarLink} readOnly />
-                                <Button variant="secondary" className="shrink-0" onClick={copyLink}>
-                                    Copy Link
+                                <Button type="submit" className="px-4" onClick={copyLink}>
+                                    <span className="sr-only">Copy</span>
+                                    <CopyIcon className="h-4 w-4" />
                                 </Button>
                             </div>
                             <Collapsible>
                                 <CollapsibleTrigger asChild>
-                                    <Button variant="outline">Show Instructions</Button>
+                                    <Button variant="outline">Instructions</Button>
                                 </CollapsibleTrigger>
-                                <CollapsibleContent>
+                                <CollapsibleContent className="p-4 space-y-4">
+                                    <div className="text-base font-medium text-muted-foreground">Instructions</div>
                                     <ol className="list-decimal list-inside text-sm space-y-2">
                                         <li>Copy the link above by clicking the &quot;Copy Link&quot; button.</li>
                                         <li>
@@ -197,8 +219,6 @@ export default function ProfilePage() {
                             </Collapsible>
                         </div>
                     </div>
-
-                    <Separator />
                 </div>
             )}
 
