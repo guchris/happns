@@ -96,7 +96,9 @@ const EventList = ({ events }: { events: Event[] }) => {
                                     <Image
                                         src={event.image || "/tempFlyer1.svg"}
                                         alt={event.name}
-                                        fill
+                                        width={150}
+                                        height={150}
+                                        loading="lazy"
                                         className="object-cover w-full h-full rounded-lg"
                                     />
                                 </div>
