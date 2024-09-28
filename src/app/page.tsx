@@ -1,6 +1,7 @@
 // Next Imports
 import { Metadata } from "next"
 import Link from "next/link"
+import Image from "next/image"
 
 // App Imports
 import { TopBar } from "@/components/top-bar"
@@ -78,10 +79,12 @@ export default async function Home() {
         {/* Sponsored AD */}
         <div className="w-full p-4">
           <Link href={ad.link}>
-            <img
-              src={ad.imageUrl}
-              alt={`Ad ${ad.id}`}
-              className="w-full h-auto rounded-lg object-cover"
+            <Image
+                src={ad.imageUrl}
+                alt={`Ad ${ad.id}`}
+                width={880} // Adjust width based on container size
+                height={495} // Adjust height as needed
+                className="w-full h-auto rounded-lg object-cover"
             />
           </Link>
           <p className="text-center text-xs text-gray-500 mt-1">sponsored</p>
