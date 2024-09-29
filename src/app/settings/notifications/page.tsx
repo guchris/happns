@@ -1,13 +1,13 @@
 // Shadcn Imports
 import { Separator } from "@/components/ui/separator"
 
-export default function SettingsProfilePage() {
+export default function SettingsNotificationsPage() {
     return (
         <div className="space-y-6">
             <div>
-                <h3 className="text-lg font-medium">Profile</h3>
+                <h3 className="text-lg font-medium">Notifications</h3>
                 <p className="text-sm text-muted-foreground">
-                    Configure your profile.
+                    Configure how you receive notifications.
                 </p>
             </div>
             <Separator />
