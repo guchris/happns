@@ -2,6 +2,7 @@
 
 // Next and React Imports
 import Image from "next/image"
+import Link from "next/link"
 import { useRef, useEffect, useState } from "react"
 import { useAuth } from "@/context/AuthContext"
 
@@ -38,7 +39,7 @@ function getInitials(name: string) {
 
 export default function ProfilePage() {
     const inputRef = useRef<HTMLInputElement>(null);
-    const { user } = useAuth();
+    const { user, loading } = useAuth();
     const [calendarLink, setCalendarLink] = useState<string>("");
     const [userInfo, setUserInfo] = useState<any>(null);
     const [bookmarkCount, setBookmarkCount] = useState<number>(0);
@@ -176,6 +177,36 @@ export default function ProfilePage() {
             setIsDialogOpen(false);
         }
     };
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex flex-col">
+                <TopBar title={`happns/settings`} />
+                <Separator />
+                <h1 className="text-lg font-semibold p-4">Loading...</h1>
+                <Footer className="mt-auto" />
+            </div>
+        );
+    }
+
+    if (!user) {
+        return (
+            <div className="min-h-screen flex flex-col">
+                <TopBar title={`happns/profile`} />
+                <Separator />
+                <div className="px-4">
+                    <Alert className="max-w-3xl my-6 mx-auto p-4">
+                        <ExclamationTriangleIcon className="h-4 w-4" />
+                        <AlertTitle>Not Authorized</AlertTitle>
+                        <AlertDescription>
+                            You do not have permission to view this page. Please <Link href="/auth" className="text-blue-500">login</Link>.
+                        </AlertDescription>
+                    </Alert>
+                </div>
+                <Footer className="mt-auto" />
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen flex flex-col">

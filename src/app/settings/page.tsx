@@ -121,6 +121,7 @@ export default function SettingsPage() {
                         </AlertDescription>
                     </Alert>
                 </div>
+                <Footer className="mt-auto" />
             </div>
         );
     }
