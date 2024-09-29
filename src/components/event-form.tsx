@@ -137,6 +137,7 @@ export default function EventForm() {
 
     const [selectedCity, setSelectedCity] = useState<string | null>(null);
     const [neighborhoodsForCity, setNeighborhoodsForCity] = useState<Option[]>([]);
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [clicks, setClicks] = useState(0);
 
     const hasPermission = !loading && user && userData?.role === "curator";
@@ -158,6 +159,10 @@ export default function EventForm() {
 
                     setSelectedCity(eventData.city);
                     setClicks(eventData.clicks || 0);
+
+                    if (eventData.image && typeof eventData.image === "string") {
+                        setImagePreview(eventData.image);
+                    }
 
                     setTimeout(() => {
                         const transformedData = {
@@ -709,24 +714,30 @@ export default function EventForm() {
                                 <FormLabel>Event Image / Flyer</FormLabel>
                                 <FormControl>
                                     <div>
-                                        {/* Display existing image if it's a string (URL) */}
-                                        {typeof field.value === "string" && field.value && (
+                                        {/* Image Preview */}
+                                        {imagePreview && (
                                             <div className="mb-4 relative w-64 h-auto">
                                                 <Image
-                                                    src={field.value}
-                                                    alt="Event Image"
-                                                    width={256} // Use appropriate width
-                                                    height={160} // Use appropriate height
+                                                    src={imagePreview}
+                                                    alt="Event Image Preview"
+                                                    width={160}
+                                                    height={160}
                                                     className="rounded-lg object-cover"
                                                 />
                                             </div>
                                         )}
 
-                                        {/* File input for new image */}
+                                        {/* Image Input */}
                                         <Input
                                             type="file"
                                             accept="image/*"
-                                            onChange={(e) => field.onChange(e.target.files?.[0])}
+                                            onChange={(e) => {
+                                                const file = e.target.files?.[0];
+                                                if (file) {
+                                                    field.onChange(file); // Update form value with new file
+                                                    setImagePreview(URL.createObjectURL(file)); // Set the preview to the new image
+                                                }
+                                            }}
                                         />
                                     </div>
                                 </FormControl>
