@@ -125,6 +125,7 @@ export function UserSignupForm({ className, onSuccess, ...props }: UserSignupFor
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             disabled={isLoading}
+                            className="input"
                         />
                     </div>
                     <div className="grid gap-1">
@@ -138,6 +139,7 @@ export function UserSignupForm({ className, onSuccess, ...props }: UserSignupFor
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             disabled={isLoading}
+                            className="input"
                         />
                     </div>
                     <div className="grid gap-1">
@@ -154,6 +156,7 @@ export function UserSignupForm({ className, onSuccess, ...props }: UserSignupFor
                             autoComplete="email"
                             autoCorrect="off"
                             disabled={isLoading}
+                            className="input"
                         />
                     </div>
                     <div className="grid gap-1">
@@ -170,6 +173,7 @@ export function UserSignupForm({ className, onSuccess, ...props }: UserSignupFor
                             autoComplete="current-password"
                             autoCorrect="off"
                             disabled={isLoading}
+                            className="input"
                         />
                     </div>
                     {error && <p className="text-sm text-red-500">{error}</p>}
