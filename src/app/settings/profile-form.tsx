@@ -16,9 +16,13 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
 // Shadcn Imports
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } from "@/components/ui/form"
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog"
+
+// Other Imports
+import { z } from "zod"
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 // Utility Function to get initials
 function getInitials(name: string) {
@@ -26,43 +30,63 @@ function getInitials(name: string) {
     return firstName[0] + (lastName ? lastName[0] : "");
 }
 
+const profileFormSchema = z.object({
+    name: z.string().min(1, "Name is required"),
+    username: z.string().min(1, "Username is required"),
+    email: z.string().email("Please enter a valid email address"),
+    profilePicture: z.string().optional(),
+});
+
+type ProfileFormValues = z.infer<typeof profileFormSchema>;
+
+const defaultValues: Partial<ProfileFormValues> = {
+    name: "",
+    username: "",
+    email: "",
+    profilePicture: undefined,
+};
+
 export default function ProfileForm() {
     const { user } = useAuth();
 
-    // States for form inputs
     const [userInfo, setUserInfo] = useState<any>(null);
-    const [editName, setEditName] = useState<string>("");
-    const [editUsername, setEditUsername] = useState<string>("");
-    const [editEmail, setEditEmail] = useState<string>("");
     const [editProfilePicture, setEditProfilePicture] = useState<string | null>(null);
     const [profilePictureFile, setProfilePictureFile] = useState<File | null>(null);
-    const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
 
     // Fetch user info when component mounts
     useEffect(() => {
         if (user?.uid) {
             const fetchUserInfo = async () => {
-                try {
-                    const userRef = doc(db, "users", user.uid);
-                    const userDoc = await getDoc(userRef);
-                    if (userDoc.exists()) {
-                        const userData = userDoc.data();
-                        setUserInfo(userData);
-                        setEditName(userData.name || "");
-                        setEditUsername(userData.username || "");
-                        setEditEmail(userData.email || "");
-                    }
-                } catch (error) {
-                    console.error("Error fetching user data: ", error);
+                const userRef = doc(db, "users", user.uid); // Use the authenticated user's ID
+                const userDoc = await getDoc(userRef);
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    setUserInfo(userData);
+                    setEditProfilePicture(userData.profilePicture || undefined); // Set undefined if no picture
+
+                    // Reset form fields with fetched data
+                    form.reset({
+                        name: userData.name || "",
+                        username: userData.username || "",
+                        email: userData.email || "",
+                        profilePicture: userData.profilePicture || undefined,
+                    });
                 }
             };
             fetchUserInfo();
         }
     }, [user]);
 
-    if (!userInfo) {
-        return <p>Loading...</p>;
-    }
+    const form = useForm<ProfileFormValues>({
+        resolver: zodResolver(profileFormSchema),
+        defaultValues: {
+            name: userInfo?.name || "",
+            username: userInfo?.username || "",
+            email: userInfo?.email || "",
+            profilePicture: userInfo?.profilePicture || undefined,
+        },
+    });
+
 
     // Handle profile picture upload and preview
     const handleProfilePictureUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -77,159 +101,116 @@ export default function ProfileForm() {
         }
     };
 
-    const handleProfileUpdate = async () => {
+    const handleProfileUpdate = async (data: ProfileFormValues) => {
         if (user?.uid) {
-            const userRef = doc(db, "users", user.uid);
-            let updatedProfilePictureURL = userInfo?.profilePicture || null;
+            const userRef = doc(db, "users", user.uid); // Use the authenticated user's ID
+            let updatedProfilePictureURL = userInfo?.profilePicture || undefined;
 
-            // If there's a new profile picture to upload
             if (profilePictureFile) {
-                const storageRef = ref(storage, `profile_pictures/${user.uid}`);
-                try {
-                    // Upload the new profile picture to Firebase Storage
-                    await uploadBytes(storageRef, profilePictureFile);
-                    // Get the new profile picture URL
-                    updatedProfilePictureURL = await getDownloadURL(storageRef);
-                } catch (error) {
-                    console.error("Error uploading profile picture: ", error);
-                    toast({
-                        title: "Error",
-                        description: "There was an error uploading your profile picture. Please try again.",
-                        variant: "destructive",
-                    });
-                    return;
-                }
+                const storageRef = ref(storage, `profile_pictures/${user.uid}`); // Store picture in Firebase with user's ID
+                await uploadBytes(storageRef, profilePictureFile);
+                updatedProfilePictureURL = await getDownloadURL(storageRef);
             }
 
             try {
-                // Update user information in Firestore
                 await updateDoc(userRef, {
-                    name: editName,
-                    username: editUsername,
-                    email: editEmail,
+                    ...data,
                     profilePicture: updatedProfilePictureURL,
                 });
-                setUserInfo({
-                    ...userInfo,
-                    name: editName,
-                    username: editUsername,
-                    email: editEmail,
-                    profilePicture: updatedProfilePictureURL,
-                });
+
                 toast({
                     title: "Profile Updated",
                     description: "Your profile information has been updated.",
                 });
-                setIsDialogOpen(false); // Close the dialog after saving changes
             } catch (error) {
-                console.error("Error updating profile: ", error);
+                console.error("Error updating profile:", error);
                 toast({
                     title: "Error",
-                    description: "There was an error updating your profile. Please try again.",
+                    description: "There was an error updating your profile.",
                     variant: "destructive",
                 });
             }
-            setIsDialogOpen(false);
         }
     };
 
-    return (
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-                <Button variant="outline" onClick={() => setIsDialogOpen(true)}>
-                    Edit Profile
-                </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                    <DialogTitle>Edit profile</DialogTitle>
-                <DialogDescription>
-                    Make changes to your profile here. Click save when you&apos;re done.
-                </DialogDescription>
-                </DialogHeader>
-                    <div className="grid gap-4 py-4">
+    if (!userInfo) {
+        return <p>Loading...</p>;
+    }
 
-                        {/* Profile Picture Preview */}
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="profile-picture-preview" className="text-right">
-                                Profile Picture
-                            </Label>
-                            <div className="col-span-3">
+    return (
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(handleProfileUpdate)}>
+                <div className="space-y-4">
+                    {/* Profile Picture Preview */}
+                    <FormField
+                        control={form.control}
+                        name="profilePicture"
+                        render={() => (
+                            <FormItem>
+                                <FormLabel>Profile Picture</FormLabel>
                                 <Avatar className="h-24 w-24 mb-2">
                                     {editProfilePicture ? (
                                         <Image
                                             src={editProfilePicture}
                                             alt="Profile Picture Preview"
-                                            width={96} // Use appropriate size for your preview avatar
-                                            height={96}
-                                            className="h-full w-full object-cover rounded-full"
-                                        />
-                                    ) : userInfo?.profilePicture ? (
-                                        <Image
-                                            src={userInfo.profilePicture}
-                                            alt="Profile Picture"
                                             width={96}
                                             height={96}
                                             className="h-full w-full object-cover rounded-full"
                                         />
                                     ) : (
-                                        <AvatarFallback>{getInitials(userInfo.name)}</AvatarFallback>
+                                        <AvatarFallback>{userInfo.name.charAt(0)}</AvatarFallback>
                                     )}
                                 </Avatar>
-                                <Input
-                                    type="file"
-                                    id="profile-picture-upload"
-                                    accept="image/*"
-                                    onChange={handleProfilePictureUpload}
-                                />
-                            </div>
-                        </div>
+                                <Input type="file" accept="image/*" onChange={handleProfilePictureUpload} />
+                            </FormItem>
+                        )}
+                    />
 
-                        {/* Name Field */}
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="name" className="text-right">
-                                Name
-                            </Label>
-                            <Input
-                                id="name"
-                                value={editName}
-                                onChange={(e) => setEditName(e.target.value)}
-                                className="col-span-3"
-                            />
-                        </div>
+                    {/* Name Field */}
+                    <FormField
+                        control={form.control}
+                        name="name"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Name</FormLabel>
+                                <FormControl>
+                                    <Input {...field} placeholder="Enter your name" />
+                                </FormControl>
+                            </FormItem>
+                        )}
+                    />
 
-                        {/* Username Field */}
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="username" className="text-right">
-                                Username
-                            </Label>
-                            <Input
-                                id="username"
-                                value={editUsername}
-                                onChange={(e) => setEditUsername(e.target.value)}
-                                className="col-span-3"
-                            />
-                        </div>
-                        
-                        {/* Email Field */}
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="email" className="text-right">
-                                Email
-                            </Label>
-                            <Input
-                                id="email"
-                                value={editEmail}
-                                onChange={(e) => setEditEmail(e.target.value)}
-                                className="col-span-3"
-                            />
-                        </div>
-                    </div>
-                <DialogFooter>
-                    <Button type="submit" onClick={handleProfileUpdate}>
-                        Save changes
-                    </Button>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
+                    {/* Username Field */}
+                    <FormField
+                        control={form.control}
+                        name="username"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Username</FormLabel>
+                                <FormControl>
+                                    <Input {...field} placeholder="Enter your username" />
+                                </FormControl>
+                            </FormItem>
+                        )}
+                    />
+
+                    {/* Email Field */}
+                    <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Email</FormLabel>
+                                <FormControl>
+                                    <Input {...field} placeholder="Enter your email" />
+                                </FormControl>
+                            </FormItem>
+                        )}
+                    />
+
+                    <Button type="submit">Update Profile</Button>
+                </div>
+            </form>
+        </Form>
     )
 }
