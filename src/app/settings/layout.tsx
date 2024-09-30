@@ -18,15 +18,15 @@ import { ExclamationTriangleIcon } from "@radix-ui/react-icons"
 
 const sidebarNavItems = [
     {
-        title: "Profile",
+        title: "profile",
         href: "/settings"
     },
     {
-        title: "Account",
+        title: "account",
         href: "/settings/account"
     },
     {
-        title: "Notifications",
+        title: "notifications",
         href: "/settings/notifications"
     }
 ]
@@ -73,20 +73,12 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
         <div className="min-h-screen flex flex-col">
             <TopBar title={`happns/settings`} />
             <Separator />
-            <div className="p-4 space-y-6">
-                <div>
-                    <h1 className="text-lg font-semibold">Settings</h1>
-                    <p className="text-sm text-muted-foreground">
-                        Manage your account settings and set e-mail preferences.
-                    </p>
-                </div>
-                <Separator />
-                <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0 p-4">
-                    <aside className="-mx-4 lg:w-1/5">
-                        <SidebarNav items={sidebarNavItems} />
-                    </aside>
-                    <div className="flex-1 lg:max-w-2xl">{children}</div>
-                </div>
+            <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0 p-4">
+                <aside className="lg:w-1/5">
+                    <SidebarNav items={sidebarNavItems} />
+                </aside>
+                <Separator orientation="vertical" className="hidden lg:block" />
+                <div className="flex-1 lg:max-w-2xl">{children}</div>
             </div>
             <Footer className="mt-auto" />
         </div>

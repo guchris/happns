@@ -4,10 +4,10 @@ import { Separator } from "@/components/ui/separator"
 export default function SettingsProfilePage() {
     return (
         <div className="space-y-6">
-            <div>
-                <h3 className="text-lg font-medium">Profile</h3>
+            <div className="p-4">
+                <h1 className="text-lg font-semibold">profile</h1>
                 <p className="text-sm text-muted-foreground">
-                    Configure your profile.
+                    configure your profile
                 </p>
             </div>
             <Separator />

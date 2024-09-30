@@ -3,11 +3,11 @@ import { Separator } from "@/components/ui/separator"
 
 export default function SettingsNotificationsPage() {
     return (
-        <div className="space-y-6">
+        <div className="space-y-4">
             <div>
-                <h3 className="text-lg font-medium">Notifications</h3>
+                <h1 className="text-lg font-semibold">notifications</h1>
                 <p className="text-sm text-muted-foreground">
-                    Configure how you receive notifications.
+                    configure how you receive notifications
                 </p>
             </div>
             <Separator />
