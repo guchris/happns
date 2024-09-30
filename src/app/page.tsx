@@ -27,10 +27,10 @@ export const dynamic = 'force-dynamic';
 export async function generateMetadata(): Promise<Metadata> {
   return {
     title: "happns | events in your city",
-    description: "discover curated events happening in your city with happn",
+    description: "discover curated events happening in your city with happns",
     openGraph: {
       title: "happns | events in your city",
-      description: "discover curated events happening in your city with happn",
+      description: "discover curated events happening in your city with happns",
       images: ["https://ithappns.com/logo.png"],
       url: "https://ithappns.com",
       type: "website",
@@ -38,7 +38,7 @@ export async function generateMetadata(): Promise<Metadata> {
     twitter: {
       card: "summary_large_image",
       title: "happns | events in your city",
-      description: "discover curated events happening in your city with happn",
+      description: "discover curated events happening in your city with happns",
       images: ["https://ithappns.com/logo.png"],
     },
   };
