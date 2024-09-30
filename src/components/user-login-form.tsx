@@ -133,7 +133,7 @@ export function UserLoginForm({ className, onSuccess, ...props }: UserLoginFormP
                             autoComplete="email"
                             autoCorrect="off"
                             disabled={isLoading}
-                            className="input"
+                            className="text-base sm:text-sm"
                         />
                     </div>
                     <div className="grid gap-1">
@@ -150,7 +150,7 @@ export function UserLoginForm({ className, onSuccess, ...props }: UserLoginFormP
                             autoComplete="current-password"
                             autoCorrect="off"
                             disabled={isLoading}
-                            className="input"
+                            className="text-base sm:text-sm"
                         />
                     </div>
                     {error && <p className="text-sm text-red-500">{error}</p>}
