@@ -21,8 +21,9 @@ import { Button } from "@/components/ui/button"
 
 // Other Imports
 import { z } from "zod"
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form"
+import { useWatch } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 
 // Utility Function to get initials
 function getInitials(name: string) {
@@ -53,6 +54,17 @@ export default function ProfileForm() {
     const [editProfilePicture, setEditProfilePicture] = useState<string | null>(null);
     const [profilePictureFile, setProfilePictureFile] = useState<File | null>(null);
 
+    const form = useForm<ProfileFormValues>({
+        resolver: zodResolver(profileFormSchema),
+        defaultValues,
+    });
+
+    const watchedValues = useWatch({
+        control: form.control,
+    });
+
+    const [isModified, setIsModified] = useState(false);
+
     // Fetch user info when component mounts
     useEffect(() => {
         if (user?.uid) {
@@ -75,18 +87,20 @@ export default function ProfileForm() {
             };
             fetchUserInfo();
         }
-    }, [user]);
+    }, [user, form]);
 
-    const form = useForm<ProfileFormValues>({
-        resolver: zodResolver(profileFormSchema),
-        defaultValues: {
-            name: userInfo?.name || "",
-            username: userInfo?.username || "",
-            email: userInfo?.email || "",
-            profilePicture: userInfo?.profilePicture || undefined,
-        },
-    });
+    // Watch for form changes to enable or disable the button
+    useEffect(() => {
+        if (userInfo) {
+            const hasChanges = 
+                watchedValues.name !== userInfo.name ||
+                watchedValues.username !== userInfo.username ||
+                watchedValues.email !== userInfo.email ||
+                editProfilePicture !== userInfo.profilePicture;
 
+            setIsModified(hasChanges);
+        }
+    }, [watchedValues, userInfo, editProfilePicture]);
 
     // Handle profile picture upload and preview
     const handleProfilePictureUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -157,8 +171,18 @@ export default function ProfileForm() {
                                             height={96}
                                             className="h-full w-full object-cover rounded-full"
                                         />
+                                    ) : userInfo?.profilePicture ? (
+                                        <Image
+                                            src={userInfo.profilePicture}
+                                            alt="Profile Picture"
+                                            width={96}
+                                            height={96}
+                                            className="h-full w-full object-cover rounded-full"
+                                        />
                                     ) : (
-                                        <AvatarFallback>{userInfo.name.charAt(0)}</AvatarFallback>
+                                        <AvatarFallback>
+                                            {getInitials(userInfo.name)}
+                                        </AvatarFallback>
                                     )}
                                 </Avatar>
                                 <Input type="file" accept="image/*" onChange={handleProfilePictureUpload} />
@@ -208,7 +232,7 @@ export default function ProfileForm() {
                         )}
                     />
 
-                    <Button type="submit">Update Profile</Button>
+                    <Button type="submit" disabled={!isModified}>Update Profile</Button>
                 </div>
             </form>
         </Form>
