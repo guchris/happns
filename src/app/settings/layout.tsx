@@ -77,8 +77,8 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
                 <aside className="lg:w-1/5 lg:min-h-screen p-4">
                     <SidebarNav items={sidebarNavItems} />
                 </aside>
-                <Separator className="hidden lg:block lg:h-auto lg:w-px" />
-                <Separator orientation="vertical" className="lg:hidden" />
+                <Separator orientation="vertical" className="hidden lg:block lg:h-auto" />
+                <Separator className="lg:hidden" />
                 <div className="flex-1 lg:max-w-2xl p-4">{children}</div>
             </div>
             <Footer className="mt-auto" />

@@ -15,7 +15,6 @@ import { ref, deleteObject } from "firebase/storage"
 import { deleteUser } from "firebase/auth"
 
 // Shadcn Imports
-import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog"
 

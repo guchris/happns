@@ -30,7 +30,7 @@ interface TopBarProps {
 }
 
 export const TopBar: React.FC<TopBarProps> = ({ title }) => {
-    const { user, loading, userData } = useAuth();
+    const { user, userData } = useAuth();
     const router = useRouter();
     const { toast } = useToast();
 

@@ -1,23 +1,11 @@
 "use client"
 
-// Next Imports
-import Link from "next/link"
-
 // App Imports
 import { toast } from "@/hooks/use-toast"
 
 // Shadcn Imports
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } from "@/components/ui/form"
 import { Switch } from "@/components/ui/switch"
 
 // Other Imports
@@ -27,7 +15,7 @@ import { z } from "zod"
 
 const notificationsFormSchema = z.object({
     communication_emails: z.boolean().default(false).optional(),
-    social_emails: z.boolean().default(false).optional(),
+    roundup_emails: z.boolean().default(false).optional(),
     marketing_emails: z.boolean().default(false).optional(),
 })
 
@@ -36,7 +24,7 @@ type NotificationsFormValues = z.infer<typeof notificationsFormSchema>
 const defaultValues: Partial<NotificationsFormValues> = {
     communication_emails: true,
     marketing_emails: true,
-    social_emails: true,
+    roundup_emails: true,
 }
 
 export function NotificationsForm() {
@@ -72,7 +60,7 @@ export function NotificationsForm() {
                                         Communication emails
                                     </FormLabel>
                                     <FormDescription className="text-sm">
-                                        Receive emails about your account activity.
+                                        Receive emails about your account activity
                                     </FormDescription>
                                     </div>
                                     <FormControl>
@@ -94,7 +82,7 @@ export function NotificationsForm() {
                                         Marketing emails
                                     </FormLabel>
                                     <FormDescription>
-                                        Receive emails about new products, features, and more.
+                                        Receive emails about new features, partnerships, and more
                                     </FormDescription>
                                     </div>
                                     <FormControl>
@@ -108,13 +96,13 @@ export function NotificationsForm() {
                         />
                         <FormField
                             control={form.control}
-                            name="social_emails"
+                            name="roundup_emails"
                             render={({ field }) => (
                                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                                     <div className="space-y-0.5">
-                                    <FormLabel className="text-sm">Social emails</FormLabel>
+                                    <FormLabel className="text-sm">Roundup emails</FormLabel>
                                     <FormDescription>
-                                        Receive emails for friend requests, follows, and more.
+                                        Receive weekly roundup emails of events in your city
                                     </FormDescription>
                                     </div>
                                     <FormControl>

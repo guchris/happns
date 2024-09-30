@@ -1,9 +1,6 @@
 // App Imports
 import { NotificationsForm } from "@/app/settings/notifications/notifications-form"
 
-// Shadcn Imports
-import { Separator } from "@/components/ui/separator"
-
 export default function SettingsNotificationsPage() {
     return (
         <div className="space-y-6">

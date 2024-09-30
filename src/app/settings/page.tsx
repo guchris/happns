@@ -1,5 +1,5 @@
-// Shadcn Imports
-import { Separator } from "@/components/ui/separator"
+// App Imports
+import ProfileForm from "@/app/settings/profile-form"
 
 export default function SettingsProfilePage() {
     return (
@@ -10,6 +10,7 @@ export default function SettingsProfilePage() {
                     configure your profile
                 </p>
             </div>
+            <ProfileForm />
         </div>
     )
 }
