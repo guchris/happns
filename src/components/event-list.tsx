@@ -32,6 +32,7 @@ interface EventListProps {
 // Utility function to determine the correct date for display
 const getCurrentDateForDisplay = (startDate: Date, endDate: Date) => {
     const today = new Date();
+    
     // If today's date is within the range, return today
     if (isWithinInterval(today, { start: startDate, end: endDate })) {
         return today;

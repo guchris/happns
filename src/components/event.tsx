@@ -83,13 +83,15 @@ export function Event({ events, city }: EventProps) {
     }, [setEvent])
 
     const isEventInRange = (eventStart: Date, eventEnd: Date, rangeStart: Date, rangeEnd?: Date) => {
-        const effectiveRangeEnd = rangeEnd || new Date(9999, 11, 31); // Use far-future date if rangeEnd is undefined
-        return (
-            isWithinInterval(eventStart, { start: rangeStart, end: effectiveRangeEnd }) || 
-            isWithinInterval(eventEnd, { start: rangeStart, end: effectiveRangeEnd }) || 
-            (rangeStart <= eventStart && effectiveRangeEnd >= eventEnd)
-        )
-    }
+        const effectiveRangeEnd = rangeEnd || new Date(9999, 11, 31);
+
+        const eventStartDate = eventStart.toISOString().split('T')[0];
+        const eventEndDate = eventEnd.toISOString().split('T')[0];
+        const rangeStartDate = rangeStart.toISOString().split('T')[0];
+        const effectiveRangeEndDate = effectiveRangeEnd.toISOString().split('T')[0];
+        
+        return eventStartDate <= effectiveRangeEndDate && eventEndDate >= rangeStartDate;
+    };
 
     // Filtered events based on selected filters
     const filteredEvents = events.filter((e) => {

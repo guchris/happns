@@ -99,7 +99,7 @@ export default async function CityPage({ params }: CityPageProps) {
                         </div>
 
                         {/* Right Section: City Image */}
-                        <div className="lg:w-1/2">
+                        <div className="lg:w-1/2 hidden lg:block">
                             <Image
                                 src={`/covers/cover-${city}.png`} 
                                 alt={`${cityLabel} cover image`} 
