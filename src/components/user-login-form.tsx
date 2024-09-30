@@ -133,6 +133,7 @@ export function UserLoginForm({ className, onSuccess, ...props }: UserLoginFormP
                             autoComplete="email"
                             autoCorrect="off"
                             disabled={isLoading}
+                            style={{ fontSize: '16px' }}
                         />
                     </div>
                     <div className="grid gap-1">
@@ -149,6 +150,7 @@ export function UserLoginForm({ className, onSuccess, ...props }: UserLoginFormP
                             autoComplete="current-password"
                             autoCorrect="off"
                             disabled={isLoading}
+                            style={{ fontSize: '16px' }}
                         />
                     </div>
                     {error && <p className="text-sm text-red-500">{error}</p>}
