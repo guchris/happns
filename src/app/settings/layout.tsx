@@ -73,12 +73,12 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
         <div className="min-h-screen flex flex-col">
             <TopBar title={`happns/settings`} />
             <Separator />
-            <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0 p-4">
-                <aside className="lg:w-1/5">
+            <div className="flex flex-col lg:flex-row lg:space-x-12 lg:space-y-0">
+                <aside className="lg:w-1/5 p-4">
                     <SidebarNav items={sidebarNavItems} />
                 </aside>
-                <Separator orientation="vertical" className="hidden lg:block" />
-                <div className="flex-1 lg:max-w-2xl">{children}</div>
+                <Separator />
+                <div className="flex-1 lg:max-w-2xl p-4">{children}</div>
             </div>
             <Footer className="mt-auto" />
         </div>

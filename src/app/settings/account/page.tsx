@@ -88,7 +88,7 @@ function DeleteAccountDialog() {
 export default function SettingsAccountPage() {
     return (
         <div className="space-y-6">
-            <div className="p-4">
+            <div>
                 <h1 className="text-lg font-semibold">account</h1>
                 <p className="text-sm text-muted-foreground">
                     update your account settings, set your preferred language and timezone

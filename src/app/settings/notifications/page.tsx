@@ -10,7 +10,6 @@ export default function SettingsNotificationsPage() {
                     configure how you receive notifications
                 </p>
             </div>
-            <Separator />
         </div>
     )
 }
