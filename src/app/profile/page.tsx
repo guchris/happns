@@ -25,7 +25,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 
 // Icon Imports
-import { ExclamationTriangleIcon, CopyIcon } from "@radix-ui/react-icons"
+import { ExclamationTriangleIcon, CopyIcon, Pencil1Icon } from "@radix-ui/react-icons"
 
 // Utility Function to get initials
 function getInitials(name: string) {
@@ -131,31 +131,35 @@ export default function ProfilePage() {
 
             {userInfo && (
                 <div className="flex flex-1 flex-col">
-                    <div className="p-4">
-                        <div className="flex items-center gap-4">
-                            {/* User Avatar */}
-                            <div className="flex justify-left mb-4">
-                                <Avatar className="h-24 w-24">
-                                    {userInfo.profilePicture ? (
-                                        <Image
-                                            src={userInfo.profilePicture}
-                                            alt="Profile Picture"
-                                            width={96} // Use appropriate size for your avatar
-                                            height={96}
-                                            className="h-full w-full object-cover rounded-full"
-                                        />
-                                    ) : (
-                                        <AvatarFallback>{getInitials(userInfo.name)}</AvatarFallback>
-                                    )}
-                                </Avatar>
-                            </div>
-
-                            {/* User Name and Username */}
-                            <div className="grid gap-1">
-                                <div className="text-lg font-semibold">{userInfo.name}</div>
-                                <div className="text-base font-medium">@{userInfo.username}</div>
-                            </div>
+                    <div className="p-4 flex gap-4">
+                        {/* User Avatar */}
+                        <div className="flex justify-left">
+                            <Avatar className="h-24 w-24">
+                                {userInfo.profilePicture ? (
+                                    <Image
+                                        src={userInfo.profilePicture}
+                                        alt="Profile Picture"
+                                        width={96} // Use appropriate size for your avatar
+                                        height={96}
+                                        className="h-full w-full object-cover rounded-full"
+                                    />
+                                ) : (
+                                    <AvatarFallback>{getInitials(userInfo.name)}</AvatarFallback>
+                                )}
+                            </Avatar>
                         </div>
+
+                        {/* User Name and Username */}
+                        <div className="flex flex-col">
+                            <div className="text-lg font-semibold">{userInfo.name}</div>
+                            <div className="text-base font-medium">@{userInfo.username}</div>
+                        </div>
+                        
+                        <Link href="/settings" className="ml-auto">
+                            <Button variant="outline" size="icon">
+                                <Pencil1Icon className="h-4 w-4" />
+                            </Button>
+                        </Link>
                     </div>
 
                     <Separator />
