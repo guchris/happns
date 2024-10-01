@@ -30,7 +30,7 @@ import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/s
 
 // Other Imports
 import { CalendarIcon, SectionIcon, ContainerIcon } from "@radix-ui/react-icons"
-import { isWithinInterval, parse, parseISO, format } from "date-fns"
+import { parseISO, format } from "date-fns"
 
 interface EventProps {
     events: Event[]

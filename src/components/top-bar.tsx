@@ -3,7 +3,7 @@
 // Next Imports
 import Link from "next/link"
 import Image from "next/image"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 
 // App Imports
 import { useAuth } from "@/context/AuthContext"
@@ -32,6 +32,7 @@ interface TopBarProps {
 export const TopBar: React.FC<TopBarProps> = ({ title }) => {
     const { user, userData } = useAuth();
     const router = useRouter();
+    const pathname = usePathname();
     const { toast } = useToast();
 
     const handleSignOut = async () => {
@@ -121,7 +122,7 @@ export const TopBar: React.FC<TopBarProps> = ({ title }) => {
                     </DropdownMenuContent>
                 </DropdownMenu>
             ) : (
-                <Link href="/auth" passHref>
+                <Link href={`/auth?redirect=${pathname}`} passHref>
                     <Button asChild>
                         <div>Log In</div>
                     </Button>

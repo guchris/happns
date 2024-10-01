@@ -1,7 +1,8 @@
 "use client"
 
-// React Imports
+// Next and React Imports
 import * as React from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 
 // App Imports
 import { User } from "@/components/types"
@@ -28,6 +29,12 @@ interface UserLoginFormProps extends React.HTMLAttributes<HTMLDivElement> {
 export function UserLoginForm({ className, onSuccess, ...props }: UserLoginFormProps) {
     const { setIsAuthenticated } = useAuth()
     const { toast } = useToast()
+
+    const router = useRouter()
+    const searchParams = useSearchParams()
+
+    // Get the redirect path from the query parameter, defaulting to "/"
+    const redirectPath = searchParams?.get("redirect") || "/"
 
     const [isLoading, setIsLoading] = React.useState<boolean>(false)
     const [email, setEmail] = React.useState<string>("")
@@ -80,6 +87,8 @@ export function UserLoginForm({ className, onSuccess, ...props }: UserLoginFormP
                 onSuccess();
             }
 
+            router.push(redirectPath)
+
         } catch (error: any) {
             console.error("Error signing in with Google:", error.message)
             setError(error.message)
@@ -107,6 +116,8 @@ export function UserLoginForm({ className, onSuccess, ...props }: UserLoginFormP
             if (onSuccess) {
                 onSuccess();
             }
+
+            router.push(redirectPath)
         } catch (error: any) {
             console.error("Error signing in:", error.message)
             setError("Invalid credentials. Have you signed up yet?");
