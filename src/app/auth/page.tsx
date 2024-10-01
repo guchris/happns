@@ -120,7 +120,9 @@ export default function AuthPage() {
                         {isSignUp ? (
                             <UserSignupForm />
                         ) : (
-                            <UserLoginForm />
+                            <Suspense fallback={<div>Loading...</div>}>
+                                <UserLoginForm />
+                            </Suspense>
                         )}
                         <p className="px-8 text-center text-sm text-muted-foreground">
                             By continuing, you agree to our{" "}
