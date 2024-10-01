@@ -10,7 +10,7 @@ import { toast } from "@/hooks/use-toast"
 
 // Firebase Imports
 import { db, storage } from "@/lib/firebase"
-import { doc, getDoc, updateDoc } from "firebase/firestore"
+import { doc, getDoc, updateDoc, setDoc, deleteDoc } from "firebase/firestore"
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
 
 // Shadcn Imports
@@ -127,14 +127,45 @@ export default function ProfileForm() {
             }
 
             try {
+                // Check if the new username already exists
+                if (data.username !== userInfo.username) {
+                    const usernameRef = doc(db, "usernames", data.username);
+                    const usernameSnap = await getDoc(usernameRef);
+                    
+                    if (usernameSnap.exists()) {
+                        toast({
+                            title: "Username Taken",
+                            description: "The username is already taken. Please choose another one.",
+                            variant: "destructive",
+                        });
+                        return; // Prevent the update if the username exists
+                    }
+                }
+
                 await updateDoc(userRef, {
                     ...data,
                     profilePicture: updatedProfilePictureURL,
                 });
 
+                // Update the `usernames` collection if the username has changed
+                if (data.username !== userInfo.username) {
+                    // Remove the old username
+                    await deleteDoc(doc(db, "usernames", userInfo.username));
+
+                    // Add the new username
+                    await setDoc(doc(db, "usernames", data.username), { uid: user.uid });
+                }
+
                 toast({
                     title: "Profile Updated",
                     description: "Your profile information has been updated.",
+                });
+
+                // Update the local state with the new user info
+                setUserInfo({
+                    ...userInfo,
+                    ...data,
+                    profilePicture: updatedProfilePictureURL,
                 });
             } catch (error) {
                 console.error("Error updating profile:", error);
@@ -212,7 +243,12 @@ export default function ProfileForm() {
                             <FormItem>
                                 <FormLabel>Username</FormLabel>
                                 <FormControl>
-                                    <Input {...field} placeholder="Enter your username" />
+                                    <Input
+                                        {...field}
+                                        placeholder="Enter your username"
+                                        value={field.value.toLowerCase()}
+                                        onChange={(e) => field.onChange(e.target.value.toLowerCase())} 
+                                    />
                                 </FormControl>
                             </FormItem>
                         )}

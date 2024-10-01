@@ -1,7 +1,7 @@
 "use client"
 
 // React Imports
-import * as React from "react"
+import { useState, useEffect } from "react"
 
 // App Imports
 import { User } from "@/components/types"
@@ -28,12 +28,48 @@ export function UserSignupForm({ className, onSuccess, ...props }: UserSignupFor
     const { setIsAuthenticated } = useAuth()
     const { toast } = useToast()
 
-    const [isLoading, setIsLoading] = React.useState<boolean>(false)
-    const [name, setName] = React.useState<string>("")
-    const [username, setUsername] = React.useState<string>("")
-    const [email, setEmail] = React.useState<string>("")
-    const [password, setPassword] = React.useState<string>("")
-    const [error, setError] = React.useState<string | null>(null)
+    const [isLoading, setIsLoading] = useState<boolean>(false)
+    const [name, setName] = useState<string>("")
+    const [username, setUsername] = useState<string>("")
+    const [email, setEmail] = useState<string>("")
+    const [password, setPassword] = useState<string>("")
+    const [error, setError] = useState<string | null>(null)
+
+    const [isUsernameAvailable, setIsUsernameAvailable] = useState<boolean | null>(null)
+    const [isCheckingUsername, setIsCheckingUsername] = useState<boolean>(false)
+
+    async function checkUsernameAvailability(username: string) {
+        setIsCheckingUsername(true)
+        setIsUsernameAvailable(null)
+    
+        try {
+            const usernameRef = doc(db, "usernames", username)
+            const usernameSnap = await getDoc(usernameRef)
+    
+            if (usernameSnap.exists()) {
+                setIsUsernameAvailable(false)
+            } else {
+                setIsUsernameAvailable(true)
+            }
+        } catch (error) {
+            console.error("Error checking username")
+            setIsUsernameAvailable(false)
+        } finally {
+            setIsCheckingUsername(false)
+        }
+    }
+
+    useEffect(() => {
+        if (username.trim().length > 0) {
+            const delayDebounceFn = setTimeout(() => {
+                checkUsernameAvailability(username)
+            }, 500) // 500ms debounce
+    
+            return () => clearTimeout(delayDebounceFn)
+        } else {
+            setIsUsernameAvailable(null)
+        }
+    }, [username])
 
     async function handleGoogleSignIn() {
         setIsLoading(true)
@@ -44,6 +80,16 @@ export function UserSignupForm({ className, onSuccess, ...props }: UserSignupFor
         try {
             const result = await signInWithPopup(auth, provider)
             const user = result.user
+
+            const username = user.email?.split("@")[0] || "user"
+            const usernameRef = doc(db, "usernames", username)
+            const usernameSnap = await getDoc(usernameRef)
+
+            if (usernameSnap.exists()) {
+                setError("Username is already taken. Please choose another one.")
+                setIsLoading(false)
+                return
+            }
     
             // Check if user already exists in Firestore
             const userRef = doc(db, "users", user.uid)
@@ -54,12 +100,13 @@ export function UserSignupForm({ className, onSuccess, ...props }: UserSignupFor
                 const newUser: User = {
                     uid: user.uid,
                     name: user.displayName || "Anonymous",
-                    username: user.email?.split("@")[0] || "user",
+                    username: username,
                     email: user.email || "",
                     createdAt: new Date(),
                     role: "general"
                 }
                 await setDoc(userRef, newUser)
+                await setDoc(doc(db, "usernames", username), { uid: user.uid })
             }
             
             toast({
@@ -85,6 +132,16 @@ export function UserSignupForm({ className, onSuccess, ...props }: UserSignupFor
         setError(null)
 
         try {
+            // Check if the username is already taken
+            const usernameRef = doc(db, "usernames", username)
+            const usernameSnap = await getDoc(usernameRef)
+
+            if (usernameSnap.exists()) {
+                setError("Username is already taken. Please choose another one.")
+                setIsLoading(false)
+                return
+            }
+
             const userCredential = await createUserWithEmailAndPassword(auth, email, password)
             const user = userCredential.user
             const newUser: User = {
@@ -97,6 +154,7 @@ export function UserSignupForm({ className, onSuccess, ...props }: UserSignupFor
             }
 
             await setDoc(doc(db, "users", newUser.uid), newUser)
+            await setDoc(doc(db, "usernames", username), { uid: user.uid })
 
             setIsAuthenticated(true);
             if (onSuccess) {
@@ -137,10 +195,13 @@ export function UserSignupForm({ className, onSuccess, ...props }: UserSignupFor
                             placeholder="Your username"
                             type="text"
                             value={username}
-                            onChange={(e) => setUsername(e.target.value)}
+                            onChange={(e) => setUsername(e.target.value.toLowerCase())}
                             disabled={isLoading}
                             className="text-base sm:text-sm"
                         />
+                        {isCheckingUsername && <p className="text-sm text-gray-500">Checking username...</p>}
+                        {isUsernameAvailable === true && <p className="text-sm text-green-500">Username is available</p>}
+                        {isUsernameAvailable === false && <p className="text-sm text-red-500">Username is taken</p>}
                     </div>
                     <div className="grid gap-1">
                         <Label className="sr-only" htmlFor="email">
