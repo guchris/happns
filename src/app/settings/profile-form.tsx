@@ -142,10 +142,17 @@ export default function ProfileForm() {
                     }
                 }
 
-                const updatedData = {
-                    ...data,
-                    ...(updatedProfilePictureURL && { profilePicture: updatedProfilePictureURL }),
+                // Construct the update payload
+                const updatedData: any = {
+                    name: data.name,
+                    username: data.username,
+                    email: data.email,
                 };
+
+                // Only include profilePicture if it has a valid URL
+                if (updatedProfilePictureURL) {
+                    updatedData.profilePicture = updatedProfilePictureURL;
+                }
     
                 await updateDoc(userRef, updatedData);
 
