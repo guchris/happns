@@ -142,10 +142,12 @@ export default function ProfileForm() {
                     }
                 }
 
-                await updateDoc(userRef, {
+                const updatedData = {
                     ...data,
-                    profilePicture: updatedProfilePictureURL,
-                });
+                    ...(updatedProfilePictureURL && { profilePicture: updatedProfilePictureURL }),
+                };
+    
+                await updateDoc(userRef, updatedData);
 
                 // Update the `usernames` collection if the username has changed
                 if (data.username !== userInfo.username) {
