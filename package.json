@@ -39,7 +39,7 @@
     "date-fns": "^3.6.0",
     "date-fns-tz": "^3.2.0",
     "emailjs-com": "^3.2.0",
-    "embla-carousel-react": "^8.2.0",
+    "embla-carousel-react": "^8.3.0",
     "firebase": "^10.13.1",
     "firebase-admin": "^12.4.0",
     "ical-generator": "^8.0.0",

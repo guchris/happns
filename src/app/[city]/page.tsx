@@ -74,7 +74,7 @@ export default async function CityPage({ params }: CityPageProps) {
     const topEvents = sortEventsByClicks(upcomingEvents, 8);
 
     return (
-        <div className="min-h-screen flex flex-col">
+        <div className="flex flex-col min-h-screen">
             <TopBar title={`happns/${city}`} />
             <Separator />
 

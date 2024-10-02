@@ -14,10 +14,13 @@ import { collection, getDocs } from "firebase/firestore"
 
 // Shadcn Imports
 import { Separator } from "@/components/ui/separator"
+import { Button } from "@/components/ui/button"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 
 // Other Imports
-import { CalendarIcon } from "@radix-ui/react-icons"
+import { CalendarIcon, MagnifyingGlassIcon } from "@radix-ui/react-icons"
 
 const ad = { id: 1, imageUrl: "/ads/ad1.jpg", link: "https://seattle.boo-halloween.com/" }
 
@@ -69,11 +72,78 @@ async function fetchCities() {
 export default async function Home() {
 
   const cities = await fetchCities();
+  const defaultCity = "seattle";
+  const selectedCity = defaultCity;
 
   return (
     <div className="flex flex-col min-h-screen">
       <TopBar title="happns" />
       <Separator />
+
+      <div className="flex-1 overflow-y-auto">
+        {/* Hero Section */}
+        <div className="py-16">
+            <div className="flex flex-col max-w-[880px] mx-auto space-y-8 px-8 lg:flex-row lg:space-x-12 items-center">
+                
+                {/* Left Section: City Title and Description */}
+                <div className="lg:w-1/2 space-y-4">
+                    <h2 className="text-3xl font-bold">discover curated events happning in your city</h2>
+                    
+                    <div className="flex items-center space-x-2">
+                      {/* Select for city selection */}
+                      <Select defaultValue={defaultCity}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select your city" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {cities.map((city) => (
+                            <SelectItem key={city.slug} value={city.slug}>
+                              {city.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+
+                      {/* Explore Button */}
+                      <Link href={`/${selectedCity}/explore`}>
+                          {/* <Button size="icon">
+                            <MagnifyingGlassIcon className="h-4 w-4" />
+                          </Button> */}
+                          <Button>explore</Button>
+                      </Link>
+                    </div>
+                </div>
+
+                {/* Right Section: Event Photo Carousel */}
+                <div className="hidden lg:w-1/2 lg:block">
+                  <Carousel
+                    opts={{
+                      align: "center",
+                      loop: true
+                    }}
+                    className="w-full max-w-lg"
+                  >
+                    <CarouselContent>
+                      {Array.from({ length: 5 }).map((_, index) => (
+                        <CarouselItem key={index} className="md:basis-1/4 lg:basis-1/3 pb-5">
+                            <Image
+                              src={`/carousel/photo${index + 1}.jpg`}
+                              alt={`Event photo ${index + 1}`}
+                              className="object-cover w-full h-full rounded-lg"
+                              width={300}
+                              height={300}
+                            />
+                        </CarouselItem>
+                      ))}
+                    </CarouselContent>
+                  </Carousel>
+                </div>
+            </div>
+        </div>
+      </div>
+
+      <Separator />
+      <p className="p-4">old home page UI below</p>
 
       <div className="flex-grow w-full max-w-[880px] mx-auto p-4">
         {/* Sponsored AD */}
