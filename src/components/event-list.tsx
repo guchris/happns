@@ -27,6 +27,7 @@ import { format, parse, parseISO, isWithinInterval, eachDayOfInterval, isValid }
 interface EventListProps {
     items: Event[]
     isVerticalLayout: boolean
+    isFilterActive: boolean
 }
 
 // Utility function to determine the correct date for display
@@ -41,7 +42,7 @@ const getCurrentDateForDisplay = (startDate: Date, endDate: Date) => {
     return startDate;
 };
 
-export function EventList({ items, isVerticalLayout }: EventListProps) {
+export function EventList({ items, isVerticalLayout, isFilterActive }: EventListProps) {
 
     // Group events by the display date (either start date or today's date if within range)
     const eventsByDate = items.reduce((acc, item) => {
@@ -68,23 +69,35 @@ export function EventList({ items, isVerticalLayout }: EventListProps) {
     );
 
     const allDates = eachDayOfInterval({ start: firstEventDate, end: lastEventDate });
-    allDates.forEach((date) => {
-        const isoDate = date.toISOString().split("T")[0];
-        if (!eventsByDate[isoDate]) {
-            eventsByDate[isoDate] = [];
-        }
-    });
+
+    // Add empty dates only if no filters are applied
+    if (!isFilterActive) {
+        allDates.forEach((date) => {
+            const isoDate = date.toISOString().split("T")[0];
+            if (!eventsByDate[isoDate]) {
+                eventsByDate[isoDate] = [];
+            }
+        });
+    }
 
     const sortedDates = Object.keys(eventsByDate).sort((a, b) => parseISO(a).getTime() - parseISO(b).getTime());
 
     return (
         <ScrollArea>
-            <div className="flex h-full flex-col" >
-                {sortedDates.map((date, index) => (
-                    <div key={date}>
-                        <CollapsibleItem date={date} events={eventsByDate[date]} isLastItem={index === sortedDates.length - 1} isVerticalLayout={isVerticalLayout} />
-                    </div>
-                ))}
+            <div className="flex h-full flex-col">
+                {sortedDates.map((date, index) => {
+                    if (isFilterActive && eventsByDate[date].length === 0) return null;
+                    return (
+                        <div key={date}>
+                            <CollapsibleItem
+                                date={date}
+                                events={eventsByDate[date]}
+                                isLastItem={index === sortedDates.length - 1}
+                                isVerticalLayout={isVerticalLayout}
+                            />
+                        </div>
+                    );
+                })}
             </div>
         </ScrollArea>
     )

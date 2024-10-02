@@ -113,9 +113,12 @@ export default async function CityPage({ params }: CityPageProps) {
                 </div>
 
                 {/* Events Section */}
-                <div className="flex flex-col max-w-[1000px] mx-auto space-y-8 px-4 py-16">
-                    <div className="space-y-2">
-                        <h2 className="text-lg font-semibold tracking-tight">happnings</h2>
+                <div className="flex flex-col max-w-[1000px] mx-auto px-4 py-16">
+                    <div className="space-y-4">
+                        <div>
+                            <h2 className="text-lg font-semibold">happnings</h2>
+                            <p className="text-sm">top events happning today, tomorrow, and this month</p>
+                        </div>
                         <EventGrid
                             eventsHappeningToday={eventsHappeningToday}
                             eventsHappeningTomorrow={eventsHappeningTomorrow}

@@ -62,6 +62,8 @@ export function Event({ events, city }: EventProps) {
 
     const [searchQuery, setSearchQuery] = useState("");
 
+    const isFilterActive = selectedCategories.length > 0 || selectedFormats.length > 0 || selectedNeighborhoods.length > 0 || selectedCosts.length > 0 || searchQuery.length > 0 || showBookmarkedEvents;
+
     useEffect(() => {
         if (user) {
             const fetchBookmarkedEvents = async () => {
@@ -289,7 +291,7 @@ export function Event({ events, city }: EventProps) {
                         {filteredEvents.length === 0 ? (
                             <div className="p-8 text-center text-muted-foreground">No events</div>
                         ) : (
-                            <EventList items={filteredEvents} isVerticalLayout={isVerticalLayout} />
+                            <EventList items={filteredEvents} isVerticalLayout={isVerticalLayout} isFilterActive={isFilterActive} />
                         )}
                     </div>
                 ) : (
@@ -417,7 +419,7 @@ export function Event({ events, city }: EventProps) {
                         {filteredEvents.length === 0 ? (
                             <div className="p-8 text-center text-muted-foreground">No events</div>
                         ) : (
-                            <EventList items={filteredEvents} isVerticalLayout={isVerticalLayout} />
+                            <EventList items={filteredEvents} isVerticalLayout={isVerticalLayout} isFilterActive={isFilterActive} />
                         )}
                     </ResizablePanel>
 
