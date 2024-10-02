@@ -87,20 +87,19 @@ export default async function CityPage({ params }: CityPageProps) {
                         {/* Left Section: City Title and Description */}
                         <div className="lg:w-1/3 space-y-4">
                             <div>
-                                <h2 className="text-3xl font-bold">discover curated events in your city</h2>
-                                {/* <h2 className="text-lg font-bold">events in</h2>
-                                <h1 className="text-4xl font-black">{city}</h1> */}
+                                <h2 className="text-lg font-bold">events in</h2>
+                                <h1 className="text-4xl font-black">{city}</h1>
                             </div>
-                            {/* <p className="text-base text-muted-foreground">
+                            <p className="text-base text-muted-foreground">
                                 Explore a curated selection of {cityLabel}&#39;s best events and easily plan outings with your friends or discover new connections along the way. From exclusive experiences to hidden gems, happns helps you find the perfect events.
-                            </p> */}
+                            </p>
                             <Link href={`/${city}/explore`}>
                                 <Button className="mt-4">explore {city} events</Button>
                             </Link>
                         </div>
 
                         {/* Right Section: City Image */}
-                        {/* <div className="lg:w-1/2 hidden lg:block">
+                        <div className="lg:w-1/2 hidden lg:block">
                             <Image
                                 src={`/covers/cover-${city}.png`} 
                                 alt={`${cityLabel} cover image`} 
@@ -109,7 +108,7 @@ export default async function CityPage({ params }: CityPageProps) {
                                 height={300}
                                 priority
                             />
-                        </div> */}
+                        </div>
                     </div>
                 </div>
 

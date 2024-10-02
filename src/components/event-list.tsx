@@ -83,7 +83,7 @@ export function EventList({ items, isVerticalLayout, isFilterActive }: EventList
     const sortedDates = Object.keys(eventsByDate).sort((a, b) => parseISO(a).getTime() - parseISO(b).getTime());
 
     return (
-        <ScrollArea>
+        <ScrollArea className="h-full overflow-y-auto">
             <div className="flex h-full flex-col">
                 {sortedDates.map((date, index) => {
                     if (isFilterActive && eventsByDate[date].length === 0) return null;

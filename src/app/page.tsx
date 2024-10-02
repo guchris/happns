@@ -83,14 +83,15 @@ export default async function Home() {
       <div className="flex-1 overflow-y-auto">
         {/* Hero Section */}
         <div className="py-16">
-            <div className="flex flex-col max-w-[880px] mx-auto space-y-8 px-8 lg:flex-row lg:space-x-12 items-center">
+            <div className="flex flex-col max-w-[880px] mx-auto space-y-8 p-4 lg:flex-row lg:space-x-12 items-center">
                 
-                {/* Left Section: City Title and Description */}
+                {/* Left Section: Slogan and CTA */}
                 <div className="lg:w-1/2 space-y-4">
                     <h2 className="text-3xl font-bold">discover curated events happning in your city</h2>
                     
                     <div className="flex items-center space-x-2">
-                      {/* Select for city selection */}
+
+                      {/* City Selection */}
                       <Select defaultValue={defaultCity}>
                         <SelectTrigger>
                           <SelectValue placeholder="Select your city" />
@@ -106,9 +107,6 @@ export default async function Home() {
 
                       {/* Explore Button */}
                       <Link href={`/${selectedCity}/explore`}>
-                          {/* <Button size="icon">
-                            <MagnifyingGlassIcon className="h-4 w-4" />
-                          </Button> */}
                           <Button>explore</Button>
                       </Link>
                     </div>
@@ -119,7 +117,7 @@ export default async function Home() {
                   <Carousel
                     opts={{
                       align: "center",
-                      loop: true
+                      loop: true,
                     }}
                     className="w-full max-w-lg"
                   >
@@ -140,50 +138,51 @@ export default async function Home() {
                 </div>
             </div>
         </div>
+        
+        <Separator />
+
+        {/* City Cards */}
+        <div className="flex-1 mx-auto max-w-[880px]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 w-full">
+            {cities.map((city) => {
+              return (
+                <Link href={`/${city.slug}`} key={city.name}>
+                  <Card className="w-full">
+                    <CardHeader className="space-y-2">
+                      <CardTitle className="text-base w-full">{city.name}</CardTitle>
+                      <CardDescription className="line-clamp-2 w-full">{city.description}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex flex-col space-y-2 text-sm text-muted-foreground">
+                        <div className="flex items-center">
+                          <CalendarIcon className="mr-1 h-3 w-3" />
+                          {city.upcomingEventCount} upcoming events
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+
       </div>
 
-      <Separator />
-      <p className="p-4">old home page UI below</p>
-
-      <div className="flex-grow w-full max-w-[880px] mx-auto p-4">
-        {/* Sponsored AD */}
+      {/* <div className="flex-grow w-full max-w-[880px] mx-auto p-4">
         <div className="w-full p-4">
           <Link href={ad.link}>
             <Image
                 src={ad.imageUrl}
                 alt={`Ad ${ad.id}`}
-                width={880} // Adjust width based on container size
-                height={495} // Adjust height as needed
+                width={880}
+                height={495}
                 className="w-full h-auto rounded-lg object-cover"
             />
           </Link>
           <p className="text-center text-xs text-gray-500 mt-1">sponsored</p>
         </div>
-
-        {/* City Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 w-full">
-          {cities.map((city) => {
-            return (
-              <Link href={`/${city.slug}`} key={city.name}>
-                <Card className="w-full">
-                  <CardHeader className="space-y-2">
-                    <CardTitle className="text-base w-full">{city.name}</CardTitle>
-                    <CardDescription className="line-clamp-2 w-full">{city.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex flex-col space-y-2 text-sm text-muted-foreground">
-                      <div className="flex items-center">
-                        <CalendarIcon className="mr-1 h-3 w-3" />
-                        {city.upcomingEventCount} upcoming events
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            );
-          })}
-        </div>
-      </div>
+      </div> */}
 
       <Footer />
     </div>
