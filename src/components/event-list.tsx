@@ -78,8 +78,8 @@ export function EventList({ items, isVerticalLayout }: EventListProps) {
     const sortedDates = Object.keys(eventsByDate).sort((a, b) => parseISO(a).getTime() - parseISO(b).getTime());
 
     return (
-        <ScrollArea className="h-full">
-            <div className="flex flex-col">
+        <ScrollArea>
+            <div className="flex h-full flex-col" >
                 {sortedDates.map((date, index) => (
                     <div key={date}>
                         <CollapsibleItem date={date} events={eventsByDate[date]} isLastItem={index === sortedDates.length - 1} isVerticalLayout={isVerticalLayout} />
@@ -180,7 +180,7 @@ function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: Collaps
                                     key={item.id}
                                     className={cn(
                                         // If isVerticalLayout is true, apply flex-col (image on top, text below), else apply flex-row for mobile
-                                        `${isVerticalLayout ? 'flex-col' : 'flex-row'} md:flex-row flex w-full items-start gap-4 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent`,
+                                        `${isVerticalLayout ? 'flex-col' : 'flex-row'} flex w-full items-start gap-4 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent`,
                                         event.selected === item.id && "bg-muted"
                                     )}
                                     onClick={() => handleEventClick(item.id)}
@@ -192,8 +192,7 @@ function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: Collaps
                                         height={150}
                                         loading="lazy"
                                         className={cn(
-                                            isVerticalLayout ? "w-full" : "w-28",
-                                            "object-cover rounded-lg md:w-40 md:h-40"
+                                            isVerticalLayout ? "w-full" : "w-28", "object-cover rounded-lg md:w-40 md:h-40"
                                         )}
                                     />
                                     <div className="flex flex-col gap-2 w-full">
