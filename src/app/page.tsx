@@ -20,7 +20,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 
 // Other Imports
-import { CalendarIcon, MagnifyingGlassIcon } from "@radix-ui/react-icons"
+import { CalendarIcon } from "@radix-ui/react-icons"
 
 const ad = { id: 1, imageUrl: "/ads/ad1.jpg", link: "https://seattle.boo-halloween.com/" }
 
@@ -75,25 +75,24 @@ async function fetchCities() {
   return cities;
 }
 
-// Fetch carousel event data from Firestore and corresponding event details from "events" collection
+// Fetch carousel event data
 async function fetchCarouselEvents() {
   const carouselRef = collection(db, "carousel");
   const carouselSnapshot = await getDocs(carouselRef);
 
   // For each carousel item, fetch the corresponding event details from the "events" collection
   const carouselEvents = await Promise.all(
-    carouselSnapshot.docs.map(async (carouselDoc) => { // Renamed the conflicting `doc` to `carouselDoc`
-      const eventId = carouselDoc.id; // Event ID from the "carousel" collection
+    carouselSnapshot.docs.map(async (carouselDoc) => {
+      const eventId = carouselDoc.id;
 
-      // Fetch the corresponding event document from the "events" collection
-      const eventDocRef = doc(db, "events", eventId); // Keep Firestore's `doc` function
+      const eventDocRef = doc(db, "events", eventId);
       const eventDoc = await getDoc(eventDocRef);
 
       if (eventDoc.exists()) {
         const eventData = eventDoc.data();
         return {
-          uid: eventId, // Event ID
-          image: eventData.image, // Event image from the "events" collection
+          uid: eventId,
+          image: eventData.image,
         };
       } else {
         return null;
@@ -119,70 +118,69 @@ export default async function Home() {
 
       <div className="flex-1 overflow-y-auto">
         {/* Hero Section */}
-        <div className="py-16">
-            <div className="flex flex-col max-w-[880px] mx-auto space-y-8 p-4 lg:flex-row lg:space-x-12 items-center">
+        <div className="flex flex-col max-w-[880px] mx-auto py-16 p-4 space-y-8 items-center lg:flex-row lg:space-x-12">
+            
+            {/* Left Section: Slogan and CTA */}
+            <div className="lg:w-1/2 space-y-4">
+                <h2 className="text-3xl font-bold">discover curated events happning in your city</h2>
                 
-                {/* Left Section: Slogan and CTA */}
-                <div className="lg:w-1/2 space-y-4">
-                    <h2 className="text-3xl font-bold">discover curated events happning in your city</h2>
-                    
-                    <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2">
 
-                      {/* City Selection */}
-                      <Select defaultValue={defaultCity}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select your city" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {cities.map((city) => (
-                            <SelectItem key={city.slug} value={city.slug}>
-                              {city.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-
-                      {/* Explore Button */}
-                      <Link href={`/${selectedCity}/explore`}>
-                          <Button>explore</Button>
-                      </Link>
-                    </div>
-                </div>
-
-                {/* Right Section: Event Photo Carousel */}
-                <div className="hidden lg:w-1/2 lg:block">
-                  <Carousel
-                    opts={{
-                      align: "center",
-                      loop: true,
-                    }}
-                    className="w-full max-w-lg"
-                  >
-                    <CarouselContent>
-                      {carouselEvents.map((event) => (
-                        <CarouselItem key={event.uid} className="md:basis-1/4 lg:basis-1/3 pb-5">
-                          <Link href={`/events/${event.uid}`}>
-                            <Image
-                              src={event.image}
-                              alt={`Event photo ${event.uid}`}
-                              className="object-cover w-full h-full rounded-lg"
-                              width={300}
-                              height={300}
-                            />
-                          </Link>
-                        </CarouselItem>
+                  {/* City Selection */}
+                  <Select defaultValue={defaultCity}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select your city" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {cities.map((city) => (
+                        <SelectItem key={city.slug} value={city.slug}>
+                          {city.name}
+                        </SelectItem>
                       ))}
-                    </CarouselContent>
-                  </Carousel>
+                    </SelectContent>
+                  </Select>
+
+                  {/* Explore Button */}
+                  <Link href={`/${selectedCity}/explore`}>
+                      <Button>explore</Button>
+                  </Link>
                 </div>
+            </div>
+
+            {/* Right Section: Event Photo Carousel */}
+            <div className="hidden lg:w-1/2 lg:block">
+              <Carousel
+                opts={{
+                  align: "center",
+                  loop: true,
+                }}
+                className="w-full max-w-lg"
+              >
+                <CarouselContent>
+                  {carouselEvents.map((event) => (
+                    <CarouselItem key={event.uid} className="md:basis-1/4 lg:basis-1/3 pb-5">
+                      <Link href={`/events/${event.uid}`}>
+                        <Image
+                          src={event.image}
+                          alt={`Event photo ${event.uid}`}
+                          className="object-cover w-full h-full rounded-lg"
+                          width={300}
+                          height={300}
+                        />
+                      </Link>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+              </Carousel>
             </div>
         </div>
         
         <Separator />
 
         {/* City Cards */}
-        <div className="flex-1 mx-auto max-w-[880px]">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 w-full">
+        <div className="flex-1 mx-auto max-w-[880px] py-12 p-4 space-y-4">
+          <h3 className="text-xl font-semibold">popular cities</h3>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 w-full">
             {cities.map((city) => {
               return (
                 <Link href={`/${city.slug}`} key={city.name}>
@@ -195,7 +193,7 @@ export default async function Home() {
                       <div className="flex flex-col space-y-2 text-sm text-muted-foreground">
                         <div className="flex items-center">
                           <CalendarIcon className="mr-1 h-3 w-3" />
-                          {city.upcomingEventCount} upcoming events
+                          {city.upcomingEventCount} events
                         </div>
                       </div>
                     </CardContent>
