@@ -10,7 +10,7 @@ import { getTotalUpcomingEvents } from "@/lib/eventUtils"
 
 // Firebase Imports
 import { db } from "@/lib/firebase"
-import { collection, getDocs } from "firebase/firestore"
+import { collection, doc, getDoc, getDocs } from "firebase/firestore"
 
 // Shadcn Imports
 import { Separator } from "@/components/ui/separator"
@@ -23,6 +23,12 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { CalendarIcon, MagnifyingGlassIcon } from "@radix-ui/react-icons"
 
 const ad = { id: 1, imageUrl: "/ads/ad1.jpg", link: "https://seattle.boo-halloween.com/" }
+
+// Event interface
+interface CarouselEvent {
+  uid: string;
+  image: string;
+}
 
 export const dynamic = 'force-dynamic';
 
@@ -69,9 +75,40 @@ async function fetchCities() {
   return cities;
 }
 
+// Fetch carousel event data from Firestore and corresponding event details from "events" collection
+async function fetchCarouselEvents() {
+  const carouselRef = collection(db, "carousel");
+  const carouselSnapshot = await getDocs(carouselRef);
+
+  // For each carousel item, fetch the corresponding event details from the "events" collection
+  const carouselEvents = await Promise.all(
+    carouselSnapshot.docs.map(async (carouselDoc) => { // Renamed the conflicting `doc` to `carouselDoc`
+      const eventId = carouselDoc.id; // Event ID from the "carousel" collection
+
+      // Fetch the corresponding event document from the "events" collection
+      const eventDocRef = doc(db, "events", eventId); // Keep Firestore's `doc` function
+      const eventDoc = await getDoc(eventDocRef);
+
+      if (eventDoc.exists()) {
+        const eventData = eventDoc.data();
+        return {
+          uid: eventId, // Event ID
+          image: eventData.image, // Event image from the "events" collection
+        };
+      } else {
+        return null;
+      }
+    })
+  );
+
+  // Filter out any null values (in case an event was not found)
+  return carouselEvents.filter((event): event is CarouselEvent => event !== null);
+}
+
 export default async function Home() {
 
   const cities = await fetchCities();
+  const carouselEvents = await fetchCarouselEvents();
   const defaultCity = "seattle";
   const selectedCity = defaultCity;
 
@@ -122,15 +159,17 @@ export default async function Home() {
                     className="w-full max-w-lg"
                   >
                     <CarouselContent>
-                      {Array.from({ length: 5 }).map((_, index) => (
-                        <CarouselItem key={index} className="md:basis-1/4 lg:basis-1/3 pb-5">
+                      {carouselEvents.map((event) => (
+                        <CarouselItem key={event.uid} className="md:basis-1/4 lg:basis-1/3 pb-5">
+                          <Link href={`/events/${event.uid}`}>
                             <Image
-                              src={`/carousel/photo${index + 1}.jpg`}
-                              alt={`Event photo ${index + 1}`}
+                              src={event.image}
+                              alt={`Event photo ${event.uid}`}
                               className="object-cover w-full h-full rounded-lg"
                               width={300}
                               height={300}
                             />
+                          </Link>
                         </CarouselItem>
                       ))}
                     </CarouselContent>
