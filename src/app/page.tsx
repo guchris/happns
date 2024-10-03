@@ -1,11 +1,12 @@
 // Next Imports
 import { Metadata } from "next"
-import Link from "next/link"
-import Image from "next/image"
 
 // App Imports
 import { TopBar } from "@/components/top-bar"
 import { Footer } from "@/components/footer"
+import { CitySelector } from "@/components/city-selector"
+import { EventCarousel } from "@/components/event-carousel"
+import { CityGrid } from "@/components/city-grid"
 import { getTotalUpcomingEvents } from "@/lib/eventUtils"
 
 // Firebase Imports
@@ -14,15 +15,6 @@ import { collection, doc, getDoc, getDocs } from "firebase/firestore"
 
 // Shadcn Imports
 import { Separator } from "@/components/ui/separator"
-import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
-
-// Other Imports
-import { CalendarIcon } from "@radix-ui/react-icons"
-
-const ad = { id: 1, imageUrl: "/ads/ad1.jpg", link: "https://seattle.boo-halloween.com/" }
 
 // Event interface
 interface CarouselEvent {
@@ -66,6 +58,8 @@ async function fetchCities() {
       return {
         name: cityData.name,
         slug: cityData.slug,
+        lat: cityData.lat,
+        lon: cityData.lon,
         description: cityData.description,
         upcomingEventCount,
       };
@@ -108,8 +102,6 @@ export default async function Home() {
 
   const cities = await fetchCities();
   const carouselEvents = await fetchCarouselEvents();
-  const defaultCity = "seattle";
-  const selectedCity = defaultCity;
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -117,111 +109,30 @@ export default async function Home() {
       <Separator />
 
       <div className="flex-1 overflow-y-auto">
+
         {/* Hero Section */}
         <div className="flex flex-col max-w-[880px] mx-auto py-16 p-4 space-y-8 items-center lg:flex-row lg:space-x-12">
             
-            {/* Left Section: Slogan and CTA */}
+            {/* Left Section: Slogan, City Selector */}
             <div className="lg:w-1/2 space-y-4">
                 <h2 className="text-3xl font-bold">discover curated events happning in your city</h2>
-                
-                <div className="flex items-center space-x-2">
-
-                  {/* City Selection */}
-                  <Select defaultValue={defaultCity}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select your city" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {cities.map((city) => (
-                        <SelectItem key={city.slug} value={city.slug}>
-                          {city.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-
-                  {/* Explore Button */}
-                  <Link href={`/${selectedCity}/explore`}>
-                      <Button>explore</Button>
-                  </Link>
-                </div>
+                <CitySelector cities={cities} />
             </div>
 
             {/* Right Section: Event Photo Carousel */}
-            <div className="hidden lg:w-1/2 lg:block">
-              <Carousel
-                opts={{
-                  align: "center",
-                  loop: true,
-                }}
-                className="w-full max-w-lg"
-              >
-                <CarouselContent>
-                  {carouselEvents.map((event) => (
-                    <CarouselItem key={event.uid} className="md:basis-1/4 lg:basis-1/3 pb-5">
-                      <Link href={`/events/${event.uid}`}>
-                        <Image
-                          src={event.image}
-                          alt={`Event photo ${event.uid}`}
-                          className="object-cover w-full h-full rounded-lg"
-                          width={300}
-                          height={300}
-                        />
-                      </Link>
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-              </Carousel>
-            </div>
+            <EventCarousel carouselEvents={carouselEvents} />
+
         </div>
         
         <Separator />
 
-        {/* City Cards */}
-        <div className="flex-1 mx-auto max-w-[880px] py-12 p-4 space-y-4">
-          <h3 className="text-xl font-semibold">popular cities</h3>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 w-full">
-            {cities.map((city) => {
-              return (
-                <Link href={`/${city.slug}`} key={city.name}>
-                  <Card className="w-full">
-                    <CardHeader className="space-y-2">
-                      <CardTitle className="text-base w-full">{city.name}</CardTitle>
-                      <CardDescription className="line-clamp-2 w-full">{city.description}</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex flex-col space-y-2 text-sm text-muted-foreground">
-                        <div className="flex items-center">
-                          <CalendarIcon className="mr-1 h-3 w-3" />
-                          {city.upcomingEventCount} events
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
+        {/* City Grid */}
+        <CityGrid cities={cities} />
 
       </div>
 
-      {/* <div className="flex-grow w-full max-w-[880px] mx-auto p-4">
-        <div className="w-full p-4">
-          <Link href={ad.link}>
-            <Image
-                src={ad.imageUrl}
-                alt={`Ad ${ad.id}`}
-                width={880}
-                height={495}
-                className="w-full h-auto rounded-lg object-cover"
-            />
-          </Link>
-          <p className="text-center text-xs text-gray-500 mt-1">sponsored</p>
-        </div>
-      </div> */}
-
       <Footer />
+
     </div>
   );
 }
