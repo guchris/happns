@@ -24,6 +24,7 @@ interface CitySelectorProps {
 
 export function CitySelector({ cities }: CitySelectorProps) {
     const [selectedCity, setSelectedCity] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     // Function to find the closest city based on the user's location
     const findClosestCity = (userLat: number, userLon: number) => {
@@ -50,26 +51,37 @@ export function CitySelector({ cities }: CitySelectorProps) {
                     const userLon = position.coords.longitude;
                     const closestCitySlug = findClosestCity(userLat, userLon);
                     setSelectedCity(closestCitySlug);
+                    setIsLoading(false);
                 },
                 (error) => {
                     console.error("Error getting user location:", error);
                     setSelectedCity("seattle"); // Fallback to default city if geolocation fails
+                    setIsLoading(false);
                 }
             );
         } else {
             setSelectedCity("seattle"); // Fallback if geolocation is not available
+            setIsLoading(false);
         }
     }, []);
 
     return (
         <div className="flex items-center space-x-2">
-
-            {/* City Selection */}
-            {selectedCity && (
+            {isLoading ? (
+                // Temporary loading placeholder
+                <>  
+                    <Select>
+                        <SelectTrigger disabled>
+                            <SelectValue placeholder="Loading location..." />
+                        </SelectTrigger>
+                    </Select>
+                    <Button disabled>explore</Button>
+                </>
+            ) : selectedCity ? (
                 <>
-                    <Select defaultValue={selectedCity} onValueChange={(value) => setSelectedCity(value)}>
+                    <Select value={selectedCity ?? undefined} onValueChange={(value) => setSelectedCity(value)}>
                         <SelectTrigger>
-                            <SelectValue placeholder="Select your city" />
+                            <SelectValue>{cities.find((city) => city.slug === selectedCity)?.name || "Select your city"}</SelectValue>
                         </SelectTrigger>
                         <SelectContent>
                             {cities.map((city) => (
@@ -85,6 +97,11 @@ export function CitySelector({ cities }: CitySelectorProps) {
                         <Button>explore</Button>
                     </Link>
                 </>
+            ) : (
+                // Fallback UI in case `selectedCity` fails to set
+                <div>
+                    <p>Error: Could not set city</p>
+                </div>
             )}
         </div>
     )
