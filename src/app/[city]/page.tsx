@@ -14,7 +14,7 @@ import { mapFirestoreEvent, getUpcomingEvents, getEventsHappeningToday, getEvent
 
 // Firebase Imports
 import { db } from "@/lib/firebase"
-import { collection, getDocs, query, where } from "firebase/firestore"
+import { collection, getDoc, getDocs, doc, query, where } from "firebase/firestore"
 
 // Shadcn Imports
 import { Separator } from "@/components/ui/separator"
@@ -26,6 +26,12 @@ type CityPageProps = {
         city: string;
     };
 };
+
+type Curator = {
+    name: string;
+    username: string;
+    profilePicture: string;
+}
 
 // Metadata for SEO
 export async function generateMetadata({ params }: CityPageProps): Promise<Metadata> {
@@ -74,6 +80,53 @@ export default async function CityPage({ params }: CityPageProps) {
     const eventsHappeningTomorrow = getEventsHappeningTomorrow(events, today);
     const topEvents = sortEventsByClicks(upcomingEvents, 8);
 
+    // Step 1: Find the city document that has the slug "seattle"
+    const citiesCol = collection(db, "cities");
+    const cityQuery2 = query(citiesCol, where("slug", "==", "seattle"));
+    const citySnapshot = await getDocs(cityQuery2);
+
+    if (citySnapshot.empty) {
+        console.log("No city found with the slug 'seattle'");
+        return;
+    }
+
+    // Assuming there is only one document for "seattle"
+    const cityDoc = citySnapshot.docs[0]; 
+    const cityDocId = cityDoc.id; // Get the document ID of the city
+
+    // Step 2: Fetch the curators sub-collection for the found city document
+    const curatorsCol = collection(db, "cities", cityDocId, "curators");
+    const curatorsSnapshot = await getDocs(curatorsCol);
+
+    if (curatorsSnapshot.empty) {
+        console.log(`No curators found for city with document ID: ${cityDocId}`);
+        return;
+    }
+
+    // Step 3: Fetch user details from the global 'users' collection using the UIDs in the curators sub-collection
+    const curators = await Promise.all(
+        curatorsSnapshot.docs.map(async (curatorDoc) => {
+            const uid = curatorDoc.id; // The UID stored in curators sub-collection
+            const userDoc = await getDoc(doc(db, "users", uid)); // Fetch the user data from the global 'users' collection
+
+            if (!userDoc.exists()) {
+                console.log(`No user found for UID: ${uid}`);
+                return null; // Handle missing user case
+            }
+
+            const userData = userDoc.data();
+
+            return {
+                name: userData?.name || "Unknown Curator",
+                username: userData?.username || "unknown",
+                profilePicture: userData?.profilePicture || "/default-profile.png",
+            };
+        })
+    );
+
+    // Filter out any null results (in case user data was missing for some UIDs)
+    const validCurators = curators.filter((curator): curator is Curator => curator !== null);
+
     return (
         <div className="flex flex-col min-h-screen">
             <TopBar title={`happns/${city}`} />
@@ -110,7 +163,7 @@ export default async function CityPage({ params }: CityPageProps) {
                 <div className="py-12 space-y-8">
 
                     {/* Bio Card */}
-                    <div className="flex-1 mx-auto max-w-[880px] p-4 space-y-4">
+                    <div className="flex-1 mx-auto max-w-[880px] px-4 space-y-4">
                         <Card className="w-full bg-neutral-50 border-none">
                             <CardHeader>
                                 <CardTitle className="text-xl font-semibold">connect with your city</CardTitle>
@@ -119,6 +172,30 @@ export default async function CityPage({ params }: CityPageProps) {
                                 </CardDescription>
                             </CardHeader>
                         </Card>
+                    </div>
+
+                    {/* Curators Section */}
+                    <div className="flex flex-col max-w-[880px] mx-auto px-4 space-y-4">
+                        <h2 className="text-lg font-semibold">meet the curators</h2>
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                            {validCurators.map((curator, index) => (
+                                <Card key={index} className="w-full">
+                                    <CardHeader className="p-4">
+                                        <div className="aspect-square w-full overflow-hidden relative">
+                                            <Image
+                                                src={curator.profilePicture}
+                                                alt={`${curator.name}'s profile picture`}
+                                                layout="fill"
+                                                objectFit="cover"
+                                                className="rounded-full"
+                                            />
+                                        </div>
+                                        <CardTitle className="line-clamp-1 text-md font-semibold">{curator.name}</CardTitle>
+                                        <CardDescription className="text-xs text-sm text-gray-500">@{curator.username}</CardDescription>
+                                    </CardHeader>
+                                </Card>
+                            ))}
+                        </div>
                     </div>
 
                     {/* Events Section */}
