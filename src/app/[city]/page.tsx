@@ -86,7 +86,7 @@ export default async function CityPage({ params }: CityPageProps) {
                     
                     {/* Left Section: City Name */}
                     <div className="lg:w-1/2 space-y-4">
-                        <h2 className="text-3xl font-bold">uncover events shaping Seattle's culture and scene</h2>
+                        <h2 className="text-3xl font-bold">uncover events shaping Seattle&apos;s culture and scene</h2>
                         <Link href={`/${city}/explore`}>
                             <Button className="mt-4">explore {city} events</Button>
                         </Link>

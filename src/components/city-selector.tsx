@@ -63,7 +63,7 @@ export function CitySelector({ cities }: CitySelectorProps) {
             setSelectedCity("seattle"); // Fallback if geolocation is not available
             setIsLoading(false);
         }
-    }, []);
+    }, [findClosestCity]);
 
     return (
         <div className="flex items-center space-x-2">
