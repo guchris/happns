@@ -115,7 +115,7 @@ export default async function CityPage({ params }: CityPageProps) {
                             <CardHeader>
                                 <CardTitle className="text-xl font-semibold">connect with your city</CardTitle>
                                 <CardDescription className="mt-8 text-sm">
-                                    Explore a curated selection of {cityLabel}&#39;s best events and easily plan outings with your friends or discover new connections along the way. From exclusive experiences to "emerald" gems, happns helps you find the perfect events.
+                                    Explore a curated selection of {cityLabel}&apos;s best events and easily plan outings with your friends or discover new connections along the way. From exclusive experiences to &quot;emerald&quot; gems, happns helps you find the perfect events.
                                 </CardDescription>
                             </CardHeader>
                         </Card>
