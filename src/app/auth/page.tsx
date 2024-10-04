@@ -2,7 +2,7 @@
 
 // Next and React Imports
 import Link from "next/link"
-import { Suspense, useState } from "react"
+import { Suspense, useState, useEffect } from "react"
 
 // App Imports
 import AuthHandler from "@/context/AuthHandler"
@@ -19,6 +19,10 @@ import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHe
 export default function AuthPage() {
     const { user } = useAuth();
     const [isSignUp, setIsSignUp] = useState<boolean>(false);
+
+    useEffect(() => {
+        window.scrollTo({ top: 0 });
+    }, []);
 
     return (
         <>

@@ -84,7 +84,7 @@ export default function ContactForm() {
             <TopBar title={`happns/contact`} />
             <Separator />
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col px-4 py-8 space-y-8 max-w-[800px] mx-auto">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col px-4 py-8 space-y-8 max-w-[880px] mx-auto">
 
                     {/* Title and Description */}
                     <div className="space-y-2">

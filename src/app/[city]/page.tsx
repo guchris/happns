@@ -19,6 +19,7 @@ import { collection, getDocs, query, where } from "firebase/firestore"
 // Shadcn Imports
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 
 type CityPageProps = {
     params: {
@@ -81,49 +82,58 @@ export default async function CityPage({ params }: CityPageProps) {
             <div className="flex-1 overflow-y-auto">
 
                 {/* Hero Section */}
-                <div className="bg-neutral-50 py-16">
-                    <div className="flex flex-col max-w-[1000px] mx-auto space-y-8 px-4 lg:flex-row lg:space-x-12 items-center">
-                        
-                        {/* Left Section: City Title and Description */}
-                        <div className="lg:w-1/3 space-y-4">
-                            <div>
-                                <h2 className="text-lg font-bold">events in</h2>
-                                <h1 className="text-4xl font-black">{city}</h1>
-                            </div>
-                            <p className="text-base text-muted-foreground">
-                                Explore a curated selection of {cityLabel}&#39;s best events and easily plan outings with your friends or discover new connections along the way. From exclusive experiences to hidden gems, happns helps you find the perfect events.
-                            </p>
-                            <Link href={`/${city}/explore`}>
-                                <Button className="mt-4">explore {city} events</Button>
-                            </Link>
-                        </div>
-
-                        {/* Right Section: City Image */}
-                        <div className="lg:w-1/2 hidden lg:block">
-                            <Image
-                                src={`/covers/cover-${city}.png`} 
-                                alt={`${cityLabel} cover image`} 
-                                className="rounded-lg object-cover w-full h-auto"
-                                width={500}
-                                height={300}
-                                priority
-                            />
-                        </div>
+                <div className="flex flex-col max-w-[880px] mx-auto py-16 p-4 space-y-8 items-center lg:flex-row lg:space-x-12">
+                    
+                    {/* Left Section: City Name */}
+                    <div className="lg:w-1/2 space-y-4">
+                        <h2 className="text-3xl font-bold">uncover events shaping Seattle's culture and scene</h2>
+                        <Link href={`/${city}/explore`}>
+                            <Button className="mt-4">explore {city} events</Button>
+                        </Link>
                     </div>
+
+                    {/* Right Section: City Image */}
+                    {/* <div className="lg:w-1/2 lg:block">
+                        <Image
+                            src={`/covers/cover-${city}.png`} 
+                            alt={`${cityLabel} cover image`} 
+                            className="rounded-lg object-cover w-full h-full"
+                            width={500}
+                            height={300}
+                            priority
+                        />
+                    </div> */}
                 </div>
 
-                {/* Events Section */}
-                <div className="flex flex-col max-w-[1000px] mx-auto px-4 py-16">
-                    <div className="space-y-4">
-                        <div>
-                            <h2 className="text-lg font-semibold">happnings</h2>
-                            <p className="text-sm">upcoming top events</p>
+                <Separator />
+
+                <div className="py-12 space-y-8">
+
+                    {/* Bio Card */}
+                    <div className="flex-1 mx-auto max-w-[880px] p-4 space-y-4">
+                        <Card className="w-full bg-neutral-50 border-none">
+                            <CardHeader>
+                                <CardTitle className="text-xl font-semibold">connect with your city</CardTitle>
+                                <CardDescription className="mt-8 text-sm">
+                                    Explore a curated selection of {cityLabel}&#39;s best events and easily plan outings with your friends or discover new connections along the way. From exclusive experiences to "emerald" gems, happns helps you find the perfect events.
+                                </CardDescription>
+                            </CardHeader>
+                        </Card>
+                    </div>
+
+                    {/* Events Section */}
+                    <div className="flex flex-col max-w-[880px] mx-auto px-4">
+                        <div className="space-y-4">
+                            <div>
+                                <h2 className="text-lg font-semibold">happnings</h2>
+                                <p className="text-sm">upcoming top events</p>
+                            </div>
+                            <EventGrid
+                                eventsHappeningToday={eventsHappeningToday}
+                                eventsHappeningTomorrow={eventsHappeningTomorrow}
+                                topEvents={topEvents}
+                            />
                         </div>
-                        <EventGrid
-                            eventsHappeningToday={eventsHappeningToday}
-                            eventsHappeningTomorrow={eventsHappeningTomorrow}
-                            topEvents={topEvents}
-                        />
                     </div>
                 </div>
             </div>
