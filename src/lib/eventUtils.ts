@@ -3,7 +3,7 @@ import { Event } from "@/components/types"
 
 // Firebase Imports
 import { db } from "@/lib/firebase"
-import { DocumentData, QueryDocumentSnapshot, collection, getCountFromServer, query, where } from "firebase/firestore"
+import { DocumentData, QueryDocumentSnapshot, collection, getCountFromServer, query, where, getDocs } from "firebase/firestore"
 
 // Other Imports
 import { format, parse, isAfter, isSameDay, isSameMonth, addDays, parseISO } from "date-fns"
@@ -32,6 +32,23 @@ export function mapFirestoreEvent(doc: QueryDocumentSnapshot<DocumentData>): Eve
         startDate: doc.data().startDate,
         time: doc.data().time,
     };
+}
+
+
+/**
+ * Fetches all events for a specific city from Firestore.
+ * Filters events based on the city's slug and maps them into the Event type.
+ * @param citySlug - The slug of the city to fetch events for.
+ * @returns {Promise<Event[]>} - Array of Event objects for the specified city.
+ */
+export async function getEventsByCity(citySlug: string): Promise<Event[]> {
+
+    const eventsCol = collection(db, "events");
+    const cityQuery = query(eventsCol, where("city", "==", citySlug));
+    const eventSnapshot = await getDocs(cityQuery);
+
+    const events: Event[] = eventSnapshot.docs.map(mapFirestoreEvent);
+    return events;
 }
 
 

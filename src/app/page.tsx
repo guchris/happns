@@ -8,7 +8,8 @@ import { Footer } from "@/components/footer"
 import { CitySelector } from "@/components/city-selector"
 import { EventCarousel } from "@/components/event-carousel"
 import { CityGrid } from "@/components/city-grid"
-import { getTotalUpcomingEvents } from "@/lib/eventUtils"
+import EventGrid from "@/components/event-grid"
+import { getTotalUpcomingEvents, getEventsByCity, getEventsHappeningToday, getEventsHappeningTomorrow, getUpcomingEvents, sortEventsByClicks } from "@/lib/eventUtils"
 
 // Firebase Imports
 import { db } from "@/lib/firebase"
@@ -106,6 +107,14 @@ export default async function Home() {
   const cities = await fetchCities();
   const carouselEvents = await fetchCarouselEvents();
 
+  // Use utility functions for filtering and sorting events
+  const today = new Date();
+  const events = await getEventsByCity("seattle");
+  const upcomingEvents = getUpcomingEvents(events, today);
+  const eventsHappeningToday = getEventsHappeningToday(events, today);
+  const eventsHappeningTomorrow = getEventsHappeningTomorrow(events, today);
+  const topEvents = sortEventsByClicks(upcomingEvents, 8);
+
   return (
     <div className="flex flex-col min-h-screen">
       <TopBar title="happns" />
@@ -130,6 +139,18 @@ export default async function Home() {
         <Separator />
 
         <div className="py-12 space-y-8">
+
+          {/* Events Grid */}
+          <div className="flex-1 max-w-[880px] mx-auto p-4 space-y-4">
+            {/* Header */}
+            <h3 className="text-xl font-semibold">happnings in seattle</h3>
+            <EventGrid
+              eventsHappeningToday={eventsHappeningToday}
+              eventsHappeningTomorrow={eventsHappeningTomorrow}
+              topEvents={topEvents}
+            />
+          </div>
+
           {/* City Grid */}
           <CityGrid cities={cities} />
 

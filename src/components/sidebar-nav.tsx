@@ -44,6 +44,6 @@ export function SidebarNav({ className, items, ...props }: SidebarNavProps) {
                         {item.title}
                     </Link>
                 ))}
-            </nav>
+        </nav>
     )
 }

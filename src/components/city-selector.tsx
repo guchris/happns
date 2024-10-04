@@ -55,15 +55,15 @@ export function CitySelector({ cities }: CitySelectorProps) {
                 },
                 (error) => {
                     console.error("Error getting user location:", error);
-                    setSelectedCity("seattle"); // Fallback to default city if geolocation fails
+                    setSelectedCity("seattle");
                     setIsLoading(false);
                 }
             );
         } else {
-            setSelectedCity("seattle"); // Fallback if geolocation is not available
+            setSelectedCity("seattle");
             setIsLoading(false);
         }
-    }, [findClosestCity]);
+    }, []);
 
     return (
         <div className="flex items-center space-x-2">

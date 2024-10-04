@@ -35,7 +35,7 @@ export default function AuthPage() {
                         "absolute right-4 top-4 md:right-8 md:top-8"
                     )}
                 >
-                    {isSignUp ? "Log In" : "Sign Up"}
+                    {isSignUp ? "login" : "sign up"}
                 </button>
 
                 {/* Mobile Button for Sheet */}

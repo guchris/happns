@@ -124,7 +124,7 @@ export const TopBar: React.FC<TopBarProps> = ({ title }) => {
             ) : (
                 <Link href={`/auth?redirect=${pathname}`} passHref>
                     <Button asChild>
-                        <div>Log In</div>
+                        <div>login</div>
                     </Button>
                 </Link>
             )}
