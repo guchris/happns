@@ -16,7 +16,7 @@ interface EventCarouselProps {
 
 export function EventCarousel({ carouselEvents }: EventCarouselProps) {
     return (
-        <div className="hidden lg:w-1/2 lg:block">
+        <div className="flex flex-col lg:flex-row justify-center items-center w-full">
             <Carousel
                 opts={{
                     align: "center",
@@ -26,7 +26,10 @@ export function EventCarousel({ carouselEvents }: EventCarouselProps) {
             >
                 <CarouselContent>
                     {carouselEvents.map((event) => (
-                        <CarouselItem key={event.uid} className="md:basis-1/4 lg:basis-1/3 pb-5">
+                        <CarouselItem
+                            key={event.uid}
+                            className="basis-1/3 sm:basis-1/4 md:basis-1/5 lg:basis-1/3 pb-5"
+                        >
                             <Link href={`/events/${event.uid}`}>
                                 <Image
                                     src={event.image}
