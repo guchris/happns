@@ -1,5 +1,6 @@
 // Next Imports
 import { Metadata } from "next"
+import Link from "next/link"
 
 // App Imports
 import { TopBar } from "@/components/top-bar"
@@ -15,6 +16,8 @@ import { collection, doc, getDoc, getDocs } from "firebase/firestore"
 
 // Shadcn Imports
 import { Separator } from "@/components/ui/separator"
+import { Button } from "@/components/ui/button"
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 
 // Event interface
 interface CarouselEvent {
@@ -126,9 +129,28 @@ export default async function Home() {
         
         <Separator />
 
-        {/* City Grid */}
-        <CityGrid cities={cities} />
+        <div className="py-12 space-y-8">
+          {/* City Grid */}
+          <CityGrid cities={cities} />
 
+          {/* Join Card */}
+          <div className="flex-1 mx-auto max-w-[880px] p-4 space-y-4">
+            <Card className="w-full bg-neutral-50 border-none">
+              <CardHeader>
+                <CardTitle className="text-xl font-semibold">join happns</CardTitle>
+                <CardDescription className="mt-8 text-sm">
+                  Join happns today to easily bookmark events, leave comments, sync events to your Google Calendar, and access exclusive event stats - unlock all these features and more!
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Link href="/auth">
+                  <Button>sign up</Button>
+                </Link>
+              </CardContent>
+            </Card>
+          </div>
+
+        </div>
       </div>
 
       <Footer />
