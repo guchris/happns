@@ -1,17 +1,14 @@
 // Next Imports
 import Link from "next/link"
 
+// App Imports
+import { City } from "@/components/types"
+
 // Shadcn Imports
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 // Other Imports
 import { CalendarIcon } from "@radix-ui/react-icons"
-
-interface City {
-    name: string;
-    slug: string;
-    upcomingEventCount: number;
-}
 
 interface CityGridProps {
     cities: City[];

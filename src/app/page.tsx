@@ -9,7 +9,8 @@ import { CitySelector } from "@/components/city-selector"
 import { EventCarousel } from "@/components/event-carousel"
 import { CityGrid } from "@/components/city-grid"
 import EventGridDynamic from "@/components/event-grid-dynamic"
-import { getTotalUpcomingEvents, getEventsByCity, getEventsHappeningToday, getEventsHappeningTomorrow, getUpcomingEvents, sortEventsByClicks } from "@/lib/eventUtils"
+import { CarouselEvent } from "@/components/types"
+import { getTotalUpcomingEvents } from "@/lib/eventUtils"
 
 // Firebase Imports
 import { db } from "@/lib/firebase"
@@ -19,12 +20,6 @@ import { collection, doc, getDoc, getDocs } from "firebase/firestore"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
-
-// Event interface
-interface CarouselEvent {
-  uid: string;
-  image: string;
-}
 
 export const dynamic = 'force-dynamic';
 
@@ -106,14 +101,6 @@ export default async function Home() {
 
   const cities = await fetchCities();
   const carouselEvents = await fetchCarouselEvents();
-
-  // Use utility functions for filtering and sorting events
-  const today = new Date();
-  const events = await getEventsByCity("seattle");
-  const upcomingEvents = getUpcomingEvents(events, today);
-  const eventsHappeningToday = getEventsHappeningToday(events, today);
-  const eventsHappeningTomorrow = getEventsHappeningTomorrow(events, today);
-  const topEvents = sortEventsByClicks(upcomingEvents, 8);
 
   return (
     <div className="flex flex-col min-h-screen">

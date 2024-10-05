@@ -2,13 +2,11 @@
 import Link from "next/link"
 import Image from "next/image"
 
+// App Imports
+import { CarouselEvent } from "@/components/types"
+
 // Shadcn Imports
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel"
-
-interface CarouselEvent {
-    uid: string;
-    image: string;
-}
 
 interface EventCarouselProps {
     carouselEvents: CarouselEvent[];

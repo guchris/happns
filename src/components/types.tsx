@@ -36,3 +36,17 @@ export interface Comment {
     content: string;
     timestamp: any;
 }
+
+export interface City {
+    name: string;
+    slug: string;
+    lat: number;
+    lon: number;
+    description: string;
+    upcomingEventCount: number;
+}
+
+export interface CarouselEvent {
+    uid: string;
+    image: string;
+}
