@@ -8,7 +8,7 @@ import { Footer } from "@/components/footer"
 import { CitySelector } from "@/components/city-selector"
 import { EventCarousel } from "@/components/event-carousel"
 import { CityGrid } from "@/components/city-grid"
-import EventGrid from "@/components/event-grid"
+import EventGridDynamic from "@/components/event-grid-dynamic"
 import { getTotalUpcomingEvents, getEventsByCity, getEventsHappeningToday, getEventsHappeningTomorrow, getUpcomingEvents, sortEventsByClicks } from "@/lib/eventUtils"
 
 // Firebase Imports
@@ -143,12 +143,8 @@ export default async function Home() {
           {/* Events Grid */}
           <div className="flex-1 max-w-[880px] mx-auto p-4 space-y-4">
             {/* Header */}
-            <h3 className="text-xl font-semibold">happnings in seattle</h3>
-            <EventGrid
-              eventsHappeningToday={eventsHappeningToday}
-              eventsHappeningTomorrow={eventsHappeningTomorrow}
-              topEvents={topEvents}
-            />
+            <h3 className="text-xl font-semibold">happnings near you</h3>
+            <EventGridDynamic cities={cities} />
           </div>
 
           {/* City Grid */}
