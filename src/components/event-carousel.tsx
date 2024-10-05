@@ -3,7 +3,7 @@ import Link from "next/link"
 import Image from "next/image"
 
 // Shadcn Imports
-import { Carousel, CarouselContent, CarouselItem, CarouselNext } from "@/components/ui/carousel"
+import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel"
 
 interface CarouselEvent {
     uid: string;
@@ -42,7 +42,6 @@ export function EventCarousel({ carouselEvents }: EventCarouselProps) {
                         </CarouselItem>
                     ))}
                 </CarouselContent>
-                <CarouselNext />
             </Carousel>
         </div>
     )
