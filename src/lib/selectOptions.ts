@@ -76,12 +76,12 @@ export const neighborhoodOptions: Record<string, { value: string, label: string 
         { value: "nob-hill", label: "Nob Hill" },
         { value: "hawthorne", label: "Hawthorne" },
     ],
-    vancouver: [
+    'los-angeles': [
         { value: "other", label: "Other" },
         { value: "downtown", label: "Downtown" },
-        { value: "kitsilano", label: "Kitsilano" },
-        { value: "granville", label: "Granville" },
-        { value: "yaletown", label: "Yaletown" },
+        { value: "venice", label: "Venice" },
+        { value: "koreatown", label: "Koreatown" },
+        { value: "little-tokyo", label: "Little Tokyo" },
     ],
     'san-francisco': [
         { value: "other", label: "Other" },
@@ -103,6 +103,6 @@ export const costOptions = [
 export const cityOptions = [
     { value: "seattle", label: "Seattle" },
     { value: "portland", label: "Portland" },
-    { value: "vancouver", label: "Vancouver" },
+    { value: "los-angeles", label: "Los Angeles" },
     { value: "san-francisco", label: "San Francisco" },
 ];
