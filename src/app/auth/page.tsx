@@ -2,11 +2,11 @@
 
 // Next and React Imports
 import Link from "next/link"
+import { useSearchParams } from "next/navigation"
 import { Suspense, useState, useEffect } from "react"
 
 // App Imports
 import AuthHandler from "@/context/AuthHandler"
-import { useAuth } from "@/context/AuthContext"
 import { UserLoginForm } from "@/components/user-login-form"
 import { UserSignupForm } from "@/components/user-signup-form"
 import { cn } from "@/lib/utils"
@@ -17,12 +17,16 @@ import { buttonVariants } from "@/components/ui/button"
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 
 export default function AuthPage() {
-    const { user } = useAuth();
     const [isSignUp, setIsSignUp] = useState<boolean>(false);
+    const searchParams = useSearchParams();
 
     useEffect(() => {
+        const signupParam = searchParams?.get("signup");
+        if (signupParam) {
+            setIsSignUp(true);
+        }
         window.scrollTo({ top: 0 });
-    }, []);
+    }, [searchParams]);
 
     return (
         <>
@@ -84,7 +88,9 @@ export default function AuthPage() {
                     {/* Header */}
                     <div className="absolute inset-0 bg-zinc-900" />
                     <div className="relative z-20 flex items-center text-lg font-medium">
-                        happns
+                        <Link href="/">
+                            happns
+                        </Link>
                     </div>
 
                     {/* Centered Benefits Section */}
@@ -115,7 +121,7 @@ export default function AuthPage() {
                     <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
                         <div className="flex flex-col space-y-2 text-center">
                             <h1 className="text-2xl font-semibold tracking-tight">
-                                {isSignUp ? "Sign up for happns" : "Log in to happns"}
+                                {isSignUp ? "sign up for happns" : "login to happns"}
                             </h1>
                             <p className="text-sm text-muted-foreground">
                                 {isSignUp ? "Enter your details to sign up" : "Enter your email and password"}

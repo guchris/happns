@@ -178,7 +178,7 @@ export function UserSignupForm({ className, onSuccess, ...props }: UserSignupFor
                         </Label>
                         <Input
                             id="name"
-                            placeholder="Your name"
+                            placeholder="your name"
                             type="text"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
@@ -192,7 +192,7 @@ export function UserSignupForm({ className, onSuccess, ...props }: UserSignupFor
                         </Label>
                         <Input
                             id="username"
-                            placeholder="Your username"
+                            placeholder="your username"
                             type="text"
                             value={username}
                             onChange={(e) => setUsername(e.target.value.toLowerCase())}
@@ -226,7 +226,7 @@ export function UserSignupForm({ className, onSuccess, ...props }: UserSignupFor
                         </Label>
                         <Input
                             id="password"
-                            placeholder="Your password"
+                            placeholder="your password"
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
@@ -242,7 +242,7 @@ export function UserSignupForm({ className, onSuccess, ...props }: UserSignupFor
                         {isLoading && (
                             <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
                         )}
-                        Sign Up
+                        sign up
                     </Button>
                 </div>
             </form>

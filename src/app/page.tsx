@@ -147,7 +147,7 @@ export default async function Home() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Link href="/auth">
+                <Link href="/auth?signup=true">
                   <Button>sign up</Button>
                 </Link>
               </CardContent>
