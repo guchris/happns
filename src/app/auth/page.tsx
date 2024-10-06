@@ -2,11 +2,11 @@
 
 // Next and React Imports
 import Link from "next/link"
-import { useSearchParams } from "next/navigation"
 import { Suspense, useState, useEffect } from "react"
 
 // App Imports
 import AuthHandler from "@/context/AuthHandler"
+import SearchParamsHandler from "@/components/search-params-handler"
 import { UserLoginForm } from "@/components/user-login-form"
 import { UserSignupForm } from "@/components/user-signup-form"
 import { cn } from "@/lib/utils"
@@ -18,31 +18,16 @@ import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHe
 
 export default function AuthPage() {
     const [isSignUp, setIsSignUp] = useState<boolean>(false);
-    const [isClient, setIsClient] = useState(false);
-    const searchParams = useSearchParams();
-
-    useEffect(() => {
-        setIsClient(true); // Ensure the component is only rendered on the client
-    }, []);
-
-    useEffect(() => {
-        if (isClient) {
-            const signupParam = searchParams?.get("signup");
-            if (signupParam) {
-                setIsSignUp(true);
-            }
-            window.scrollTo({ top: 0 });
-        }
-    }, [searchParams, isClient]);
-
-    if (!isClient) {
-        return null; // Return nothing if we are rendering on the server to prevent SSR issues
-    }
 
     return (
         <>
             {/* Main Auth Page */}
             <div className="container relative min-h-screen flex flex-col items-center justify-center lg:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
+                
+                <Suspense fallback={<div>Loading...</div>}>
+                    <SearchParamsHandler setIsSignUp={setIsSignUp} />
+                </Suspense>
+                
                 <button
                     onClick={() => setIsSignUp(!isSignUp)}
                     className={cn(
