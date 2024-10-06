@@ -30,6 +30,12 @@ export interface User {
     role: "general" | "curator";
 }
 
+export type Curator = {
+    name: string;
+    username: string;
+    profilePicture: string;
+}
+
 export interface Comment {
     id: string;
     username: string;

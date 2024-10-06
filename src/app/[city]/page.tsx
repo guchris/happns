@@ -10,6 +10,7 @@ import { Footer } from "@/components/footer"
 import { Event } from "@/components/types"
 import EventGrid from "@/components/event-grid"
 import { cityOptions } from "@/lib/selectOptions"
+import { Curator } from "@/components/types"
 import { mapFirestoreEvent, getUpcomingEvents, getEventsHappeningToday, getEventsHappeningTomorrow, sortEventsByClicks } from "@/lib/eventUtils"
 
 // Firebase Imports
@@ -26,12 +27,6 @@ type CityPageProps = {
         city: string;
     };
 };
-
-type Curator = {
-    name: string;
-    username: string;
-    profilePicture: string;
-}
 
 // Metadata for SEO
 export async function generateMetadata({ params }: CityPageProps): Promise<Metadata> {
