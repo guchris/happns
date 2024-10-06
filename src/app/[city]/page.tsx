@@ -54,18 +54,30 @@ export async function generateMetadata({ params }: CityPageProps): Promise<Metad
 
 export default async function CityPage({ params }: CityPageProps) {
     const city = params.city || "";
-    const cityLabel = cityOptions.find(option => option.value === city)?.label || "City";
 
     if (!city) {
         notFound();
     }
 
-    // Fetch events from Firestore
-    const eventsCol = collection(db, "events");
-    const cityQuery = query(eventsCol, where("city", "==", city));
-    const eventSnapshot = await getDocs(cityQuery);
+    // Step 1: Fetch city data from Firestore using the slug
+    const citiesCol = collection(db, "cities");
+    const cityQuery = query(citiesCol, where("slug", "==", city));
+    const citySnapshot = await getDocs(cityQuery);
 
-    // Map Firestore data to EventType using the utility function
+    if (citySnapshot.empty) {
+        console.log(`No city found with the slug '${city}'`);
+        notFound();
+    }
+
+    // Assuming there's only one document for the city slug
+    const cityDoc = citySnapshot.docs[0];
+    const cityData = cityDoc.data();
+    const cityLabel = cityData?.name || "City";
+
+    // Step 2: Fetch events for this city
+    const eventsCol = collection(db, "events");
+    const eventQuery = query(eventsCol, where("city", "==", city));
+    const eventSnapshot = await getDocs(eventQuery);
     const events: Event[] = eventSnapshot.docs.map(mapFirestoreEvent);
 
     // Use utility functions for filtering and sorting events
@@ -75,42 +87,15 @@ export default async function CityPage({ params }: CityPageProps) {
     const eventsHappeningTomorrow = getEventsHappeningTomorrow(events, today);
     const topEvents = sortEventsByClicks(upcomingEvents, 8);
 
-    // Step 1: Find the city document that has the slug "seattle"
-    const citiesCol = collection(db, "cities");
-    const cityQuery2 = query(citiesCol, where("slug", "==", "seattle"));
-    const citySnapshot = await getDocs(cityQuery2);
-
-    if (citySnapshot.empty) {
-        console.log("No city found with the slug 'seattle'");
-        return;
-    }
-
-    // Assuming there is only one document for "seattle"
-    const cityDoc = citySnapshot.docs[0]; 
-    const cityDocId = cityDoc.id; // Get the document ID of the city
-
-    // Step 2: Fetch the curators sub-collection for the found city document
-    const curatorsCol = collection(db, "cities", cityDocId, "curators");
+    // Step 3: Fetch curators for this city
+    const curatorsCol = collection(db, "cities", cityDoc.id, "curators");
     const curatorsSnapshot = await getDocs(curatorsCol);
-
-    if (curatorsSnapshot.empty) {
-        console.log(`No curators found for city with document ID: ${cityDocId}`);
-        return;
-    }
-
-    // Step 3: Fetch user details from the global 'users' collection using the UIDs in the curators sub-collection
     const curators = await Promise.all(
         curatorsSnapshot.docs.map(async (curatorDoc) => {
-            const uid = curatorDoc.id; // The UID stored in curators sub-collection
-            const userDoc = await getDoc(doc(db, "users", uid)); // Fetch the user data from the global 'users' collection
-
-            if (!userDoc.exists()) {
-                console.log(`No user found for UID: ${uid}`);
-                return null; // Handle missing user case
-            }
-
+            const uid = curatorDoc.id;
+            const userDoc = await getDoc(doc(db, "users", uid));
+            if (!userDoc.exists()) return null;
             const userData = userDoc.data();
-
             return {
                 name: userData?.name || "Unknown Curator",
                 username: userData?.username || "unknown",
@@ -118,8 +103,6 @@ export default async function CityPage({ params }: CityPageProps) {
             };
         })
     );
-
-    // Filter out any null results (in case user data was missing for some UIDs)
     const validCurators = curators.filter((curator): curator is Curator => curator !== null);
 
     return (
@@ -134,7 +117,7 @@ export default async function CityPage({ params }: CityPageProps) {
                     
                     {/* Left Section: City Name */}
                     <div className="lg:w-1/2 space-y-4">
-                        <h2 className="text-3xl font-bold">uncover events shaping Seattle&apos;s culture and scene</h2>
+                        <h2 className="text-3xl font-bold">{cityData.slogan}</h2>
                         <Link href={`/${city}/explore`}>
                             <Button className="mt-4">explore {city} events</Button>
                         </Link>
@@ -164,7 +147,7 @@ export default async function CityPage({ params }: CityPageProps) {
                             <CardHeader>
                                 <CardTitle className="text-xl font-semibold">connect with your city</CardTitle>
                                 <CardDescription className="mt-8 text-sm">
-                                    Explore a curated selection of {cityLabel}&apos;s best events and easily plan outings with your friends or discover new connections along the way. From exclusive experiences to &quot;emerald&quot; gems, happns helps you find the perfect events.
+                                    Explore a curated selection of {cityLabel}&apos;s best events and easily plan outings with your friends or discover new connections along the way. From exclusive experiences to hidden gems, happns helps you find the perfect events.
                                 </CardDescription>
                             </CardHeader>
                         </Card>
@@ -197,8 +180,8 @@ export default async function CityPage({ params }: CityPageProps) {
                     <div className="flex flex-col max-w-[880px] mx-auto px-4">
                         <div className="space-y-4">
                             <div>
-                                <h2 className="text-xl font-semibold">happnings</h2>
-                                <p className="text-sm">upcoming top events</p>
+                                <h2 className="text-xl font-semibold">find what&apos;s happning</h2>
+                                <p className="text-sm">trending events</p>
                             </div>
                             <EventGrid
                                 eventsHappeningToday={eventsHappeningToday}

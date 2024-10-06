@@ -71,7 +71,7 @@ export default function AuthPage() {
                         <div className="mt-6 border-t border-gray-700 pt-4">
                             <blockquote className="italic text-white text-base">
                                 &ldquo;happns made it so easy to discover events in my city and plan with friends. 
-                                Now, I never miss out on what’s happening around me!&rdquo;
+                                Now, I never miss out on what&apos;s happening around me!&rdquo;
                             </blockquote>
                             <footer className="text-right text-white text-base mt-2">- Jeremy Simpson</footer>
                         </div>
@@ -120,7 +120,7 @@ export default function AuthPage() {
                                 {isSignUp ? "sign up for happns" : "login to happns"}
                             </h1>
                             <p className="text-sm text-muted-foreground">
-                                {isSignUp ? "Enter your details to sign up" : "Enter your email and password"}
+                                {isSignUp ? "enter your details to sign up" : "enter your email and password"}
                             </p>
                         </div>
                         {isSignUp ? (
