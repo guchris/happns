@@ -61,15 +61,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Loop over valid events
     validEvents.forEach(event => {
-        // TypeScript safeguard: Ensure the event is not null
-        if (!event) {
-            return;  // Skip if event is null or undefined
-        }
 
-        // Ensure startDate, endDate, and time exist
-        if (!event.startDate || !event.endDate || !event.times || !event.times[0]) {
+        // Ensure the event is not null and has required fields
+        if (!event || !event.startDate || !event.endDate || !event.times || !event.times[0]) {
             console.error("Missing startDate, endDate, or times for event:", event);
-            return; // Skip this event if any of the required fields are missing
+            return;  // Skip this event if any of the required fields are missing
         }
 
         // Parse startDate and endDate
@@ -84,8 +80,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         // Parse time
         const firstTimeEntry = event.times[0];
-        let eventStart = parse(firstTimeEntry.startTime, "h:mm a", eventStartDate);
-        let eventEnd = parse(firstTimeEntry.endTime, "h:mm a", eventEndDate);
+        const eventStart = parse(`${event.startDate} ${firstTimeEntry.startTime}`, "yyyy-MM-dd h:mm a", new Date());
+        const eventEnd = parse(`${event.endDate} ${firstTimeEntry.endTime}`, "yyyy-MM-dd h:mm a", new Date());
 
         // Check if the parsed times are valid
         if (!isValid(eventStart) || !isValid(eventEnd)) {
