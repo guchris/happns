@@ -13,7 +13,7 @@ import EventActions from "@/components/event-actions"
 import EventComments from "@/components/event-comments"
 import ClientButton from "@/components/client-button"
 import { categoryOptions, formatOptions, neighborhoodOptions } from "@/lib/selectOptions"
-import { formatEventDate, formatEventTime, formatEventCost } from "@/lib/eventUtils"
+import { formatEventDate, formatEventCost } from "@/lib/eventUtils"
 
 // Other Imports
 import { differenceInDays, parseISO, addDays, format } from "date-fns"

@@ -197,9 +197,6 @@ export default function EventForm() {
         const endDate = data.endDate.toISOString().split('T')[0];
         const startTime = data.startTime;
         const endTime = data.endTime;
-        const time = startTime === endTime
-            ? startTime
-            : `${startTime} - ${endTime}`;
 
         const uploadImage = async () => {
             if (data.image && typeof data.image !== "string") {
@@ -238,7 +235,7 @@ export default function EventForm() {
             details: data.details,
             startDate,
             endDate,
-            time,
+            times: [{ startTime: data.startTime, endTime: data.endTime }],
             format: data.format,
             gmaps: data.gmaps,
             image: imageUrl,
