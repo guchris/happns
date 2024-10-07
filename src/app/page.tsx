@@ -20,6 +20,7 @@ import { collection, doc, getDoc, getDocs } from "firebase/firestore"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
+import { Music, PartyPopper, Theater, Globe, Dumbbell, Users, Gamepad, Film } from "lucide-react"
 
 export const dynamic = 'force-dynamic';
 
@@ -129,7 +130,6 @@ export default async function Home() {
 
           {/* Events Grid */}
           <div className="flex-1 max-w-[880px] mx-auto p-4 space-y-4">
-            {/* Header */}
             <h3 className="text-xl font-semibold">happnings near you</h3>
             <EventGridDynamic cities={cities} />
           </div>
@@ -152,6 +152,30 @@ export default async function Home() {
                 </Link>
               </CardContent>
             </Card>
+          </div>
+
+          {/* Categories Section */}
+          <div className="flex-1 max-w-[880px] mx-auto p-4 space-y-4">
+            <h3 className="text-xl font-semibold">explore top categories</h3>
+            <div className="grid grid-cols-4 lg:grid-cols-6 gap-4">
+                {[
+                    { name: "music", icon: <Music /> },
+                    { name: "nightlife", icon: <PartyPopper /> },
+                    { name: "arts", icon: <Theater /> },
+                    { name: "culture", icon: <Globe /> },
+                    { name: "fitness", icon: <Dumbbell /> },
+                    { name: "family", icon: <Users /> },
+                    { name: "gaming", icon: <Gamepad /> },
+                    { name: "film", icon: <Film /> }
+                ].map((category) => (
+                    <div className="pointer-events-none opacity-50">
+                        <Card key={category.name} className="flex flex-col items-center justify-center p-4 h-24 space-y-1">
+                            <div className="flex items-center justify-center w-10 h-10 text-muted-foreground">{category.icon}</div>
+                            <CardTitle className="line-clamp-1 text-center text-base font-medium">{category.name}</CardTitle>
+                        </Card>
+                    </div>
+                ))}
+            </div>
           </div>
 
         </div>
