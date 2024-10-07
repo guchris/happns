@@ -67,9 +67,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         // Ensure startDate, endDate, and time exist
-        if (!event.startDate || !event.endDate || !event.time) {
-            console.error("Missing startDate, endDate, or time for event:", event);
-            return;  // Skip this event if any of the required fields are missing
+        if (!event.startDate || !event.endDate || !event.times || !event.times[0]) {
+            console.error("Missing startDate, endDate, or times for event:", event);
+            return; // Skip this event if any of the required fields are missing
         }
 
         // Parse startDate and endDate
@@ -83,30 +83,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         // Parse time
-        const timeParts = event.time.split(" - ");
-        let eventStart, eventEnd;
-
-        if (timeParts.length === 2) {
-            const [startTime, endTime] = timeParts;
-
-            // Parse start time and end time using startDate and endDate as bases
-            eventStart = parse(startTime, "h:mm a", eventStartDate);
-            eventEnd = parse(endTime, "h:mm a", eventEndDate);
-
-            // If the end time is earlier than the start time, it means it spans midnight
-            if (eventEnd < eventStart) {
-                eventEnd = new Date(eventEnd.getTime() + 24 * 60 * 60 * 1000); // Add one day
-            }
-
-            // Overwrite eventEnd with eventEndDate if it's a multi-day event
-            if (event.startDate !== event.endDate) {
-                eventEnd = new Date(eventEndDate.setHours(eventEnd.getHours(), eventEnd.getMinutes()));
-            }
-
-        } else {
-            console.error("Invalid time format for event:", event);
-            return; // Skip this event if the time format is invalid
-        }
+        const firstTimeEntry = event.times[0];
+        let eventStart = parse(firstTimeEntry.startTime, "h:mm a", eventStartDate);
+        let eventEnd = parse(firstTimeEntry.endTime, "h:mm a", eventEndDate);
 
         // Check if the parsed times are valid
         if (!isValid(eventStart) || !isValid(eventEnd)) {
