@@ -91,14 +91,15 @@ export function EventDisplay({ event }: EventDisplayProps) {
                                             {`${event.times[0].startTime} - ${event.times[0].endTime}`}
                                         </div>
                                     ) : (
-                                        <div className="text-sm font-medium">
+                                        <div className="text-sm font-medium max-h-12 overflow-y-auto">
                                             {event.times?.map((time, index) => {
                                                 const currentDate = startDate ? addDays(startDate, index) : null;
                                                 const formattedDate = currentDate ? format(currentDate, 'MMM d') : '';
 
                                                 return (
-                                                    <div key={index}>
-                                                        {formattedDate} • {time.startTime} - {time.endTime}
+                                                    <div key={index} className="flex items-center font-normal">
+                                                        <span className="inline-block w-20">{formattedDate}</span>
+                                                        <span>{`${time.startTime} - ${time.endTime}`}</span>
                                                     </div>
                                                 );
                                             })}

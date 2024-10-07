@@ -165,18 +165,14 @@ function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: Collaps
                             const startDate = parseISO(item.startDate);
                             const endDate = parseISO(item.endDate);
 
+                            // Display the first entry in the times array
+                            const timeEntry = item.times[0];
+                            const formattedTime = `${timeEntry.startTime} - ${timeEntry.endTime}`;
+                            
                             // Format the display date for rendering
                             const formattedDate = startDate.getTime() === endDate.getTime()
                                 ? format(startDate, "MMM d")
                                 : `${format(startDate, "MMM d")} - ${format(endDate, "MMM d")}`;
-
-                            // Calculate the index for the collapsible date relative to the startDate
-                            const collapsibleDate = parseISO(date);
-                            const dateIndex = differenceInDays(collapsibleDate, startDate);
-
-                            // Get the corresponding time entry based on the index
-                            const timeEntry = item.times[dateIndex];
-                            const formattedTime = `${timeEntry.startTime} - ${timeEntry.endTime}`;
 
                             return (
                                 <button

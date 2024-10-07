@@ -30,7 +30,7 @@ export function mapFirestoreEvent(doc: QueryDocumentSnapshot<DocumentData>): Eve
         name: doc.data().name,
         neighborhood: doc.data().neighborhood,
         startDate: doc.data().startDate,
-        time: doc.data().time,
+        times: doc.data().times,
     };
 }
 
