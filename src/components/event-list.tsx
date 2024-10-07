@@ -161,14 +161,17 @@ function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: Collaps
                     </CollapsibleTrigger>
                     <CollapsibleContent className="space-y-2 pt-2">
                         {events.map((item) => {
-                            // Parse start and end dates using ISO strings
                             const startDate = parseISO(item.startDate);
                             const endDate = parseISO(item.endDate);
-
-                            // Display the first entry in the times array
-                            const timeEntry = item.times[0];
+                        
+                            // Calculate the index of the collapsible date relative to the event's start date
+                            const collapsibleDate = parseISO(date);
+                            const dateIndex = differenceInDays(collapsibleDate, startDate);
+                        
+                            // Use dateIndex to get the corresponding time entry for this collapsible date
+                            const timeEntry = item.times[dateIndex];
                             const formattedTime = `${timeEntry.startTime} - ${timeEntry.endTime}`;
-                            
+                        
                             // Format the display date for rendering
                             const formattedDate = startDate.getTime() === endDate.getTime()
                                 ? format(startDate, "MMM d")
