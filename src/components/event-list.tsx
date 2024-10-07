@@ -21,7 +21,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 
 // Other Imports
 import { Plus, Minus } from "lucide-react"
-import { format, parse, parseISO, isWithinInterval, eachDayOfInterval, isValid } from "date-fns"
+import { format, parse, parseISO, isWithinInterval, eachDayOfInterval, differenceInDays } from "date-fns"
 
 
 interface EventListProps {
@@ -170,23 +170,13 @@ function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: Collaps
                                 ? format(startDate, "MMM d")
                                 : `${format(startDate, "MMM d")} - ${format(endDate, "MMM d")}`;
 
-                            // Parse and format time strings separately from dates
-                            let formattedTime = "Time not available";
-                            if (item.time && item.time.includes(" - ")) {
-                                const [startTime, endTime] = item.time.split(" - ");
-                                try {
-                                    // Parse and format time separately from dates
-                                    const parsedStartTime = parse(startTime.trim(), "hh:mm a", new Date());
-                                    const parsedEndTime = parse(endTime.trim(), "hh:mm a", new Date());
-                                    if (isValid(parsedStartTime) && isValid(parsedEndTime)) {
-                                        const formattedStartTime = format(parsedStartTime, "h:mm a");
-                                        const formattedEndTime = format(parsedEndTime, "h:mm a");
-                                        formattedTime = `${formattedStartTime} - ${formattedEndTime}`;
-                                    }
-                                } catch (error) {
-                                    console.error("Error parsing time for event:", item, error);
-                                }
-                            }
+                            // Calculate the index for the collapsible date relative to the startDate
+                            const collapsibleDate = parseISO(date);
+                            const dateIndex = differenceInDays(collapsibleDate, startDate);
+
+                            // Get the corresponding time entry based on the index
+                            const timeEntry = item.times[dateIndex];
+                            const formattedTime = `${timeEntry.startTime} - ${timeEntry.endTime}`;
 
                             return (
                                 <button
