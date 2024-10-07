@@ -98,10 +98,11 @@ const EventActions = ({ event }: EventActionsProps) => {
     };
 
     function getGoogleCalendarLink(event: Event) {
-        const startDateTime = new Date(`${event.startDate}T${event.time.split(" - ")[0]}`).toISOString().replace(/-|:|\.\d\d\d/g, "");
-        const endDateTime = event.time.split(" - ")[1]
-            ? new Date(`${event.endDate}T${event.time.split(" - ")[1]}`).toISOString().replace(/-|:|\.\d\d\d/g, "")
-            : new Date(new Date(event.startDate).getTime() + 3600000).toISOString().replace(/-|:|\.\d\d\d/g, "");
+        const firstTimeEntry = event.times[0];
+        const startDateTime = new Date(`${event.startDate}T${firstTimeEntry.startTime}`).toISOString().replace(/-|:|\.\d\d\d/g, "");
+        const endDateTime = firstTimeEntry.endTime
+            ? new Date(`${event.startDate}T${firstTimeEntry.endTime}`).toISOString().replace(/-|:|\.\d\d\d/g, "")
+            : new Date(new Date(`${event.startDate}T${firstTimeEntry.startTime}`).getTime() + 3600000).toISOString().replace(/-|:|\.\d\d\d/g, "");
         return `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.name)}&dates=${startDateTime}/${endDateTime}&details=${encodeURIComponent(event.details)}&location=${encodeURIComponent(event.location)}&sf=true&output=xml`;
     }
 
