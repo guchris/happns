@@ -16,7 +16,7 @@ import { categoryOptions, formatOptions, neighborhoodOptions } from "@/lib/selec
 import { formatEventDate, formatEventTime, formatEventCost } from "@/lib/eventUtils"
 
 // Other Imports
-import { differenceInDays, parseISO } from "date-fns"
+import { differenceInDays, parseISO, addDays, format } from "date-fns"
 
 interface EventDisplayProps {
     event: Event | null;
@@ -33,6 +33,7 @@ export function EventDisplay({ event }: EventDisplayProps) {
 
     // Calculate the number of days away from the event start date
     const startDate = event?.startDate ? parseISO(event.startDate) : null;
+    const endDate = event?.endDate ? parseISO(event.endDate) : null;
     const daysAway = startDate ? differenceInDays(startDate, today) : null;
 
     let daysAwayLabel = "";
@@ -83,7 +84,26 @@ export function EventDisplay({ event }: EventDisplayProps) {
                                 <div className="grid gap-1">
                                     <div className="text-lg font-semibold">{event.name}</div>
                                     <div className="text-base font-medium">{formatEventDate(event.startDate, event.endDate)}</div>
-                                    <div className="text-sm font-medium">{formatEventTime(event.time)}</div>
+
+                                    {/* Conditionally render either the single time or times array */}
+                                    {event.startDate === event.endDate ? (
+                                        <div className="text-sm font-medium">
+                                            {`${event.times[0].startTime} - ${event.times[0].endTime}`}
+                                        </div>
+                                    ) : (
+                                        <div className="text-sm font-medium">
+                                            {event.times?.map((time, index) => {
+                                                const currentDate = startDate ? addDays(startDate, index) : null;
+                                                const formattedDate = currentDate ? format(currentDate, 'MMM d') : '';
+
+                                                return (
+                                                    <div key={index}>
+                                                        {formattedDate} • {time.startTime} - {time.endTime}
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
