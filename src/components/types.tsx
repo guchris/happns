@@ -17,7 +17,10 @@ export interface Event {
     name: string;
     neighborhood: string;
     startDate: string;
-    time: string;
+    times: {
+        startTime: string;
+        endTime: string;
+    }[];
 }
 
 export interface User {
