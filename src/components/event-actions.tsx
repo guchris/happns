@@ -18,6 +18,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { Button } from "@/components/ui/button"
 
 // Other Imports
+import { parse } from 'date-fns'
 import { Bookmark, BookmarkCheck, CalendarPlus, Link as LinkIcon, Pencil } from "lucide-react"
 
 interface EventActionsProps {
@@ -99,10 +100,15 @@ const EventActions = ({ event }: EventActionsProps) => {
 
     function getGoogleCalendarLink(event: Event) {
         const firstTimeEntry = event.times[0];
-        const startDateTime = new Date(`${event.startDate}T${firstTimeEntry.startTime}`).toISOString().replace(/-|:|\.\d\d\d/g, "");
-        const endDateTime = firstTimeEntry.endTime
-            ? new Date(`${event.startDate}T${firstTimeEntry.endTime}`).toISOString().replace(/-|:|\.\d\d\d/g, "")
-            : new Date(new Date(`${event.startDate}T${firstTimeEntry.startTime}`).getTime() + 3600000).toISOString().replace(/-|:|\.\d\d\d/g, "");
+    
+        // Parse the start and end times with the correct format
+        const eventStartDateTime = parse(`${event.startDate} ${firstTimeEntry.startTime}`, "yyyy-MM-dd h:mm a", new Date());
+        const eventEndDateTime = parse(`${event.endDate} ${firstTimeEntry.endTime}`, "yyyy-MM-dd h:mm a", new Date());
+    
+        // Convert to ISO string format and remove unwanted characters
+        const startDateTime = eventStartDateTime.toISOString().replace(/-|:|\.\d\d\d/g, "");
+        const endDateTime = eventEndDateTime.toISOString().replace(/-|:|\.\d\d\d/g, "");
+    
         return `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.name)}&dates=${startDateTime}/${endDateTime}&details=${encodeURIComponent(event.details)}&location=${encodeURIComponent(event.location)}&sf=true&output=xml`;
     }
 
