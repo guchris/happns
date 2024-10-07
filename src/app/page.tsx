@@ -168,7 +168,7 @@ export default async function Home() {
                     { name: "gaming", icon: <Gamepad /> },
                     { name: "film", icon: <Film /> }
                 ].map((category) => (
-                    <div className="pointer-events-none opacity-50">
+                    <div key={category.name} className="pointer-events-none opacity-50">
                         <Card key={category.name} className="flex flex-col items-center justify-center p-4 h-24 space-y-1">
                             <div className="flex items-center justify-center w-10 h-10 text-muted-foreground">{category.icon}</div>
                             <CardTitle className="line-clamp-1 text-center text-base font-medium">{category.name}</CardTitle>
