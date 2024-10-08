@@ -3,21 +3,21 @@
 // Next and React Imports
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { useRouter, useSearchParams } from "next/navigation"
 import Image from "next/image"
+import { useRouter, useSearchParams } from "next/navigation"
 
 // App Imports
 import { useAuth } from "@/context/AuthContext"
 import { TopBar } from "@/components/top-bar"
 import MultiSelect, { Option } from "@/components/multi-select"
+import { useToast } from "@/hooks/use-toast"
 import { cn } from "@/lib/utils"
 import { cityOptions, categoryOptions, formatOptions, neighborhoodOptions } from "@/lib/selectOptions"
-import { useToast } from "@/hooks/use-toast"
 
 // Firebase Imports
-import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"
-import { doc, setDoc, getDoc, updateDoc, collection } from "firebase/firestore"
 import { db } from "@/lib/firebase"
+import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore"
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"
 
 // Zod Imports
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -38,21 +38,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 
 // Other Imports
+import { v4 as uuidv4 } from "uuid";
 import { format, eachDayOfInterval } from "date-fns"
 import { CalendarIcon, ExclamationTriangleIcon } from "@radix-ui/react-icons"
-import { v4 as uuidv4 } from "uuid";
 
-interface DailyTime {
-    date: Date;
-    startTime: string;
-    endTime: string;
-}
 
+
+// Schema for form validation
 const eventFormSchema = z.object({
-    category: z.array(z.string()).min(1, { message: "At least 1 category is required." }).max(3, { message: "You can select up to 3 categories." }),
-    city: z.string({
-        required_error: "A city is required.",
-    }),
+    category: z
+        .array(z.string())
+        .min(1, { message: "At least 1 category is required." })
+        .max(3, { message: "You can select up to 3 categories." }),
+    city: z.string({ required_error: "A city is required." }),
     cost: z.object({
         type: z.enum(["single", "range", "minimum"]),
         value: z.union([
@@ -76,26 +74,20 @@ const eventFormSchema = z.object({
         .max(10000, {
             message: "Details must not be longer than 10,000 characters.",
         }),
-    endDate: z.date({
-        required_error: "An end date is required.",
-    }),
+    endDate: z.date({ required_error: "An end date is required." }),
     endTime: z
         .string()
         .regex(/^(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)$/i, {
             message: "End time must be in HH:mm AM/PM format.",
         })
         .optional(),
-    format: z.enum(["in-person", "online", "hybrid"], {
-        required_error: "Please select a format.",
-    }),
+    format: z.enum(["in-person", "online", "hybrid"], { required_error: "Please select a format." }),
     gmaps: z
         .string()
         .url({
             message: "Please enter a valid Google Maps URL.",
         }),
-    image: z.any({
-        required_error: "An image is required.",
-    }),
+    image: z.any({ required_error: "An image is required." }),
     link: z
         .string()
         .url({
@@ -117,12 +109,8 @@ const eventFormSchema = z.object({
         .max(50, {
             message: "Name must not be longer than 50 characters.",
         }),
-    neighborhood: z.string({
-        required_error: "A neighborhood is required.",
-    }),
-    startDate: z.date({
-        required_error: "A start date is required.",
-    }),
+    neighborhood: z.string({ required_error: "A neighborhood is required." }),
+    startDate: z.date({ required_error: "A start date is required." }),
     startTime: z
         .string()
         .regex(/^(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)$/i, {
@@ -130,14 +118,8 @@ const eventFormSchema = z.object({
         })
         .optional()
 }).refine((data) => {
-    // If dailyTimes is populated, startTime and endTime are not required.
     const usingVaryingTimes = data.dailyTimes && data.dailyTimes.length > 0;
-    if (usingVaryingTimes) {
-        return true;
-    } else {
-        // Otherwise, startTime and endTime are required.
-        return data.startTime && data.endTime;
-    }
+    return usingVaryingTimes || (data.startTime && data.endTime);
 }, {
     message: "Provide either a single start and end time or varying daily times.",
     path: ["startTime"]
@@ -148,14 +130,13 @@ type EventFormValues = z.infer<typeof eventFormSchema>
 export default function EventForm() {
     const router = useRouter();
     const { toast } = useToast();
+
+    // Initialize form with default values
     const form = useForm<EventFormValues>({
         resolver: zodResolver(eventFormSchema),
         mode: "onChange",
         defaultValues: {
-            cost: {
-                type: "single",
-                value: 0,
-            },
+            cost: { type: "single", value: 0 },
             format: "in-person",
         },
     })
@@ -164,13 +145,14 @@ export default function EventForm() {
     const searchParams = useSearchParams();
     const eventId = searchParams ? searchParams.get("id") : null;
 
+    // Local state to track various form-specific values
     const [selectedCity, setSelectedCity] = useState<string | null>(null);
     const [neighborhoodsForCity, setNeighborhoodsForCity] = useState<Option[]>([]);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [clicks, setClicks] = useState(0);
-
     const [varyingTimes, setVaryingTimes] = useState(false);
     const [dailyTimes, setDailyTimes] = useState([{ date: new Date(), startTime: "", endTime: "" }]);
+
     const startDate = form.watch("startDate");
     const endDate = form.watch("endDate");
     const startDateFormatted = startDate ? format(startDate, "yyyy-MM-dd") : null;
@@ -178,6 +160,7 @@ export default function EventForm() {
 
     const hasPermission = !loading && user && userData?.role === "curator";
 
+    // Updates the neighborhood options whenever the selected city changes
     useEffect(() => {
         if (selectedCity) {
             // Update neighborhoods based on the selected city
@@ -185,14 +168,16 @@ export default function EventForm() {
         }
     }, [selectedCity]);
 
+    // If editing an existint event, fetches event data from Firestore and updates the form fields
     useEffect(() => {
         if (eventId) {
-            // If there's an event ID, load the event data for editing
+            // If there's an event ID in the URL, fetch the event data for editing
             const fetchEvent = async () => {
                 const eventDoc = await getDoc(doc(db, "events", eventId));
                 if (eventDoc.exists()) {
                     const eventData = eventDoc.data();
 
+                    // Set form fields with event data
                     setSelectedCity(eventData.city);
                     setClicks(eventData.clicks || 0);
 
@@ -200,10 +185,11 @@ export default function EventForm() {
                         setImagePreview(eventData.image);
                     }
 
+                    // Slight delay for form update and setting multi-day times if applicable
                     setTimeout(() => {
                         const hasMultipleTimes = eventData.times && eventData.times.length > 1;
 
-                        const transformedData = {
+                        form.reset({
                             ...eventData,
                             startDate: new Date(eventData.startDate),
                             endDate: new Date(eventData.endDate),
@@ -212,8 +198,7 @@ export default function EventForm() {
                             dailyTimes: hasMultipleTimes ? eventData.times : undefined,
                             startTime: hasMultipleTimes ? undefined : eventData.times[0]?.startTime,
                             endTime: hasMultipleTimes ? undefined : eventData.times[0]?.endTime,
-                        };
-                        form.reset(transformedData);
+                        });
                         setVaryingTimes(hasMultipleTimes);
                         if (hasMultipleTimes) {
                             setDailyTimes(eventData.times.map((time: { startTime: string; endTime: string }) => ({
@@ -224,11 +209,8 @@ export default function EventForm() {
                         }
                     }, 50);
                 } else {
-                    toast({
-                        title: "Error",
-                        description: "Event not found.",
-                        variant: "destructive",
-                    });
+                    // If event does not exist, show an error message and navigate back to the homepage
+                    toast({ title: "Error", description: "Event not found.", variant: "destructive" });
                     router.push("/");
                 }
             };
@@ -236,25 +218,24 @@ export default function EventForm() {
         }
     }, [eventId]);
 
+    // Updates dailyTimes state based on the interval between start and end dates
     useEffect(() => {
-        if (form.watch("startDate") && form.watch("endDate")) {
-            const startDate = form.getValues("startDate");
-            const endDate = form.getValues("endDate");
-    
-            if (startDate && endDate && startDate !== endDate) {
-                const daysBetween = eachDayOfInterval({ start: startDate, end: endDate });
-                const initialTimes = daysBetween.map((date) => ({ date, startTime: "", endTime: "" }));
-                setDailyTimes(initialTimes);
-            } else {
-                setVaryingTimes(false);
-            }
+        if (startDate && endDate && startDate !== endDate) {
+            // If start and end dates are different, create an array of dates between them
+            const daysBetween = eachDayOfInterval({ start: startDate, end: endDate });
+            const initialTimes = daysBetween.map((date) => ({ date, startTime: "", endTime: "" }));
+            setDailyTimes(initialTimes); // Set initial daily times for each date in the interval
+        } else {
+            // Reset to single-time mode if start and end dates are the same
+            setVaryingTimes(false);
         }
-    }, [form.watch("startDate"), form.watch("endDate")]);
+    }, [startDate, endDate]);
 
     const handleToggleVaryingTimes = () => {
         setVaryingTimes(!varyingTimes);
     };
 
+    // Form submission handler
     const onSubmit = async (data: EventFormValues) => {
         const storage = getStorage();
         const eventsCollectionRef = doc(db, "events", eventId || uuidv4());
@@ -269,20 +250,15 @@ export default function EventForm() {
                 const uuid = uuidv4();
                 const storageRef = ref(storage, `event_images/${uuid}`);
                 const uploadTask = uploadBytesResumable(storageRef, data.image);
-    
+
                 return new Promise<string>((resolve, reject) => {
-                    uploadTask.on(
-                        "state_changed",
-                        () => {},
-                        (error) => {
-                            console.error("Upload failed:", error);
-                            reject(error);
-                        },
-                        async () => {
-                            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-                            resolve(downloadURL);
-                        }
-                    );
+                    uploadTask.on("state_changed", () => {}, (error) => {
+                        console.error("Upload failed:", error);
+                        reject(error);
+                    }, async () => {
+                        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                        resolve(downloadURL);
+                    });
                 });
             } else if (typeof data.image === "string") {
                 return data.image; // Use existing URL if already a string
@@ -767,51 +743,6 @@ export default function EventForm() {
                         </div>
                     )}
 
-                    {/* <div className="grid grid-cols-2 gap-4 w-full">
-                        <FormField
-                            control={form.control}
-                            name="startTime"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Start Time</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            type="text"
-                                            {...field}
-                                            placeholder="Enter start time"
-                                            pattern="(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)"
-                                        />
-                                    </FormControl>
-                                    <FormDescription>
-                                        HH:mm AM/PM
-                                    </FormDescription>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="endTime"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>End Time</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            type="text"
-                                            {...field}
-                                            placeholder="Enter end time"
-                                            pattern="(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)"
-                                        />
-                                    </FormControl>
-                                    <FormDescription>
-                                        HH:mm AM/PM
-                                    </FormDescription>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    </div> */}
-
                     <Separator />
 
                     <FormField
@@ -870,7 +801,6 @@ export default function EventForm() {
                             </FormItem>
                         )}
                     />
-                    
 
                     <Separator />
 
@@ -932,7 +862,9 @@ export default function EventForm() {
                             </FormItem>
                         )}
                     />
+
                     <Button type="submit">{eventId ? "Save" : "Submit"}</Button>
+                    
                 </form>
             </Form>
         </>
