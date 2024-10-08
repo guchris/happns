@@ -21,12 +21,12 @@ import { db } from "@/lib/firebase"
 
 // Zod Imports
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form";
+import { useForm } from "react-hook-form"
 import { z } from "zod"
 
 // Shadcn Imports
-import { format } from "date-fns"
 import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import { Separator } from "@/components/ui/separator"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -38,8 +38,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 
 // Other Imports
+import { format, eachDayOfInterval } from "date-fns"
 import { CalendarIcon, ExclamationTriangleIcon } from "@radix-ui/react-icons"
 import { v4 as uuidv4 } from "uuid";
+
+interface DailyTime {
+    date: Date;
+    startTime: string;
+    endTime: string;
+}
 
 const eventFormSchema = z.object({
     category: z.array(z.string()).min(1, { message: "At least 1 category is required." }).max(3, { message: "You can select up to 3 categories." }),
@@ -53,6 +60,14 @@ const eventFormSchema = z.object({
             z.tuple([z.number().nonnegative(), z.number().nonnegative()]), // for range
         ]),
     }).default({ type: "single", value: 0 }),
+    dailyTimes: z.array(z.object({
+        startTime: z.string().regex(/^(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)$/i, {
+            message: "Start time must be in HH:mm AM/PM format.",
+        }),
+        endTime: z.string().regex(/^(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)$/i, {
+            message: "End time must be in HH:mm AM/PM format.",
+        })
+    })).optional(),
     details: z
         .string()
         .min(4, {
@@ -68,7 +83,8 @@ const eventFormSchema = z.object({
         .string()
         .regex(/^(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)$/i, {
             message: "End time must be in HH:mm AM/PM format.",
-        }),
+        })
+        .optional(),
     format: z.enum(["in-person", "online", "hybrid"], {
         required_error: "Please select a format.",
     }),
@@ -112,6 +128,19 @@ const eventFormSchema = z.object({
         .regex(/^(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)$/i, {
             message: "Start time must be in HH:mm AM/PM format.",
         })
+        .optional()
+}).refine((data) => {
+    // If dailyTimes is populated, startTime and endTime are not required.
+    const usingVaryingTimes = data.dailyTimes && data.dailyTimes.length > 0;
+    if (usingVaryingTimes) {
+        return true;
+    } else {
+        // Otherwise, startTime and endTime are required.
+        return data.startTime && data.endTime;
+    }
+}, {
+    message: "Provide either a single start and end time or varying daily times.",
+    path: ["startTime"]
 });
 
 type EventFormValues = z.infer<typeof eventFormSchema>
@@ -139,6 +168,13 @@ export default function EventForm() {
     const [neighborhoodsForCity, setNeighborhoodsForCity] = useState<Option[]>([]);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [clicks, setClicks] = useState(0);
+
+    const [varyingTimes, setVaryingTimes] = useState(false);
+    const [dailyTimes, setDailyTimes] = useState([{ date: new Date(), startTime: "", endTime: "" }]);
+    const startDate = form.watch("startDate");
+    const endDate = form.watch("endDate");
+    const startDateFormatted = startDate ? format(startDate, "yyyy-MM-dd") : null;
+    const endDateFormatted = endDate ? format(endDate, "yyyy-MM-dd") : null;
 
     const hasPermission = !loading && user && userData?.role === "curator";
 
@@ -189,14 +225,33 @@ export default function EventForm() {
         }
     }, [eventId]);
 
+    useEffect(() => {
+        if (form.watch("startDate") && form.watch("endDate")) {
+            const startDate = form.getValues("startDate");
+            const endDate = form.getValues("endDate");
+    
+            if (startDate && endDate && startDate !== endDate) {
+                const daysBetween = eachDayOfInterval({ start: startDate, end: endDate });
+                const initialTimes = daysBetween.map((date) => ({ date, startTime: "", endTime: "" }));
+                setDailyTimes(initialTimes);
+            } else {
+                setVaryingTimes(false);
+            }
+        }
+    }, [form.watch("startDate"), form.watch("endDate")]);
+
+    const handleToggleVaryingTimes = () => {
+        setVaryingTimes(!varyingTimes);
+    };
+
     const onSubmit = async (data: EventFormValues) => {
         const storage = getStorage();
         const eventsCollectionRef = doc(db, "events", eventId || uuidv4());
         
         const startDate = data.startDate.toISOString().split('T')[0];
         const endDate = data.endDate.toISOString().split('T')[0];
-        const startTime = data.startTime;
-        const endTime = data.endTime;
+
+        const times = varyingTimes ? data.dailyTimes : [{ startTime: data.startTime, endTime: data.endTime }];
 
         const uploadImage = async () => {
             if (data.image && typeof data.image !== "string") {
@@ -235,7 +290,7 @@ export default function EventForm() {
             details: data.details,
             startDate,
             endDate,
-            times: [{ startTime: data.startTime, endTime: data.endTime }],
+            times,
             format: data.format,
             gmaps: data.gmaps,
             image: imageUrl,
@@ -580,7 +635,128 @@ export default function EventForm() {
                             )}
                         />
                     </div>
-                    <div className="grid grid-cols-2 gap-4 w-full">
+
+                    {startDate && endDate && startDateFormatted !== endDateFormatted && (
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                            <FormControl>
+                                <Checkbox checked={varyingTimes} onCheckedChange={handleToggleVaryingTimes} />
+                            </FormControl>
+                            <FormLabel className="text-sm font-normal">Event has varying start and end times</FormLabel>
+                        </FormItem>
+                    )}
+
+                    {varyingTimes ? (
+                        <div className="space-y-2">
+                            {/* Labels for the columns */}
+                            <div className="flex space-x-4 pb-2">
+                                <span className="w-1/5"></span>
+                                <div className="w-2/5">
+                                    <span className="text-sm font-medium">Start Times</span>
+                                    <span className="text-sm font-normal text-muted-foreground block">HH:mm AM/PM</span>
+                                </div>
+                                <div className="w-2/5">
+                                    <span className="text-sm font-medium">End Times</span>
+                                    <span className="text-sm font-normal text-muted-foreground block">HH:mm AM/PM</span>
+                                </div>
+                            </div>
+                        
+                            {dailyTimes.map((time, index) => (
+                                <div key={index} className="flex space-x-4">
+                                    
+                                    {/* Display Date */}
+                                    <Input
+                                        type="text"
+                                        value={format(time.date, "MMM d")}
+                                        disabled
+                                        className="w-1/5"
+                                    />
+                                    
+                                    {/* Start Time */}
+                                    <FormField
+                                        control={form.control}
+                                        name={`dailyTimes.${index}.startTime`}
+                                        render={({ field }) => (
+                                            <FormItem className="w-2/5">
+                                                <FormControl>
+                                                    <Input
+                                                        {...field}
+                                                        placeholder="Enter start time"
+                                                        pattern="(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)"
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+
+                                    {/* End Time */}
+                                    <FormField
+                                        control={form.control}
+                                        name={`dailyTimes.${index}.endTime`}
+                                        render={({ field }) => (
+                                            <FormItem className="w-2/5">
+                                                <FormControl>
+                                                    <Input
+                                                        {...field}
+                                                        placeholder="Enter end time"
+                                                        pattern="(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)"
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-2 gap-4 w-full">
+                            <FormField
+                                control={form.control}
+                                name="startTime"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Start Time</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="text"
+                                                {...field}
+                                                placeholder="Enter start time"
+                                                pattern="(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)"
+                                            />
+                                        </FormControl>
+                                        <FormDescription>
+                                            HH:mm AM/PM
+                                        </FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="endTime"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>End Time</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="text"
+                                                {...field}
+                                                placeholder="Enter end time"
+                                                pattern="(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)"
+                                            />
+                                        </FormControl>
+                                        <FormDescription>
+                                            HH:mm AM/PM
+                                        </FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                    )}
+
+                    {/* <div className="grid grid-cols-2 gap-4 w-full">
                         <FormField
                             control={form.control}
                             name="startTime"
@@ -623,7 +799,7 @@ export default function EventForm() {
                                 </FormItem>
                             )}
                         />
-                    </div>
+                    </div> */}
 
                     <Separator />
 
