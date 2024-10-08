@@ -10,7 +10,7 @@ import { User as AppUser } from "@/components/types"
 import { useAuthState } from "react-firebase-hooks/auth"
 import { auth, db } from "@/lib/firebase"
 import { doc, getDoc } from "firebase/firestore"
-import { User as FirebaseUser } from "firebase/auth"
+import { User as FirebaseUser, setPersistence, browserLocalPersistence } from "firebase/auth"
 
 
 interface AuthContextType {
@@ -31,6 +31,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [user, loading] = useAuthState(auth);
     const [userData, setUserData] = useState<AppUser | null>(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+    useEffect(() => {
+        // Set persistence on mount
+        setPersistence(auth, browserLocalPersistence)
+            .catch(error => {
+                console.error("Error setting auth persistence:", error);
+            });
+    }, []);
 
     useEffect(() => {
         const fetchUserData = async () => {
