@@ -201,16 +201,27 @@ export default function EventForm() {
                     }
 
                     setTimeout(() => {
+                        const hasMultipleTimes = eventData.times && eventData.times.length > 1;
+
                         const transformedData = {
                             ...eventData,
                             startDate: new Date(eventData.startDate),
                             endDate: new Date(eventData.endDate),
                             category: eventData.category,
                             image: eventData.image,
-                            startTime: eventData.time.split(" - ")[0],
-                            endTime: eventData.time.split(" - ")[1],
+                            dailyTimes: hasMultipleTimes ? eventData.times : undefined,
+                            startTime: hasMultipleTimes ? undefined : eventData.times[0]?.startTime,
+                            endTime: hasMultipleTimes ? undefined : eventData.times[0]?.endTime,
                         };
                         form.reset(transformedData);
+                        setVaryingTimes(hasMultipleTimes);
+                        if (hasMultipleTimes) {
+                            setDailyTimes(eventData.times.map((time: { startTime: string; endTime: string }) => ({
+                                date: new Date(eventData.startDate),
+                                startTime: time.startTime,
+                                endTime: time.endTime,
+                            })));
+                        }
                     }, 50);
                 } else {
                     toast({
