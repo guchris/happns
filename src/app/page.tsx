@@ -135,10 +135,7 @@ export default async function Home() {
           <div className="py-12 space-y-8">
 
             {/* Events Grid */}
-            <div className="flex-1 max-w-[880px] mx-auto p-4 space-y-4">
-              <h3 className="text-xl font-semibold">happnings near you</h3>
-              <EventGridDynamic cities={cities} />
-            </div>
+            <EventGridDynamic cities={cities} />
 
             {/* City Grid */}
             <CityGrid cities={cities} />
