@@ -56,10 +56,12 @@ async function fetchCities() {
       const cityData = doc.data();
       const upcomingEventCount = await getTotalUpcomingEvents(cityData.slug);
       return {
+        id: doc.id,
         name: cityData.name,
         slug: cityData.slug,
         lat: cityData.lat,
         lon: cityData.lon,
+        slogan: cityData.slogan,
         description: cityData.description,
         upcomingEventCount,
       };
