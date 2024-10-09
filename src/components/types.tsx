@@ -31,6 +31,7 @@ export interface User {
     createdAt: Date;
     profilePicture?: string;
     role: "general" | "curator";
+    selectedCity?: string;
 }
 
 export type Curator = {
@@ -47,12 +48,14 @@ export interface Comment {
 }
 
 export interface City {
+    id: string;
     name: string;
     slug: string;
     lat: number;
     lon: number;
+    slogan: string;
     description: string;
-    upcomingEventCount: number;
+    upcomingEventCount?: number;
 }
 
 export interface CarouselEvent {
