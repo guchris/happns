@@ -419,7 +419,15 @@ export function Event({ events, city }: EventProps) {
                         {filteredEvents.length === 0 ? (
                             <div className="p-8 text-center text-muted-foreground">No events</div>
                         ) : (
-                            <EventList items={filteredEvents} isVerticalLayout={isVerticalLayout} isFilterActive={isFilterActive} />
+                            <div className="flex flex-col h-full">
+                                <div className="flex justify-between items-center p-4">
+                                    <p className="text-sm text-muted-foreground py-0.5">
+                                        showing {filteredEvents.length} event{filteredEvents.length !== 1 ? 's' : ''}
+                                    </p>
+                                </div>
+                                <Separator />
+                                <EventList items={filteredEvents} isVerticalLayout={isVerticalLayout} isFilterActive={isFilterActive} />
+                            </div>
                         )}
                     </ResizablePanel>
 
