@@ -1,13 +1,13 @@
-"use client";
+"use client"
 
 // React Imports
-import { useEffect } from "react";
+import { useEffect } from "react"
 
 // Next Imports
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation"
 
 // Context Imports
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/AuthContext"
 
 // This component handles the authentication redirection based on the search params
 export default function AuthHandler() {

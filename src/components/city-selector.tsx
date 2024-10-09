@@ -5,6 +5,7 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 
 // App Imports
+import { City } from "@/components/types"
 import { useAuth } from "@/context/AuthContext"
 import { calculateDistance } from "@/lib/geoUtils"
 
@@ -15,13 +16,6 @@ import { doc, getDoc } from "firebase/firestore"
 // Shadcn Imports
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
-
-interface City {
-    name: string;
-    slug: string;
-    lat: number;
-    lon: number;
-}
 
 interface CitySelectorProps {
     cities: City[];

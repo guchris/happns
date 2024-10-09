@@ -1,6 +1,5 @@
 // Next Imports
 import { Metadata } from "next"
-import Link from "next/link"
 
 // App Imports
 import { TopBar } from "@/components/top-bar"
@@ -8,6 +7,7 @@ import { Footer } from "@/components/footer"
 import { CitySelector } from "@/components/city-selector"
 import { EventCarousel } from "@/components/event-carousel"
 import { CityGrid } from "@/components/city-grid"
+import JoinCard from "@/components/join-card"
 import EventGridDynamic from "@/components/event-grid-dynamic"
 import { CarouselEvent } from "@/components/types"
 import { getTotalUpcomingEvents } from "@/lib/eventUtils"
@@ -18,7 +18,6 @@ import { collection, doc, getDoc, getDocs } from "firebase/firestore"
 
 // Shadcn Imports
 import { Separator } from "@/components/ui/separator"
-import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { Music, PartyPopper, Theater, Globe, Dumbbell, Users, Gamepad, Film } from "lucide-react"
 
@@ -140,21 +139,7 @@ export default async function Home() {
           <CityGrid cities={cities} />
 
           {/* Join Card */}
-          <div className="flex-1 mx-auto max-w-[880px] p-4 space-y-4">
-            <Card className="w-full bg-neutral-50 border-none">
-              <CardHeader>
-                <CardTitle className="text-xl font-semibold">join happns</CardTitle>
-                <CardDescription className="mt-8 text-sm">
-                  Join happns today to easily bookmark events, leave comments, sync events to your Google Calendar, and access exclusive event stats - unlock all these features and more!
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Link href="/auth?signup=true">
-                  <Button>sign up</Button>
-                </Link>
-              </CardContent>
-            </Card>
-          </div>
+          <JoinCard />
 
           {/* Categories Section */}
           <div className="flex-1 max-w-[880px] mx-auto p-4 space-y-4">
