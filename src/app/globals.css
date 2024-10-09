@@ -67,3 +67,34 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+@keyframes hideAfterDelay {
+  0%, 99% {
+    opacity: 1;
+    visibility: visible;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+.intro-animation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #ffffff;
+  z-index: 50;
+  animation: hideAfterDelay 0s 1s forwards;
+}
+
+.intro-animation h1 {
+  font-size: 1.5rem;
+  font-weight: bold;
+}

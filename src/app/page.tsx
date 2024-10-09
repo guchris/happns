@@ -105,71 +105,77 @@ export default async function Home() {
   const carouselEvents = await fetchCarouselEvents();
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <TopBar title="happns" />
-      <Separator />
-
-      <div className="flex-1 overflow-y-auto">
-
-        {/* Hero Section */}
-        <div className="flex flex-col max-w-[880px] mx-auto py-16 p-4 space-y-8 items-center lg:flex-row lg:space-x-12">
-            
-            {/* Left Section: Slogan, City Selector */}
-            <div className="lg:w-1/2 space-y-4">
-                <h2 className="text-3xl font-bold">discover curated events happning in your city</h2>
-                <CitySelector cities={cities} />
-            </div>
-
-            {/* Right Section: Event Photo Carousel */}
-            <EventCarousel carouselEvents={carouselEvents} />
-
-        </div>
-        
+    <div>
+      {/* Intro Animation */}
+      <div className="intro-animation">
+          <h1>happns/</h1>
+      </div>
+      <div className="flex flex-col min-h-screen">
+        <TopBar title="happns" />
         <Separator />
 
-        <div className="py-12 space-y-8">
+        <div className="flex-1 overflow-y-auto">
 
-          {/* Events Grid */}
-          <div className="flex-1 max-w-[880px] mx-auto p-4 space-y-4">
-            <h3 className="text-xl font-semibold">happnings near you</h3>
-            <EventGridDynamic cities={cities} />
+          {/* Hero Section */}
+          <div className="flex flex-col max-w-[880px] mx-auto py-16 p-4 space-y-8 items-center lg:flex-row lg:space-x-12">
+              
+              {/* Left Section: Slogan, City Selector */}
+              <div className="lg:w-1/2 space-y-4">
+                  <h2 className="text-3xl font-bold">discover curated events happning in your city</h2>
+                  <CitySelector cities={cities} />
+              </div>
+
+              {/* Right Section: Event Photo Carousel */}
+              <EventCarousel carouselEvents={carouselEvents} />
+
           </div>
+          
+          <Separator />
 
-          {/* City Grid */}
-          <CityGrid cities={cities} />
+          <div className="py-12 space-y-8">
 
-          {/* Join Card */}
-          <JoinCard />
-
-          {/* Categories Section */}
-          <div className="flex-1 max-w-[880px] mx-auto p-4 space-y-4">
-            <h3 className="text-xl font-semibold">explore top categories</h3>
-            <div className="grid grid-cols-4 lg:grid-cols-6 gap-4">
-                {[
-                    { name: "music", icon: <Music /> },
-                    { name: "nightlife", icon: <PartyPopper /> },
-                    { name: "arts", icon: <Theater /> },
-                    { name: "culture", icon: <Globe /> },
-                    { name: "fitness", icon: <Dumbbell /> },
-                    { name: "family", icon: <Users /> },
-                    { name: "gaming", icon: <Gamepad /> },
-                    { name: "film", icon: <Film /> }
-                ].map((category) => (
-                    <div key={category.name} className="pointer-events-none opacity-50">
-                        <Card key={category.name} className="flex flex-col items-center justify-center p-4 h-24 space-y-1">
-                            <div className="flex items-center justify-center w-10 h-10 text-muted-foreground">{category.icon}</div>
-                            <CardTitle className="line-clamp-1 text-center text-base font-medium">{category.name}</CardTitle>
-                        </Card>
-                    </div>
-                ))}
+            {/* Events Grid */}
+            <div className="flex-1 max-w-[880px] mx-auto p-4 space-y-4">
+              <h3 className="text-xl font-semibold">happnings near you</h3>
+              <EventGridDynamic cities={cities} />
             </div>
+
+            {/* City Grid */}
+            <CityGrid cities={cities} />
+
+            {/* Join Card */}
+            <JoinCard />
+
+            {/* Categories Section */}
+            <div className="flex-1 max-w-[880px] mx-auto p-4 space-y-4">
+              <h3 className="text-xl font-semibold">explore top categories</h3>
+              <div className="grid grid-cols-4 lg:grid-cols-6 gap-4">
+                  {[
+                      { name: "music", icon: <Music /> },
+                      { name: "nightlife", icon: <PartyPopper /> },
+                      { name: "arts", icon: <Theater /> },
+                      { name: "culture", icon: <Globe /> },
+                      { name: "fitness", icon: <Dumbbell /> },
+                      { name: "family", icon: <Users /> },
+                      { name: "gaming", icon: <Gamepad /> },
+                      { name: "film", icon: <Film /> }
+                  ].map((category) => (
+                      <div key={category.name} className="pointer-events-none opacity-50">
+                          <Card key={category.name} className="flex flex-col items-center justify-center p-4 h-24 space-y-1">
+                              <div className="flex items-center justify-center w-10 h-10 text-muted-foreground">{category.icon}</div>
+                              <CardTitle className="line-clamp-1 text-center text-base font-medium">{category.name}</CardTitle>
+                          </Card>
+                      </div>
+                  ))}
+              </div>
+            </div>
+
           </div>
-
         </div>
+
+        <Footer />
+
       </div>
-
-      <Footer />
-
     </div>
   );
 }
