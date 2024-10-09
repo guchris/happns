@@ -5,7 +5,12 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 
 // App Imports
+import { useAuth } from "@/context/AuthContext"
 import { calculateDistance } from "@/lib/geoUtils"
+
+// Firebase Imports
+import { db } from "@/lib/firebase"
+import { doc, getDoc } from "firebase/firestore"
 
 // Shadcn Imports
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -23,6 +28,7 @@ interface CitySelectorProps {
 }
 
 export function CitySelector({ cities }: CitySelectorProps) {
+    const { user } = useAuth();
     const [selectedCity, setSelectedCity] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -42,28 +48,48 @@ export function CitySelector({ cities }: CitySelectorProps) {
         return closestCity.slug; // Return the slug of the closest city
     };
 
-    // Get the user's location
+    // Set city selection
     useEffect(() => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const userLat = position.coords.latitude;
-                    const userLon = position.coords.longitude;
-                    const closestCitySlug = findClosestCity(userLat, userLon);
-                    setSelectedCity(closestCitySlug);
-                    setIsLoading(false);
-                },
-                (error) => {
-                    console.error("Error getting user location:", error);
-                    setSelectedCity("seattle");
-                    setIsLoading(false);
+        // Load default city from Firestore if available
+        const loadUserCity = async () => {
+            if (user) {
+                const userDocRef = doc(db, "users", user.uid);
+                const userDoc = await getDoc(userDocRef);
+
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    if (userData.selectedCity && userData.selectedCity !== "") {
+                        setSelectedCity(userData.selectedCity);
+                        setIsLoading(false);
+                        return; // Exit the function if default city is set
+                    }
                 }
-            );
-        } else {
-            setSelectedCity("seattle");
-            setIsLoading(false);
-        }
-    }, []);
+            }
+
+            // If no default city, fallback to geolocation
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const userLat = position.coords.latitude;
+                        const userLon = position.coords.longitude;
+                        const closestCitySlug = findClosestCity(userLat, userLon);
+                        setSelectedCity(closestCitySlug);
+                        setIsLoading(false);
+                    },
+                    (error) => {
+                        console.error("Error getting user location:", error);
+                        setSelectedCity("seattle"); // Fallback city if geolocation fails
+                        setIsLoading(false);
+                    }
+                );
+            } else {
+                setSelectedCity("seattle"); // Fallback city if geolocation is unavailable
+                setIsLoading(false);
+            }
+        };
+
+        loadUserCity();
+    }, [user, cities]);
 
     return (
         <div className="flex items-center space-x-2">
