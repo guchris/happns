@@ -164,15 +164,28 @@ export default function ProfilePage() {
 
                     <Separator />
 
-                    {/* User Role */}
+                    {/* User Badges */}
                     <div className="flex whitespace-pre-wrap p-4 grid gap-4">
                         <div className="grid gap-2">
+                            {/* Email */}
                             <div className="text-sm font-medium flex items-center space-x-2">
                                 <span className="text-muted-foreground w-10">Email</span>
                                 <Badge variant="outline" className="inline-block">
                                     {userInfo.email}
                                 </Badge>
                             </div>
+
+                            {/* City */}
+                            {userInfo.selectedCity && (
+                                <div className="text-sm font-medium flex items-center space-x-2">
+                                    <span className="text-muted-foreground w-10">City</span>
+                                    <Badge variant="outline" className="inline-block">
+                                        {userInfo.selectedCity}
+                                    </Badge>
+                                </div>
+                            )}
+
+                            {/* Role */}
                             <div className="text-sm font-medium flex items-center space-x-2">
                                 <span className="text-muted-foreground w-10">Role</span>
                                 <Badge variant="outline" className="inline-block">
