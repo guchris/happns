@@ -169,7 +169,7 @@ export default async function CityPage({ params }: CityPageProps) {
                                             />
                                         </div>
                                         <CardTitle className="line-clamp-1 text-base font-semibold">{curator.name}</CardTitle>
-                                        <CardDescription className="text-sm text-gray-500">@{curator.username}</CardDescription>
+                                        <CardDescription className="line-clamp-1 text-sm text-gray-500">@{curator.username}</CardDescription>
                                     </CardHeader>
                                 </Card>
                             ))}

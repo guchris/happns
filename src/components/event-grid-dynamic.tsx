@@ -95,10 +95,11 @@ const EventGridDynamic = ({ cities }: EventGridDyanmicProps) => {
                 setCityName(citySlug);
                 const eventsByCity = await getEventsByCity(citySlug);
                 const today = new Date();
-                setUpcomingEvents(getUpcomingEvents(eventsByCity, today));
+                const upcomingEvents = getUpcomingEvents(eventsByCity, today);
+                setUpcomingEvents(upcomingEvents);
                 setEventsHappeningToday(getEventsHappeningToday(eventsByCity, today));
                 setEventsHappeningTomorrow(getEventsHappeningTomorrow(eventsByCity, today));
-                setTopEvents(sortEventsByClicks(eventsByCity, 8));
+                setTopEvents(sortEventsByClicks(upcomingEvents, 8));
                 setIsLoading(false);
             } else if (navigator.geolocation) {
                 // If no selected city, fall back to geolocation
