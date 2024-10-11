@@ -24,11 +24,11 @@ export function CityGrid({ cities }: CityGridProps) {
             {/* Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 w-full">
                 {cities.map((city) => {
-                        const isSeattle = city.name === "Seattle";
+                        const isReadycity = city.name === "Seattle" || city.name === "San Francisco";
 
                         return (
-                            <div key={city.name} className={`${!isSeattle ? "pointer-events-none opacity-50" : ""}`}>
-                                <Link href={isSeattle ? `/${city.slug}` : "#"} passHref>
+                            <div key={city.name} className={`${!isReadycity ? "pointer-events-none opacity-50" : ""}`}>
+                                <Link href={isReadycity ? `/${city.slug}` : "#"} passHref>
                                     <Card className="w-full">
                                         <CardHeader className="space-y-2">
                                             <CardTitle className="line-clamp-1 text-base w-full">{city.name.toLowerCase()}</CardTitle>

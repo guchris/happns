@@ -13,7 +13,7 @@ export function EventCarousel({ carouselEvents }: EventCarouselProps) {
     return (
         <div className="w-full">
             {/* Show 3 images on small and large screens */}
-            <div className="flex justify-center items-center space-x-4 sm:hidden md:hidden lg:flex">
+            <div className="flex justify-center items-center space-x-4 md:hidden lg:flex">
                 {carouselEvents.slice(0, 3).map((event) => (
                     <div 
                         key={event.uid} 
