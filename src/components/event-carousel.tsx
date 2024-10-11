@@ -5,42 +5,52 @@ import Image from "next/image"
 // App Imports
 import { CarouselEvent } from "@/components/types"
 
-// Shadcn Imports
-import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel"
-
 interface EventCarouselProps {
     carouselEvents: CarouselEvent[];
 }
 
 export function EventCarousel({ carouselEvents }: EventCarouselProps) {
     return (
-        <div className="flex flex-col lg:flex-row justify-center items-center w-full">
-            <Carousel
-                opts={{
-                    align: "center",
-                    loop: true,
-                }}
-                className="w-full max-w-lg"
-            >
-                <CarouselContent>
-                    {carouselEvents.map((event) => (
-                        <CarouselItem
-                            key={event.uid}
-                            className="basis-1/3 sm:basis-1/4 md:basis-1/5 lg:basis-1/3 pb-5"
-                        >
-                            <Link href={`/events/${event.uid}`}>
-                                <Image
-                                    src={event.image}
-                                    alt={`Event photo ${event.uid}`}
-                                    className="object-cover w-full h-full rounded-lg"
-                                    width={300}
-                                    height={300}
-                                />
-                            </Link>
-                        </CarouselItem>
-                    ))}
-                </CarouselContent>
-            </Carousel>
+        <div className="w-full">
+            {/* Show 3 images on small and large screens */}
+            <div className="flex justify-center items-center space-x-4 sm:hidden md:hidden lg:flex">
+                {carouselEvents.slice(0, 3).map((event) => (
+                    <div 
+                        key={event.uid} 
+                        className="w-1/3 pb-5"
+                    >
+                        <Link href={`/events/${event.uid}`}>
+                            <Image
+                                src={event.image}
+                                alt={`Event photo ${event.uid}`}
+                                className="object-cover w-full h-full rounded-lg"
+                                width={300}
+                                height={300}
+                            />
+                        </Link>
+                    </div>
+                ))}
+            </div>
+
+            {/* Show 5 images on medium screens only */}
+            <div className="hidden md:flex justify-center items-center max-w-[700px] mx-auto space-x-4 lg:hidden">
+                {carouselEvents.slice(0, 5).map((event) => (
+                    <div 
+                        key={event.uid} 
+                        className="flex-grow pb-5" // Flex-grow makes items adjust to fit
+                    >
+                        <Link href={`/events/${event.uid}`}>
+                            <Image
+                                src={event.image}
+                                alt={`Event photo ${event.uid}`}
+                                className="object-cover w-full h-full rounded-lg"
+                                width={300}
+                                height={300}
+                            />
+                        </Link>
+                    </div>
+                ))}
+            </div>
         </div>
     )
 }

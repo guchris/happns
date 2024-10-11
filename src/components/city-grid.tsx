@@ -16,7 +16,7 @@ interface CityGridProps {
 
 export function CityGrid({ cities }: CityGridProps) {
     return (
-        <div className="flex-1 mx-auto max-w-[880px] p-4 space-y-4">
+        <div className="flex-1 mx-auto max-w-[880px] md:max-w-[700px] lg:max-w-[880px] p-4 space-y-4">
 
             {/* Header */}
             <h3 className="text-xl font-semibold">popular cities</h3>

@@ -137,7 +137,7 @@ const EventGridDynamic = ({ cities }: EventGridDyanmicProps) => {
         : topEvents;
     
     return (
-        <div className="flex-1 max-w-[880px] mx-auto p-4 space-y-4">
+        <div className="flex-1 max-w-[880px] md:max-w-[700px] lg:max-w-[880px] mx-auto p-4 space-y-4">
             {/* Header */}
             <div className="flex items-center space-x-2 text-xl font-semibold">
                 <span>happnings in</span>
@@ -186,7 +186,7 @@ const EventGridDynamic = ({ cities }: EventGridDyanmicProps) => {
 // EventList Component for displaying the list of events
 const EventList = ({ events }: { events: Event[] }) => {
     return (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
             {events.length > 0 ? (
                 events.map((event) => (
                     <Card key={event.id} className="w-full">

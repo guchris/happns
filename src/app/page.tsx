@@ -117,7 +117,7 @@ export default async function Home() {
         <div className="flex-1 overflow-y-auto">
 
           {/* Hero Section */}
-          <div className="flex flex-col max-w-[880px] mx-auto py-16 p-4 space-y-8 items-center lg:flex-row lg:space-x-12">
+          <div className="flex flex-col max-w-[880px] md:max-w-[700px] lg:max-w-[880px] mx-auto py-16 p-4 space-y-8 items-center lg:flex-row lg:space-x-12">
               
               {/* Left Section: Slogan, City Selector */}
               <div className="lg:w-1/2 space-y-4">
@@ -144,7 +144,7 @@ export default async function Home() {
             <JoinCard />
 
             {/* Categories Section */}
-            <div className="flex-1 max-w-[880px] mx-auto p-4 space-y-4">
+            <div className="flex-1 max-w-[880px] md:max-w-[700px] lg:max-w-[880px] mx-auto p-4 space-y-4">
               <h3 className="text-xl font-semibold">explore top categories</h3>
               <div className="grid grid-cols-4 lg:grid-cols-6 gap-4">
                   {[
