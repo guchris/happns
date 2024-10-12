@@ -23,7 +23,7 @@ import { Music, PartyPopper, Theater, Globe, Dumbbell, Users, Gamepad, Film } fr
 
 export const dynamic = 'force-dynamic';
 
-// Helper function to get metadata
+// Generate page metadata
 export async function generateMetadata(): Promise<Metadata> {
   return {
     title: "happns | events in your city",

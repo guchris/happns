@@ -1,15 +1,11 @@
-"use client"
-
 // Next and React Imports
-import { useParams } from "next/navigation"
+import { Metadata } from "next"
 import Image from "next/image"
-import { useEffect, useState } from "react"
 
 // App Imports
-import { useAuth } from "@/context/AuthContext"
 import { TopBar } from "@/components/top-bar"
 import { Footer } from "@/components/footer"
-import Loading from "@/components/loading"
+import EmptyPage from "@/components/empty-page"
 import { User } from "@/components/types"
 import { getInitials } from "@/lib/userUtils"
 
@@ -22,46 +18,77 @@ import { Separator } from "@/components/ui/separator"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 
-export default function PublicProfilePage() {
-    const { id } = useParams() as { id: string };
-    const { user, loading } = useAuth();
-    const [userInfo, setUserInfo] = useState<User | null>(null);
-    const [bookmarkCount, setBookmarkCount] = useState(0);
+// Generate page metadata
+export async function generateMetadata({ params }: { params: { userId: string } }): Promise<Metadata> {
+    const userId = params.userId;
+    let title = "happns | user profile";
+    let description = "explore user profiles on happns";
+    let imageUrl = "https://ithappns.com/logo.png";
 
-    useEffect(() => {
-        if (id && typeof id === "string") {
-            // Fetch user information from Firestore
-            const fetchUserInfo = async () => {
-                try {
-                    const userRef = doc(db, "users", id);
-                    const userDoc = await getDoc(userRef);
-
-                    if (userDoc.exists()) {
-                        setUserInfo(userDoc.data() as User);
-                    } else {
-                        console.error("No such user document!");
-                    }
-
-                    // Fetch user bookmarks count
-                    const bookmarksRef = collection(userRef, "user-bookmarks");
-                    const bookmarksSnapshot = await getDocs(bookmarksRef);
-                    setBookmarkCount(bookmarksSnapshot.size);
-                } catch (error) {
-                    console.error("Error fetching user data: ", error);
-                }
-            };
-
-            fetchUserInfo();
+    try {
+        const userRef = doc(db, "users", userId);
+        const userDoc = await getDoc(userRef);
+        if (userDoc.exists()) {
+            const userInfo = userDoc.data() as User;
+            title = `${userInfo.username}'s profile on happns`;
+            description = `discover events and interests of ${userInfo.username}`;
+            
+            if (userInfo.profilePicture) {
+                imageUrl = userInfo.profilePicture;
+            }
         }
-    }, [id]);
+    } catch (error) {
+        console.error("Error fetching user data for metadata:", error);
+    }
 
-    if (loading) {
-        return <Loading title="happns/profile" />;
+    return {
+        title,
+        description,
+        openGraph: {
+            title,
+            description,
+            images: [imageUrl],
+            url: `https://ithappns.com/profile/${userId}`,
+            type: "profile",
+        },
+        twitter: {
+            card: "summary_large_image",
+            title,
+            description,
+            images: [imageUrl],
+        },
+    };
+}
+
+export default async function PublicProfilePage({ params }: { params: { userId: string } }) {
+    const { userId } = params;
+    let userInfo: User | null = null;
+    let bookmarkCount: number = 0;
+
+    try {
+        const userRef = doc(db, "users", userId);
+        const userDoc = await getDoc(userRef);
+
+        if (userDoc.exists()) {
+            userInfo = userDoc.data() as User;
+
+            const bookmarksRef = collection(userRef, "user-bookmarks");
+            const bookmarksSnapshot = await getDocs(bookmarksRef);
+            bookmarkCount = bookmarksSnapshot.size;
+        }
+    } catch (error) {
+        console.error("Error fetching user data:", error);
+    }
+
+    if (!userInfo) {
+        return (
+            <EmptyPage title="happns/error" description="user not found" />
+        );
     }
 
     return (
         <div className="min-h-screen flex flex-col">
-            <TopBar title={`happns/${userInfo ? userInfo.username : 'profile'}`} />
+            <TopBar title={`happns/${userInfo.username}`} />
             <Separator />
 
             {userInfo && (
