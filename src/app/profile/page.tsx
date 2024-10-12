@@ -9,7 +9,7 @@ import { useRef, useEffect, useState } from "react"
 import { useAuth } from "@/context/AuthContext"
 import { TopBar } from "@/components/top-bar"
 import { Footer } from "@/components/footer"
-import Loading from "@/components/loading"
+import EmptyPage from "@/components/empty-page"
 import { toast } from "@/hooks/use-toast" 
 import { getInitials } from "@/lib/userUtils"
 
@@ -91,7 +91,7 @@ export default function ProfilePage() {
     };
 
     if (loading) {
-        return <Loading title="happns/profile" />;
+        return <EmptyPage title="happns/profile" description="loading..." />;
     }
 
     if (!user) {

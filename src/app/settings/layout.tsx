@@ -8,7 +8,7 @@ import { useAuth } from "@/context/AuthContext"
 import { TopBar } from "@/components/top-bar"
 import { Footer } from "@/components/footer"
 import { SidebarNav } from "@/components/sidebar-nav"
-import Loading from "@/components/loading"
+import EmptyPage from "@/components/empty-page"
 
 // Shadcn Imports
 import { Separator } from "@/components/ui/separator"
@@ -41,7 +41,7 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
     const { user, loading } = useAuth();
 
     if (loading) {
-        return <Loading title="happns/settings" />;
+        return <EmptyPage title="happns/settings" description="loading..." />;
     }
 
     if (!user) {

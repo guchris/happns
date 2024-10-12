@@ -10,7 +10,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { useAuth } from "@/context/AuthContext"
 import { TopBar } from "@/components/top-bar"
 import MultiSelect, { Option } from "@/components/multi-select"
-import Loading from "@/components/loading"
+import EmptyPage from "@/components/empty-page"
 import { useToast } from "@/hooks/use-toast"
 import { cn } from "@/lib/utils"
 import { cityOptions, categoryOptions, formatOptions, neighborhoodOptions } from "@/lib/selectOptions"
@@ -316,7 +316,7 @@ export default function EventForm() {
     }
 
     if (loading) {
-        return <Loading title="happns/event-form" />;
+        return <EmptyPage title="happns/event-form" description="loading..." />;
     }
 
     // If user is not logged in or does not have "curator" role, show an unauthorized message

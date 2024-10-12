@@ -5,6 +5,7 @@ import { useState, useEffect } from "react"
 import Image from "next/image"
 
 // App Imports
+import EmptyPage from "@/components/empty-page"
 import { useAuth } from "@/context/AuthContext"
 import { toast } from "@/hooks/use-toast"
 import { getInitials } from "@/lib/userUtils"
@@ -183,7 +184,9 @@ export default function ProfileForm() {
     };
 
     if (!userInfo) {
-        return <p>Loading...</p>;
+        return (
+            <EmptyPage title="happns/error" description="user not found" />
+        );
     }
 
     return (
