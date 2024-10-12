@@ -11,7 +11,7 @@ import { getInitials } from "@/lib/userUtils"
 
 // Firebase Imports
 import { db } from "@/lib/firebase"
-import { doc, getDoc, collection, getDocs } from "firebase/firestore"
+import { collection, getDocs, query, where } from "firebase/firestore"
 
 // Shadcn Imports
 import { Separator } from "@/components/ui/separator"
@@ -19,20 +19,24 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 
 // Generate page metadata
-export async function generateMetadata({ params }: { params: { userId: string } }): Promise<Metadata> {
-    const userId = params.userId;
+export async function generateMetadata({ params }: { params: { username: string } }): Promise<Metadata> {
+    const username = params.username;
     let title = "happns | user profile";
     let description = "explore user profiles on happns";
     let imageUrl = "https://ithappns.com/logo.png";
 
     try {
-        const userRef = doc(db, "users", userId);
-        const userDoc = await getDoc(userRef);
-        if (userDoc.exists()) {
+        const usersRef = collection(db, "users");
+        const userQuery = query(usersRef, where("username", "==", username));
+        const userSnapshot = await getDocs(userQuery);
+
+        if (!userSnapshot.empty) {
+            const userDoc = userSnapshot.docs[0];
             const userInfo = userDoc.data() as User;
             title = `${userInfo.username}'s profile on happns`;
             description = `discover events and interests of ${userInfo.username}`;
             
+            // Use the user's profile picture if available
             if (userInfo.profilePicture) {
                 imageUrl = userInfo.profilePicture;
             }
@@ -48,7 +52,7 @@ export async function generateMetadata({ params }: { params: { userId: string } 
             title,
             description,
             images: [imageUrl],
-            url: `https://ithappns.com/profile/${userId}`,
+            url: `https://ithappns.com/profile/${username}`,
             type: "profile",
         },
         twitter: {
@@ -60,19 +64,22 @@ export async function generateMetadata({ params }: { params: { userId: string } 
     };
 }
 
-export default async function PublicProfilePage({ params }: { params: { userId: string } }) {
-    const { userId } = params;
+export default async function PublicProfilePage({ params }: { params: { username: string } }) {
+    const username = params.username;
     let userInfo: User | null = null;
     let bookmarkCount: number = 0;
 
     try {
-        const userRef = doc(db, "users", userId);
-        const userDoc = await getDoc(userRef);
+        const usersRef = collection(db, "users");
+        const userQuery = query(usersRef, where("username", "==", username));
+        const userSnapshot = await getDocs(userQuery);
 
-        if (userDoc.exists()) {
+        if (!userSnapshot.empty) {
+            const userDoc = userSnapshot.docs[0];
             userInfo = userDoc.data() as User;
 
-            const bookmarksRef = collection(userRef, "user-bookmarks");
+            // Fetch user bookmarks count
+            const bookmarksRef = collection(userDoc.ref, "user-bookmarks");
             const bookmarksSnapshot = await getDocs(bookmarksRef);
             bookmarkCount = bookmarksSnapshot.size;
         }
