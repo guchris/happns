@@ -9,7 +9,9 @@ import { useRef, useEffect, useState } from "react"
 import { useAuth } from "@/context/AuthContext"
 import { TopBar } from "@/components/top-bar"
 import { Footer } from "@/components/footer"
+import Loading from "@/components/loading"
 import { toast } from "@/hooks/use-toast" 
+import { getInitials } from "@/lib/userUtils"
 
 // Firebase Imports
 import { db } from "@/lib/firebase"
@@ -27,12 +29,6 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 // Icon Imports
 import { ExclamationTriangleIcon, CopyIcon, Pencil1Icon } from "@radix-ui/react-icons"
 
-// Utility Function to get initials
-function getInitials(name: string) {
-    const [firstName, lastName] = name.split(" ");
-    return firstName[0] + (lastName ? lastName[0] : "");
-}
-  
 
 export default function ProfilePage() {
     const inputRef = useRef<HTMLInputElement>(null);
@@ -95,14 +91,7 @@ export default function ProfilePage() {
     };
 
     if (loading) {
-        return (
-            <div className="min-h-screen flex flex-col">
-                <TopBar title={`happns/settings`} />
-                <Separator />
-                <h1 className="text-lg font-semibold p-4">Loading...</h1>
-                <Footer className="mt-auto" />
-            </div>
-        );
+        return <Loading title="happns/profile" />;
     }
 
     if (!user) {

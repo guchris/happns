@@ -8,6 +8,7 @@ import { useAuth } from "@/context/AuthContext"
 import { TopBar } from "@/components/top-bar"
 import { Footer } from "@/components/footer"
 import { SidebarNav } from "@/components/sidebar-nav"
+import Loading from "@/components/loading"
 
 // Shadcn Imports
 import { Separator } from "@/components/ui/separator"
@@ -40,14 +41,7 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
     const { user, loading } = useAuth();
 
     if (loading) {
-        return (
-            <div className="min-h-screen flex flex-col">
-                <TopBar title={`happns/settings`} />
-                <Separator />
-                <h1 className="text-lg font-semibold p-4">Loading...</h1>
-                <Footer className="mt-auto" />
-            </div>
-        );
+        return <Loading title="happns/settings" />;
     }
 
     if (!user) {

@@ -9,7 +9,9 @@ import { useEffect, useState } from "react"
 import { useAuth } from "@/context/AuthContext"
 import { TopBar } from "@/components/top-bar"
 import { Footer } from "@/components/footer"
+import Loading from "@/components/loading"
 import { User } from "@/components/types"
+import { getInitials } from "@/lib/userUtils"
 
 // Firebase Imports
 import { db } from "@/lib/firebase"
@@ -19,12 +21,6 @@ import { doc, getDoc, collection, getDocs } from "firebase/firestore"
 import { Separator } from "@/components/ui/separator"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-
-// Utility Function to get initials
-function getInitials(name: string) {
-    const [firstName, lastName] = name.split(" ");
-    return firstName[0] + (lastName ? lastName[0] : "");
-}
 
 export default function PublicProfilePage() {
     const { id } = useParams() as { id: string };
@@ -60,14 +56,7 @@ export default function PublicProfilePage() {
     }, [id]);
 
     if (loading) {
-        return (
-            <div className="min-h-screen flex flex-col">
-                <TopBar title={`happns/settings`} />
-                <Separator />
-                <h1 className="text-lg font-semibold p-4">Loading...</h1>
-                <Footer className="mt-auto" />
-            </div>
-        );
+        return <Loading title="happns/profile" />;
     }
 
     return (

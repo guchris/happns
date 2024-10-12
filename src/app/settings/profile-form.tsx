@@ -7,6 +7,7 @@ import Image from "next/image"
 // App Imports
 import { useAuth } from "@/context/AuthContext"
 import { toast } from "@/hooks/use-toast"
+import { getInitials } from "@/lib/userUtils"
 
 // Firebase Imports
 import { db, storage } from "@/lib/firebase"
@@ -24,12 +25,6 @@ import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-
-// Utility Function to get initials
-function getInitials(name: string) {
-    const [firstName, lastName] = name.split(" ");
-    return firstName[0] + (lastName ? lastName[0] : "");
-}
 
 const profileFormSchema = z.object({
     name: z.string().min(1, "Name is required"),

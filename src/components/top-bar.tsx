@@ -8,6 +8,7 @@ import { useRouter, usePathname } from "next/navigation"
 // App Imports
 import { useAuth } from "@/context/AuthContext"
 import { useToast } from "@/hooks/use-toast"
+import { getInitials } from "@/lib/userUtils"
 
 // Firebase Imports
 import { auth } from "@/lib/firebase"
@@ -18,12 +19,6 @@ import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-
-// Utility Function to get initials
-function getInitials(name: string) {
-    const [firstName, lastName] = name.split(" ");
-    return firstName[0] + (lastName ? lastName[0] : "");
-}
   
 interface TopBarProps {
     title: string;

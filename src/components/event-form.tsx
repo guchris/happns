@@ -10,6 +10,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { useAuth } from "@/context/AuthContext"
 import { TopBar } from "@/components/top-bar"
 import MultiSelect, { Option } from "@/components/multi-select"
+import Loading from "@/components/loading"
 import { useToast } from "@/hooks/use-toast"
 import { cn } from "@/lib/utils"
 import { cityOptions, categoryOptions, formatOptions, neighborhoodOptions } from "@/lib/selectOptions"
@@ -314,17 +315,8 @@ export default function EventForm() {
         }
     }
 
-    // If still checking for login state, show a loading state
     if (loading) {
-        return (
-            <div className="min-h-screen flex flex-col">
-                <TopBar title={`happns/`} />
-                <Separator />
-                <div className="flex-1 overflow-y-auto p-4">
-                    Loading event...
-                </div>
-            </div>
-        )
+        return <Loading title="happns/event-form" />;
     }
 
     // If user is not logged in or does not have "curator" role, show an unauthorized message
