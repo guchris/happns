@@ -4,9 +4,9 @@
 import Image from "next/image"
 import Link from "next/link"
 import { useRef, useEffect, useState } from "react"
-import { useAuth } from "@/context/AuthContext"
 
 // App Imports
+import { useAuth } from "@/context/AuthContext"
 import { TopBar } from "@/components/top-bar"
 import { Footer } from "@/components/footer"
 import { toast } from "@/hooks/use-toast" 
