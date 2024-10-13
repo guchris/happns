@@ -25,7 +25,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
-import { ExclamationTriangleIcon, CopyIcon, Pencil1Icon } from "@radix-ui/react-icons"
+import { ExclamationTriangleIcon, CopyIcon, Pencil1Icon, Share2Icon } from "@radix-ui/react-icons"
 
 
 export default function ProfilePage() {
@@ -88,6 +88,24 @@ export default function ProfilePage() {
         }
     };
 
+    const shareProfile = () => {
+        const profileLink = `https://ithappns.com/profile/${userInfo.username}`;
+        navigator.clipboard.writeText(profileLink)
+            .then(() => {
+                toast({
+                    title: "Profile Link Copied",
+                    description: "The profile link has been copied to your clipboard.",
+                });
+            })
+            .catch((err) => {
+                toast({
+                    title: "Error",
+                    description: "Failed to copy the profile link. Please try again.",
+                    variant: "destructive",
+                });
+            });
+    };
+
     if (loading) {
         return <EmptyPage title="happns/profile" description="loading..." />;
     }
@@ -141,12 +159,17 @@ export default function ProfilePage() {
                             <div className="text-lg font-semibold">{userInfo.name}</div>
                             <div className="text-base font-medium">@{userInfo.username}</div>
                         </div>
-                        
-                        <Link href="/settings" className="ml-auto">
-                            <Button variant="outline" size="icon">
-                                <Pencil1Icon className="h-4 w-4" />
+
+                        <div className="ml-auto flex space-x-2">
+                            <Link href="/settings">
+                                <Button variant="outline" size="icon">
+                                    <Pencil1Icon className="h-4 w-4" />
+                                </Button>
+                            </Link>
+                            <Button variant="outline" size="icon" onClick={shareProfile}>
+                                <Share2Icon className="h-4 w-4" />
                             </Button>
-                        </Link>
+                        </div>
                     </div>
 
                     <Separator />

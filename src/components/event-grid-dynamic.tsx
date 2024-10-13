@@ -61,7 +61,7 @@ const EventGridDynamic = ({ cities }: EventGridDynamicProps) => {
             const { top } = tabsRef.current.getBoundingClientRect();
             if (top < 0 || top > 100) {
                 window.scrollTo({
-                    top: window.scrollY + top - 45,
+                    top: window.scrollY + top - 60,
                     behavior: "smooth",
                 });
             }
