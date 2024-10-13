@@ -6,30 +6,52 @@ import Link from "next/link"
 import Image from "next/image"
 
 // App Imports
-import { Event, City } from "@/components/types"
-import { calculateDistance } from "@/lib/geoUtils"
+import { useAuth } from "@/context/AuthContext"
+import { Event } from "@/components/types"
 import { formatEventDate, getEventsByCity, getUpcomingEvents, getEventsHappeningToday, getEventsHappeningTomorrow, sortEventsByClicks } from "@/lib/eventUtils"
+import { calculateDistance } from "@/lib/geoUtils"
+
+// Firebase Imports
+import { db } from "@/lib/firebase"
+import { doc, getDoc } from "firebase/firestore"
 
 // Shadcn Imports
+import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 
-interface EventGridDynamicProps {
-    cities: City[];
-    initialCity: string;
-}
+// EventGridDynamic Props
+type EventGridDyanmicProps = {
+    cities: { name: string; slug: string; lat: number; lon: number }[];
+};
 
-const EventGridDynamic = ({ cities, initialCity }: EventGridDynamicProps) => {
-    const [selectedCity, setSelectedCity] = useState<string>(initialCity);
+const EventGridDynamic = ({ cities }: EventGridDyanmicProps) => {
+    const { user } = useAuth();
+    const [cityName, setCityName] = useState<string>("");
     const [activeTab, setActiveTab] = useState("today");
+    const tabsRef = useRef<HTMLDivElement | null>(null);
+    const [userInteracted, setUserInteracted] = useState(false);
     const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
     const [eventsHappeningToday, setEventsHappeningToday] = useState<Event[]>([]);
     const [eventsHappeningTomorrow, setEventsHappeningTomorrow] = useState<Event[]>([]);
     const [topEvents, setTopEvents] = useState<Event[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    
-    const tabsRef = useRef<HTMLDivElement | null>(null);
-    const [userInteracted, setUserInteracted] = useState(false);
+
+    // Function to find the closest city based on user location
+    const findClosestCity = (userLat: number, userLon: number) => {
+        let closestCity = cities[0];
+        let minDistance = calculateDistance(userLat, userLon, cities[0].lat, cities[0].lon);
+
+        cities.forEach((city) => {
+            const distance = calculateDistance(userLat, userLon, city.lat, city.lon);
+            if (distance < minDistance) {
+                closestCity = city;
+                minDistance = distance;
+            }
+        });
+
+        return closestCity.slug;
+    };
 
     // Scroll the tabs list into view when the active tab changes, if needed
     useEffect(() => {
@@ -44,66 +66,68 @@ const EventGridDynamic = ({ cities, initialCity }: EventGridDynamicProps) => {
         }
     }, [activeTab, userInteracted]);
 
-    // Reset after scrolling
     useEffect(() => {
         if (userInteracted) {
-            setUserInteracted(false);
+            setUserInteracted(false); // Reset after scrolling
         }
     }, [userInteracted]);
 
-    // Determine the closest city based on geolocation
     useEffect(() => {
-        if (initialCity) {
-            // Use the user's default city if it’s set
-            setSelectedCity(initialCity);
-        } else if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const userLat = position.coords.latitude;
-                    const userLon = position.coords.longitude;
-                    let closestCity = cities[0];
-                    let minDistance = calculateDistance(userLat, userLon, cities[0].lat, cities[0].lon);
-    
-                    cities.forEach((city) => {
-                        const distance = calculateDistance(userLat, userLon, city.lat, city.lon);
-                        if (distance < minDistance) {
-                            closestCity = city;
-                            minDistance = distance;
-                        }
-                    });
-    
-                    setSelectedCity(closestCity.slug);
-                },
-                () => {
-                    // Fallback city if geolocation fails and no user city is set
-                    setSelectedCity("seattle");
+        const fetchSelectedCity = async () => {
+            let citySlug: string | null = null;
+
+            if (user) {
+                try {
+                    const userDocRef = doc(db, "users", user.uid);
+                    const userDoc = await getDoc(userDocRef);
+
+                    if (userDoc.exists()) {
+                        const userData = userDoc.data();
+                        citySlug = userData.selectedCity || null;
+                    }
+                } catch (error) {
+                    console.error("Error fetching user selected city:", error);
                 }
-            );
-        } else {
-            // If geolocation is not supported and no user city is set
-            setSelectedCity("seattle");
-        }
-    }, [cities, initialCity]);
+            }
 
-    // Fetch events whenever `selectedCity` changes
-    useEffect(() => {
-        const fetchEvents = async () => {
-            if (!selectedCity) return;
-            setIsLoading(true);
+            // If selectedCity is found, fetch its events
+            if (citySlug) {
+                setCityName(citySlug);
+                const eventsByCity = await getEventsByCity(citySlug);
+                const today = new Date();
+                const upcomingEvents = getUpcomingEvents(eventsByCity, today);
+                setUpcomingEvents(upcomingEvents);
+                setEventsHappeningToday(getEventsHappeningToday(eventsByCity, today));
+                setEventsHappeningTomorrow(getEventsHappeningTomorrow(eventsByCity, today));
+                setTopEvents(sortEventsByClicks(upcomingEvents, 8));
+                setIsLoading(false);
+            } else if (navigator.geolocation) {
+                // If no selected city, fall back to geolocation
+                navigator.geolocation.getCurrentPosition(
+                    async (position) => {
+                        const userLat = position.coords.latitude;
+                        const userLon = position.coords.longitude;
+                        const closestCitySlug = findClosestCity(userLat, userLon);
+                        setCityName(closestCitySlug);
 
-            const eventsByCity = await getEventsByCity(selectedCity);
-            const today = new Date();
-            const upcomingEvents = getUpcomingEvents(eventsByCity, today);
-            setUpcomingEvents(upcomingEvents);
-            setEventsHappeningToday(getEventsHappeningToday(eventsByCity, today));
-            setEventsHappeningTomorrow(getEventsHappeningTomorrow(eventsByCity, today));
-            setTopEvents(sortEventsByClicks(upcomingEvents, 8));
-            
-            setIsLoading(false);
+                        const eventsByCity = await getEventsByCity(closestCitySlug);
+                        const today = new Date();
+                        setUpcomingEvents(getUpcomingEvents(eventsByCity, today));
+                        setEventsHappeningToday(getEventsHappeningToday(eventsByCity, today));
+                        setEventsHappeningTomorrow(getEventsHappeningTomorrow(eventsByCity, today));
+                        setTopEvents(sortEventsByClicks(eventsByCity, 8));
+                        setIsLoading(false);
+                    },
+                    (error) => {
+                        console.error("Error getting user location:", error);
+                        setIsLoading(false);
+                    }
+                );
+            }
         };
 
-        fetchEvents();
-    }, [selectedCity]);
+        fetchSelectedCity();
+    }, [cities, user]);
 
     // Select events based on the active tab
     const filteredEvents = activeTab === "today"
@@ -117,13 +141,18 @@ const EventGridDynamic = ({ cities, initialCity }: EventGridDynamicProps) => {
             {/* Header */}
             <div className="flex items-center space-x-2 text-xl font-semibold">
                 <span>happnings in</span>
-                <span className="text-lg font-bold">{cities.find(city => city.slug === selectedCity)?.name || "your city"}</span>
+                <Input 
+                    value={cityName}
+                    disabled 
+                    className="text-center text-lg"
+                    style={{ width: `${cityName.length + 1}ch` }}
+                />
             </div>
 
             {/* Tabs */}
             <div className="space-y-4">
                 <Tabs
-                    value={activeTab}
+                    defaultValue="today"
                     onValueChange={(value) => {
                         setActiveTab(value);
                         setUserInteracted(true);
