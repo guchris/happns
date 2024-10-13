@@ -1,8 +1,9 @@
 "use client"
 
-// Components Imports
+// App Imports
 import { TopBar } from "@/components/top-bar"
-import { Footer } from "@/components/footer"
+import Footer from "@/components/footer"
+import { useToast } from "@/hooks/use-toast"
 
 // Shadcn Imports
 import { Separator } from "@/components/ui/separator"
@@ -10,7 +11,6 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form"
-import { useToast } from "@/hooks/use-toast"
 
 // Other Imports
 import { useForm } from "react-hook-form"

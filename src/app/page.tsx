@@ -3,13 +3,13 @@ import { Metadata } from "next"
 
 // App Imports
 import { TopBar } from "@/components/top-bar"
-import { Footer } from "@/components/footer"
 import CitySelector from "@/components/city-selector"
 import EventCarousel from "@/components/event-carousel"
 import CityGrid from "@/components/city-grid"
 import EventGridDynamic from "@/components/event-grid-dynamic"
 import JoinCard from "@/components/join-card"
 import CategoriesGrid from "@/components/categories-grid"
+import Footer from "@/components/footer"
 import { CarouselEvent } from "@/components/types"
 import { getTotalUpcomingEvents } from "@/lib/eventUtils"
 

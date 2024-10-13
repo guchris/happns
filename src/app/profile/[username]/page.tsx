@@ -4,7 +4,7 @@ import Image from "next/image"
 
 // App Imports
 import { TopBar } from "@/components/top-bar"
-import { Footer } from "@/components/footer"
+import Footer from "@/components/footer"
 import EmptyPage from "@/components/empty-page"
 import { User } from "@/components/types"
 import { getInitials } from "@/lib/userUtils"

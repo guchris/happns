@@ -3,7 +3,7 @@ import Image from "next/image"
 
 // App Imports
 import { TopBar } from "@/components/top-bar"
-import { Footer } from "@/components/footer"
+import Footer from "@/components/footer"
 
 // Shadcn Imports
 import { Separator } from "@/components/ui/separator"

@@ -44,6 +44,7 @@ export default function CitySelector({ cities }: CitySelectorProps) {
 
     // Set city selection
     useEffect(() => {
+        
         // Load default city from Firestore if available
         const loadUserCity = async () => {
             if (user) {
@@ -92,7 +93,7 @@ export default function CitySelector({ cities }: CitySelectorProps) {
                 <>  
                     <Select>
                         <SelectTrigger disabled>
-                            <SelectValue placeholder="Loading location..." />
+                            <SelectValue placeholder="loading location..." />
                         </SelectTrigger>
                     </Select>
                     <Button disabled>explore</Button>

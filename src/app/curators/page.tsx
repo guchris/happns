@@ -2,20 +2,13 @@
 import Link from "next/link"
 
 // Components Imports
-import { TopBar } from "@/components/top-bar";
+import { TopBar } from "@/components/top-bar"
 
 // Shadcn Imports
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
   
 
 export default function CuratorsPage() {

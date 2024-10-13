@@ -8,23 +8,23 @@ import { useState, useRef, useEffect } from "react"
 // App Imports
 import { useAuth } from "@/context/AuthContext"
 import { City, Event } from "@/components/types"
-import { formatEventDate, getEventsByCity, getUpcomingEvents, getEventsHappeningToday, getEventsHappeningTomorrow, sortEventsByClicks } from "@/lib/eventUtils"
 import { calculateDistance } from "@/lib/geoUtils"
+import { formatEventDate, getEventsByCity, getUpcomingEvents, getEventsHappeningToday, getEventsHappeningTomorrow, sortEventsByClicks } from "@/lib/eventUtils"
 
 // Firebase Imports
 import { db } from "@/lib/firebase"
 import { doc, getDoc } from "firebase/firestore"
 
 // Shadcn Imports
-import { Input } from "@/components/ui/input"
+import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 
-type EventGridDyanmicProps = {
+type EventGridDynamicProps = {
     cities: City[];
 };
 
-const EventGridDynamic = ({ cities }: EventGridDyanmicProps) => {
+const EventGridDynamic = ({ cities }: EventGridDynamicProps) => {
     const { user } = useAuth();
 
     const [cityName, setCityName] = useState<string>("");
@@ -36,7 +36,7 @@ const EventGridDynamic = ({ cities }: EventGridDyanmicProps) => {
     const [eventsHappeningToday, setEventsHappeningToday] = useState<Event[]>([]);
     const [eventsHappeningTomorrow, setEventsHappeningTomorrow] = useState<Event[]>([]);
     const [topEvents, setTopEvents] = useState<Event[]>([]);
-    
+
     const [isLoading, setIsLoading] = useState(true);
 
     // Function to find the closest city based on user location
@@ -68,9 +68,10 @@ const EventGridDynamic = ({ cities }: EventGridDyanmicProps) => {
         }
     }, [activeTab, userInteracted]);
 
+    // Reset after scrolling
     useEffect(() => {
         if (userInteracted) {
-            setUserInteracted(false); // Reset after scrolling
+            setUserInteracted(false);
         }
     }, [userInteracted]);
 
@@ -78,6 +79,7 @@ const EventGridDynamic = ({ cities }: EventGridDyanmicProps) => {
         const fetchSelectedCity = async () => {
             let citySlug: string | null = null;
 
+            // If user exists, fetch their selected city
             if (user) {
                 try {
                     const userDocRef = doc(db, "users", user.uid);
@@ -140,15 +142,11 @@ const EventGridDynamic = ({ cities }: EventGridDyanmicProps) => {
     
     return (
         <div className="flex-1 max-w-[880px] md:max-w-[700px] lg:max-w-[880px] mx-auto p-4 space-y-4">
+            
             {/* Header */}
             <div className="flex items-center space-x-2 text-xl font-semibold">
                 <span>happnings in</span>
-                <Input 
-                    value={cityName}
-                    disabled 
-                    className="text-center text-lg"
-                    style={{ width: `${cityName.length + 1}ch` }}
-                />
+                <Badge variant="secondary" className="text-lg">{cityName}</Badge>
             </div>
 
             {/* Tabs */}
@@ -162,22 +160,22 @@ const EventGridDynamic = ({ cities }: EventGridDyanmicProps) => {
                 >
                     <div ref={tabsRef} className="mb-4">
                         <TabsList>
-                            <TabsTrigger value="today">Today</TabsTrigger>
-                            <TabsTrigger value="tomorrow">Tomorrow</TabsTrigger>
-                            <TabsTrigger value="month">This Month</TabsTrigger>
+                            <TabsTrigger value="today">today</TabsTrigger>
+                            <TabsTrigger value="tomorrow">tomorrow</TabsTrigger>
+                            <TabsTrigger value="month">this month</TabsTrigger>
                         </TabsList>
                     </div>
 
                     <TabsContent value="today">
-                        {isLoading ? <p className="text-sm text-muted-foreground">Loading events...</p> : <EventList events={filteredEvents} />}
+                        {isLoading ? <p className="text-sm text-muted-foreground">loading events...</p> : <EventList events={filteredEvents} />}
                     </TabsContent>
 
                     <TabsContent value="tomorrow">
-                        {isLoading ? <p className="text-sm text-muted-foreground">Loading events...</p> : <EventList events={filteredEvents} />}
+                        {isLoading ? <p className="text-sm text-muted-foreground">loading events...</p> : <EventList events={filteredEvents} />}
                     </TabsContent>
 
                     <TabsContent value="month">
-                        {isLoading ? <p className="text-sm text-muted-foreground">Loading events...</p> : <EventList events={filteredEvents} />}
+                        {isLoading ? <p className="text-sm text-muted-foreground">loading events...</p> : <EventList events={filteredEvents} />}
                     </TabsContent>
                 </Tabs>
             </div>
@@ -211,7 +209,7 @@ const EventList = ({ events }: { events: Event[] }) => {
                     </Card>
                 ))
             ) : (
-                <p className="text-sm text-muted-foreground">No events available.</p>
+                <p className="text-sm text-muted-foreground">no events available</p>
             )}
         </div>
     )

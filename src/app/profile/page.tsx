@@ -8,7 +8,7 @@ import { useRef, useEffect, useState } from "react"
 // App Imports
 import { useAuth } from "@/context/AuthContext"
 import { TopBar } from "@/components/top-bar"
-import { Footer } from "@/components/footer"
+import Footer from "@/components/footer"
 import EmptyPage from "@/components/empty-page"
 import { toast } from "@/hooks/use-toast" 
 import { getInitials } from "@/lib/userUtils"
@@ -25,8 +25,6 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
-
-// Icon Imports
 import { ExclamationTriangleIcon, CopyIcon, Pencil1Icon } from "@radix-ui/react-icons"
 
 

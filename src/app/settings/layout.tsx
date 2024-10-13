@@ -6,7 +6,7 @@ import Link from "next/link"
 // App Imports
 import { useAuth } from "@/context/AuthContext"
 import { TopBar } from "@/components/top-bar"
-import { Footer } from "@/components/footer"
+import Footer from "@/components/footer"
 import { SidebarNav } from "@/components/sidebar-nav"
 import EmptyPage from "@/components/empty-page"
 

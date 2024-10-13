@@ -1,6 +1,7 @@
+// App Imports
 import { Separator } from "@/components/ui/separator";
 import { TopBar } from "@/components/top-bar";
-import { Footer } from "@/components/footer";
+import Footer from "@/components/footer";
 
 interface EmptyPageProps {
     title: string;

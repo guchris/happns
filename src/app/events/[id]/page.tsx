@@ -6,7 +6,7 @@ import { notFound } from "next/navigation"
 import { Event } from "@/components/types"
 import { EventDisplay } from "@/components/event-display"
 import { TopBar } from "@/components/top-bar"
-import { Footer } from "@/components/footer"
+import Footer from "@/components/footer"
 
 // Firebase Imports
 import { doc, getDoc } from "firebase/firestore"

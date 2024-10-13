@@ -5,9 +5,9 @@ import Image from "next/image"
 import { notFound } from "next/navigation"
 
 // App Imports
-import { TopBar } from "@/components/top-bar"
-import { Footer } from "@/components/footer"
 import { Event } from "@/components/types"
+import { TopBar } from "@/components/top-bar"
+import Footer from "@/components/footer"
 import EventGrid from "@/components/event-grid"
 import { cityOptions } from "@/lib/selectOptions"
 import { Curator } from "@/components/types"
