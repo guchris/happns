@@ -1,13 +1,13 @@
 "use client"
 
 // Next and React Imports
-import { useState, useRef, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
+import { useState, useRef, useEffect } from "react"
 
 // App Imports
 import { useAuth } from "@/context/AuthContext"
-import { Event } from "@/components/types"
+import { City, Event } from "@/components/types"
 import { formatEventDate, getEventsByCity, getUpcomingEvents, getEventsHappeningToday, getEventsHappeningTomorrow, sortEventsByClicks } from "@/lib/eventUtils"
 import { calculateDistance } from "@/lib/geoUtils"
 
@@ -20,21 +20,23 @@ import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 
-// EventGridDynamic Props
 type EventGridDyanmicProps = {
-    cities: { name: string; slug: string; lat: number; lon: number }[];
+    cities: City[];
 };
 
 const EventGridDynamic = ({ cities }: EventGridDyanmicProps) => {
     const { user } = useAuth();
+
     const [cityName, setCityName] = useState<string>("");
     const [activeTab, setActiveTab] = useState("today");
     const tabsRef = useRef<HTMLDivElement | null>(null);
+
     const [userInteracted, setUserInteracted] = useState(false);
     const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
     const [eventsHappeningToday, setEventsHappeningToday] = useState<Event[]>([]);
     const [eventsHappeningTomorrow, setEventsHappeningTomorrow] = useState<Event[]>([]);
     const [topEvents, setTopEvents] = useState<Event[]>([]);
+    
     const [isLoading, setIsLoading] = useState(true);
 
     // Function to find the closest city based on user location

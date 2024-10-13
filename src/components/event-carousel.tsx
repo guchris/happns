@@ -9,7 +9,7 @@ interface EventCarouselProps {
     carouselEvents: CarouselEvent[];
 }
 
-export function EventCarousel({ carouselEvents }: EventCarouselProps) {
+export default function EventCarousel({ carouselEvents }: EventCarouselProps) {
     return (
         <div className="w-full">
             {/* Show 3 images on small and large screens */}

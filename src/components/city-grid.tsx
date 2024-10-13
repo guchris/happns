@@ -6,15 +6,13 @@ import { City } from "@/components/types"
 
 // Shadcn Imports
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-
-// Other Imports
 import { CalendarIcon } from "@radix-ui/react-icons"
 
 interface CityGridProps {
     cities: City[];
 }
 
-export function CityGrid({ cities }: CityGridProps) {
+export default function CityGrid({ cities }: CityGridProps) {
     return (
         <div className="flex-1 mx-auto max-w-[880px] md:max-w-[700px] lg:max-w-[880px] p-4 space-y-4">
 

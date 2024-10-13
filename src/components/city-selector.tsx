@@ -1,8 +1,8 @@
 "use client"
 
 // Next Imports
-import { useEffect, useState } from "react"
 import Link from "next/link"
+import { useEffect, useState } from "react"
 
 // App Imports
 import { City } from "@/components/types"
@@ -14,14 +14,14 @@ import { db } from "@/lib/firebase"
 import { doc, getDoc } from "firebase/firestore"
 
 // Shadcn Imports
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 interface CitySelectorProps {
     cities: City[];
 }
 
-export function CitySelector({ cities }: CitySelectorProps) {
+export default function CitySelector({ cities }: CitySelectorProps) {
     const { user } = useAuth();
     const [selectedCity, setSelectedCity] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
