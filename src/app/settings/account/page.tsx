@@ -30,9 +30,18 @@ function DeleteAccountDialog() {
             try {
                 // 1. Delete user data from Firestore
                 const userDocRef = doc(db, "users", user.uid);
+                const userDoc = await getDoc(userDocRef);
+
+                if (userDoc.exists()) {
+                    const { username } = userDoc.data();
+                    const usernameDocRef = doc(db, "usernames", username);
+                    await deleteDoc(usernameDocRef);
+                }
+
+                // 2. Delete user data from Firestore
                 await deleteDoc(userDocRef);
 
-                // 2. Delete user profile picture from Firebase Storage
+                // 3. Delete user profile picture from Firebase Storage
                 const profilePictureRef = ref(storage, `profile_pictures/${user.uid}`);
                 await deleteObject(profilePictureRef).catch((error) => {
                     // If there's no profile picture, it's okay to ignore the error
@@ -41,16 +50,16 @@ function DeleteAccountDialog() {
                     }
                 });
 
-                // 3. Delete Firebase Authentication user
+                // 4. Delete Firebase Authentication user
                 await deleteUser(user);
 
-                // 4. Provide feedback to the user
+                // 5. Provide feedback to the user
                 toast({
                     title: "Account Deleted",
                     description: "Your account has been successfully deleted.",
                 });
 
-                // 5. Close the dialog and redirect to the home page
+                // 6. Close the dialog and redirect to the home page
                 setIsDialogOpen(false);
                 router.push("/");
             } catch (error) {
