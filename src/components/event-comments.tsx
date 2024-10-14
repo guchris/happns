@@ -1,6 +1,7 @@
 "use client"
 
 // Next and React Imports
+import Link from "next/link"
 import { useState, useEffect } from "react"
 
 // App Imports
@@ -90,18 +91,22 @@ const EventComments = ({ eventId }: EventCommentsProps) => {
                 {comments.length > 0 ? (
                     comments.map((comment) => (
                         <div key={comment.id} className="flex items-start space-x-2">
-                            <Avatar className="w-11 h-11">
-                                {comment.profilePicture ? (
-                                    <AvatarImage src={comment.profilePicture} alt={`${comment.username}'s profile picture`} />
-                                ) : (
-                                    <AvatarFallback>
-                                        {getInitials(comment.username || "Anonymous")}
-                                    </AvatarFallback>
-                                )}
-                            </Avatar>
+                            <Link href={`/profile/${comment.username}`}>
+                                <Avatar className="w-11 h-11">
+                                    {comment.profilePicture ? (
+                                        <AvatarImage src={comment.profilePicture} alt={`${comment.username}'s profile picture`} />
+                                    ) : (
+                                        <AvatarFallback>
+                                            {getInitials(comment.username || "Anonymous")}
+                                        </AvatarFallback>
+                                    )}
+                                </Avatar>
+                            </Link>
                             <div className="space-y-1">
                                 <div className="flex items-center space-x-2">
-                                    <span className="text-sm font-semibold">{comment.username}</span>
+                                    <Link href={`/profile/${comment.username}`} className="text-sm font-semibold hover:underline">
+                                        {comment.username}
+                                    </Link>
                                     <span className="text-xs text-muted-foreground mt-0.5">
                                         {format(comment.timestamp.toDate(), "MMM d, yyyy h:mm a")}
                                     </span>
