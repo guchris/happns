@@ -64,7 +64,12 @@ export function UserLoginForm({ className, onSuccess, ...props }: UserLoginFormP
                     username: user.email?.split("@")[0] || "user",
                     email: user.email || "",
                     createdAt: new Date(),
-                    role: "general"
+                    role: "general",
+                    notifications: {
+                        communication_emails: true,
+                        roundup_emails: true,
+                        marketing_emails: true
+                    }
                 }
 
                 await setDoc(userRef, newUser)
