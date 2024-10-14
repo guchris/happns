@@ -103,7 +103,12 @@ export function UserSignupForm({ className, onSuccess, ...props }: UserSignupFor
                     username: username,
                     email: user.email || "",
                     createdAt: new Date(),
-                    role: "general"
+                    role: "general",
+                    notifications: {
+                        communication_emails: true,
+                        roundup_emails: true,
+                        marketing_emails: true
+                    }
                 }
                 await setDoc(userRef, newUser)
                 await setDoc(doc(db, "usernames", username), { uid: user.uid })
@@ -150,7 +155,12 @@ export function UserSignupForm({ className, onSuccess, ...props }: UserSignupFor
                 username: username,
                 email: email,
                 createdAt: new Date(),
-                role: "general"
+                role: "general",
+                notifications: {
+                    communication_emails: true,
+                    roundup_emails: true,
+                    marketing_emails: true
+                }
             }
 
             await setDoc(doc(db, "users", newUser.uid), newUser)

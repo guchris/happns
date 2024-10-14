@@ -32,6 +32,11 @@ export interface User {
     profilePicture?: string;
     role: "general" | "curator";
     selectedCity?: string;
+    notifications: {
+        communication_emails: boolean;
+        roundup_emails: boolean;
+        marketing_emails: boolean;
+    };
 }
 
 export type Curator = {
