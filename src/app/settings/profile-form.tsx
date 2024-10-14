@@ -185,7 +185,7 @@ export default function ProfileForm() {
 
     if (!userInfo) {
         return (
-            <EmptyPage title="happns/error" description="user not found" />
+            <h3 className="text-sm">loading...</h3>
         );
     }
 

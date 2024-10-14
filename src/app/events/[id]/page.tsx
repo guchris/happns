@@ -77,7 +77,8 @@ export default async function EventPage({ params }: EventPageProps) {
         notFound();
     }
 
-    const event = eventSnapshot.data() as Event;
+    const eventData = eventSnapshot.data() as Event;
+    const event = { ...eventData, id };
 
     return (
         <TooltipProvider>
