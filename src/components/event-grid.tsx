@@ -1,9 +1,9 @@
 "use client"
 
 // Next and React Imports
-import { useState, useRef, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
+import { useState, useRef, useEffect } from "react"
 
 // App Imports
 import { Event } from "@/components/types"
@@ -30,16 +30,17 @@ const EventGrid = ({ eventsHappeningToday, eventsHappeningTomorrow, topEvents }:
             const { top } = tabsRef.current.getBoundingClientRect();
             if (top < 0 || top > 100) { // Adjust threshold as needed
                 window.scrollTo({
-                    top: window.scrollY + top - 45, // Scroll to tabs position with a small offset
+                    top: window.scrollY + top - 60, // Scroll to tabs position with a small offset
                     behavior: "smooth",
                 });
             }
         }
     }, [activeTab, userInteracted]);
 
+    // Reset after scrolling
     useEffect(() => {
         if (userInteracted) {
-            setUserInteracted(false); // Reset after scrolling
+            setUserInteracted(false);
         }
     }, [userInteracted]);
 
