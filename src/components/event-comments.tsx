@@ -7,6 +7,7 @@ import { useState, useEffect } from "react"
 import { useAuth } from "@/context/AuthContext"
 import { Comment } from "@/components/types"
 import { useToast } from "@/hooks/use-toast"
+import { getInitials } from "@/lib/userUtils"
 
 // Firebase Imports
 import { db } from "@/lib/firebase"
@@ -16,6 +17,7 @@ import { collection, addDoc, query, orderBy, onSnapshot } from "firebase/firesto
 import { Separator } from "@/components/ui/separator"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 // Other Imports
 import { format } from "date-fns"
@@ -66,6 +68,7 @@ const EventComments = ({ eventId }: EventCommentsProps) => {
                 username: userData.username || "Anonymous",
                 content: newComment.trim(),
                 timestamp: new Date(),
+                profilePicture: userData.profilePicture || null,
             });
             setNewComment("");
         } catch (error) {
@@ -86,14 +89,25 @@ const EventComments = ({ eventId }: EventCommentsProps) => {
             <div className="space-y-4 p-4">
                 {comments.length > 0 ? (
                     comments.map((comment) => (
-                        <div key={comment.id} className="space-y-1">
-                            <div className="flex items-center space-x-2">
-                                <span className="text-sm font-semibold">{comment.username}</span>
-                                <span className="text-xs text-muted-foreground">
-                                    {format(comment.timestamp.toDate(), "MMM d, yyyy h:mm a")}
-                                </span>
+                        <div key={comment.id} className="flex items-start space-x-2">
+                            <Avatar className="w-11 h-11">
+                                {comment.profilePicture ? (
+                                    <AvatarImage src={comment.profilePicture} alt={`${comment.username}'s profile picture`} />
+                                ) : (
+                                    <AvatarFallback>
+                                        {getInitials(comment.username || "Anonymous")}
+                                    </AvatarFallback>
+                                )}
+                            </Avatar>
+                            <div className="space-y-1">
+                                <div className="flex items-center space-x-2">
+                                    <span className="text-sm font-semibold">{comment.username}</span>
+                                    <span className="text-xs text-muted-foreground mt-0.5">
+                                        {format(comment.timestamp.toDate(), "MMM d, yyyy h:mm a")}
+                                    </span>
+                                </div>
+                                <p className="text-sm mb-2">{comment.content}</p>
                             </div>
-                            <p className="text-sm mb-2">{comment.content}</p>
                         </div>
                     ))
                 ) : (

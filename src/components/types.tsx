@@ -45,6 +45,7 @@ export interface Comment {
     username: string;
     content: string;
     timestamp: any;
+    profilePicture?: string;
 }
 
 export interface City {
