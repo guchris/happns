@@ -7,7 +7,7 @@ export default function SettingsNotificationsPage() {
             <div>
                 <h1 className="text-lg font-semibold">notifications</h1>
                 <p className="text-sm text-muted-foreground">
-                    configure how you receive notifications
+                    configure how you receive email notifications
                 </p>
             </div>
             <NotificationsForm />
