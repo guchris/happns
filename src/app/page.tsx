@@ -7,6 +7,7 @@ import CitySelector from "@/components/city-selector"
 import EventCarousel from "@/components/event-carousel"
 import CityGrid from "@/components/city-grid"
 import EventGridDynamic from "@/components/event-grid-dynamic"
+import EventGridBookmark from "@/components/event-grid-bookmark"
 import JoinCard from "@/components/join-card"
 import CategoriesGrid from "@/components/categories-grid"
 import Footer from "@/components/footer"
@@ -133,6 +134,9 @@ export default async function Home() {
 					<Separator />
 
 					<div className="py-12 space-y-8">
+
+						{/* Bookmarked Events Grid */}
+						<EventGridBookmark />
 
 						{/* Events Grid */}
 						<EventGridDynamic cities={cities} />

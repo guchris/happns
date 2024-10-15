@@ -96,6 +96,32 @@ export function getEventsHappeningTomorrow(events: Event[], today: Date): Event[
 
 
 /**
+ * Filters events to include only those that haven't passed yet.
+ * @param events - Array of Event objects.
+ * @param today - The current date.
+ * @returns {Event[]} - Array of future events.
+ */
+export function getFutureEvents(events: Event[], today: Date): Event[] {
+    return events.filter((event) => {
+        const endDate = parseISO(event.endDate);
+        return isAfter(endDate, today);
+    });
+}
+
+
+/**
+ * Sorts events from earliest to latest based on startDate.
+ * @param events - Array of Event objects.
+ * @returns {Event[]} - Array of sorted events.
+ */
+export function sortEventsByDate(events: Event[]): Event[] {
+    return events.sort((a, b) => {
+        return parseISO(a.startDate).getTime() - parseISO(b.startDate).getTime();
+    });
+}
+
+
+/**
  * Sorts events by clicks in descending order.
  * @param events - Array of Event objects.
  * @param limit - Number of top events to return.
