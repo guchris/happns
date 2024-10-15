@@ -57,6 +57,10 @@ const EventGridBookmark = () => {
         fetchBookmarkedEvents();
     }, [user]);
 
+    if (!user) {
+        return null;
+    }
+
     return (
         <div className="flex-1 max-w-[880px] md:max-w-[700px] lg:max-w-[880px] mx-auto p-4 space-y-4">
 
