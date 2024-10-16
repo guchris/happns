@@ -33,8 +33,6 @@ const EventGridDynamic = ({ cities }: EventGridDynamicProps) => {
 
     const [userInteracted, setUserInteracted] = useState(false);
     const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
-    const [eventsHappeningToday, setEventsHappeningToday] = useState<Event[]>([]);
-    const [eventsHappeningTomorrow, setEventsHappeningTomorrow] = useState<Event[]>([]);
     const [topEvents, setTopEvents] = useState<Event[]>([]);
 
     const [isLoading, setIsLoading] = useState(true);
@@ -75,6 +73,7 @@ const EventGridDynamic = ({ cities }: EventGridDynamicProps) => {
         }
     }, [userInteracted]);
 
+    // Fetch events for designated city
     useEffect(() => {
         const fetchSelectedCity = async () => {
             let citySlug: string | null = null;
@@ -101,8 +100,6 @@ const EventGridDynamic = ({ cities }: EventGridDynamicProps) => {
                 const today = new Date();
                 const upcomingEvents = getUpcomingEvents(eventsByCity, today);
                 setUpcomingEvents(upcomingEvents);
-                setEventsHappeningToday(getEventsHappeningToday(eventsByCity, today));
-                setEventsHappeningTomorrow(getEventsHappeningTomorrow(eventsByCity, today));
                 setTopEvents(sortEventsByClicks(upcomingEvents, 8));
                 setIsLoading(false);
             } else if (navigator.geolocation) {
@@ -117,8 +114,6 @@ const EventGridDynamic = ({ cities }: EventGridDynamicProps) => {
                         const eventsByCity = await getEventsByCity(closestCitySlug);
                         const today = new Date();
                         setUpcomingEvents(getUpcomingEvents(eventsByCity, today));
-                        setEventsHappeningToday(getEventsHappeningToday(eventsByCity, today));
-                        setEventsHappeningTomorrow(getEventsHappeningTomorrow(eventsByCity, today));
                         setTopEvents(sortEventsByClicks(eventsByCity, 8));
                         setIsLoading(false);
                     },
@@ -133,12 +128,74 @@ const EventGridDynamic = ({ cities }: EventGridDynamicProps) => {
         fetchSelectedCity();
     }, [cities, user]);
 
-    // Select events based on the active tab
-    const filteredEvents = activeTab === "today"
-        ? eventsHappeningToday
-        : activeTab === "tomorrow"
-        ? eventsHappeningTomorrow
-        : topEvents;
+    // Step 1: Get today's and tomorrow's dates in yyyy-mm-dd format
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+
+    const todayStr = today.toISOString().split("T")[0]; // Format to yyyy-mm-dd
+    const tomorrowStr = tomorrow.toISOString().split("T")[0];
+
+    // Step 2: Calculate weekend dates based on today’s day of the week
+    const weekendDays: string[] = [];
+    const dayOfWeek = today.getDay();
+
+    let friday, saturday, sunday;
+
+    if (dayOfWeek <= 4) { // Monday to Thursday
+        friday = new Date(today);
+        friday.setDate(today.getDate() + (5 - dayOfWeek));
+        saturday = new Date(friday);
+        saturday.setDate(friday.getDate() + 1);
+        sunday = new Date(saturday);
+        sunday.setDate(saturday.getDate() + 1);
+    } else if (dayOfWeek === 5) { // Friday
+        friday = today;
+        saturday = new Date(today);
+        saturday.setDate(today.getDate() + 1);
+        sunday = new Date(today);
+        sunday.setDate(today.getDate() + 2);
+    } else if (dayOfWeek === 6) { // Saturday
+        saturday = today;
+        sunday = new Date(today);
+        sunday.setDate(today.getDate() + 1);
+    } else if (dayOfWeek === 0) { // Sunday
+        sunday = today;
+    }
+
+    if (friday) weekendDays.push(friday.toISOString().split("T")[0]);
+    if (saturday) weekendDays.push(saturday.toISOString().split("T")[0]);
+    if (sunday) weekendDays.push(sunday.toISOString().split("T")[0]);
+
+    // Step 3: Function to check each event's placement
+    const getEventTabs = (event: Event) => {
+        const eventStart = event.startDate; // Assuming format is 'yyyy-mm-dd'
+        const eventEnd = event.endDate; // Assuming format is 'yyyy-mm-dd'
+    
+        // Today: Event includes today
+        const isToday = eventStart <= todayStr && eventEnd >= todayStr;
+    
+        // Tomorrow: Event includes tomorrow
+        const isTomorrow = eventStart <= tomorrowStr && eventEnd >= tomorrowStr;
+    
+        // This Weekend: Event includes any day of the weekend
+        const isThisWeekend = weekendDays.some((weekendDay) => 
+            eventStart <= weekendDay && eventEnd >= weekendDay
+        );
+    
+        return { isToday, isTomorrow, isThisWeekend };
+    };
+    
+
+    const filteredEvents = upcomingEvents.filter((event) => {
+        const { isToday, isTomorrow, isThisWeekend } = getEventTabs(event);
+    
+        if (activeTab === "today") return isToday;
+        if (activeTab === "tomorrow") return isTomorrow;
+        if (activeTab === "weekend") return isThisWeekend;
+    
+        return false;
+    });
     
     return (
         <div className="flex-1 max-w-[880px] md:max-w-[700px] lg:max-w-[880px] mx-auto p-4 space-y-4">
@@ -162,7 +219,7 @@ const EventGridDynamic = ({ cities }: EventGridDynamicProps) => {
                         <TabsList>
                             <TabsTrigger value="today">today</TabsTrigger>
                             <TabsTrigger value="tomorrow">tomorrow</TabsTrigger>
-                            <TabsTrigger value="month">this month</TabsTrigger>
+                            <TabsTrigger value="weekend">this weekend</TabsTrigger>
                         </TabsList>
                     </div>
 
@@ -174,7 +231,7 @@ const EventGridDynamic = ({ cities }: EventGridDynamicProps) => {
                         {isLoading ? <p className="text-sm text-muted-foreground">loading events...</p> : <EventList events={filteredEvents} />}
                     </TabsContent>
 
-                    <TabsContent value="month">
+                    <TabsContent value="weekend">
                         {isLoading ? <p className="text-sm text-muted-foreground">loading events...</p> : <EventList events={filteredEvents} />}
                     </TabsContent>
                 </Tabs>
