@@ -60,12 +60,20 @@ const eventFormSchema = z.object({
         ]),
     }).default({ type: "single", value: 0 }),
     dailyTimes: z.array(z.object({
-        startTime: z.string().regex(/^(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)$/i, {
-            message: "Start time must be in HH:mm AM/PM format.",
-        }),
-        endTime: z.string().regex(/^(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)$/i, {
-            message: "End time must be in HH:mm AM/PM format.",
-        })
+        startTime: z.string()
+            .regex(/^(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)$/i, {
+                message: "Start time must be in HH:mm AM/PM format.",
+            })
+            .nullable()
+            .optional()
+            .or(z.literal("")),
+        endTime: z.string()
+            .regex(/^(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)$/i, {
+                message: "End time must be in HH:mm AM/PM format.",
+            })
+            .nullable()
+            .optional()
+            .or(z.literal("")),
     })).optional(),
     details: z
         .string()
@@ -119,10 +127,16 @@ const eventFormSchema = z.object({
         })
         .optional()
 }).refine((data) => {
-    const usingVaryingTimes = data.dailyTimes && data.dailyTimes.length > 0;
-    return usingVaryingTimes || (data.startTime && data.endTime);
+    const isSingleDayEvent = data.startDate === data.endDate;
+    if (isSingleDayEvent) {
+        // Single day event requires both startTime and endTime
+        return data.startTime && data.endTime;
+    } else {
+        // Multi-day event requires dailyTimes and allows nullable times
+        return data.dailyTimes && data.dailyTimes.length > 0;
+    }
 }, {
-    message: "Provide either a single start and end time or varying daily times.",
+    message: "For single-day events, start and end times are required. For multi-day events, provide varying daily times.",
     path: ["startTime"]
 });
 
@@ -657,11 +671,12 @@ export default function EventForm() {
                                         render={({ field }) => (
                                             <FormItem className="w-2/5">
                                                 <FormControl>
-                                                    <Input
-                                                        {...field}
-                                                        placeholder="Enter start time"
-                                                        pattern="(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)"
-                                                    />
+                                                <Input
+                                                    {...field}
+                                                    placeholder="start time"
+                                                    pattern="(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)"
+                                                    value={field.value ?? ""}
+                                                />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
@@ -677,8 +692,9 @@ export default function EventForm() {
                                                 <FormControl>
                                                     <Input
                                                         {...field}
-                                                        placeholder="Enter end time"
+                                                        placeholder="end time"
                                                         pattern="(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)"
+                                                        value={field.value ?? ""}
                                                     />
                                                 </FormControl>
                                                 <FormMessage />
