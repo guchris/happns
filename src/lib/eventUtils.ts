@@ -218,3 +218,91 @@ export function formatEventCost(cost: { type: "single" | "range" | "minimum"; va
             return "N/A";
     }
 }
+
+
+/**
+ * Retrieves today's and tomorrow's date in yyyy-mm-dd format.
+ * @returns {object} - An object with today's and tomorrow's date as strings in yyyy-mm-dd format.
+ */
+export const getTodayAndTomorrow = () => {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+
+    const todayStr = today.toISOString().split("T")[0]; // Format to yyyy-mm-dd
+    const tomorrowStr = tomorrow.toISOString().split("T")[0];
+
+    return { todayStr, tomorrowStr };
+};
+
+
+/**
+ * Calculates the upcoming weekend days based on the current day.
+ * Determines which days (Friday, Saturday, Sunday) are the upcoming weekend days
+ * and returns them as strings in yyyy-mm-dd format.
+ * @returns {string[]} - An array of strings representing the weekend days in yyyy-mm-dd format.
+ */
+export const getWeekendDays = () => {
+    const today = new Date();
+    const weekendDays: string[] = [];
+    const dayOfWeek = today.getDay();
+
+    let friday, saturday, sunday;
+
+    if (dayOfWeek <= 4) { // Monday to Thursday
+        friday = new Date(today);
+        friday.setDate(today.getDate() + (5 - dayOfWeek));
+        saturday = new Date(friday);
+        saturday.setDate(friday.getDate() + 1);
+        sunday = new Date(saturday);
+        sunday.setDate(saturday.getDate() + 1);
+    } else if (dayOfWeek === 5) { // Friday
+        friday = today;
+        saturday = new Date(today);
+        saturday.setDate(today.getDate() + 1);
+        sunday = new Date(today);
+        sunday.setDate(today.getDate() + 2);
+    } else if (dayOfWeek === 6) { // Saturday
+        saturday = today;
+        sunday = new Date(today);
+        sunday.setDate(today.getDate() + 1);
+    } else if (dayOfWeek === 0) { // Sunday
+        sunday = today;
+    }
+
+    if (friday) weekendDays.push(friday.toISOString().split("T")[0]);
+    if (saturday) weekendDays.push(saturday.toISOString().split("T")[0]);
+    if (sunday) weekendDays.push(sunday.toISOString().split("T")[0]);
+
+    return weekendDays;
+};
+
+
+/**
+ * Determines which tabs an event should appear in based on its start and end dates.
+ * Checks if an event falls under "Today," "Tomorrow," or "This Weekend" based on 
+ * its start and end dates compared with specified dates.
+ * 
+ * @param {Event} event - The event to be checked.
+ * @param {string} todayStr - Today's date in yyyy-mm-dd format.
+ * @param {string} tomorrowStr - Tomorrow's date in yyyy-mm-dd format.
+ * @param {string[]} weekendDays - Array of weekend dates (Friday, Saturday, Sunday) in yyyy-mm-dd format.
+ * @returns {object} - An object indicating which tabs the event appears in: { isToday, isTomorrow, isThisWeekend }.
+ */
+export const getEventTabs = ( event: Event, todayStr: string, tomorrowStr: string, weekendDays: string[] ) => {
+    const eventStart = event.startDate;
+    const eventEnd = event.endDate;
+
+    // Today: Event includes today
+    const isToday = eventStart <= todayStr && eventEnd >= todayStr;
+
+    // Tomorrow: Event includes tomorrow
+    const isTomorrow = eventStart <= tomorrowStr && eventEnd >= tomorrowStr;
+
+    // This Weekend: Event includes any day of the weekend
+    const isThisWeekend = weekendDays.some((weekendDay) => 
+        eventStart <= weekendDay && eventEnd >= weekendDay
+    );
+
+    return { isToday, isTomorrow, isThisWeekend };
+};

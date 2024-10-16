@@ -5,13 +5,12 @@ import Image from "next/image"
 import { notFound } from "next/navigation"
 
 // App Imports
-import { Event } from "@/components/types"
 import { TopBar } from "@/components/top-bar"
 import Footer from "@/components/footer"
 import EventGrid from "@/components/event-grid"
 import { cityOptions } from "@/lib/selectOptions"
 import { Curator } from "@/components/types"
-import { mapFirestoreEvent, getEventsByCity, getUpcomingEvents, getEventsHappeningToday, getEventsHappeningTomorrow, sortEventsByClicks } from "@/lib/eventUtils"
+import { getEventsByCity, getUpcomingEvents, getEventsHappeningToday, getEventsHappeningTomorrow, sortEventsByClicks } from "@/lib/eventUtils"
 
 // Firebase Imports
 import { db } from "@/lib/firebase"
@@ -20,7 +19,7 @@ import { collection, getDoc, getDocs, doc, query, where } from "firebase/firesto
 // Shadcn Imports
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
+import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 
 type CityPageProps = {
     params: {
@@ -76,13 +75,6 @@ export default async function CityPage({ params }: CityPageProps) {
 
     // Step 2: Fetch events for this city
     const eventsByCity = await getEventsByCity(city);
-
-    // Use utility functions for filtering and sorting events
-    const today = new Date();
-    const upcomingEvents = getUpcomingEvents(eventsByCity, today);
-    const eventsHappeningToday = getEventsHappeningToday(eventsByCity, today);
-    const eventsHappeningTomorrow = getEventsHappeningTomorrow(eventsByCity, today);
-    const topEvents = sortEventsByClicks(upcomingEvents, 8);
 
     // Step 3: Fetch curators for this city
     const curatorsCol = collection(db, "cities", cityDoc.id, "curators");
@@ -177,14 +169,9 @@ export default async function CityPage({ params }: CityPageProps) {
                     <div className="flex flex-col max-w-[880px] mx-auto px-4">
                         <div className="space-y-4">
                             <div>
-                                <h2 className="text-xl font-semibold">find what&apos;s happning</h2>
-                                <p className="text-sm">trending events</p>
+                                <h2 className="text-xl font-semibold">happnings in {cityData.slug}</h2>
                             </div>
-                            <EventGrid
-                                eventsHappeningToday={eventsHappeningToday}
-                                eventsHappeningTomorrow={eventsHappeningTomorrow}
-                                topEvents={topEvents}
-                            />
+                            <EventGrid events={eventsByCity} />
                         </div>
                     </div>
                 </div>

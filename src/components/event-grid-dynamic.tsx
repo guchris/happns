@@ -9,7 +9,8 @@ import { useState, useRef, useEffect } from "react"
 import { useAuth } from "@/context/AuthContext"
 import { City, Event } from "@/components/types"
 import { calculateDistance } from "@/lib/geoUtils"
-import { formatEventDate, getEventsByCity, getUpcomingEvents, getEventsHappeningToday, getEventsHappeningTomorrow, sortEventsByClicks } from "@/lib/eventUtils"
+import { formatEventDate, getEventsByCity, getUpcomingEvents, sortEventsByClicks, getTodayAndTomorrow, getWeekendDays, getEventTabs } from "@/lib/eventUtils"
+
 
 // Firebase Imports
 import { db } from "@/lib/firebase"
@@ -128,72 +129,18 @@ const EventGridDynamic = ({ cities }: EventGridDynamicProps) => {
         fetchSelectedCity();
     }, [cities, user]);
 
-    // Step 1: Get today's and tomorrow's dates in yyyy-mm-dd format
-    const today = new Date();
-    const tomorrow = new Date(today);
-    tomorrow.setDate(today.getDate() + 1);
+    // Get today's and tomorrow's dates and weekend days
+    const { todayStr, tomorrowStr } = getTodayAndTomorrow();
+    const weekendDays = getWeekendDays();
 
-    const todayStr = today.toISOString().split("T")[0]; // Format to yyyy-mm-dd
-    const tomorrowStr = tomorrow.toISOString().split("T")[0];
-
-    // Step 2: Calculate weekend dates based on today’s day of the week
-    const weekendDays: string[] = [];
-    const dayOfWeek = today.getDay();
-
-    let friday, saturday, sunday;
-
-    if (dayOfWeek <= 4) { // Monday to Thursday
-        friday = new Date(today);
-        friday.setDate(today.getDate() + (5 - dayOfWeek));
-        saturday = new Date(friday);
-        saturday.setDate(friday.getDate() + 1);
-        sunday = new Date(saturday);
-        sunday.setDate(saturday.getDate() + 1);
-    } else if (dayOfWeek === 5) { // Friday
-        friday = today;
-        saturday = new Date(today);
-        saturday.setDate(today.getDate() + 1);
-        sunday = new Date(today);
-        sunday.setDate(today.getDate() + 2);
-    } else if (dayOfWeek === 6) { // Saturday
-        saturday = today;
-        sunday = new Date(today);
-        sunday.setDate(today.getDate() + 1);
-    } else if (dayOfWeek === 0) { // Sunday
-        sunday = today;
-    }
-
-    if (friday) weekendDays.push(friday.toISOString().split("T")[0]);
-    if (saturday) weekendDays.push(saturday.toISOString().split("T")[0]);
-    if (sunday) weekendDays.push(sunday.toISOString().split("T")[0]);
-
-    // Step 3: Function to check each event's placement
-    const getEventTabs = (event: Event) => {
-        const eventStart = event.startDate; // Assuming format is 'yyyy-mm-dd'
-        const eventEnd = event.endDate; // Assuming format is 'yyyy-mm-dd'
-    
-        // Today: Event includes today
-        const isToday = eventStart <= todayStr && eventEnd >= todayStr;
-    
-        // Tomorrow: Event includes tomorrow
-        const isTomorrow = eventStart <= tomorrowStr && eventEnd >= tomorrowStr;
-    
-        // This Weekend: Event includes any day of the weekend
-        const isThisWeekend = weekendDays.some((weekendDay) => 
-            eventStart <= weekendDay && eventEnd >= weekendDay
-        );
-    
-        return { isToday, isTomorrow, isThisWeekend };
-    };
-    
-
+    // Then you can use getEventTabs to filter events based on the active tab
     const filteredEvents = upcomingEvents.filter((event) => {
-        const { isToday, isTomorrow, isThisWeekend } = getEventTabs(event);
-    
+        const { isToday, isTomorrow, isThisWeekend } = getEventTabs(event, todayStr, tomorrowStr, weekendDays);
+
         if (activeTab === "today") return isToday;
         if (activeTab === "tomorrow") return isTomorrow;
         if (activeTab === "weekend") return isThisWeekend;
-    
+
         return false;
     });
     

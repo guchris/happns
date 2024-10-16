@@ -7,22 +7,35 @@ import { useState, useRef, useEffect } from "react"
 
 // App Imports
 import { Event } from "@/components/types"
-import { formatEventDate } from "@/lib/eventUtils"
+import { formatEventDate, getTodayAndTomorrow, getWeekendDays, getEventTabs } from "@/lib/eventUtils"
 
 // Shadcn Imports
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 
 type EventGridProps = {
-    eventsHappeningToday: Event[];
-    eventsHappeningTomorrow: Event[];
-    topEvents: Event[];
+    events: Event[];
 };
 
-const EventGrid = ({ eventsHappeningToday, eventsHappeningTomorrow, topEvents }: EventGridProps) => {
+const EventGrid = ({ events }: EventGridProps) => {
     const [activeTab, setActiveTab] = useState("today");
     const tabsRef = useRef<HTMLDivElement | null>(null);
     const [userInteracted, setUserInteracted] = useState(false);
+
+    // Get today's and tomorrow's dates and weekend days
+    const { todayStr, tomorrowStr } = getTodayAndTomorrow();
+    const weekendDays = getWeekendDays();
+
+    // Filter events based on the active tab
+    const filteredEvents = events.filter((event) => {
+        const { isToday, isTomorrow, isThisWeekend } = getEventTabs(event, todayStr, tomorrowStr, weekendDays);
+
+        if (activeTab === "today") return isToday;
+        if (activeTab === "tomorrow") return isTomorrow;
+        if (activeTab === "weekend") return isThisWeekend;
+        
+        return false;
+    });
 
     // Scroll the tabs list into view when the active tab changes, if needed
     useEffect(() => {
@@ -44,13 +57,6 @@ const EventGrid = ({ eventsHappeningToday, eventsHappeningTomorrow, topEvents }:
         }
     }, [userInteracted]);
 
-    // Select events based on the active tab
-    const filteredEvents = activeTab === "today"
-        ? eventsHappeningToday
-        : activeTab === "tomorrow"
-        ? eventsHappeningTomorrow
-        : topEvents;
-
     return (
         <div className="space-y-4">
             <Tabs
@@ -62,9 +68,9 @@ const EventGrid = ({ eventsHappeningToday, eventsHappeningTomorrow, topEvents }:
             >
                 <div ref={tabsRef} className="mb-4">
                     <TabsList>
-                        <TabsTrigger value="today">Today</TabsTrigger>
-                        <TabsTrigger value="tomorrow">Tomorrow</TabsTrigger>
-                        <TabsTrigger value="month">This Month</TabsTrigger>
+                        <TabsTrigger value="today">today</TabsTrigger>
+                        <TabsTrigger value="tomorrow">tomorrow</TabsTrigger>
+                        <TabsTrigger value="weekend">this weekend</TabsTrigger>
                     </TabsList>
                 </div>
 
@@ -76,7 +82,7 @@ const EventGrid = ({ eventsHappeningToday, eventsHappeningTomorrow, topEvents }:
                     <EventList events={filteredEvents} />
                 </TabsContent>
 
-                <TabsContent value="month">
+                <TabsContent value="weekend">
                     <EventList events={filteredEvents} />
                 </TabsContent>
             </Tabs>
