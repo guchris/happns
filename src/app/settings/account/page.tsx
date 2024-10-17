@@ -99,14 +99,17 @@ export default function SettingsAccountPage() {
     const { user } = useAuth();
     const [selectedCity, setSelectedCity] = useState("");
     const [cities, setCities] = useState<City[]>([]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchCities = async () => {
+        const fetchCitiesAndUserCity = async () => {
+            if (!user) return;
+
             try {
+                // Fetch cities
                 const citiesCollectionRef = collection(db, "cities");
                 const citySnapshot = await getDocs(citiesCollectionRef);
-                
+
                 const cityList: City[] = citySnapshot.docs.map(doc => {
                     const data = doc.data();
                     return {
@@ -121,24 +124,23 @@ export default function SettingsAccountPage() {
                 });
                 
                 setCities(cityList);
-            } catch (error) {
-                console.error("Error fetching cities: ", error);
-                toast({ title: "Error", description: "Could not load cities.", variant: "destructive" });
-            }
-        };
 
-        const fetchUserCity = async () => {
-            if (user) {
+                // Fetch user-selected city
                 const userDocRef = doc(db, "users", user.uid);
                 const userDoc = await getDoc(userDocRef);
                 if (userDoc.exists()) {
                     setSelectedCity(userDoc.data().selectedCity || "");
                 }
+
+            } catch (error) {
+                console.error("Error fetching data: ", error);
+                toast({ title: "Error", description: "Could not load account data.", variant: "destructive" });
+            } finally {
+                setLoading(false);
             }
         };
 
-        fetchCities();
-        fetchUserCity();
+        fetchCitiesAndUserCity();
     }, [user]);
 
     const handleCityChange = async (newCity: string) => {
@@ -147,7 +149,6 @@ export default function SettingsAccountPage() {
 
         if (user) {
             const userDocRef = doc(db, "users", user.uid);
-            setLoading(true);
             try {
                 await updateDoc(userDocRef, { selectedCity: cityToStore });
                 toast({ title: "City Updated", description: "Your default city has been updated successfully." });
@@ -155,9 +156,12 @@ export default function SettingsAccountPage() {
                 console.error("Error updating city: ", error);
                 toast({ title: "Error", description: "Could not update your default city. Please try again.", variant: "destructive" });
             }
-            setLoading(false);
         }
     };
+
+    if (loading || selectedCity === null) {
+        return null;
+    }
 
     return (
         <div className="space-y-6">

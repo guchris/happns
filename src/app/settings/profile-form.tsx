@@ -5,7 +5,6 @@ import { useState, useEffect } from "react"
 import Image from "next/image"
 
 // App Imports
-import EmptyPage from "@/components/empty-page"
 import { useAuth } from "@/context/AuthContext"
 import { toast } from "@/hooks/use-toast"
 import { getInitials } from "@/lib/userUtils"
@@ -184,100 +183,106 @@ export default function ProfileForm() {
     };
 
     if (!userInfo) {
-        return (
-            <h3 className="text-sm">loading...</h3>
-        );
+        return null;
     }
 
     return (
-        <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleProfileUpdate)}>
-                <div className="space-y-4">
-                    {/* Profile Picture Preview */}
-                    <FormField
-                        control={form.control}
-                        name="profilePicture"
-                        render={() => (
-                            <FormItem>
-                                <FormLabel>Profile Picture</FormLabel>
-                                <Avatar className="h-24 w-24 mb-2">
-                                    {editProfilePicture ? (
-                                        <Image
-                                            src={editProfilePicture}
-                                            alt="Profile Picture Preview"
-                                            width={96}
-                                            height={96}
-                                            className="h-full w-full object-cover rounded-full"
+        <div className="space-y-6">
+            <div>
+                <h1 className="text-lg font-semibold">profile</h1>
+                <p className="text-sm text-muted-foreground">
+                    configure your profile
+                </p>
+            </div>
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(handleProfileUpdate)}>
+                    <div className="space-y-4">
+                        {/* Profile Picture Preview */}
+                        <FormField
+                            control={form.control}
+                            name="profilePicture"
+                            render={() => (
+                                <FormItem>
+                                    <FormLabel>Profile Picture</FormLabel>
+                                    <Avatar className="h-24 w-24 mb-2">
+                                        {editProfilePicture ? (
+                                            <Image
+                                                src={editProfilePicture}
+                                                alt="Profile Picture Preview"
+                                                width={96}
+                                                height={96}
+                                                className="h-full w-full object-cover rounded-full"
+                                            />
+                                        ) : userInfo?.profilePicture ? (
+                                            <Image
+                                                src={userInfo.profilePicture}
+                                                alt="Profile Picture"
+                                                width={96}
+                                                height={96}
+                                                className="h-full w-full object-cover rounded-full"
+                                            />
+                                        ) : (
+                                            <AvatarFallback>
+                                                {getInitials(userInfo.name)}
+                                            </AvatarFallback>
+                                        )}
+                                    </Avatar>
+                                    <Input type="file" accept="image/*" onChange={handleProfilePictureUpload} />
+                                </FormItem>
+                            )}
+                        />
+
+                        {/* Name Field */}
+                        <FormField
+                            control={form.control}
+                            name="name"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Name</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} placeholder="Enter your name" />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
+
+                        {/* Username Field */}
+                        <FormField
+                            control={form.control}
+                            name="username"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Username</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            {...field}
+                                            placeholder="Enter your username"
+                                            value={field.value.toLowerCase()}
+                                            onChange={(e) => field.onChange(e.target.value.toLowerCase())} 
                                         />
-                                    ) : userInfo?.profilePicture ? (
-                                        <Image
-                                            src={userInfo.profilePicture}
-                                            alt="Profile Picture"
-                                            width={96}
-                                            height={96}
-                                            className="h-full w-full object-cover rounded-full"
-                                        />
-                                    ) : (
-                                        <AvatarFallback>
-                                            {getInitials(userInfo.name)}
-                                        </AvatarFallback>
-                                    )}
-                                </Avatar>
-                                <Input type="file" accept="image/*" onChange={handleProfilePictureUpload} />
-                            </FormItem>
-                        )}
-                    />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
 
-                    {/* Name Field */}
-                    <FormField
-                        control={form.control}
-                        name="name"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Name</FormLabel>
-                                <FormControl>
-                                    <Input {...field} placeholder="Enter your name" />
-                                </FormControl>
-                            </FormItem>
-                        )}
-                    />
+                        {/* Email Field */}
+                        <FormField
+                            control={form.control}
+                            name="email"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Email</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} placeholder="Enter your email" />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
 
-                    {/* Username Field */}
-                    <FormField
-                        control={form.control}
-                        name="username"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Username</FormLabel>
-                                <FormControl>
-                                    <Input
-                                        {...field}
-                                        placeholder="Enter your username"
-                                        value={field.value.toLowerCase()}
-                                        onChange={(e) => field.onChange(e.target.value.toLowerCase())} 
-                                    />
-                                </FormControl>
-                            </FormItem>
-                        )}
-                    />
-
-                    {/* Email Field */}
-                    <FormField
-                        control={form.control}
-                        name="email"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Email</FormLabel>
-                                <FormControl>
-                                    <Input {...field} placeholder="Enter your email" />
-                                </FormControl>
-                            </FormItem>
-                        )}
-                    />
-
-                    <Button type="submit" disabled={!isModified}>Update Profile</Button>
-                </div>
-            </form>
-        </Form>
+                        <Button type="submit" disabled={!isModified}>Update Profile</Button>
+                    </div>
+                </form>
+            </Form>
+        </div>
     )
 }

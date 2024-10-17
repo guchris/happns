@@ -1,7 +1,7 @@
 "use client"
 
 // Next and React Imports
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 
 // App Imports
 import { useAuth } from "@/context/AuthContext"
@@ -41,19 +41,31 @@ export function NotificationsForm() {
         resolver: zodResolver(notificationsFormSchema),
         defaultValues,
     })
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         const fetchNotificationSettings = async () => {
             if (user) {
-                const userDocRef = doc(db, "users", user.uid)
-                const userDoc = await getDoc(userDocRef)
-                if (userDoc.exists()) {
-                    const userData = userDoc.data()
-                    form.reset({
-                        communication_emails: userData.notifications?.communication_emails || false,
-                        roundup_emails: userData.notifications?.roundup_emails || false,
-                        marketing_emails: userData.notifications?.marketing_emails || false,
+                try {
+                    const userDocRef = doc(db, "users", user.uid)
+                    const userDoc = await getDoc(userDocRef)
+                    if (userDoc.exists()) {
+                        const userData = userDoc.data()
+                        form.reset({
+                            communication_emails: userData.notifications?.communication_emails || false,
+                            roundup_emails: userData.notifications?.roundup_emails || false,
+                            marketing_emails: userData.notifications?.marketing_emails || false,
+                        })
+                    }
+                } catch (error) {
+                    console.error("Error fetching notification settings:", error)
+                    toast({
+                        title: "Error",
+                        description: "Could not load notification settings.",
+                        variant: "destructive",
                     })
+                } finally {
+                    setLoading(false) // Set loading to false after fetching
                 }
             }
         }
@@ -88,68 +100,80 @@ export function NotificationsForm() {
         }
     }
 
+    if (loading) {
+        return null;
+    }
+
     return (
-        <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                <div className="space-y-4">
-                    <FormField
-                        control={form.control}
-                        name="communication_emails"
-                        render={({ field }) => (
-                            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                                <div className="space-y-0.5">
-                                <FormLabel className="text-sm">
-                                    Communication emails
-                                </FormLabel>
-                                <FormDescription className="text-sm">
-                                    Receive emails about your account activity
-                                </FormDescription>
-                                </div>
-                                <FormControl>
-                                    <Switch checked={field.value} onCheckedChange={field.onChange} />
-                                </FormControl>
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="marketing_emails"
-                        render={({ field }) => (
-                            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                                <div className="space-y-0.5">
-                                <FormLabel className="text-sm">
-                                    Marketing emails
-                                </FormLabel>
-                                <FormDescription>
-                                    Receive emails about new features, partnerships, and more
-                                </FormDescription>
-                                </div>
-                                <FormControl>
-                                    <Switch checked={field.value} onCheckedChange={field.onChange} />
-                                </FormControl>
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="roundup_emails"
-                        render={({ field }) => (
-                            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                                <div className="space-y-0.5">
-                                <FormLabel className="text-sm">Roundup emails</FormLabel>
-                                <FormDescription>
-                                    Receive weekly roundup emails of events in your city
-                                </FormDescription>
-                                </div>
-                                <FormControl>
-                                    <Switch checked={field.value} onCheckedChange={field.onChange} />
-                                </FormControl>
-                            </FormItem>
-                        )}
-                    />
-                </div>
-                <Button type="submit">update notifications</Button>
-            </form>
-        </Form>
+        <div className="space-y-6">
+            <div>
+                <h1 className="text-lg font-semibold">notifications</h1>
+                <p className="text-sm text-muted-foreground">
+                    configure how you receive email notifications
+                </p>
+            </div>
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                    <div className="space-y-4">
+                        <FormField
+                            control={form.control}
+                            name="communication_emails"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                                    <div className="space-y-0.5">
+                                    <FormLabel className="text-sm">
+                                        Communication emails
+                                    </FormLabel>
+                                    <FormDescription className="text-sm">
+                                        Receive emails about your account activity
+                                    </FormDescription>
+                                    </div>
+                                    <FormControl>
+                                        <Switch checked={field.value} onCheckedChange={field.onChange} />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="marketing_emails"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                                    <div className="space-y-0.5">
+                                    <FormLabel className="text-sm">
+                                        Marketing emails
+                                    </FormLabel>
+                                    <FormDescription>
+                                        Receive emails about new features, partnerships, and more
+                                    </FormDescription>
+                                    </div>
+                                    <FormControl>
+                                        <Switch checked={field.value} onCheckedChange={field.onChange} />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="roundup_emails"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                                    <div className="space-y-0.5">
+                                    <FormLabel className="text-sm">Roundup emails</FormLabel>
+                                    <FormDescription>
+                                        Receive weekly roundup emails of events in your city
+                                    </FormDescription>
+                                    </div>
+                                    <FormControl>
+                                        <Switch checked={field.value} onCheckedChange={field.onChange} />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+                    <Button type="submit">update notifications</Button>
+                </form>
+            </Form>
+        </div>
     )
 }
