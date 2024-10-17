@@ -206,8 +206,8 @@ export default function EventForm() {
 
                         form.reset({
                             ...eventData,
-                            startDate: new Date(eventData.startDate),
-                            endDate: new Date(eventData.endDate),
+                            startDate: new Date(`${eventData.startDate}T00:00:00`),
+                            endDate: new Date(`${eventData.endDate}T00:00:00`),
                             category: eventData.category,
                             image: eventData.image,
                             dailyTimes: hasMultipleTimes ? eventData.times : undefined,
