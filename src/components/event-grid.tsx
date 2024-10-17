@@ -7,7 +7,7 @@ import { useState, useRef, useEffect } from "react"
 
 // App Imports
 import { Event } from "@/components/types"
-import { formatEventDate, getTodayAndTomorrow, getWeekendDays, getEventTabs } from "@/lib/eventUtils"
+import { sortEventsByDateAndName, formatEventDate, getTodayAndTomorrow, getWeekendDays, getEventTabs } from "@/lib/eventUtils"
 
 // Shadcn Imports
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -26,16 +26,18 @@ const EventGrid = ({ events }: EventGridProps) => {
     const { todayStr, tomorrowStr } = getTodayAndTomorrow();
     const weekendDays = getWeekendDays();
 
-    // Filter events based on the active tab
-    const filteredEvents = events.filter((event) => {
-        const { isToday, isTomorrow, isThisWeekend } = getEventTabs(event, todayStr, tomorrowStr, weekendDays);
+    // Filter and sort events based on the active tab
+    const filteredEvents = sortEventsByDateAndName(
+        events.filter((event) => {
+            const { isToday, isTomorrow, isThisWeekend } = getEventTabs(event, todayStr, tomorrowStr, weekendDays);
 
-        if (activeTab === "today") return isToday;
-        if (activeTab === "tomorrow") return isTomorrow;
-        if (activeTab === "weekend") return isThisWeekend;
-        
-        return false;
-    });
+            if (activeTab === "today") return isToday;
+            if (activeTab === "tomorrow") return isTomorrow;
+            if (activeTab === "weekend") return isThisWeekend;
+
+            return false;
+        })
+    );
 
     // Scroll the tabs list into view when the active tab changes, if needed
     useEffect(() => {

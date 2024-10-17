@@ -9,7 +9,7 @@ import { useState, useRef, useEffect } from "react"
 import { useAuth } from "@/context/AuthContext"
 import { City, Event } from "@/components/types"
 import { calculateDistance } from "@/lib/geoUtils"
-import { sortEventsByDateAndName, formatEventDate, getEventsByCity, getUpcomingEvents, sortEventsByClicks, getTodayAndTomorrow, getWeekendDays, getEventTabs } from "@/lib/eventUtils"
+import { sortEventsByDateAndName, formatEventDate, getEventsByCity, getTodayAndTomorrow, getWeekendDays, getEventTabs } from "@/lib/eventUtils"
 
 
 // Firebase Imports
@@ -34,7 +34,6 @@ const EventGridDynamic = ({ cities }: EventGridDynamicProps) => {
 
     const [userInteracted, setUserInteracted] = useState(false);
     const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
-    const [topEvents, setTopEvents] = useState<Event[]>([]);
 
     const [isLoading, setIsLoading] = useState(true);
 
@@ -98,10 +97,7 @@ const EventGridDynamic = ({ cities }: EventGridDynamicProps) => {
             if (citySlug) {
                 setCityName(citySlug);
                 const eventsByCity = await getEventsByCity(citySlug);
-                const today = new Date();
-                const upcomingEvents = getUpcomingEvents(eventsByCity, today);
-                setUpcomingEvents(upcomingEvents);
-                setTopEvents(sortEventsByClicks(upcomingEvents, 8));
+                setUpcomingEvents(eventsByCity);
                 setIsLoading(false);
             } else if (navigator.geolocation) {
                 // If no selected city, fall back to geolocation
@@ -113,9 +109,7 @@ const EventGridDynamic = ({ cities }: EventGridDynamicProps) => {
                         setCityName(closestCitySlug);
 
                         const eventsByCity = await getEventsByCity(closestCitySlug);
-                        const today = new Date();
-                        setUpcomingEvents(getUpcomingEvents(eventsByCity, today));
-                        setTopEvents(sortEventsByClicks(eventsByCity, 8));
+                        setUpcomingEvents(eventsByCity);
                         setIsLoading(false);
                     },
                     (error) => {
@@ -133,7 +127,7 @@ const EventGridDynamic = ({ cities }: EventGridDynamicProps) => {
     const { todayStr, tomorrowStr } = getTodayAndTomorrow();
     const weekendDays = getWeekendDays();
 
-    // Then you can use getEventTabs to filter events based on the active tab
+    // Filter and sort events based on the active tab
     const filteredEvents = sortEventsByDateAndName(
         upcomingEvents.filter((event) => {
             const { isToday, isTomorrow, isThisWeekend } = getEventTabs(event, todayStr, tomorrowStr, weekendDays);
