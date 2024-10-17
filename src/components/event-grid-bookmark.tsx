@@ -18,6 +18,8 @@ import { doc, collection, getDocs, getDoc, query, limit } from "firebase/firesto
 // Shadcn Imports
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 
+const CACHE_KEY = 'bookmarkedEvents';
+
 const EventGridBookmark = () => {
     const { user } = useAuth();
     const [bookmarkedEvents, setBookmarkedEvents] = useState<Event[]>([]);
@@ -25,32 +27,45 @@ const EventGridBookmark = () => {
 
     useEffect(() => {
         const fetchBookmarkedEvents = async () => {
-            if (user) {
-                try {
-                    const bookmarksRef = collection(db, "users", user.uid, "user-bookmarks");
-                    const bookmarkedEventsQuery = query(bookmarksRef, limit(8));
-                    const querySnapshot = await getDocs(bookmarkedEventsQuery);
-                    
-                    const today = new Date();
-                    const events: Event[] = [];
-                    for (const bookmarkDoc of querySnapshot.docs) {
-                        const eventId = bookmarkDoc.id;
-                        const eventRef = doc(db, "events", eventId);
-                        const eventDoc = await getDoc(eventRef);
-                        if (eventDoc.exists()) {
-                            events.push(eventDoc.data() as Event);
-                        }
-                    }
 
-                    const futureEvents = getFutureEvents(events, today);
-                    const sortedFutureEvents = sortEventsByDate(futureEvents);
+            if (!user) return;
 
-                    setBookmarkedEvents(sortedFutureEvents);
-                } catch (error) {
-                    console.error("Error fetching bookmarked events:", error);
-                } finally {
-                    setIsLoading(false);
-                }
+            // Check if cached data exists
+            const cachedEvents = localStorage.getItem(CACHE_KEY);
+            if (cachedEvents) {
+                setBookmarkedEvents(JSON.parse(cachedEvents));
+                setIsLoading(false);
+                return;
+            }
+
+            try {
+                const bookmarksRef = collection(db, "users", user.uid, "user-bookmarks");
+                const bookmarkedEventsQuery = query(bookmarksRef, limit(8));
+                const querySnapshot = await getDocs(bookmarkedEventsQuery);
+                
+                const today = new Date();
+
+                // Fetch event documents in parallel
+                const eventPromises = querySnapshot.docs.map((bookmarkDoc) => {
+                    const eventId = bookmarkDoc.id;
+                    const eventRef = doc(db, "events", eventId);
+                    return getDoc(eventRef);
+                });
+
+                const eventDocs = await Promise.all(eventPromises);
+                
+                const events = eventDocs
+                    .filter((eventDoc) => eventDoc.exists())
+                    .map((eventDoc) => eventDoc.data() as Event);
+
+                const futureEvents = getFutureEvents(events, today);
+                const sortedFutureEvents = sortEventsByDate(futureEvents);
+
+                setBookmarkedEvents(sortedFutureEvents);
+            } catch (error) {
+                console.error("Error fetching bookmarked events:", error);
+            } finally {
+                setIsLoading(false);
             }
         };
 
