@@ -9,7 +9,7 @@ import { useState, useRef, useEffect } from "react"
 import { useAuth } from "@/context/AuthContext"
 import { City, Event } from "@/components/types"
 import { calculateDistance } from "@/lib/geoUtils"
-import { formatEventDate, getEventsByCity, getUpcomingEvents, sortEventsByClicks, getTodayAndTomorrow, getWeekendDays, getEventTabs } from "@/lib/eventUtils"
+import { sortEventsByDateAndName, formatEventDate, getEventsByCity, getUpcomingEvents, sortEventsByClicks, getTodayAndTomorrow, getWeekendDays, getEventTabs } from "@/lib/eventUtils"
 
 
 // Firebase Imports
@@ -134,15 +134,17 @@ const EventGridDynamic = ({ cities }: EventGridDynamicProps) => {
     const weekendDays = getWeekendDays();
 
     // Then you can use getEventTabs to filter events based on the active tab
-    const filteredEvents = upcomingEvents.filter((event) => {
-        const { isToday, isTomorrow, isThisWeekend } = getEventTabs(event, todayStr, tomorrowStr, weekendDays);
-
-        if (activeTab === "today") return isToday;
-        if (activeTab === "tomorrow") return isTomorrow;
-        if (activeTab === "weekend") return isThisWeekend;
-
-        return false;
-    });
+    const filteredEvents = sortEventsByDateAndName(
+        upcomingEvents.filter((event) => {
+            const { isToday, isTomorrow, isThisWeekend } = getEventTabs(event, todayStr, tomorrowStr, weekendDays);
+    
+            if (activeTab === "today") return isToday;
+            if (activeTab === "tomorrow") return isTomorrow;
+            if (activeTab === "weekend") return isThisWeekend;
+    
+            return false;
+        })
+    );
     
     return (
         <div className="flex-1 max-w-[880px] md:max-w-[700px] lg:max-w-[880px] mx-auto p-4 space-y-4">
