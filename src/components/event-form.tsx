@@ -125,7 +125,8 @@ const eventFormSchema = z.object({
         .regex(/^(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)$/i, {
             message: "Start time must be in HH:mm AM/PM format.",
         })
-        .optional()
+        .optional(),
+    varyingTimes: z.boolean()
 }).refine((data) => {
     const isSingleDayEvent = data.startDate.toDateString() === data.endDate.toDateString();
     
@@ -157,6 +158,7 @@ export default function EventForm() {
         defaultValues: {
             cost: { type: "single", value: 0 },
             format: "in-person",
+            varyingTimes: false,
         },
     })
 
@@ -250,8 +252,9 @@ export default function EventForm() {
         }
     }, [startDate, endDate]);
 
-    const handleToggleVaryingTimes = () => {
-        setVaryingTimes(!varyingTimes);
+    const handleToggleVaryingTimes = (checked: boolean) => {
+        setVaryingTimes(checked);
+        form.setValue('varyingTimes', checked);
     };
 
     // Form submission handler

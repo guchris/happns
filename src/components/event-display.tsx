@@ -86,7 +86,7 @@ export function EventDisplay({ event }: EventDisplayProps) {
                                     <div className="text-base font-medium">{formatEventDate(event.startDate, event.endDate)}</div>
 
                                     {/* Conditionally render either the single time or times array */}
-                                    {event.startDate === event.endDate ? (
+                                    {event.times.length === 1 ? (
                                         <div className="text-sm font-medium">
                                             {`${event.times[0].startTime} - ${event.times[0].endTime}`}
                                         </div>
