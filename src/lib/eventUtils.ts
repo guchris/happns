@@ -229,8 +229,9 @@ export const getTodayAndTomorrow = () => {
     const tomorrow = new Date(today);
     tomorrow.setDate(today.getDate() + 1);
 
-    const todayStr = today.toISOString().split("T")[0]; // Format to yyyy-mm-dd
-    const tomorrowStr = tomorrow.toISOString().split("T")[0];
+    // Use toLocaleDateString to avoid timezone issues
+    const todayStr = today.toLocaleDateString('en-CA');
+    const tomorrowStr = tomorrow.toLocaleDateString('en-CA');
 
     return { todayStr, tomorrowStr };
 };
@@ -245,37 +246,38 @@ export const getTodayAndTomorrow = () => {
 export const getWeekendDays = () => {
     const today = new Date();
     const weekendDays: string[] = [];
-    const dayOfWeek = today.getDay();
+    const dayOfWeek = today.getDay(); // 0 (Sunday) to 6 (Saturday)
 
     let friday, saturday, sunday;
 
     if (dayOfWeek <= 4) { // Monday to Thursday
         friday = new Date(today);
-        friday.setDate(today.getDate() + (5 - dayOfWeek));
+        friday.setDate(today.getDate() + (5 - dayOfWeek)); // Get upcoming Friday
         saturday = new Date(friday);
-        saturday.setDate(friday.getDate() + 1);
-        sunday = new Date(saturday);
-        sunday.setDate(saturday.getDate() + 1);
+        saturday.setDate(friday.getDate() + 1); // Saturday
+        sunday = new Date(friday);
+        sunday.setDate(friday.getDate() + 2); // Sunday
     } else if (dayOfWeek === 5) { // Friday
         friday = today;
         saturday = new Date(today);
-        saturday.setDate(today.getDate() + 1);
+        saturday.setDate(today.getDate() + 1); // Saturday
         sunday = new Date(today);
-        sunday.setDate(today.getDate() + 2);
+        sunday.setDate(today.getDate() + 2); // Sunday
     } else if (dayOfWeek === 6) { // Saturday
         saturday = today;
         sunday = new Date(today);
-        sunday.setDate(today.getDate() + 1);
+        sunday.setDate(today.getDate() + 1); // Sunday
     } else if (dayOfWeek === 0) { // Sunday
         sunday = today;
     }
 
-    if (friday) weekendDays.push(friday.toISOString().split("T")[0]);
-    if (saturday) weekendDays.push(saturday.toISOString().split("T")[0]);
-    if (sunday) weekendDays.push(sunday.toISOString().split("T")[0]);
+    if (friday) weekendDays.push(friday.toLocaleDateString('en-CA')); // Push Friday
+    if (saturday) weekendDays.push(saturday.toLocaleDateString('en-CA')); // Push Saturday
+    if (sunday) weekendDays.push(sunday.toLocaleDateString('en-CA')); // Push Sunday
 
     return weekendDays;
 };
+
 
 
 /**
