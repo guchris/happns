@@ -8,6 +8,8 @@ import { cn } from "@/lib/utils"
 import { Event } from "@/components/types"
 import { useEvent } from "@/hooks/use-event"
 import { categoryOptions } from "@/lib/selectOptions"
+import { sortEventsByDateAndName } from "@/lib/eventUtils"
+
 
 // Firebase Imports
 import { db } from "@/lib/firebase"
@@ -44,43 +46,45 @@ const getCurrentDateForDisplay = (startDate: Date, endDate: Date) => {
 
 export function EventList({ items, isVerticalLayout, isFilterActive }: EventListProps) {
 
-    // Group events by the display date (either start date or today's date if within range)
+    const today = new Date().toISOString().split("T")[0]; // ISO format for today's date
+
+    // Group events by display date (today if within range, otherwise start date)
     const eventsByDate = items.reduce((acc, item) => {
         const startDate = parseISO(item.startDate);
         const endDate = parseISO(item.endDate);
 
-        // Use the new logic to determine whether to use today's date or start date
-        const displayDate = getCurrentDateForDisplay(startDate, endDate);
-        const isoDate = displayDate.toISOString().split("T")[0];
+        // Ensure multi-day events appear under today if today is within their date range
+        const isTodayInRange = new Date(today).getTime() >= startDate.getTime() && new Date(today).getTime() <= endDate.getTime();
 
-        if (!acc[isoDate]) {
-            acc[isoDate] = [];
+        if (isTodayInRange) {
+            // If today is within the event's range, ensure the event is in today's collapsible
+            if (!acc[today]) {
+                acc[today] = [];
+            }
+            acc[today].push(item);
+        } else if (startDate.getTime() > new Date(today).getTime()) {
+            // Only create a collapsible for future events (skip past dates if they span today)
+            const startIsoDate = startDate.toISOString().split("T")[0];
+            if (!acc[startIsoDate]) {
+                acc[startIsoDate] = [];
+            }
+            acc[startIsoDate].push(item);
         }
-        acc[isoDate].push(item);
+
         return acc;
     }, {} as Record<string, Event[]>);
 
-    const firstEventDate = parseISO(new Date().toISOString().split("T")[0]);
-    const lastEventDate = parseISO(
-        items.reduce((latest, item) => {
-            const endDate = parseISO(item.endDate);
-            return endDate > latest ? endDate : latest;
-        }, new Date(0)).toISOString().split("T")[0]
-    );
+    // Sort the events in each collapsible by date and then alphabetically by name
+    Object.keys(eventsByDate).forEach(date => {
+        eventsByDate[date] = sortEventsByDateAndName(eventsByDate[date]);
+    });
 
-    const allDates = eachDayOfInterval({ start: firstEventDate, end: lastEventDate });
-
-    // Add empty dates only if no filters are applied
-    if (!isFilterActive) {
-        allDates.forEach((date) => {
-            const isoDate = date.toISOString().split("T")[0];
-            if (!eventsByDate[isoDate]) {
-                eventsByDate[isoDate] = [];
-            }
-        });
-    }
-
-    const sortedDates = Object.keys(eventsByDate).sort((a, b) => parseISO(a).getTime() - parseISO(b).getTime());
+    // Sort the collapsibles by date, ensuring today comes first
+    const sortedDates = Object.keys(eventsByDate).sort((a, b) => {
+        if (a === today) return -1; // Ensure today's collapsible is first
+        if (b === today) return 1;
+        return parseISO(a).getTime() - parseISO(b).getTime();
+    });
 
     return (
         <ScrollArea className="h-full overflow-y-auto">
