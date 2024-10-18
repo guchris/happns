@@ -127,7 +127,7 @@ const eventFormSchema = z.object({
         })
         .optional()
 }).refine((data) => {
-    const isSingleDayEvent = data.startDate === data.endDate;
+    const isSingleDayEvent = data.startDate.toDateString() === data.endDate.toDateString();
     if (isSingleDayEvent) {
         // Single day event requires both startTime and endTime
         return data.startTime && data.endTime;
