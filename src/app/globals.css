@@ -80,6 +80,15 @@
   }
 }
 
+@keyframes fadeInOut {
+  0%, 100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
 .intro-animation {
   display: flex;
   align-items: center;
@@ -97,4 +106,8 @@
 .intro-animation h1 {
   font-size: 1.5rem;
   font-weight: bold;
+}
+
+.intro-animation h1 .slash {
+  animation: fadeInOut 0.5s infinite;
 }

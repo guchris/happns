@@ -107,7 +107,9 @@ export default async function Home() {
 		<div>
 			{/* Intro Animation */}
 			<div className="intro-animation">
-				<h1>happns/</h1>
+				<h1>
+					happns<span className="slash">/</span>
+				</h1>
 			</div>
 
 			{/* Main Content */}
