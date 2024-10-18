@@ -148,18 +148,20 @@ export default async function CityPage({ params }: CityPageProps) {
                         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                             {validCurators.map((curator, index) => (
                                 <Card key={index} className="w-full">
-                                    <CardHeader className="p-4">
-                                        <div className="aspect-square w-full overflow-hidden relative">
-                                            <Image
-                                                src={curator.profilePicture}
-                                                alt={`${curator.name}'s profile picture`}
-                                                className="object-cover rounded-full"
-                                                fill
-                                            />
-                                        </div>
-                                        <CardTitle className="line-clamp-1 text-base font-semibold">{curator.name}</CardTitle>
-                                        <CardDescription className="line-clamp-1 text-sm text-gray-500">@{curator.username}</CardDescription>
-                                    </CardHeader>
+                                    <Link href={`/profile/${curator.username}`} className="no-underline">
+                                        <CardHeader className="p-4">
+                                            <div className="aspect-square w-full overflow-hidden relative">
+                                                <Image
+                                                    src={curator.profilePicture}
+                                                    alt={`${curator.name}'s profile picture`}
+                                                    className="object-cover rounded-full"
+                                                    fill
+                                                />
+                                            </div>
+                                            <CardTitle className="line-clamp-1 text-base font-semibold">{curator.name}</CardTitle>
+                                            <CardDescription className="line-clamp-1 text-sm text-gray-500">@{curator.username}</CardDescription>
+                                        </CardHeader>
+                                    </Link>
                                 </Card>
                             ))}
                         </div>

@@ -143,7 +143,7 @@ export async function getTotalUpcomingEvents(citySlug: string): Promise<number> 
     const eventsQuery = query(
         collection(db, "events"),
         where("city", "==", citySlug),
-        where("startDate", ">=", today)
+        where("endDate", ">=", today)
     );
 
     const countSnapshot = await getCountFromServer(eventsQuery);
