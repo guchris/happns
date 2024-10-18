@@ -53,10 +53,13 @@ const EventGridBookmark = () => {
                 });
 
                 const eventDocs = await Promise.all(eventPromises);
-                
+
                 const events = eventDocs
                     .filter((eventDoc) => eventDoc.exists())
-                    .map((eventDoc) => eventDoc.data() as Event);
+                    .map((eventDoc) => ({
+                        ...eventDoc.data(),
+                        id: eventDoc.id,
+                    }) as Event);
 
                 const futureEvents = getFutureEvents(events, today);
                 const sortedFutureEvents = sortEventsByDate(futureEvents);
