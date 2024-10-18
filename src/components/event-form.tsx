@@ -128,12 +128,16 @@ const eventFormSchema = z.object({
         .optional()
 }).refine((data) => {
     const isSingleDayEvent = data.startDate.toDateString() === data.endDate.toDateString();
-    if (isSingleDayEvent) {
-        // Single day event requires both startTime and endTime
-        return data.startTime && data.endTime;
+    
+    if (!data.varyingTimes) {
+        // When varyingTimes is unchecked (false), validate startTime and endTime for single-day events
+        if (isSingleDayEvent) {
+            return data.startTime && data.endTime; 
+        }
+        return true;
     } else {
-        // Multi-day event requires dailyTimes and allows nullable times
-        return data.dailyTimes && data.dailyTimes.length > 0;
+        // When varyingTimes is checked (true), validate dailyTimes for multi-day events
+        return data.dailyTimes && data.dailyTimes.length > 0 && data.dailyTimes.every(day => day.startTime && day.endTime);
     }
 }, {
     message: "For single-day events, start and end times are required. For multi-day events, provide varying daily times.",
