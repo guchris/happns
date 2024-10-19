@@ -8,9 +8,10 @@ import { notFound } from "next/navigation"
 import { TopBar } from "@/components/top-bar"
 import Footer from "@/components/footer"
 import EventGrid from "@/components/event-grid"
+import CategoryEventGrid from "@/components/event-grid-category"
 import { cityOptions } from "@/lib/selectOptions"
 import { Curator } from "@/components/types"
-import { getEventsByCity, getUpcomingEvents, getEventsHappeningToday, getEventsHappeningTomorrow, sortEventsByClicks } from "@/lib/eventUtils"
+import { getEventsByCity } from "@/lib/eventUtils"
 
 // Firebase Imports
 import { db } from "@/lib/firebase"
@@ -175,6 +176,21 @@ export default async function CityPage({ params }: CityPageProps) {
                             </div>
                             <EventGrid events={eventsByCity} />
                         </div>
+                    </div>
+
+                    {/* Music Events Section */}
+                    <div className="flex flex-col max-w-[880px] mx-auto px-4">
+                        <CategoryEventGrid events={eventsByCity} category="music" />
+                    </div>
+
+                    {/* Nightlife Events Section */}
+                    <div className="flex flex-col max-w-[880px] mx-auto px-4">
+                        <CategoryEventGrid events={eventsByCity} category="nightlife" />
+                    </div>
+
+                    {/* Fitness Events Section */}
+                    <div className="flex flex-col max-w-[880px] mx-auto px-4">
+                        <CategoryEventGrid events={eventsByCity} category="fitness" />
                     </div>
                 </div>
             </div>
