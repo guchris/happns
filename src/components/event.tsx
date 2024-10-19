@@ -3,6 +3,7 @@
 // React Imports
 import * as React from "react"
 import { useEffect, useState } from "react"
+import { useSearchParams } from "next/navigation"
 
 // App Imports
 import { EventList } from "@/components/event-list"
@@ -49,6 +50,9 @@ export function Event({ events, city }: EventProps) {
 
     const [selectedCategories, setSelectedCategories] = useState<Option[]>([]);
     const selectedCategoryValues = selectedCategories.map(category => category.value);
+    const searchParams = useSearchParams();
+    const urlCategory = searchParams?.get("category") || "";
+
     const [selectedFormats, setSelectedFormats] = useState<Option[]>([]);
     const selectedFormatValues = selectedFormats.map(format => format.value);
     const [selectedNeighborhoods, setSelectedNeighborhoods] = useState<Option[]>([]);
@@ -63,6 +67,15 @@ export function Event({ events, city }: EventProps) {
     const [searchQuery, setSearchQuery] = useState("");
 
     const isFilterActive = selectedCategories.length > 0 || selectedFormats.length > 0 || selectedNeighborhoods.length > 0 || selectedCosts.length > 0 || searchQuery.length > 0 || showBookmarkedEvents;
+
+    useEffect(() => {
+        if (urlCategory) {
+            const categoryOption = categoryOptions.find(option => option.value === urlCategory);
+            if (categoryOption) {
+                setSelectedCategories([categoryOption]);
+            }
+        }
+    }, [urlCategory]);
 
     useEffect(() => {
         if (user) {

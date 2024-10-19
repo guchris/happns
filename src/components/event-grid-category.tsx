@@ -13,9 +13,10 @@ import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/ca
 type CategoryEventGridProps = {
     events: Event[];
     category: string;
+    city: string;
 };
 
-const CategoryEventGrid = ({ events, category }: CategoryEventGridProps) => {
+const CategoryEventGrid = ({ events, category, city }: CategoryEventGridProps) => {
 
     const filteredEvents = sortEventsByDateAndName(
         events.filter((event) => {
@@ -26,9 +27,12 @@ const CategoryEventGrid = ({ events, category }: CategoryEventGridProps) => {
     
     return (
         <div className="space-y-4">
-            <h2 className="text-xl font-semibold">
+            <div className="flex justify-between items-center">
                 <Badge variant="secondary" className="text-lg">{category}</Badge>
-            </h2>
+                <Link href={`/${city}/explore?category=${category}`} className="text-sm font-medium text-black hover:underline">
+                    see more
+                </Link>
+            </div>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 {filteredEvents.length > 0 ? (
                     filteredEvents.map((event) => (
@@ -52,7 +56,7 @@ const CategoryEventGrid = ({ events, category }: CategoryEventGridProps) => {
                         </Card>
                     ))
                 ) : (
-                    <p className="text-sm text-muted-foreground">no upcoming {category} events available</p>
+                    <p className="text-sm text-muted-foreground">no events available</p>
                 )}
             </div>
         </div>

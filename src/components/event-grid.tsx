@@ -118,7 +118,7 @@ const EventList = ({ events }: { events: Event[] }) => {
                     </Card>
                 ))
             ) : (
-                <p className="text-sm text-muted-foreground">No events available.</p>
+                <p className="text-sm text-muted-foreground">no events available</p>
             )}
         </div>
     );

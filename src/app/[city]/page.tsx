@@ -180,17 +180,17 @@ export default async function CityPage({ params }: CityPageProps) {
 
                     {/* Music Events Section */}
                     <div className="flex flex-col max-w-[880px] mx-auto px-4">
-                        <CategoryEventGrid events={eventsByCity} category="music" />
+                        <CategoryEventGrid events={eventsByCity} category="music" city={cityData.slug} />
                     </div>
 
                     {/* Nightlife Events Section */}
                     <div className="flex flex-col max-w-[880px] mx-auto px-4">
-                        <CategoryEventGrid events={eventsByCity} category="nightlife" />
+                        <CategoryEventGrid events={eventsByCity} category="nightlife" city={cityData.slug} />
                     </div>
 
                     {/* Fitness Events Section */}
                     <div className="flex flex-col max-w-[880px] mx-auto px-4">
-                        <CategoryEventGrid events={eventsByCity} category="fitness" />
+                        <CategoryEventGrid events={eventsByCity} category="fitness" city={cityData.slug} />
                     </div>
                 </div>
             </div>
