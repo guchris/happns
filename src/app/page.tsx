@@ -150,7 +150,7 @@ export default async function Home() {
 						<JoinCard />
 
 						{/* Categories Section */}
-						<CategoriesGrid />
+						{/* <CategoriesGrid /> */}
 
 					</div>
 				</div>

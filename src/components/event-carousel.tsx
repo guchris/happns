@@ -17,7 +17,7 @@ export default function EventCarousel({ carouselEvents }: EventCarouselProps) {
                 {carouselEvents.slice(0, 3).map((event) => (
                     <div 
                         key={event.uid} 
-                        className="w-1/3 pb-5"
+                        className="w-1/3 pb-7"
                     >
                         <Link href={`/events/${event.uid}`}>
                             <Image
