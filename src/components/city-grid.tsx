@@ -13,6 +13,9 @@ interface CityGridProps {
 }
 
 export default function CityGrid({ cities }: CityGridProps) {
+
+    const sortedCities = cities.sort((a, b) => (b.upcomingEventCount || 0) - (a.upcomingEventCount || 0));
+
     return (
         <div className="flex-1 mx-auto max-w-[880px] md:max-w-[700px] lg:max-w-[880px] p-4 space-y-4">
 
@@ -21,7 +24,7 @@ export default function CityGrid({ cities }: CityGridProps) {
 
             {/* Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 w-full">
-                {cities.map((city) => {
+                {sortedCities.map((city) => {
                         const isReadycity = city.name === "Seattle" || city.name === "San Francisco";
 
                         return (
