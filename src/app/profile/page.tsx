@@ -12,6 +12,7 @@ import Footer from "@/components/footer"
 import EmptyPage from "@/components/empty-page"
 import { toast } from "@/hooks/use-toast" 
 import { getInitials } from "@/lib/userUtils"
+import { formatEventDate } from "@/lib/eventUtils"
 
 // Firebase Imports
 import { db } from "@/lib/firebase"
@@ -27,6 +28,19 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { ExclamationTriangleIcon, CopyIcon, Pencil1Icon, Share2Icon } from "@radix-ui/react-icons"
 
+function sortByDateAndName(events: any[]): any[] {
+    return events.sort((a, b) => {
+        const dateA = new Date(a.startDate).getTime();
+        const dateB = new Date(b.startDate).getTime();
+
+        // First, compare by date
+        if (dateA < dateB) return -1;
+        if (dateA > dateB) return 1;
+
+        // If the dates are the same, compare alphabetically by name
+        return a.name.localeCompare(b.name);
+    });
+}
 
 export default function ProfilePage() {
     const inputRef = useRef<HTMLInputElement>(null);
@@ -34,6 +48,7 @@ export default function ProfilePage() {
     const [calendarLink, setCalendarLink] = useState<string>("");
     const [userInfo, setUserInfo] = useState<any>(null);
     const [bookmarkCount, setBookmarkCount] = useState<number>(0);
+    const [bookmarkedEvents, setBookmarkedEvents] = useState<any[]>([]);
 
     useEffect(() => {
         if (user?.uid) {
@@ -57,6 +72,21 @@ export default function ProfilePage() {
                     const bookmarksRef = collection(userRef, "user-bookmarks");
                     const bookmarksSnapshot = await getDocs(bookmarksRef);
                     setBookmarkCount(bookmarksSnapshot.size);
+
+                    // Fetch the actual event details for each bookmark
+                    const eventPromises = bookmarksSnapshot.docs.map(async (bookmarkDoc) => {
+                        const eventId = bookmarkDoc.id;
+                        const eventRef = doc(db, "events", eventId);
+                        const eventDoc = await getDoc(eventRef);
+                        return eventDoc.exists() ? { id: eventId, ...eventDoc.data() } : null;
+                    });
+
+                    const eventDetails = await Promise.all(eventPromises);
+
+                    const validEvents = eventDetails.filter(Boolean);
+                    const sortedEvents = sortByDateAndName(validEvents);
+
+                    setBookmarkedEvents(sortedEvents);
                 } catch (error) {
                     console.error("Error fetching user data: ", error);
                 }
@@ -245,7 +275,6 @@ export default function ProfilePage() {
                                     <Button variant="outline">Instructions</Button>
                                 </CollapsibleTrigger>
                                 <CollapsibleContent className="p-4 space-y-4">
-                                    <div className="text-base font-medium text-muted-foreground">Instructions</div>
                                     <ol className="list-decimal list-inside text-sm space-y-2">
                                         <li>Copy the link above by clicking the &quot;Copy Link&quot; button.</li>
                                         <li>
@@ -261,13 +290,47 @@ export default function ProfilePage() {
                                         <ExclamationTriangleIcon className="h-4 w-4" />
                                         <AlertTitle>Note</AlertTitle>
                                         <AlertDescription>
-                                            It may take some time for Google Calendar to refresh and sync new events. If you don&apos;t see changes immediately, give it a few minutes.
+                                            Google Calendar will get updated event information roughly every 24 hours.
                                         </AlertDescription>
                                     </Alert>
                                 </CollapsibleContent>
                             </Collapsible>
                         </div>
                     </div>
+
+                    <Separator />
+
+                    {/* User Bookmarked Events */}
+                    <div className="p-4 space-y-4">
+                        <div className="text-lg font-semibold">bookmarked events</div>
+                        <div className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-8 gap-6">
+                            {bookmarkedEvents.length > 0 ? (
+                                bookmarkedEvents.map((event) => (
+                                    <div key={event.id} className="w-full">
+                                        <Link href={`/events/${event.id}`} className="no-underline">
+                                            <div className="aspect-w-1 aspect-h-1 w-full relative">
+                                                <Image
+                                                    src={event.image || "/tempFlyer1.svg"}
+                                                    alt={event.name}
+                                                    width={150}
+                                                    height={150}
+                                                    loading="lazy"
+                                                    className="object-cover w-full h-full rounded-lg"
+                                                />
+                                            </div>
+                                            <div className="line-clamp-1 text-base font-semibold mt-2">{event.name}</div>
+                                            <div className="line-clamp-1 text-sm text-muted-foreground">
+                                                {formatEventDate(event.startDate, event.endDate)}
+                                            </div>
+                                        </Link>
+                                    </div>
+                                ))
+                            ) : (
+                                <p className="text-sm text-muted-foreground">No bookmarked events found.</p>
+                            )}
+                        </div>
+                    </div>
+
                 </div>
             )}
 

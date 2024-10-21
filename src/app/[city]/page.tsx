@@ -130,7 +130,7 @@ export default async function CityPage({ params }: CityPageProps) {
 
                 <Separator />
 
-                <div className="py-12 space-y-8">
+                <div className="py-12 space-y-12">
 
                     {/* Bio Card */}
                     <div className="flex-1 mx-auto max-w-[880px] px-4 space-y-4">
