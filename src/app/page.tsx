@@ -143,11 +143,11 @@ export default async function Home() {
 						{/* Events Grid */}
 						<EventGridDynamic cities={cities} />
 
-						{/* City Grid */}
-						<CityGrid cities={cities} />
-
 						{/* Join Card */}
 						<JoinCard />
+
+						{/* City Grid */}
+						<CityGrid cities={cities} />
 
 						{/* Categories Section */}
 						{/* <CategoriesGrid /> */}

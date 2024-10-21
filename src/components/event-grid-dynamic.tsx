@@ -112,8 +112,14 @@ const EventGridDynamic = ({ cities }: EventGridDynamicProps) => {
                         setUpcomingEvents(eventsByCity);
                         setIsLoading(false);
                     },
-                    (error) => {
+                    async (error) => {
                         console.error("Error getting user location:", error);
+                        
+                        // Default to Seattle if geolocation fails
+                        const defaultCitySlug = "seattle";
+                        setCityName(defaultCitySlug);
+                        const eventsByCity = await getEventsByCity(defaultCitySlug);
+                        setUpcomingEvents(eventsByCity);
                         setIsLoading(false);
                     }
                 );
