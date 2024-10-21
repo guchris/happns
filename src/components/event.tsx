@@ -304,7 +304,11 @@ export function Event({ events, city }: EventProps) {
                         {filteredEvents.length === 0 ? (
                             <div className="p-8 text-center text-muted-foreground">No events</div>
                         ) : (
-                            <EventList items={filteredEvents} isVerticalLayout={isVerticalLayout} isFilterActive={isFilterActive} />
+                            <EventList
+                                items={filteredEvents}
+                                isVerticalLayout={isVerticalLayout}
+                                isFilterActive={isFilterActive}
+                            />
                         )}
                     </div>
                 ) : (
@@ -439,7 +443,11 @@ export function Event({ events, city }: EventProps) {
                                     </p>
                                 </div>
                                 <Separator />
-                                <EventList items={filteredEvents} isVerticalLayout={isVerticalLayout} isFilterActive={isFilterActive} />
+                                <EventList
+                                    items={filteredEvents}
+                                    isVerticalLayout={isVerticalLayout}
+                                    isFilterActive={isFilterActive}
+                                />
                             </div>
                         )}
                     </ResizablePanel>

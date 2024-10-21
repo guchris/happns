@@ -32,18 +32,6 @@ interface EventListProps {
     isFilterActive: boolean
 }
 
-// Utility function to determine the correct date for display
-const getCurrentDateForDisplay = (startDate: Date, endDate: Date) => {
-    const today = new Date();
-    
-    // If today's date is within the range, return today
-    if (isWithinInterval(today, { start: startDate, end: endDate })) {
-        return today;
-    }
-    // Otherwise, return the start date
-    return startDate;
-};
-
 export function EventList({ items, isVerticalLayout, isFilterActive }: EventListProps) {
 
     const today = new Date().toISOString().split("T")[0]; // ISO format for today's date
