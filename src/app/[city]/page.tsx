@@ -9,6 +9,7 @@ import { TopBar } from "@/components/top-bar"
 import Footer from "@/components/footer"
 import EventGrid from "@/components/event-grid"
 import CategoryEventGrid from "@/components/event-grid-category"
+import TopEventsGrid from "@/components/event-grid-top"
 import { cityOptions } from "@/lib/selectOptions"
 import { Curator } from "@/components/types"
 import { getEventsByCity } from "@/lib/eventUtils"
@@ -176,6 +177,11 @@ export default async function CityPage({ params }: CityPageProps) {
                             </div>
                             <EventGrid events={eventsByCity} />
                         </div>
+                    </div>
+
+                    {/* Top Events Section */}
+                    <div className="flex flex-col max-w-[880px] mx-auto px-4">
+                        <TopEventsGrid events={eventsByCity} />
                     </div>
 
                     {/* Music Events Section */}

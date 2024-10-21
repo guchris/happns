@@ -13,7 +13,7 @@ import { formatEventDate, getFutureEvents, sortEventsByDate } from "@/lib/eventU
 
 // Firebase Imports
 import { db } from "@/lib/firebase"
-import { doc, collection, getDocs, getDoc, query, limit } from "firebase/firestore"
+import { doc, collection, getDocs, getDoc } from "firebase/firestore"
 
 // Shadcn Imports
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -70,7 +70,7 @@ const EventGridBookmark = () => {
                 const closestUpcomingEvents = sortedFutureEvents.slice(0, 12);
 
                 setBookmarkedEvents(closestUpcomingEvents);
-                
+
                 localStorage.setItem(CACHE_KEY, JSON.stringify(closestUpcomingEvents));
                 localStorage.setItem(CACHE_TIMESTAMP_KEY, now.toString());
             } catch (error) {

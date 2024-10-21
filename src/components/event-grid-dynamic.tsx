@@ -152,7 +152,9 @@ const EventGridDynamic = ({ cities }: EventGridDynamicProps) => {
             {/* Header */}
             <div className="flex items-center space-x-2 text-xl font-semibold">
                 <span>happnings in</span>
-                <Badge variant="secondary" className="text-lg">{cityName}</Badge>
+                <Link href={`/${cityName}/explore`} className="no-underline">
+                    <Badge variant="secondary" className="text-lg">{cityName}</Badge>
+                </Link>
             </div>
 
             {/* Tabs */}
