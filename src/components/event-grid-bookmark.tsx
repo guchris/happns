@@ -19,6 +19,8 @@ import { doc, collection, getDocs, getDoc, query, limit } from "firebase/firesto
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 
 const CACHE_KEY = 'bookmarkedEvents';
+const CACHE_TIMESTAMP_KEY = 'bookmarkedEventsTimestamp';
+const CACHE_THRESHOLD = 60 * 60 * 1000; // 1 hour
 
 const EventGridBookmark = () => {
     const { user } = useAuth();
@@ -30,9 +32,12 @@ const EventGridBookmark = () => {
 
             if (!user) return;
 
-            // Check if cached data exists
             const cachedEvents = localStorage.getItem(CACHE_KEY);
-            if (cachedEvents) {
+            const cacheTimestamp = localStorage.getItem(CACHE_TIMESTAMP_KEY);
+            const now = Date.now();
+
+            // Use cached data if it exists and is not stale
+            if (cachedEvents && cacheTimestamp && (now - parseInt(cacheTimestamp)) < CACHE_THRESHOLD) {
                 setBookmarkedEvents(JSON.parse(cachedEvents));
                 setIsLoading(false);
                 return;
@@ -40,9 +45,8 @@ const EventGridBookmark = () => {
 
             try {
                 const bookmarksRef = collection(db, "users", user.uid, "user-bookmarks");
-                const bookmarkedEventsQuery = query(bookmarksRef, limit(8));
-                const querySnapshot = await getDocs(bookmarkedEventsQuery);
-                
+                const querySnapshot = await getDocs(bookmarksRef);
+
                 const today = new Date();
 
                 // Fetch event documents in parallel
@@ -60,11 +64,15 @@ const EventGridBookmark = () => {
                         ...eventDoc.data(),
                         id: eventDoc.id,
                     }) as Event);
-
+                
                 const futureEvents = getFutureEvents(events, today);
                 const sortedFutureEvents = sortEventsByDate(futureEvents);
+                const closestUpcomingEvents = sortedFutureEvents.slice(0, 12);
 
-                setBookmarkedEvents(sortedFutureEvents);
+                setBookmarkedEvents(closestUpcomingEvents);
+                
+                localStorage.setItem(CACHE_KEY, JSON.stringify(closestUpcomingEvents));
+                localStorage.setItem(CACHE_TIMESTAMP_KEY, now.toString());
             } catch (error) {
                 console.error("Error fetching bookmarked events:", error);
             } finally {
