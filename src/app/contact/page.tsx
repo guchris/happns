@@ -1,161 +1,54 @@
 "use client"
 
+// Next Imports
+import Link from "next/link"
+
 // App Imports
 import { TopBar } from "@/components/top-bar"
 import Footer from "@/components/footer"
-import { useToast } from "@/hooks/use-toast"
 
 // Shadcn Imports
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form"
-
-// Other Imports
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
-import emailjs from "emailjs-com"
-
-const contactFormSchema = z.object({
-    name: z.string()
-        .min(2, { message: "Name must be at least 2 characters." })
-        .max(50, { message: "Name must be no longer than 50 characters." }),
-    email: z.string()
-        .email({ message: "Please enter a valid email address." }),
-    phone: z.string()
-        .regex(/^[0-9]{10}$/, { message: "Please enter a valid 10-digit phone number." }),
-    message: z.string()
-        .min(10, { message: "Message must be at least 10 characters." })
-        .max(1000, { message: "Message must not be longer than 1000 characters." }),
-});
-
-type ContactFormValues = z.infer<typeof contactFormSchema>;
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 
 export default function ContactForm() {
-    const { toast } = useToast();
-    const form = useForm<ContactFormValues>({
-        resolver: zodResolver(contactFormSchema),
-        mode: "onChange",
-    });
-
-    const onSubmit = async (data: ContactFormValues) => {
-        try {
-            const serviceID = "service_a88v82m";
-            const templateID = "template_o16thhl";
-            const publicKey = "f_LEIx68G0nwD2rXS";
-
-            // Send the form data via EmailJS
-            await emailjs.send(
-                serviceID,
-                templateID,
-                {
-                    name: data.name,
-                    email: data.email,
-                    phone: data.phone,
-                    message: data.message,
-                },
-                publicKey
-            );
-
-            toast({
-                title: "Message Sent",
-                description: "Thank you for reaching out. We'll get back to you soon.",
-            });
-
-            form.reset({
-                name: "",
-                email: "",
-                phone: "",
-                message: "",
-            });
-        } catch (error) {
-            toast({
-                title: "Error",
-                description: "Failed to send message. Please try again later.",
-                variant: "destructive",
-            });
-        }
-    }
 
     return (
         <div className="min-h-screen flex flex-col">
             <TopBar title={`happns/contact`} />
             <Separator />
-            <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col px-4 py-8 space-y-8 max-w-[880px] mx-auto">
 
-                    {/* Title and Description */}
-                    <div className="space-y-2">
-                        <h1 className="text-lg font-medium">contact us</h1>
-                        <p className="text-sm text-muted-foreground">
-                            Need to reach us? Please fill out the form below with your contact info and message, and we&apos;ll get back to you as soon as possible. Let&apos;s make it happn!
-                        </p>
-                    </div>
+            <div className="flex flex-col px-4 py-8 space-y-8 max-w-[880px] mx-auto">
 
-                    {/* Name Field */}
-                    <FormField
-                        control={form.control}
-                        name="name"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Name</FormLabel>
-                                <FormControl>
-                                    <Input {...field} placeholder="Name" />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                {/* Title and Description */}
+                <div className="space-y-2">
+                    <h1 className="text-lg font-medium">contact us</h1>
+                    <p className="text-sm text-muted-foreground">
+                        need to reach us? choose one of the options below to contact us or submit events for review
+                    </p>
+                </div>
 
-                    {/* Email Field */}
-                    <FormField
-                        control={form.control}
-                        name="email"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Email</FormLabel>
-                                <FormControl>
-                                    <Input type="email" {...field} placeholder="Email" />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                {/* General Contact Card */}
+                <Card>
+                    <Link href="https://airtable.com/appacfVqG5ilQChdJ/pag6VRqd6dJ0rdmNx/form">
+                        <CardHeader>
+                            <CardTitle className="text-lg">general contact</CardTitle>
+                            <CardDescription>questions, suggestions, bugs, or feedback? reach out to us here</CardDescription>
+                        </CardHeader>
+                    </Link>
+                </Card>
 
-                    {/* Phone Number Field */}
-                    <FormField
-                        control={form.control}
-                        name="phone"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Phone Number</FormLabel>
-                                <FormControl>
-                                    <Input type="tel" {...field} placeholder="Phone Number" />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
-                    {/* Message Field */}
-                    <FormField
-                        control={form.control}
-                        name="message"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Message</FormLabel>
-                                <FormControl>
-                                    <Textarea {...field} placeholder="Your message" />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <Button type="submit">Submit</Button>
-                </form>
-            </Form>
+                {/* Submit Event Card */}
+                <Card>
+                    <Link href="https://airtable.com/appacfVqG5ilQChdJ/pagQuf4Qrapa1qjfa/form">
+                        <CardHeader>
+                            <CardTitle className="text-lg">submit an event</CardTitle>
+                            <CardDescription>want to submit an event for review? click here to send us the details</CardDescription>
+                        </CardHeader>
+                    </Link>
+                </Card>
+            </div>
             <Footer className="mt-auto" />
         </div>
     )
