@@ -20,6 +20,8 @@ import { collection, doc, getDoc, getDocs } from "firebase/firestore"
 
 // Shadcn Imports
 import { Separator } from "@/components/ui/separator"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { RocketIcon } from "@radix-ui/react-icons"
 
 export const dynamic = 'force-dynamic';
 
@@ -136,6 +138,17 @@ export default async function Home() {
 					<Separator />
 
 					<div className="py-12 space-y-8">
+
+						{/* Beta Alert */}
+						<div className="flex-1 max-w-[880px] md:max-w-[700px] lg:max-w-[880px] mx-auto p-4 space-y-4">
+							<Alert>
+								<RocketIcon className="h-4 w-4" />
+								<AlertTitle>welcome to happns</AlertTitle>
+								<AlertDescription>
+									thank you for joining us during our beta phase, we're excited to have you with us as we grow and improve!
+								</AlertDescription>
+							</Alert>
+						</div>
 
 						{/* Bookmarked Events Grid */}
 						<EventGridBookmark />
