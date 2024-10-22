@@ -161,8 +161,17 @@ function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: Collaps
                             const dateIndex = differenceInDays(collapsibleDate, startDate);
                         
                             // Use dateIndex to get the corresponding time entry for this collapsible date
-                            const timeEntry = item.times[dateIndex];
-                            const formattedTime = `${timeEntry.startTime} - ${timeEntry.endTime}`;
+                            let timeEntry = item.times[dateIndex];
+
+                            // If timeEntry is undefined and times array has only one entry, use that single entry
+                            if (!timeEntry && item.times.length === 1) {
+                                timeEntry = item.times[0];
+                            }
+
+                            // Check if timeEntry exists before trying to format the time
+                            const formattedTime = timeEntry
+                                ? `${timeEntry.startTime} - ${timeEntry.endTime}`
+                                : "Time not available";
                         
                             // Format the display date for rendering
                             const formattedDate = startDate.getTime() === endDate.getTime()
