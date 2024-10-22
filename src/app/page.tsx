@@ -145,7 +145,7 @@ export default async function Home() {
 								<RocketIcon className="h-4 w-4" />
 								<AlertTitle>welcome to happns</AlertTitle>
 								<AlertDescription>
-									thank you for joining us during our beta phase, we're excited to have you with us as we grow and improve!
+									thank you for joining us during our beta phase, we&apos;re excited to have you with us as we grow and improve!
 								</AlertDescription>
 							</Alert>
 						</div>
