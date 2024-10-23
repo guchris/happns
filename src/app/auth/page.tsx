@@ -130,20 +130,23 @@ export default function AuthPage() {
                                 <UserLoginForm />
                             </Suspense>
                         )}
+                        <Link href="/auth/password-reset" className="text-sm text-muted-foreground underline underline-offset-4 hover:text-primary text-center">
+                            forgot your password?
+                        </Link>
                         <p className="px-8 text-center text-sm text-muted-foreground">
-                            By continuing, you agree to our{" "}
+                            by continuing, you agree to our{" "}
                             <Link
                                 href="/terms"
                                 className="underline underline-offset-4 hover:text-primary"
                             >
-                                Terms of Service
+                                terms of service
                             </Link>{" "}
                             and{" "}
                             <Link
                                 href="/privacy"
                                 className="underline underline-offset-4 hover:text-primary"
                             >
-                                Privacy Policy
+                                privacy policy
                             </Link>.
                         </p>
                     </div>
