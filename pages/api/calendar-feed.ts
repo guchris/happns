@@ -94,7 +94,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             start: eventStart,
             end: eventEnd,
             summary: event.name || "No Title",
-            description: `view this event on happns: https://ithappns.com/event/${event.id}\n\n${event.details || "No Details"}`,
+            description: `view this event on happns: https://ithappns.com/event/${event.id}\n\n${event.details || "no details"}`,
             location: event.location || "Location not specified",
             url: event.link,
             timezone: 'America/Los_Angeles'

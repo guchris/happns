@@ -7,6 +7,7 @@ import Link from "next/link"
 import { TopBar } from "@/components/top-bar"
 import Footer from "@/components/footer"
 import EmptyPage from "@/components/empty-page"
+import EventGridBookmarkTabs from "@/components/event-grid-bookmark-tabs"
 import { User } from "@/components/types"
 import { getInitials } from "@/lib/userUtils"
 import { formatEventDate } from "@/lib/eventUtils"
@@ -19,20 +20,6 @@ import { collection, doc, getDoc, getDocs, query, where } from "firebase/firesto
 import { Separator } from "@/components/ui/separator"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-
-function sortByDateAndName(events: any[]): any[] {
-    return events.sort((a, b) => {
-        const dateA = new Date(a.startDate).getTime();
-        const dateB = new Date(b.startDate).getTime();
-
-        // First, compare by date
-        if (dateA < dateB) return -1;
-        if (dateA > dateB) return 1;
-
-        // If the dates are the same, compare alphabetically by name
-        return a.name.localeCompare(b.name);
-    });
-}
 
 // Generate page metadata
 export async function generateMetadata({ params }: { params: { username: string } }): Promise<Metadata> {
@@ -110,8 +97,7 @@ export default async function PublicProfilePage({ params }: { params: { username
 
             const eventDetails = await Promise.all(eventPromises);
 
-            const validEvents = eventDetails.filter(Boolean);
-            bookmarkedEvents = sortByDateAndName(validEvents);
+            bookmarkedEvents = eventDetails.filter(Boolean);
         }
     } catch (error) {
         console.error("Error fetching user data:", error);
@@ -201,36 +187,9 @@ export default async function PublicProfilePage({ params }: { params: { username
                     </div>
 
                     <Separator />
+
                     {/* User Bookmarked Events */}
-                    <div className="p-4 space-y-4">
-                        <div className="text-lg font-semibold">bookmarked events</div>
-                        <div className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-8 gap-6">
-                            {bookmarkedEvents.length > 0 ? (
-                                bookmarkedEvents.map((event) => (
-                                    <div key={event.id} className="w-full">
-                                        <Link href={`/events/${event.id}`} className="no-underline">
-                                            <div className="aspect-w-1 aspect-h-1 w-full relative">
-                                                <Image
-                                                    src={event.image || "/tempFlyer1.svg"}
-                                                    alt={event.name}
-                                                    width={150}
-                                                    height={150}
-                                                    loading="lazy"
-                                                    className="object-cover w-full h-full rounded-lg"
-                                                />
-                                            </div>
-                                            <div className="line-clamp-1 text-base font-semibold mt-2">{event.name}</div>
-                                            <div className="line-clamp-1 text-sm text-muted-foreground">
-                                                {formatEventDate(event.startDate, event.endDate)}
-                                            </div>
-                                        </Link>
-                                    </div>
-                                ))
-                            ) : (
-                                <p className="text-sm text-muted-foreground">No bookmarked events found.</p>
-                            )}
-                        </div>
-                    </div>
+                    <EventGridBookmarkTabs bookmarkedEvents={bookmarkedEvents} />
 
                 </div>
             )}

@@ -10,9 +10,9 @@ import { useAuth } from "@/context/AuthContext"
 import { TopBar } from "@/components/top-bar"
 import Footer from "@/components/footer"
 import EmptyPage from "@/components/empty-page"
+import EventGridBookmarkTabs from "@/components/event-grid-bookmark-tabs"
 import { toast } from "@/hooks/use-toast" 
 import { getInitials } from "@/lib/userUtils"
-import { formatEventDate } from "@/lib/eventUtils"
 
 // Firebase Imports
 import { db } from "@/lib/firebase"
@@ -27,20 +27,6 @@ import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { ExclamationTriangleIcon, CopyIcon, Pencil1Icon, Share2Icon } from "@radix-ui/react-icons"
-
-function sortByDateAndName(events: any[]): any[] {
-    return events.sort((a, b) => {
-        const dateA = new Date(a.startDate).getTime();
-        const dateB = new Date(b.startDate).getTime();
-
-        // First, compare by date
-        if (dateA < dateB) return -1;
-        if (dateA > dateB) return 1;
-
-        // If the dates are the same, compare alphabetically by name
-        return a.name.localeCompare(b.name);
-    });
-}
 
 export default function ProfilePage() {
     const inputRef = useRef<HTMLInputElement>(null);
@@ -82,11 +68,8 @@ export default function ProfilePage() {
                     });
 
                     const eventDetails = await Promise.all(eventPromises);
-
                     const validEvents = eventDetails.filter(Boolean);
-                    const sortedEvents = sortByDateAndName(validEvents);
-
-                    setBookmarkedEvents(sortedEvents);
+                    setBookmarkedEvents(validEvents);
                 } catch (error) {
                     console.error("Error fetching user data: ", error);
                 }
@@ -209,7 +192,7 @@ export default function ProfilePage() {
                         <div className="grid gap-2">
                             {/* Email */}
                             <div className="text-sm font-medium flex items-center space-x-2">
-                                <span className="text-muted-foreground w-10">Email</span>
+                                <span className="text-muted-foreground w-10">email</span>
                                 <Badge variant="outline" className="inline-block">
                                     {userInfo.email}
                                 </Badge>
@@ -218,7 +201,7 @@ export default function ProfilePage() {
                             {/* City */}
                             {userInfo.selectedCity && (
                                 <div className="text-sm font-medium flex items-center space-x-2">
-                                    <span className="text-muted-foreground w-10">City</span>
+                                    <span className="text-muted-foreground w-10">city</span>
                                     <Badge variant="outline" className="inline-block">
                                         {userInfo.selectedCity}
                                     </Badge>
@@ -227,7 +210,7 @@ export default function ProfilePage() {
 
                             {/* Role */}
                             <div className="text-sm font-medium flex items-center space-x-2">
-                                <span className="text-muted-foreground w-10">Role</span>
+                                <span className="text-muted-foreground w-10">role</span>
                                 <Badge variant="outline" className="inline-block">
                                     {userInfo.role}
                                 </Badge>
@@ -240,14 +223,14 @@ export default function ProfilePage() {
                     {/* User Stats */}
                     <div className="flex items-center gap-4">
                         <div className="flex-1 p-4">
-                            <div className="text-sm font-medium text-muted-foreground">Bookmarked</div>
+                            <div className="text-sm font-medium text-muted-foreground">bookmarked</div>
                             <div className="text-sm font-medium">
                                 {bookmarkCount} events bookmarked
                             </div>
                         </div>
                         <Separator orientation="vertical" className="h-auto self-stretch" />
                         <div className="flex-1 p-4">
-                            <div className="text-sm font-medium text-muted-foreground">Attended</div>
+                            <div className="text-sm font-medium text-muted-foreground">attended</div>
                             <div className="text-sm font-medium">
                                 0 events attended
                             </div>
@@ -258,10 +241,10 @@ export default function ProfilePage() {
 
                     {/* User Calendar Link */}
                     <div className="flex-col p-4 space-y-2">
-                        <div className="text-sm font-medium text-muted-foreground">Google Calendar Subscription Link</div>
+                        <div className="text-sm font-medium text-muted-foreground">google calendar subscription link</div>
                         <div className="space-y-2">
                             <p className="text-sm">
-                                Subscribe to your bookmarked events by adding this link to your Google Calendar.
+                                subscribe to your bookmarked events by adding this link to your gcal
                             </p>
                             <div className="flex space-x-2">
                                 <Input ref={inputRef} value={calendarLink} readOnly />
@@ -301,35 +284,7 @@ export default function ProfilePage() {
                     <Separator />
 
                     {/* User Bookmarked Events */}
-                    <div className="p-4 space-y-4">
-                        <div className="text-lg font-semibold">bookmarked events</div>
-                        <div className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-8 gap-6">
-                            {bookmarkedEvents.length > 0 ? (
-                                bookmarkedEvents.map((event) => (
-                                    <div key={event.id} className="w-full">
-                                        <Link href={`/events/${event.id}`} className="no-underline">
-                                            <div className="aspect-w-1 aspect-h-1 w-full relative">
-                                                <Image
-                                                    src={event.image || "/tempFlyer1.svg"}
-                                                    alt={event.name}
-                                                    width={150}
-                                                    height={150}
-                                                    loading="lazy"
-                                                    className="object-cover w-full h-full rounded-lg"
-                                                />
-                                            </div>
-                                            <div className="line-clamp-1 text-base font-semibold mt-2">{event.name}</div>
-                                            <div className="line-clamp-1 text-sm text-muted-foreground">
-                                                {formatEventDate(event.startDate, event.endDate)}
-                                            </div>
-                                        </Link>
-                                    </div>
-                                ))
-                            ) : (
-                                <p className="text-sm text-muted-foreground">No bookmarked events found.</p>
-                            )}
-                        </div>
-                    </div>
+                    <EventGridBookmarkTabs bookmarkedEvents={bookmarkedEvents} />
 
                 </div>
             )}
