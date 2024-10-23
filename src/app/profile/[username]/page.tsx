@@ -1,7 +1,6 @@
 // Next and React Imports
 import { Metadata } from "next"
 import Image from "next/image"
-import Link from "next/link"
 
 // App Imports
 import { TopBar } from "@/components/top-bar"
@@ -10,7 +9,6 @@ import EmptyPage from "@/components/empty-page"
 import EventGridBookmarkTabs from "@/components/event-grid-bookmark-tabs"
 import { User } from "@/components/types"
 import { getInitials } from "@/lib/userUtils"
-import { formatEventDate } from "@/lib/eventUtils"
 
 // Firebase Imports
 import { db } from "@/lib/firebase"
@@ -116,8 +114,10 @@ export default async function PublicProfilePage({ params }: { params: { username
 
             {userInfo && (
                 <div className="flex flex-1 flex-col">
+
                     {/* User Info Display */}
                     <div className="p-4 flex gap-4">
+
                         {/* User Avatar */}
                         <div className="flex justify-left">
                             <Avatar className="h-24 w-24">
@@ -134,7 +134,8 @@ export default async function PublicProfilePage({ params }: { params: { username
                                 )}
                             </Avatar>
                         </div>
-
+                        
+                        {/* User Main Info */}
                         <div className="flex flex-col">
                             <div className="text-lg font-semibold">{userInfo.name}</div>
                             <div className="text-base font-medium">@{userInfo.username}</div>
@@ -150,7 +151,7 @@ export default async function PublicProfilePage({ params }: { params: { username
                             {/* City */}
                             {userInfo.selectedCity && (
                                 <div className="text-sm font-medium flex items-center space-x-2">
-                                    <span className="text-muted-foreground w-10">City</span>
+                                    <span className="text-muted-foreground w-10">city</span>
                                     <Badge variant="outline" className="inline-block">
                                         {userInfo.selectedCity}
                                     </Badge>
@@ -159,7 +160,7 @@ export default async function PublicProfilePage({ params }: { params: { username
 
                             {/* Role */}
                             <div className="text-sm font-medium flex items-center space-x-2">
-                                <span className="text-muted-foreground w-10">Role</span>
+                                <span className="text-muted-foreground w-10">role</span>
                                 <Badge variant="outline" className="inline-block">
                                     {userInfo.role}
                                 </Badge>
@@ -172,14 +173,14 @@ export default async function PublicProfilePage({ params }: { params: { username
                     {/* User Stats */}
                     <div className="flex items-center gap-4">
                         <div className="flex-1 p-4">
-                            <div className="text-sm font-medium text-muted-foreground">Bookmarked</div>
+                            <div className="text-sm font-medium text-muted-foreground">bookmarked</div>
                             <div className="text-sm font-medium">
                                 {bookmarkCount} events bookmarked
                             </div>
                         </div>
                         <Separator orientation="vertical" className="h-auto self-stretch" />
                         <div className="flex-1 p-4">
-                            <div className="text-sm font-medium text-muted-foreground">Attended</div>
+                            <div className="text-sm font-medium text-muted-foreground">attended</div>
                             <div className="text-sm font-medium">
                                 0 events attended
                             </div>

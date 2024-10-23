@@ -150,6 +150,7 @@ export default function ProfilePage() {
             {userInfo && (
                 <div className="flex flex-1 flex-col">
                     <div className="p-4 flex gap-4">
+
                         {/* User Avatar */}
                         <div className="flex justify-left">
                             <Avatar className="h-24 w-24">
@@ -157,7 +158,7 @@ export default function ProfilePage() {
                                     <Image
                                         src={userInfo.profilePicture}
                                         alt="Profile Picture"
-                                        width={96} // Use appropriate size for your avatar
+                                        width={96}
                                         height={96}
                                         className="h-full w-full object-cover rounded-full"
                                     />
@@ -172,7 +173,8 @@ export default function ProfilePage() {
                             <div className="text-lg font-semibold">{userInfo.name}</div>
                             <div className="text-base font-medium">@{userInfo.username}</div>
                         </div>
-
+                        
+                        {/* User Profile Quick Actions */}
                         <div className="ml-auto flex space-x-2">
                             <Link href="/settings">
                                 <Button variant="outline" size="icon">
