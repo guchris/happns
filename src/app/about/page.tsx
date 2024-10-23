@@ -15,7 +15,7 @@ export default function AboutPage() {
             <TopBar title={`happns/about`} />
             <Separator />
             <div className="flex-1 px-4 py-8 max-w-[880px] mx-auto space-y-4">
-                <h1 className="text-lg font-medium">about happns</h1>
+                <h1 className="text-xl font-semibold">about happns</h1>
                 <p className="text-sm">
                     <b>happns</b> was created by Christopher Gu in Seattle out of a desire to solve a personal problem: he found it difficult to discover what was happening in his city. As someone who loves exploring local events and connecting with the community, Christopher was frustrated by the lack of a centralized platform that aggregated all the interesting happenings around town.
                 </p>

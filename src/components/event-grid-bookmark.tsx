@@ -67,7 +67,7 @@ const EventGridBookmark = () => {
                 
                 const futureEvents = getFutureEvents(events, today);
                 const sortedFutureEvents = sortEventsByDate(futureEvents);
-                const closestUpcomingEvents = sortedFutureEvents.slice(0, 12);
+                const closestUpcomingEvents = sortedFutureEvents.slice(0, 8);
 
                 setBookmarkedEvents(closestUpcomingEvents);
 

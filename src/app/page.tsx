@@ -8,7 +8,8 @@ import EventCarousel from "@/components/event-carousel"
 import CityGrid from "@/components/city-grid"
 import EventGridDynamic from "@/components/event-grid-dynamic"
 import EventGridBookmark from "@/components/event-grid-bookmark"
-import JoinCard from "@/components/join-card"
+import WelcomeCard from "@/components/card-welcome"
+import JoinCard from "@/components/card-join"
 import CategoriesGrid from "@/components/categories-grid"
 import Footer from "@/components/footer"
 import { CarouselEvent } from "@/components/types"
@@ -20,8 +21,6 @@ import { collection, doc, getDoc, getDocs } from "firebase/firestore"
 
 // Shadcn Imports
 import { Separator } from "@/components/ui/separator"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { RocketIcon } from "@radix-ui/react-icons"
 
 export const dynamic = 'force-dynamic';
 
@@ -139,16 +138,8 @@ export default async function Home() {
 
 					<div className="py-12 space-y-8">
 
-						{/* Beta Alert */}
-						<div className="flex-1 max-w-[880px] md:max-w-[700px] lg:max-w-[880px] mx-auto p-4 space-y-4">
-							<Alert>
-								<RocketIcon className="h-4 w-4" />
-								<AlertTitle>welcome to happns</AlertTitle>
-								<AlertDescription>
-									thank you for joining us during our beta phase, we&apos;re excited to have you with us as we grow and improve!
-								</AlertDescription>
-							</Alert>
-						</div>
+						{/* Welcome Card */}
+						<WelcomeCard />
 
 						{/* Bookmarked Events Grid */}
 						<EventGridBookmark />

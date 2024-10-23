@@ -14,7 +14,7 @@ export default function JoinCard() {
     const { user } = useAuth();
     if (user) return null;
     return (
-        <div className="flex-1 mx-auto max-w-[880px] p-4 space-y-4">
+        <div className="flex-1 max-w-[880px] md:max-w-[700px] lg:max-w-[880px] mx-auto p-4 space-y-4">
             <Card className="w-full bg-neutral-50 border-none">
                 <CardHeader>
                     <CardTitle className="text-xl font-semibold">join happns</CardTitle>

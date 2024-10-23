@@ -9,7 +9,6 @@ import Footer from "@/components/footer"
 
 // Shadcn Imports
 import { Separator } from "@/components/ui/separator"
-import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 
 export default function ContactForm() {
@@ -23,7 +22,7 @@ export default function ContactForm() {
 
                 {/* Title and Description */}
                 <div className="space-y-2">
-                    <h1 className="text-lg font-medium">contact us</h1>
+                    <h1 className="text-xl font-semibold">contact us</h1>
                     <p className="text-sm text-muted-foreground">
                         need to reach us? choose one of the options below to contact us or submit events for review
                     </p>
