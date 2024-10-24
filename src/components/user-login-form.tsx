@@ -73,6 +73,7 @@ export function UserLoginForm({ className, onSuccess, ...props }: UserLoginFormP
                 }
 
                 await setDoc(userRef, newUser)
+                await setDoc(doc(db, "usernames", newUser.username), { uid: user.uid })
 
                 toast({
                     title: "Account Successfully Created!",
