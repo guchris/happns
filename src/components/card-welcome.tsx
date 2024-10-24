@@ -29,7 +29,7 @@ export default function WelcomeCard() {
                             />
                         </div>
                         <Link href="/about">
-                            <Button>about</Button>
+                            <Button variant="outline">about</Button>
                         </Link>
                     </div>
                 </CardContent>

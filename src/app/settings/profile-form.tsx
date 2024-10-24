@@ -203,7 +203,7 @@ export default function ProfileForm() {
                             name="profilePicture"
                             render={() => (
                                 <FormItem>
-                                    <FormLabel>Profile Picture</FormLabel>
+                                    <FormLabel>profile picture</FormLabel>
                                     <Avatar className="h-24 w-24 mb-2">
                                         {editProfilePicture ? (
                                             <Image
@@ -238,7 +238,7 @@ export default function ProfileForm() {
                             name="name"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Name</FormLabel>
+                                    <FormLabel>name</FormLabel>
                                     <FormControl>
                                         <Input {...field} placeholder="Enter your name" />
                                     </FormControl>
@@ -252,7 +252,7 @@ export default function ProfileForm() {
                             name="username"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Username</FormLabel>
+                                    <FormLabel>username</FormLabel>
                                     <FormControl>
                                         <Input
                                             {...field}
@@ -271,7 +271,7 @@ export default function ProfileForm() {
                             name="email"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Email</FormLabel>
+                                    <FormLabel>email</FormLabel>
                                     <FormControl>
                                         <Input {...field} placeholder="Enter your email" />
                                     </FormControl>
@@ -279,7 +279,7 @@ export default function ProfileForm() {
                             )}
                         />
 
-                        <Button type="submit" disabled={!isModified}>Update Profile</Button>
+                        <Button type="submit" disabled={!isModified}>update profile</Button>
                     </div>
                 </form>
             </Form>

@@ -4,6 +4,7 @@ export const categoryOptions = [
     { value: "arts", label: "Arts" },
     { value: "charity", label: "Charity" },
     { value: "cinema-film", label: "Cinema & Film"},
+    { value: "comedy", label: "Comedy" },
     { value: "community", label: "Community" },
     { value: "crafts", label: "Crafts" },
     { value: "culture", label: "Culture" },

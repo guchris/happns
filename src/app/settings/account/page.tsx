@@ -77,18 +77,18 @@ function DeleteAccountDialog() {
     return (
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-                <Button variant="destructive">Delete Account</Button>
+                <Button variant="destructive">delete account</Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Are you sure?</DialogTitle>
+                    <DialogTitle>are you sure?</DialogTitle>
                     <DialogDescription>
-                        This action cannot be undone. This will permanently delete your account and remove your data from our servers.
+                        this action cannot be undone - this will permanently delete your account and remove your data from our servers
                     </DialogDescription>
                 </DialogHeader>
                 <DialogFooter>
-                    <Button variant="secondary" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
-                    <Button variant="destructive" onClick={handleDelete}>Delete</Button>
+                    <Button variant="secondary" onClick={() => setIsDialogOpen(false)}>cancel</Button>
+                    <Button variant="destructive" onClick={handleDelete}>delete</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

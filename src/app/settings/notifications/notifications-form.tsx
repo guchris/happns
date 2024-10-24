@@ -122,10 +122,10 @@ export function NotificationsForm() {
                                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                                     <div className="space-y-0.5">
                                     <FormLabel className="text-sm">
-                                        Communication emails
+                                        communication emails
                                     </FormLabel>
                                     <FormDescription className="text-sm">
-                                        Receive emails about your account activity
+                                        receive emails about your account activity
                                     </FormDescription>
                                     </div>
                                     <FormControl>
@@ -141,10 +141,10 @@ export function NotificationsForm() {
                                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                                     <div className="space-y-0.5">
                                     <FormLabel className="text-sm">
-                                        Marketing emails
+                                        marketing emails
                                     </FormLabel>
                                     <FormDescription>
-                                        Receive emails about new features, partnerships, and more
+                                        receive emails about new features, partnerships, and more
                                     </FormDescription>
                                     </div>
                                     <FormControl>
@@ -159,9 +159,9 @@ export function NotificationsForm() {
                             render={({ field }) => (
                                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                                     <div className="space-y-0.5">
-                                    <FormLabel className="text-sm">Roundup emails</FormLabel>
+                                    <FormLabel className="text-sm">roundup emails</FormLabel>
                                     <FormDescription>
-                                        Receive weekly roundup emails of events in your city
+                                        receive weekly roundup emails of events in your city
                                     </FormDescription>
                                     </div>
                                     <FormControl>

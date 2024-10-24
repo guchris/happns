@@ -92,7 +92,7 @@ export const TopBar: React.FC<TopBarProps> = ({ title }) => {
                             </div>
                         </DropdownMenuLabel>
                         <div className="px-2 py-2 flex justify-left">
-                            <Badge variant="outline" className="text-xs capitalize">
+                            <Badge variant="outline" className="text-xs">
                                 {userData.role}
                             </Badge>
                         </div>
@@ -100,19 +100,19 @@ export const TopBar: React.FC<TopBarProps> = ({ title }) => {
 
                         {userData.role === "curator" && (
                             <DropdownMenuItem>
-                                <Link href="/event-form" className="w-full">Add Event</Link>
+                                <Link href="/event-form" className="w-full">add event</Link>
                             </DropdownMenuItem>
                         )}
 
                         <DropdownMenuItem>
-                            <Link href="/profile" className="w-full">Profile</Link>
+                            <Link href="/profile" className="w-full">profile</Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem>
-                            <Link href="/settings" className="w-full">Settings</Link>
+                            <Link href="/settings" className="w-full">settings</Link>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={handleSignOut}>
-                            <Link href="/" className="w-full">Log Out</Link>
+                            <Link href="/" className="w-full">logout</Link>
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
