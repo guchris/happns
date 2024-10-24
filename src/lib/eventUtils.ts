@@ -4,6 +4,7 @@ import { Event } from "@/components/types"
 // Firebase Imports
 import { db } from "@/lib/firebase"
 import { DocumentData, QueryDocumentSnapshot, collection, getCountFromServer, query, where, getDocs } from "firebase/firestore"
+import { DocumentSnapshot } from "firebase-admin/firestore"
 
 // Other Imports
 import { format, parse, isAfter, isSameDay, isSameMonth, addDays, parseISO } from "date-fns"
@@ -13,7 +14,7 @@ import { format, parse, isAfter, isSameDay, isSameMonth, addDays, parseISO } fro
  * @param doc - The Firestore document snapshot.
  * @returns {Event} - The mapped event object.
  */
-export function mapFirestoreEvent(doc: QueryDocumentSnapshot<DocumentData>): Event {
+export function mapFirestoreEvents(doc: QueryDocumentSnapshot<DocumentData>): Event {
     return {
         id: doc.id,
         category: doc.data().category,
@@ -33,6 +34,26 @@ export function mapFirestoreEvent(doc: QueryDocumentSnapshot<DocumentData>): Eve
         times: doc.data().times,
     };
 }
+export function mapFirestoreEvent(doc: DocumentSnapshot): Event {
+    return {
+        id: doc.id,
+        category: doc.data()?.category,
+        city: doc.data()?.city,
+        clicks: doc.data()?.clicks,
+        cost: doc.data()?.cost,
+        details: doc.data()?.details,
+        endDate: doc.data()?.endDate,
+        format: doc.data()?.format,
+        gmaps: doc.data()?.gmaps,
+        image: doc.data()?.image,
+        link: doc.data()?.link,
+        location: doc.data()?.location,
+        name: doc.data()?.name,
+        neighborhood: doc.data()?.neighborhood,
+        startDate: doc.data()?.startDate,
+        times: doc.data()?.times,
+    };
+}
 
 
 /**
@@ -47,7 +68,7 @@ export async function getEventsByCity(citySlug: string): Promise<Event[]> {
     const cityQuery = query(eventsCol, where("city", "==", citySlug));
     const eventSnapshot = await getDocs(cityQuery);
 
-    const events: Event[] = eventSnapshot.docs.map(mapFirestoreEvent);
+    const events: Event[] = eventSnapshot.docs.map(mapFirestoreEvents);
     return events;
 }
 

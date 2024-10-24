@@ -1,13 +1,17 @@
 // Next Imports
-import { NextApiRequest, NextApiResponse } from 'next'
+import { NextApiRequest, NextApiResponse } from "next"
+
+// App Imports
+import { Event } from "@/components/types"
+import { mapFirestoreEvent } from "@/lib/eventUtils"
 
 // Firebase Imports
-import { getFirestore } from 'firebase-admin/firestore'
-import { initializeApp, getApps, cert } from 'firebase-admin/app'
+import { getFirestore } from "firebase-admin/firestore"
+import { initializeApp, getApps, cert } from "firebase-admin/app"
 
 // Other Imports
-import ical from 'ical-generator'
-import { parseISO, parse, isValid } from 'date-fns';
+import ical from "ical-generator"
+import { parseISO, parse, isValid } from "date-fns";
 
 // Service account credentials (You need to add these credentials)
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY!);
@@ -46,11 +50,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const eventsRef = db.collection('events');
     const eventsData = await Promise.all(eventIds.map(async (eventId) => {
         const eventDoc = await eventsRef.doc(eventId).get();
-        return eventDoc.exists ? eventDoc.data() : null;
+        return eventDoc.exists ? mapFirestoreEvent(eventDoc) : null;
     }));
 
     // Filter out any null (non-existent) events
-    const validEvents = eventsData.filter(event => event !== null);
+    const validEvents: Event[] = eventsData.filter(event => event !== null) as Event[];
     
     if (validEvents.length === 0) {
         return res.status(404).json({ error: 'No valid events found for user' });
@@ -64,8 +68,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         // Ensure the event is not null and has required fields
         if (!event || !event.startDate || !event.endDate || !event.times || !event.times[0]) {
-            console.error("Missing startDate, endDate, or times for event:", event);
-            return;  // Skip this event if any of the required fields are missing
+            console.error(`Skipping event ${event?.id || "unknown"} due to missing fields.`);
+            return;
         }
 
         // Parse startDate and endDate

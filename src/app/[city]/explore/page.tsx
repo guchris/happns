@@ -7,7 +7,7 @@ import { TopBar } from "@/components/top-bar"
 import { Event as EventType } from "@/components/types"
 import { Event as EventComponent } from "@/components/event"
 import { cityOptions } from "@/lib/selectOptions"
-import { mapFirestoreEvent } from "@/lib/eventUtils"
+import { mapFirestoreEvents } from "@/lib/eventUtils"
 
 // Firebase Imports
 import { db } from "@/lib/firebase"
@@ -59,7 +59,7 @@ export default async function ExploreCityPage({ params }: ExploreCityPageProps) 
     const eventSnapshot = await getDocs(cityQuery);
 
     // Map Firestore data to EventType using the utility function
-    const events: EventType[] = eventSnapshot.docs.map(mapFirestoreEvent);
+    const events: EventType[] = eventSnapshot.docs.map(mapFirestoreEvents);
 
     return (
         <div className="md:h-screen min-h-screen flex flex-col">
