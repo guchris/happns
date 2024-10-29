@@ -30,7 +30,7 @@ export default function CityGrid({ cities }: CityGridProps) {
                         return (
                             <div key={city.name} className={`${!isReadycity ? "pointer-events-none opacity-50" : ""}`}>
                                 <Link href={isReadycity ? `/${city.slug}` : "#"} passHref>
-                                    <Card className="w-full">
+                                    <Card className="w-full shadow-none">
                                         <CardHeader className="space-y-2">
                                             <CardTitle className="line-clamp-1 text-base w-full">{city.name.toLowerCase()}</CardTitle>
                                         </CardHeader>

@@ -149,7 +149,7 @@ export default async function CityPage({ params }: CityPageProps) {
                         <h2 className="text-xl font-semibold">meet the curators</h2>
                         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                             {validCurators.map((curator, index) => (
-                                <Card key={index} className="w-full">
+                                <Card key={index} className="w-full shadow-none">
                                     <Link href={`/profile/${curator.username}`} className="no-underline">
                                         <CardHeader className="p-4">
                                             <div className="aspect-square w-full overflow-hidden relative">

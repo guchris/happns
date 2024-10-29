@@ -28,7 +28,7 @@ const CategoryEventGrid = ({ events, category, city }: CategoryEventGridProps) =
     return (
         <div className="space-y-4">
             <div className="flex justify-between items-center">
-                <Badge variant="secondary" className="text-lg">{category}</Badge>
+                <Badge variant="secondary" className="text-lg rounded-lg">{category}</Badge>
                 <Link href={`/${city}/explore?category=${category}`} className="text-sm font-medium text-black hover:underline">
                     see more
                 </Link>
@@ -36,24 +36,24 @@ const CategoryEventGrid = ({ events, category, city }: CategoryEventGridProps) =
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 {filteredEvents.length > 0 ? (
                     filteredEvents.map((event) => (
-                        <Card key={event.id} className="w-full">
+                        <div key={event.id} className="w-full">
                             <Link href={`/events/${event.id}`} className="no-underline">
-                                <CardHeader className="p-2">
-                                    <div className="aspect-w-1 aspect-h-1 w-full relative">
-                                        <Image
-                                            src={event.image || "/tempFlyer1.svg"}
-                                            alt={event.name}
-                                            width={150}
-                                            height={150}
-                                            loading="lazy"
-                                            className="object-cover w-full h-full rounded-lg"
-                                        />
-                                    </div>
-                                    <CardTitle className="line-clamp-1 text-base font-semibold mt-2">{event.name}</CardTitle>
-                                    <CardDescription className="text-sm text-muted-foreground">{formatEventDate(event.startDate, event.endDate)}</CardDescription>
-                                </CardHeader>
+                                <div className="aspect-w-1 aspect-h-1 w-full relative">
+                                    <Image
+                                        src={event.image || "/tempFlyer1.svg"}
+                                        alt={event.name}
+                                        width={150}
+                                        height={150}
+                                        loading="lazy"
+                                        className="object-cover w-full h-full rounded-lg"
+                                    />
+                                </div>
+                                <div className="line-clamp-1 text-base font-semibold mt-1">{event.name}</div>
+                                <div className="line-clamp-1 text-sm text-muted-foreground">
+                                    {formatEventDate(event.startDate, event.endDate)}
+                                </div>
                             </Link>
-                        </Card>
+                        </div>
                     ))
                 ) : (
                     <p className="text-sm text-muted-foreground">no events available</p>

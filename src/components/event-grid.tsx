@@ -98,24 +98,24 @@ const EventList = ({ events }: { events: Event[] }) => {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {events.length > 0 ? (
                 events.map((event) => (
-                    <Card key={event.id} className="w-full">
+                    <div key={event.id} className="w-full">
                         <Link href={`/events/${event.id}`} className="no-underline">
-                            <CardHeader className="p-2">
-                                <div className="aspect-w-1 aspect-h-1 w-full relative">
-                                    <Image
-                                        src={event.image || "/tempFlyer1.svg"}
-                                        alt={event.name}
-                                        width={150}
-                                        height={150}
-                                        loading="lazy"
-                                        className="object-cover w-full h-full rounded-lg"
-                                    />
-                                </div>
-                                <CardTitle className="line-clamp-1 text-base font-semibold mt-2">{event.name}</CardTitle>
-                                <CardDescription className="text-sm text-muted-foreground">{formatEventDate(event.startDate, event.endDate)}</CardDescription>
-                            </CardHeader>
+                            <div className="aspect-w-1 aspect-h-1 w-full relative">
+                                <Image
+                                    src={event.image || "/tempFlyer1.svg"}
+                                    alt={event.name}
+                                    width={150}
+                                    height={150}
+                                    loading="lazy"
+                                    className="object-cover w-full h-full rounded-lg"
+                                />
+                            </div>
+                            <div className="line-clamp-1 text-base font-semibold mt-1">{event.name}</div>
+                            <div className="line-clamp-1 text-sm text-muted-foreground">
+                                {formatEventDate(event.startDate, event.endDate)}
+                            </div>
                         </Link>
-                    </Card>
+                    </div>
                 ))
             ) : (
                 <p className="text-sm text-muted-foreground">no events available</p>

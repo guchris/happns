@@ -97,7 +97,7 @@ const EventGridBookmarkTabs = ({ bookmarkedEvents }: EventGridBookmarkTabsProps)
 
 const EventList = ({ events }: { events: Event[] }) => {
     return events.length > 0 ? (
-        <div className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-8 gap-4">
+        <div className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-8 gap-6">
             {events.map(event => (
                 <div key={event.id} className="w-full">
                     <Link href={`/events/${event.id}`} className="no-underline">
@@ -111,7 +111,7 @@ const EventList = ({ events }: { events: Event[] }) => {
                                 className="object-cover w-full h-full rounded-lg"
                             />
                         </div>
-                        <div className="line-clamp-1 text-base font-semibold mt-2">{event.name}</div>
+                        <div className="line-clamp-1 text-base font-semibold mt-1">{event.name}</div>
                         <div className="line-clamp-1 text-sm text-muted-foreground">
                             {formatEventDate(event.startDate, event.endDate)}
                         </div>
