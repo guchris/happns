@@ -116,7 +116,7 @@ const EventComments = ({ eventId }: EventCommentsProps) => {
                         </div>
                     ))
                 ) : (
-                    <p className="text-sm text-muted-foreground">No comments yet.</p>
+                    <p className="text-sm text-muted-foreground">no comments yet</p>
                 )}
             </div>
 
@@ -126,20 +126,20 @@ const EventComments = ({ eventId }: EventCommentsProps) => {
             {user ? (
                 <div className="p-4 space-y-2">
                     <Textarea
-                        placeholder="Add a comment"
+                        placeholder="add a comment"
                         value={newComment}
                         onChange={(e) => setNewComment(e.target.value)}
                         disabled={loading}
                     />
                     <Button onClick={postComment} disabled={loading || !newComment.trim()}>
-                        {loading ? "Posting..." : "Post Comment"}
+                        {loading ? "posting..." : "post comment"}
                     </Button>
                 </div>
             ) : (
                 <div className="p-4 text-sm text-muted-foreground">
-                    Please <a href={`/auth?redirect=${encodeURIComponent(redirectUrl || "/")}`} className="underline">
-                        log in
-                    </a> to post a comment.
+                    please <a href={`/auth?redirect=${encodeURIComponent(redirectUrl || "/")}`} className="underline">
+                        login
+                    </a> to post a comment
                 </div>
             )}
         </>

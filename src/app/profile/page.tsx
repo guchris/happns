@@ -257,9 +257,9 @@ export default function ProfilePage() {
                             </div>
                             <Collapsible>
                                 <CollapsibleTrigger asChild>
-                                    <Button variant="outline">Instructions</Button>
+                                    <Button variant="outline">instructions</Button>
                                 </CollapsibleTrigger>
-                                <CollapsibleContent className="p-4 space-y-4">
+                                <CollapsibleContent className="pt-4 space-y-4">
                                     <ol className="list-decimal list-inside text-sm space-y-2">
                                         <li>Copy the link above by clicking the &quot;Copy Link&quot; button.</li>
                                         <li>
@@ -273,7 +273,7 @@ export default function ProfilePage() {
                                     </ol>
                                     <Alert>
                                         <ExclamationTriangleIcon className="h-4 w-4" />
-                                        <AlertTitle>Note</AlertTitle>
+                                        <AlertTitle>note</AlertTitle>
                                         <AlertDescription>
                                             Google Calendar will get updated event information roughly every 24 hours.
                                         </AlertDescription>

@@ -115,7 +115,7 @@ export function EventDisplay({ event }: EventDisplayProps) {
                         <div className="flex-1 whitespace-pre-wrap p-4 grid gap-4">
                             <div className="grid gap-1">
                                 <div className="text-sm font-medium">
-                                    <span className="text-muted-foreground">Categories: </span>
+                                    <span className="text-muted-foreground">categories: </span>
                                     {categoryLabels.map((label, index) => (
                                         <Badge key={index} variant="outline" className="inline-block mr-1">
                                             {label}
@@ -123,19 +123,19 @@ export function EventDisplay({ event }: EventDisplayProps) {
                                     ))}
                                 </div>
                                 <div className="text-sm font-medium">
-                                    <span className="text-muted-foreground">Format: </span>
-                                    <Badge variant="outline" className="inline-block">
-                                        {formatLabel}
-                                    </Badge>
-                                </div>
-                                <div className="text-sm font-medium">
-                                    <span className="text-muted-foreground">Neighborhood: </span>
+                                    <span className="text-muted-foreground">neighborhood: </span>
                                     <Badge variant="outline" className="inline-block">
                                         {neighborhoodLabel}
                                     </Badge>
                                 </div>
                                 <div className="text-sm font-medium">
-                                    <span className="text-muted-foreground">Days Away: </span>
+                                    <span className="text-muted-foreground">format: </span>
+                                    <Badge variant="outline" className="inline-block">
+                                        {formatLabel}
+                                    </Badge>
+                                </div>
+                                <div className="text-sm font-medium">
+                                    <span className="text-muted-foreground">days away: </span>
                                     <Badge variant="outline" className="inline-block">
                                         {daysAwayLabel}
                                     </Badge>
@@ -148,14 +148,14 @@ export function EventDisplay({ event }: EventDisplayProps) {
                         {/* Event Location and Cost */}
                         <div className="flex items-center gap-4">
                             <div className="flex-1 p-4">
-                                <div className="text-sm font-medium text-muted-foreground">Location</div>
+                                <div className="text-sm font-medium text-muted-foreground">location</div>
                                 <Link href={event.gmaps} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-black underline">
                                     {event.location}
                                 </Link>
                             </div>
                             <Separator orientation="vertical" className="h-auto self-stretch" />
                             <div className="flex-1 p-4">
-                                <div className="text-sm font-medium text-muted-foreground">Cost</div>
+                                <div className="text-sm font-medium text-muted-foreground">cost</div>
                                 <div className="text-sm font-medium">
                                     {event?.cost ? formatEventCost(event.cost) : "N/A"}
                                 </div>
@@ -166,16 +166,35 @@ export function EventDisplay({ event }: EventDisplayProps) {
 
                         {/* Event Website */}
                         <div className="flex-1 p-4">
-                            <div className="text-sm font-medium text-muted-foreground">External Website</div>
+                            <div className="text-sm font-medium text-muted-foreground">external website</div>
                             <Link href={event.link} passHref legacyBehavior>
                                 <a
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-sm font-medium text-black underline break-words"
+                                    className="line-clamp-1 text-sm font-medium text-black underline break-words"
                                 >
                                     {event.link}
                                 </a>
                             </Link>
+                        </div>
+
+                        <Separator />
+                        
+                        {/* Event Stats */}
+                        <div className="flex items-center gap-4">
+                            <div className="flex-1 p-4">
+                                <div className="text-sm font-medium text-muted-foreground">clicks</div>
+                                <div className="text-sm font-medium">
+                                    {event.clicks}
+                                </div>
+                            </div>
+                            <Separator orientation="vertical" className="h-auto self-stretch" />
+                            <div className="flex-1 p-4">
+                                <div className="text-sm font-medium text-muted-foreground">going</div>
+                                <div className="text-sm font-medium">
+                                    coming soon
+                                </div>
+                            </div>
                         </div>
 
                         <Separator />
@@ -192,7 +211,7 @@ export function EventDisplay({ event }: EventDisplayProps) {
                     </div>
                 ) : (
                     <div className="p-8 text-center text-muted-foreground">
-                        No event selected
+                        no event selected
                     </div>
                 )}
             </div>

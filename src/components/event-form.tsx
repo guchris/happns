@@ -42,6 +42,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { v4 as uuidv4 } from "uuid";
 import { format, eachDayOfInterval } from "date-fns"
 import { CalendarIcon, ExclamationTriangleIcon } from "@radix-ui/react-icons"
+import { FieldErrors } from "react-hook-form"
 
 
 
@@ -126,7 +127,7 @@ const eventFormSchema = z.object({
             message: "Start time must be in HH:mm AM/PM format.",
         })
         .optional(),
-    varyingTimes: z.boolean()
+    varyingTimes: z.boolean().optional().default(false)
 }).refine((data) => {
     const isSingleDayEvent = data.startDate.toDateString() === data.endDate.toDateString();
     
@@ -181,6 +182,10 @@ export default function EventForm() {
 
     const hasPermission = !loading && user && userData?.role === "curator";
 
+    const onError = (errors: FieldErrors<EventFormValues>) => {
+        console.log("Form submission errors:", errors);
+    };
+
     // Updates the neighborhood options whenever the selected city changes
     useEffect(() => {
         if (selectedCity) {
@@ -216,7 +221,7 @@ export default function EventForm() {
                             endDate: new Date(`${eventData.endDate}T00:00:00`),
                             category: eventData.category,
                             image: eventData.image,
-                            dailyTimes: hasMultipleTimes ? eventData.times : undefined,
+                            dailyTimes: eventData.times && eventData.times.length > 1 ? eventData.times : [],
                             startTime: hasMultipleTimes ? undefined : eventData.times[0]?.startTime,
                             endTime: hasMultipleTimes ? undefined : eventData.times[0]?.endTime,
                         });
@@ -259,6 +264,7 @@ export default function EventForm() {
 
     // Form submission handler
     const onSubmit = async (data: EventFormValues) => {
+        
         const storage = getStorage();
         const eventsCollectionRef = doc(db, "events", eventId || uuidv4());
         
@@ -366,7 +372,7 @@ export default function EventForm() {
                 <Separator />
             </div>
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col px-4 py-2 space-y-8 max-w-[800px] mx-auto">
+                <form onSubmit={form.handleSubmit(onSubmit, onError)} className="flex flex-col px-4 py-2 space-y-8 max-w-[800px] mx-auto">
 
                     <FormField
                         control={form.control}
