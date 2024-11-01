@@ -10,17 +10,10 @@ import { useAuth } from "@/context/AuthContext"
 import { Event } from "@/components/types"
 import { formatEventDate, getFutureEvents, sortEventsByDate } from "@/lib/eventUtils"
 
-
 // Firebase Imports
 import { db } from "@/lib/firebase"
 import { doc, collection, getDocs, getDoc } from "firebase/firestore"
 
-// Shadcn Imports
-import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-
-const CACHE_KEY = 'bookmarkedEvents';
-const CACHE_TIMESTAMP_KEY = 'bookmarkedEventsTimestamp';
-const CACHE_THRESHOLD = 60 * 60 * 1000; // 1 hour
 
 const EventGridBookmark = () => {
     const { user } = useAuth();
@@ -31,17 +24,6 @@ const EventGridBookmark = () => {
         const fetchBookmarkedEvents = async () => {
 
             if (!user) return;
-
-            const cachedEvents = localStorage.getItem(CACHE_KEY);
-            const cacheTimestamp = localStorage.getItem(CACHE_TIMESTAMP_KEY);
-            const now = Date.now();
-
-            // Use cached data if it exists and is not stale
-            if (cachedEvents && cacheTimestamp && (now - parseInt(cacheTimestamp)) < CACHE_THRESHOLD) {
-                setBookmarkedEvents(JSON.parse(cachedEvents));
-                setIsLoading(false);
-                return;
-            }
 
             try {
                 const bookmarksRef = collection(db, "users", user.uid, "user-bookmarks");
@@ -70,9 +52,6 @@ const EventGridBookmark = () => {
                 const closestUpcomingEvents = sortedFutureEvents.slice(0, 8);
 
                 setBookmarkedEvents(closestUpcomingEvents);
-
-                localStorage.setItem(CACHE_KEY, JSON.stringify(closestUpcomingEvents));
-                localStorage.setItem(CACHE_TIMESTAMP_KEY, now.toString());
             } catch (error) {
                 console.error("Error fetching bookmarked events:", error);
             } finally {

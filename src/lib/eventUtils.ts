@@ -7,7 +7,7 @@ import { DocumentData, QueryDocumentSnapshot, collection, getCountFromServer, qu
 import { DocumentSnapshot } from "firebase-admin/firestore"
 
 // Other Imports
-import { format, parse, isAfter, isSameDay, isSameMonth, addDays, parseISO } from "date-fns"
+import { format, parse, isAfter, isEqual, isSameDay, isSameMonth, addDays, parseISO } from "date-fns"
 
 /**
  * Maps Firestore document data to an Event type.
@@ -117,15 +117,20 @@ export function getEventsHappeningTomorrow(events: Event[], today: Date): Event[
 
 
 /**
- * Filters events to include only those that haven't passed yet.
+ * Filters events to include only those that haven't passed yet or are happening today.
  * @param events - Array of Event objects.
  * @param today - The current date.
  * @returns {Event[]} - Array of future events.
  */
 export function getFutureEvents(events: Event[], today: Date): Event[] {
+    const todayStr = today.toISOString().split('T')[0]; // Only the date portion
+
     return events.filter((event) => {
-        const endDate = parseISO(event.endDate);
-        return isAfter(endDate, today);
+        const startDateStr = parseISO(event.startDate).toISOString().split('T')[0];
+        const endDateStr = parseISO(event.endDate).toISOString().split('T')[0];
+
+        // Include events that start on or after today, or events that span over today
+        return endDateStr >= todayStr && (startDateStr <= todayStr || startDateStr >= todayStr);
     });
 }
 
