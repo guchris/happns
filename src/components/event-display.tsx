@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge"
 // App Imports
 import { Event } from "@/components/types"
 import EventActions from "@/components/event-actions"
+import EventAttendance from "@/components/event-attendance"
 import EventComments from "@/components/event-comments"
 import ClientButton from "@/components/client-button"
 import { categoryOptions, formatOptions, neighborhoodOptions } from "@/lib/selectOptions"
@@ -79,6 +80,10 @@ export function EventDisplay({ event }: EventDisplayProps) {
                                         />
                                     </div>
                                 )}
+
+                                <div className="flex items-center justify-center mb-2">
+                                    <EventAttendance event={event} />
+                                </div>
 
                                 {/* Event Name, Date, and Time */}
                                 <div className="grid gap-1">

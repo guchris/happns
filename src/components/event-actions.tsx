@@ -32,7 +32,6 @@ const EventActions = ({ event }: EventActionsProps) => {
     const { toast } = useToast();
 
     const [isBookmarked, setIsBookmarked] = useState(false);
-    const [attendanceStatus, setAttendanceStatus] = useState<"yes" | "maybe" | "no" | null>(null);
     const isDisabled = !event;
 
     useEffect(() => {
@@ -47,23 +46,6 @@ const EventActions = ({ event }: EventActionsProps) => {
                 }
             };
             checkIfBookmarked();
-        }
-    }, [user, event]);
-
-    useEffect(() => {
-        if (user && event) {
-            const fetchAttendanceStatus = async () => {
-                try {
-                    const attendanceRef = doc(db, `events/${event.id}/attendances`, user.uid);
-                    const attendanceSnap = await getDoc(attendanceRef);
-                    if (attendanceSnap.exists()) {
-                        setAttendanceStatus(attendanceSnap.data().status); // Set initial attendance status
-                    }
-                } catch (error) {
-                    console.error("Error fetching attendance status: ", error);
-                }
-            };
-            fetchAttendanceStatus();
         }
     }, [user, event]);
 
@@ -153,18 +135,6 @@ const EventActions = ({ event }: EventActionsProps) => {
         }
     };
 
-    const handleAttendanceChange = async (status: "yes" | "maybe" | "no") => {
-        if (attendanceStatus === status) {
-            // If the button is already selected, unselect it by setting to null
-            setAttendanceStatus(null); // No attendance selected
-            await updateAttendance(event!.id, user!.uid, null); // Pass null to remove attendance in Firestore
-        } else {
-            // Set the new status if it’s different and update in Firestore
-            setAttendanceStatus(status);
-            await updateAttendance(event!.id, user!.uid, status);
-        }
-    };
-
     return (
         <div className="flex items-center gap-2">
 
@@ -188,30 +158,6 @@ const EventActions = ({ event }: EventActionsProps) => {
                     </TooltipTrigger>
                     <TooltipContent>Edit Event</TooltipContent>
                 </Tooltip>
-            )}
-
-            {/* Attendance Buttons */}
-            {user && event && (
-                <div className="attendance-buttons flex gap-2">
-                    <Button 
-                        variant={attendanceStatus === "yes" ? "default" : "outline"} 
-                        onClick={() => handleAttendanceChange("yes")}
-                    >
-                        yes
-                    </Button>
-                    <Button 
-                        variant={attendanceStatus === "maybe" ? "default" : "outline"} 
-                        onClick={() => handleAttendanceChange("maybe")}
-                    >
-                        maybe
-                    </Button>
-                    <Button 
-                        variant={attendanceStatus === "no" ? "default" : "outline"} 
-                        onClick={() => handleAttendanceChange("no")}
-                    >
-                        no
-                    </Button>
-                </div>
             )}
 
             {/* Bookmark Button */}
@@ -240,7 +186,7 @@ const EventActions = ({ event }: EventActionsProps) => {
                 </Tooltip>
             )}
 
-            {/* Calendar and Link Buttons */}
+            {/* Calendar Button */}
             <Tooltip>
                 <TooltipTrigger asChild>
                     <Button variant="ghost" size="icon" disabled={isDisabled} onClick={addToCalendar}>
@@ -250,6 +196,8 @@ const EventActions = ({ event }: EventActionsProps) => {
                 </TooltipTrigger>
                 <TooltipContent>Add to Calendar</TooltipContent>
             </Tooltip>
+
+            {/* Link Button */}
             <Tooltip>
                 <TooltipTrigger asChild>
                     <Button variant="ghost" size="icon" disabled={isDisabled} onClick={handleCopyEventLink}>
