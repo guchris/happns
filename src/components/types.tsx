@@ -21,6 +21,11 @@ export interface Event {
         startTime: string;
         endTime: string;
     }[];
+    attendanceSummary: {
+        yesCount: number;
+        maybeCount: number;
+        noCount: number;
+    };
 }
 
 export interface User {
@@ -67,4 +72,11 @@ export interface City {
 export interface CarouselEvent {
     uid: string;
     image: string;
+}
+
+export interface Attendance {
+    userId: string;
+    eventId: string;
+    status: "yes" | "maybe" | "not";
+    timestamp: Date;
 }

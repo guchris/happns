@@ -3,8 +3,9 @@ import { Event } from "@/components/types"
 
 // Firebase Imports
 import { db } from "@/lib/firebase"
-import { DocumentData, QueryDocumentSnapshot, collection, getCountFromServer, query, where, getDocs } from "firebase/firestore"
+import { doc, setDoc, runTransaction, increment, DocumentData, QueryDocumentSnapshot, collection, getCountFromServer, query, where, getDocs } from "firebase/firestore"
 import { DocumentSnapshot } from "firebase-admin/firestore"
+
 
 // Other Imports
 import { format, parse, isAfter, isEqual, isSameDay, isSameMonth, addDays, parseISO } from "date-fns"
@@ -32,6 +33,11 @@ export function mapFirestoreEvents(doc: QueryDocumentSnapshot<DocumentData>): Ev
         neighborhood: doc.data().neighborhood,
         startDate: doc.data().startDate,
         times: doc.data().times,
+        attendanceSummary: {
+            yesCount: doc.data().attendanceSummary?.yesCount || 0,
+            maybeCount: doc.data().attendanceSummary?.maybeCount || 0,
+            noCount: doc.data().attendanceSummary?.noCount || 0,
+        }
     };
 }
 export function mapFirestoreEvent(doc: DocumentSnapshot): Event {
@@ -52,6 +58,11 @@ export function mapFirestoreEvent(doc: DocumentSnapshot): Event {
         neighborhood: doc.data()?.neighborhood,
         startDate: doc.data()?.startDate,
         times: doc.data()?.times,
+        attendanceSummary: {
+            yesCount: doc.data()?.attendanceSummary?.yesCount || 0,
+            maybeCount: doc.data()?.attendanceSummary?.maybeCount || 0,
+            noCount: doc.data()?.attendanceSummary?.noCount || 0,
+        }
     };
 }
 
@@ -336,6 +347,7 @@ export const getEventTabs = ( event: Event, todayStr: string, tomorrowStr: strin
 };
 
 
+
 /**
  * Sorts events first by start date and then alphabetically by name for events with the same date.
  * @param events - Array of Event objects.
@@ -353,4 +365,70 @@ export function sortEventsByDateAndName(events: Event[]): Event[] {
         // If startDate is the same, sort by name alphabetically
         return a.name.localeCompare(b.name);
     });
+}
+
+
+
+/**
+ * Updates the attendance status for a user on a specific event.
+ * Adjusts the attendance summary counts in the event document accordingly,
+ * and records the attendance in the user's "user-attendance" sub-collection.
+ * 
+ * @param eventId - The ID of the event.
+ * @param userId - The ID of the user.
+ * @param status - The attendance status ("yes", "maybe", "no") or null if unselecting.
+ */
+export async function updateAttendance(eventId: string, userId: string, status: "yes" | "maybe" | "no" | null) {
+    const eventRef = doc(db, "events", eventId);
+    const attendanceDocRef = doc(db, "events", eventId, "attendances", userId);
+    const userAttendanceDocRef = doc(db, "users", userId, "user-attendance", eventId);
+
+    try {
+        await runTransaction(db, async (transaction) => {
+            const attendanceDoc = await transaction.get(attendanceDocRef);
+            const currentStatus = attendanceDoc.exists() ? attendanceDoc.data().status : null;
+
+            // Handle deselecting the current option (status is null)
+            if (status === null) {
+                // Remove attendance record from the event's attendances sub-collection
+                transaction.delete(attendanceDocRef);
+
+                // Decrement the count for the previously selected status
+                if (currentStatus) {
+                    transaction.update(eventRef, {
+                        [`attendanceSummary.${currentStatus}Count`]: increment(-1),
+                    });
+                }
+
+                // Remove attendance record from the user's user-attendance sub-collection
+                transaction.delete(userAttendanceDocRef);
+            } else {
+                // Update the attendance document in the event's attendances sub-collection
+                transaction.set(attendanceDocRef, { status, userId, timestamp: new Date() });
+
+                // Update the summary counts in the event document if the status has changed
+                if (currentStatus !== status) {
+                    if (currentStatus) {
+                        transaction.update(eventRef, {
+                            [`attendanceSummary.${currentStatus}Count`]: increment(-1),
+                        });
+                    }
+                    transaction.update(eventRef, {
+                        [`attendanceSummary.${status}Count`]: increment(1),
+                    });
+                }
+
+                // Record the user's attendance in their user-attendance sub-collection
+                transaction.set(userAttendanceDocRef, {
+                    eventId,
+                    status,
+                    timestamp: new Date(),
+                });
+            }
+        });
+
+        console.log("Attendance updated successfully.");
+    } catch (error) {
+        console.error("Error updating attendance: ", error);
+    }
 }

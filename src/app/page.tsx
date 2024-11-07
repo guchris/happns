@@ -22,6 +22,7 @@ import { collection, doc, getDoc, getDocs } from "firebase/firestore"
 // Shadcn Imports
 import { Separator } from "@/components/ui/separator"
 
+
 export const dynamic = 'force-dynamic';
 
 // Generate page metadata
