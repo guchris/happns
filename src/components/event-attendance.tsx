@@ -58,24 +58,27 @@ const EventAttendanceActions = ({ event }: EventAttendanceActionsProps) => {
         <div className="flex items-center gap-2">
             {/* Attendance Buttons */}
             {user && event && (
-                <div className="attendance-buttons flex gap-2">
+                <div className="attendance-buttons flex gap-2 w-[300px]">
                     <Button 
-                        variant={attendanceStatus === "yes" ? "default" : "outline"} 
+                        variant={attendanceStatus === "yes" ? "default" : "outline"}
+                        className="w-full"
                         onClick={() => handleAttendanceChange("yes")}
                     >
-                        going
+                        👍 going
                     </Button>
                     <Button 
-                        variant={attendanceStatus === "maybe" ? "default" : "outline"} 
+                        variant={attendanceStatus === "maybe" ? "default" : "outline"}
+                        className="w-full"
                         onClick={() => handleAttendanceChange("maybe")}
                     >
-                        maybe
+                        🤔 maybe
                     </Button>
                     <Button 
-                        variant={attendanceStatus === "no" ? "default" : "outline"} 
+                        variant={attendanceStatus === "no" ? "default" : "outline"}
+                        className="w-full"
                         onClick={() => handleAttendanceChange("no")}
                     >
-                        not
+                        👎 not
                     </Button>
                 </div>
             )}
