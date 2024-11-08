@@ -313,6 +313,11 @@ export default function EventForm() {
             location: data.location,
             name: data.name,
             neighborhood: data.neighborhood,
+            attendanceSummary: {
+                yesCount: 0,
+                maybeCount: 0,
+                noCount: 0,
+            },
         };
 
         try {

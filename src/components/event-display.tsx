@@ -197,7 +197,14 @@ export function EventDisplay({ event }: EventDisplayProps) {
                             <div className="flex-1 p-4">
                                 <div className="text-sm font-medium text-muted-foreground">going</div>
                                 <div className="text-sm font-medium">
-                                    coming soon
+                                    {event.attendanceSummary.yesCount}
+                                </div>
+                            </div>
+                            <Separator orientation="vertical" className="h-auto self-stretch" />
+                            <div className="flex-1 p-4">
+                                <div className="text-sm font-medium text-muted-foreground">maybe</div>
+                                <div className="text-sm font-medium">
+                                    {event.attendanceSummary.maybeCount}
                                 </div>
                             </div>
                         </div>
