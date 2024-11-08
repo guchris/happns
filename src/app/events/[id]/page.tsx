@@ -9,7 +9,7 @@ import { TopBar } from "@/components/top-bar"
 import Footer from "@/components/footer"
 
 // Firebase Imports
-import { doc, getDoc } from "firebase/firestore"
+import { doc, getDoc, updateDoc, increment } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 
 // Shadcn Imports
@@ -71,6 +71,7 @@ export default async function EventPage({ params }: EventPageProps) {
     }
 
     const eventDoc = doc(db, "events", id);
+    await updateDoc(eventDoc, { clicks: increment(1) });
     const eventSnapshot = await getDoc(eventDoc);
 
     if (!eventSnapshot.exists()) {
