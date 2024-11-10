@@ -165,6 +165,23 @@ export default async function PublicProfilePage({ params }: { params: { username
                                     {userInfo.role}
                                 </Badge>
                             </div>
+
+                            {/* Instagram Handle */}
+                            {userInfo.instagram && (
+                                <div className="text-sm font-medium flex items-center space-x-2">
+                                    <span className="text-muted-foreground w-10">insta</span>
+                                    <Badge variant="outline" className="inline-block">
+                                        <a 
+                                            href={`https://www.instagram.com/${userInfo.instagram}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-inherit no-underline"
+                                        >
+                                            @{userInfo.instagram}
+                                        </a>
+                                    </Badge>
+                                </div>
+                            )}
                         </div>
                     </div>
 

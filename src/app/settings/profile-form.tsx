@@ -31,6 +31,7 @@ const profileFormSchema = z.object({
     username: z.string().min(1, "Username is required"),
     email: z.string().email("Please enter a valid email address"),
     profilePicture: z.string().optional(),
+    instagram: z.string().optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -40,6 +41,7 @@ const defaultValues: Partial<ProfileFormValues> = {
     username: "",
     email: "",
     profilePicture: undefined,
+    instagram: "",
 };
 
 export default function ProfileForm() {
@@ -77,6 +79,7 @@ export default function ProfileForm() {
                         username: userData.username || "",
                         email: userData.email || "",
                         profilePicture: userData.profilePicture || undefined,
+                        instagram: userData.instagram || "",
                     });
                 }
             };
@@ -91,6 +94,7 @@ export default function ProfileForm() {
                 watchedValues.name !== userInfo.name ||
                 watchedValues.username !== userInfo.username ||
                 watchedValues.email !== userInfo.email ||
+                watchedValues.instagram !== userInfo.instagram ||
                 editProfilePicture !== userInfo.profilePicture;
 
             setIsModified(hasChanges);
@@ -142,6 +146,7 @@ export default function ProfileForm() {
                     name: data.name,
                     username: data.username,
                     email: data.email,
+                    instagram: data.instagram
                 };
 
                 // Only include profilePicture if it has a valid URL
@@ -274,6 +279,20 @@ export default function ProfileForm() {
                                     <FormLabel>email</FormLabel>
                                     <FormControl>
                                         <Input {...field} placeholder="Enter your email" />
+                                    </FormControl>
+                                </FormItem>
+                            )}
+                        />
+
+                        {/* Instagram Field */}
+                        <FormField
+                            control={form.control}
+                            name="instagram"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Instagram Handle</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} placeholder="Enter your Instagram handle" />
                                     </FormControl>
                                 </FormItem>
                             )}

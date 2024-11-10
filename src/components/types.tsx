@@ -37,6 +37,7 @@ export interface User {
     profilePicture?: string;
     role: "general" | "curator";
     selectedCity?: string;
+    instagram?: string;
     notifications: {
         communication_emails: boolean;
         roundup_emails: boolean;

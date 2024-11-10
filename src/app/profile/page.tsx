@@ -192,6 +192,7 @@ export default function ProfilePage() {
                     {/* User Badges */}
                     <div className="flex whitespace-pre-wrap p-4 grid gap-4">
                         <div className="grid gap-2">
+
                             {/* Email */}
                             <div className="text-sm font-medium flex items-center space-x-2">
                                 <span className="text-muted-foreground w-10">email</span>
@@ -217,6 +218,23 @@ export default function ProfilePage() {
                                     {userInfo.role}
                                 </Badge>
                             </div>
+
+                            {/* Instagram Handle */}
+                            {userInfo.instagram && (
+                                <div className="text-sm font-medium flex items-center space-x-2">
+                                    <span className="text-muted-foreground w-10">insta</span>
+                                    <Badge variant="outline" className="inline-block">
+                                        <a 
+                                            href={`https://www.instagram.com/${userInfo.instagram}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-inherit no-underline"
+                                        >
+                                            @{userInfo.instagram}
+                                        </a>
+                                    </Badge>
+                                </div>
+                            )}
                         </div>
                     </div>
 
