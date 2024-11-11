@@ -25,7 +25,7 @@ export default function CityGrid({ cities }: CityGridProps) {
             {/* Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 w-full">
                 {sortedCities.map((city) => {
-                        const isReadycity = city.name === "Seattle" || city.name === "San Francisco";
+                        const isReadycity = city.name === "Seattle";
 
                         return (
                             <div key={city.name} className={`${!isReadycity ? "pointer-events-none opacity-50" : ""}`}>

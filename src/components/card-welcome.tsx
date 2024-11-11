@@ -14,7 +14,6 @@ export default function WelcomeCard() {
                     <CardTitle className="text-xl font-semibold">welcome to happns</CardTitle>
                     <CardDescription className="mt-8 text-sm">
                         thank you for joining me during this beta - happns is a personal project I built to make discovering events easier, and I&apos;m excited to see where this goes!
-                        <span className="font-bold"> - chris</span>
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
