@@ -99,13 +99,17 @@ export function Event({ events, city }: EventProps) {
 
     const isEventInRange = (eventStart: Date, eventEnd: Date, rangeStart: Date, rangeEnd?: Date) => {
         const effectiveRangeEnd = rangeEnd || new Date(9999, 11, 31);
+        const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" });
 
         const eventStartDate = eventStart.toISOString().split('T')[0];
         const eventEndDate = eventEnd.toISOString().split('T')[0];
         const rangeStartDate = rangeStart.toISOString().split('T')[0];
         const effectiveRangeEndDate = effectiveRangeEnd.toISOString().split('T')[0];
         
-        return eventStartDate <= effectiveRangeEndDate && eventEndDate >= rangeStartDate;
+        return (
+            (eventStartDate <= effectiveRangeEndDate && eventEndDate >= rangeStartDate) ||
+            eventEndDate === today
+        );
     };
 
     // Filtered events based on selected filters

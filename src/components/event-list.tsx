@@ -10,7 +10,6 @@ import { useEvent } from "@/hooks/use-event"
 import { categoryOptions } from "@/lib/selectOptions"
 import { sortEventsByDateAndName } from "@/lib/eventUtils"
 
-
 // Firebase Imports
 import { db } from "@/lib/firebase"
 import { doc, updateDoc, increment } from "firebase/firestore"
@@ -34,29 +33,22 @@ interface EventListProps {
 
 export function EventList({ items, isVerticalLayout, isFilterActive }: EventListProps) {
 
-    const today = new Date().toISOString().split("T")[0]; // ISO format for today's date
+    const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" });
 
     // Group events by display date (today if within range, otherwise start date)
     const eventsByDate = items.reduce((acc, item) => {
-        const startDate = parseISO(item.startDate);
-        const endDate = parseISO(item.endDate);
+        const startDate = item.startDate;
+        const endDate = item.endDate;
 
         // Ensure multi-day events appear under today if today is within their date range
-        const isTodayInRange = new Date(today).getTime() >= startDate.getTime() && new Date(today).getTime() <= endDate.getTime();
+        const isTodayInRange = today >= startDate && today <= endDate;
 
         if (isTodayInRange) {
-            // If today is within the event's range, ensure the event is in today's collapsible
-            if (!acc[today]) {
-                acc[today] = [];
-            }
+            if (!acc[today]) acc[today] = [];
             acc[today].push(item);
-        } else if (startDate.getTime() > new Date(today).getTime()) {
-            // Only create a collapsible for future events (skip past dates if they span today)
-            const startIsoDate = startDate.toISOString().split("T")[0];
-            if (!acc[startIsoDate]) {
-                acc[startIsoDate] = [];
-            }
-            acc[startIsoDate].push(item);
+        } else if (startDate > today) {
+            if (!acc[startDate]) acc[startDate] = [];
+            acc[startDate].push(item);
         }
 
         return acc;
