@@ -17,7 +17,7 @@ import { cityOptions, categoryOptions, formatOptions, neighborhoodOptions } from
 
 // Firebase Imports
 import { db } from "@/lib/firebase"
-import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore"
+import { collection, doc, setDoc, getDoc, addDoc, updateDoc } from "firebase/firestore"
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"
 
 // Zod Imports
@@ -266,7 +266,7 @@ export default function EventForm() {
     const onSubmit = async (data: EventFormValues) => {
         
         const storage = getStorage();
-        const eventsCollectionRef = doc(db, "events", eventId || uuidv4());
+        const eventsCollectionRef = collection(db, "events");
         
         const startDate = data.startDate.toISOString().split('T')[0];
         const endDate = data.endDate.toISOString().split('T')[0];
@@ -323,14 +323,14 @@ export default function EventForm() {
         try {
             if (eventId) {
                 // If eventId exists, update the existing event
-                await updateDoc(eventsCollectionRef, eventData);
+                await updateDoc(doc(db, "events", eventId), eventData);
                 toast({
                     title: "Event Updated",
                     description: data.name,
                 });
             } else {
                 // If no eventId, create a new event
-                await setDoc(eventsCollectionRef, eventData);
+                await addDoc(eventsCollectionRef, eventData);
                 toast({
                     title: "Event Created",
                     description: data.name,
