@@ -81,3 +81,12 @@ export interface Attendance {
     status: "yes" | "maybe" | "not";
     timestamp: Date;
 }
+
+export interface Notification {
+    id: string;
+    type: string;
+    message: string;
+    date: Date;
+    link: string;
+    isRead: boolean;
+}
