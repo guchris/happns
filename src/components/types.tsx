@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase/firestore"
+
 export interface Event {
     category: string[];
     city: string;
@@ -86,7 +88,7 @@ export interface Notification {
     id: string;
     type: string;
     message: string;
-    date: Date;
+    date: Timestamp | Date;
     link: string;
     isRead: boolean;
 }

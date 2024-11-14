@@ -10,23 +10,19 @@ import { useState, useEffect } from "react"
 import { useAuth } from "@/context/AuthContext"
 import { useToast } from "@/hooks/use-toast"
 import { getInitials } from "@/lib/userUtils"
+import { Notification } from "@/components/types"
+import { NotificationList } from "@/components/notification-list"
 
 // Firebase Imports
-import { auth } from "@/lib/firebase"
+import { db, auth } from "@/lib/firebase"
 import { signOut } from "firebase/auth"
+import { doc, collection, onSnapshot, updateDoc, orderBy, query } from "firebase/firestore"
 
 // Shadcn Imports
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import {
-    Sheet,
-    SheetContent,
-    SheetDescription,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger,
-} from "@/components/ui/sheet"
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Bell } from "lucide-react"
   
@@ -42,9 +38,10 @@ export const TopBar: React.FC<TopBarProps> = ({ title }) => {
 
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
+    const [notifications, setNotifications] = useState<Notification[]>([]);
 
+    // Determine if the viewport is mobile or desktop
     useEffect(() => {
-        // Determine if the viewport is mobile or desktop
         const handleResize = () => {
             setIsMobile(window.innerWidth < 768);
         };
@@ -53,11 +50,41 @@ export const TopBar: React.FC<TopBarProps> = ({ title }) => {
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
+    // Fetch notifications from Firestore in real-time, ordered by date in descending order
+    useEffect(() => {
+        if (user) {
+            const notificationsRef = collection(db, "users", user.uid, "notifications");
+            const notificationsQuery = query(notificationsRef, orderBy("date", "desc")); // Order by date, newest first
+            const unsubscribe = onSnapshot(notificationsQuery, (snapshot) => {
+                const fetchedNotifications = snapshot.docs.map((doc) => ({
+                    id: doc.id,
+                    ...doc.data(),
+                })) as Notification[];
+                setNotifications(fetchedNotifications);
+            });
+            return unsubscribe;
+        }
+    }, [user]);
+
+     // Mark a notification as read in Firestore and update local state
+    const markAsRead = async (id: string) => {
+        if (user) {
+            const notificationRef = doc(db, "users", user.uid, "notifications", id);
+            await updateDoc(notificationRef, { isRead: true });
+            
+            setNotifications((prevNotifications) =>
+                prevNotifications.map((notification) =>
+                    notification.id === id ? { ...notification, isRead: true } : notification
+                )
+            );
+        }
+    };
+
     const handleSignOut = async () => {
         await signOut(auth);
         router.push("/");
         toast({
-            title: "Logged Out"
+            title: "logged out"
         });
     };
 
@@ -109,8 +136,7 @@ export const TopBar: React.FC<TopBarProps> = ({ title }) => {
                                     <SheetTitle className="text-left">notifications</SheetTitle>
                                 </SheetHeader>
                                 <div className="mt-4 space-y-4">
-                                    <p className="text-sm">lorem ipsum</p>
-                                    {/* Add more notification items here */}
+                                    <NotificationList notifications={notifications} onMarkAsRead={markAsRead} />
                                 </div>
                             </SheetContent>
                         </Sheet>
@@ -129,9 +155,8 @@ export const TopBar: React.FC<TopBarProps> = ({ title }) => {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="w-96 max-h-96 bg-white shadow-lg rounded-lg p-4 mr-14">
                                 <DropdownMenuLabel className="text-base">notifications</DropdownMenuLabel>
-                                <div className="p-2 space-y-2">
-                                    <p className="text-sm">lorem ipsum</p>
-                                    {/* Add more notifications here */}
+                                <div className="p-2 space-y-2 overflow-y-auto max-h-80">
+                                    <NotificationList notifications={notifications} onMarkAsRead={markAsRead} />
                                 </div>
                             </DropdownMenuContent>
                         </DropdownMenu>
