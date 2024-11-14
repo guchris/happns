@@ -16,7 +16,7 @@ import { NotificationList } from "@/components/notification-list"
 // Firebase Imports
 import { db, auth } from "@/lib/firebase"
 import { signOut } from "firebase/auth"
-import { doc, collection, onSnapshot, updateDoc, orderBy, query } from "firebase/firestore"
+import { doc, collection, onSnapshot, updateDoc, orderBy, query, writeBatch } from "firebase/firestore"
 
 // Shadcn Imports
 import { Badge } from "@/components/ui/badge"
@@ -82,6 +82,28 @@ export const TopBar: React.FC<TopBarProps> = ({ title }) => {
         }
     };
 
+    // Mark all notifications as read
+    const markAllAsRead = async () => {
+        if (user) {
+            const batch = writeBatch(db); // Create a batch
+            notifications.forEach((notification) => {
+                if (!notification.isRead) {
+                    const notificationRef = doc(db, "users", user.uid, "notifications", notification.id);
+                    batch.update(notificationRef, { isRead: true });
+                }
+            });
+            await batch.commit(); // Commit the batch operation
+    
+            // Update local state to mark all notifications as read
+            setNotifications((prevNotifications) =>
+                prevNotifications.map((notification) => ({
+                    ...notification,
+                    isRead: true,
+                }))
+            );
+        }
+    };
+
     const handleSignOut = async () => {
         await signOut(auth);
         router.push("/");
@@ -127,11 +149,11 @@ export const TopBar: React.FC<TopBarProps> = ({ title }) => {
                                 <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="relative h-8 w-8 rounded-full"
+                                    className="relative h-8 w-8 rounded-full border border-gray-100"
                                 >
-                                    <Bell className="h-6 w-6 text-black" />
+                                    <Bell className="h-5 w-5 text-black" />
                                     {unreadCount > 0 && (
-                                        <span className="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                                        <span className="absolute top-[-4px] right-[-4px] bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
                                             {unreadCount}
                                         </span>
                                     )}
@@ -139,7 +161,14 @@ export const TopBar: React.FC<TopBarProps> = ({ title }) => {
                             </SheetTrigger>
                             <SheetContent side="top" className="w-full h-full">
                                 <SheetHeader>
-                                    <SheetTitle className="text-left">notifications</SheetTitle>
+                                    <div className="text-left space-y-4">
+                                        <SheetTitle className="text-left">notifications</SheetTitle>
+                                        {unreadCount > 0 && (
+                                            <Button variant="outline" className="text-xs" onClick={markAllAsRead}>
+                                                mark all as read
+                                            </Button>
+                                        )}
+                                    </div>
                                 </SheetHeader>
                                 <div className="mt-4 space-y-4">
                                     <NotificationList notifications={notifications} onMarkAsRead={markAsRead} />
@@ -164,7 +193,14 @@ export const TopBar: React.FC<TopBarProps> = ({ title }) => {
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="w-96 max-h-96 bg-white shadow-lg rounded-lg p-4 mr-14">
-                                <DropdownMenuLabel className="text-base">notifications</DropdownMenuLabel>
+                                <DropdownMenuLabel className="text-base flex justify-between items-center">
+                                    notifications
+                                    {unreadCount > 0 && (
+                                        <Button variant="link" className="text-xs px-0" onClick={markAllAsRead}>
+                                            mark all as read
+                                        </Button>
+                                    )}
+                                </DropdownMenuLabel>
                                 <div className="p-2 space-y-2 overflow-y-auto max-h-80">
                                     <NotificationList notifications={notifications} onMarkAsRead={markAsRead} />
                                 </div>
