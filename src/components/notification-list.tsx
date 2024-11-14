@@ -1,5 +1,6 @@
 // App Imports
 import { Notification } from "@/components/types"
+import { formatDistanceToNow } from "date-fns"
 
 interface NotificationListProps {
     notifications: Notification[];
@@ -22,8 +23,7 @@ export function NotificationList({ notifications, onMarkAsRead }: NotificationLi
                         <p className="text-xs">{notification.message}</p>
                     </div>
                     <p className="text-xs text-gray-400">
-                        {/* Check if date is a Timestamp and convert it; otherwise, assume it's already a Date */}
-                        {(notification.date instanceof Date ? notification.date : notification.date.toDate()).toLocaleString()}
+                        {formatDistanceToNow(notification.date instanceof Date ? notification.date : notification.date.toDate(), { addSuffix: true })}
                     </p>
                 </div>
             ))}

@@ -35,10 +35,12 @@ export const TopBar: React.FC<TopBarProps> = ({ title }) => {
     const router = useRouter();
     const pathname = usePathname();
     const { toast } = useToast();
-
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
     const [notifications, setNotifications] = useState<Notification[]>([]);
+
+    // Calculate unread count
+    const unreadCount = notifications.filter(notification => !notification.isRead).length;
 
     // Determine if the viewport is mobile or desktop
     useEffect(() => {
@@ -127,8 +129,12 @@ export const TopBar: React.FC<TopBarProps> = ({ title }) => {
                                     size="icon"
                                     className="relative h-8 w-8 rounded-full"
                                 >
-                                    <Bell className="h-5 w-5 text-black" />
-                                    <div className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full" /> {/* Badge for unread */}
+                                    <Bell className="h-6 w-6 text-black" />
+                                    {unreadCount > 0 && (
+                                        <span className="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                                            {unreadCount}
+                                        </span>
+                                    )}
                                 </Button>
                             </SheetTrigger>
                             <SheetContent side="top" className="w-full h-full">
@@ -147,10 +153,14 @@ export const TopBar: React.FC<TopBarProps> = ({ title }) => {
                                 <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="relative h-8 w-8 rounded-full"
+                                    className="relative h-8 w-8 rounded-full border border-gray-100"
                                 >
                                     <Bell className="h-5 w-5 text-black" />
-                                    <div className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full" /> {/* Badge for unread */}
+                                    {unreadCount > 0 && (
+                                        <span className="absolute top-[-4px] right-[-4px] bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                                            {unreadCount}
+                                        </span>
+                                    )}
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="w-96 max-h-96 bg-white shadow-lg rounded-lg p-4 mr-14">
