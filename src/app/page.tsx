@@ -10,7 +10,6 @@ import EventGridDynamic from "@/components/event-grid-dynamic"
 import EventGridBookmark from "@/components/event-grid-bookmark"
 import WelcomeCard from "@/components/card-welcome"
 import JoinCard from "@/components/card-join"
-import CategoriesGrid from "@/components/categories-grid"
 import Footer from "@/components/footer"
 import { CarouselEvent } from "@/components/types"
 import { getTotalUpcomingEvents } from "@/lib/eventUtils"
@@ -153,9 +152,6 @@ export default async function Home() {
 
 						{/* City Grid */}
 						<CityGrid cities={cities} />
-
-						{/* Categories Section */}
-						{/* <CategoriesGrid /> */}
 
 					</div>
 				</div>
