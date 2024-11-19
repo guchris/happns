@@ -1,13 +1,16 @@
+/*
 import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
 
 // Initialize Firebase admin
 admin.initializeApp();
 const db = admin.firestore();
+*/
 
 /**
  * Scheduled function to send a test notification to all users every hour.
  */
+/*
 export const sendTestNotificationsScheduled = functions.pubsub
   .schedule("every hour")
   .onRun(async () => {
@@ -37,11 +40,13 @@ export const sendTestNotificationsScheduled = functions.pubsub
       console.error("Error sending test notifications:", error);
     }
   });
+*/
 
 /**
  * Scheduled function to send event reminders to all users for events marked
  * as "yes" or "maybe" happening within the next 24 hours.
  */
+/*
 export const sendEventRemindersScheduled = functions.pubsub
   .schedule("every 24 hours")
   .onRun(async () => {
@@ -107,3 +112,4 @@ export const sendEventRemindersScheduled = functions.pubsub
       return null;
     }
   });
+*/
