@@ -1,66 +1,105 @@
-// import * as admin from "firebase-admin";
-// import {onSchedule} from "firebase-functions/v2/scheduler";
+import * as admin from "firebase-admin";
+import {onSchedule} from "firebase-functions/v2/scheduler";
 
-// // Initialize Firebase admin
-// admin.initializeApp();
-// const db = admin.firestore();
+// Initialize Firebase admin
+admin.initializeApp();
+const db = admin.firestore();
 
-// /**
-//  * Scheduled function to send event reminders to all users for events marked
-//  * as "yes" or "maybe" happening within the next 24 hours.
-//  */
-// export const sendEventRemindersScheduled = onSchedule(
-//   "every 24 hours",
-//   async () => {
-//     const now = admin.firestore.Timestamp.now();
-//     const oneDayFromNow = admin.firestore.Timestamp.fromDate(
-//       new Date(now.toDate().getTime() + 24 * 60 * 60 * 1000)
-//     );
+/**
+ * Scheduled function to send a test notification to all users every hour.
+ */
+export const sendTestNotificationsScheduled = onSchedule(
+    "every hour",
+    async () => {
+      const now = admin.firestore.Timestamp.now();
+  
+      try {
+        // Fetch all users
+        const usersSnapshot = await db.collection("users").get();
+  
+        // Iterate through each user
+        for (const userDoc of usersSnapshot.docs) {
+          const userId = userDoc.id;
+  
+          // Create a test notification
+          const testNotification = {
+            message: "This is a test notification.",
+            date: now,
+            link: "/notifications",
+            isRead: false,
+          };
+  
+          // Add test notification to the user's notifications collection
+          await db
+            .collection("users")
+            .doc(userId)
+            .collection("notifications")
+            .add(testNotification);
+        }
+  
+        console.log("Test notifications sent successfully.");
+      } catch (error) {
+        console.error("Error sending test notifications:", error);
+      }
+    }
+  );
 
-//     try {
-//       // Fetch all users
-//       const usersSnapshot = await db.collection("users").get();
+/**
+ * Scheduled function to send event reminders to all users for events marked
+ * as "yes" or "maybe" happening within the next 24 hours.
+ */
+export const sendEventRemindersScheduled = onSchedule(
+  "every 24 hours",
+  async () => {
+    const now = admin.firestore.Timestamp.now();
+    const oneDayFromNow = admin.firestore.Timestamp.fromDate(
+      new Date(now.toDate().getTime() + 24 * 60 * 60 * 1000)
+    );
 
-//       // Process each user for reminders
-//       usersSnapshot.forEach(async (userDoc) => {
-//         const userId = userDoc.id;
+    try {
+      // Fetch all users
+      const usersSnapshot = await db.collection("users").get();
 
-//         // Query events marked as "yes" or "maybe" for this user
-//         // happening within the next 24 hours
-//         const eventsRef = db
-//           .collection("users")
-//           .doc(userId)
-//           .collection("user-events");
-//         const eventsQuery = eventsRef
-//           .where("attendanceStatus", "in", ["yes", "maybe"])
-//           .where("eventDate", ">=", now)
-//           .where("eventDate", "<=", oneDayFromNow);
+      // Process each user for reminders
+      usersSnapshot.forEach(async (userDoc) => {
+        const userId = userDoc.id;
 
-//         const eventsSnapshot = await eventsQuery.get();
+        // Query events marked as "yes" or "maybe" for this user
+        // happening within the next 24 hours
+        const eventsRef = db
+          .collection("users")
+          .doc(userId)
+          .collection("user-events");
+        const eventsQuery = eventsRef
+          .where("attendanceStatus", "in", ["yes", "maybe"])
+          .where("eventDate", ">=", now)
+          .where("eventDate", "<=", oneDayFromNow);
 
-//         // Prepare reminders for each event
-//         const reminders = eventsSnapshot.docs.map((eventDoc) => {
-//           const eventData = eventDoc.data();
-//           return {
-//             message: `Reminder: "${eventData.eventName}" is happening soon!`,
-//             date: now,
-//             link: `/events/${eventDoc.id}`,
-//             isRead: false,
-//           };
-//         });
+        const eventsSnapshot = await eventsQuery.get();
 
-//         // Add each reminder as a notification for the user
-//         const notificationsRef = db
-//           .collection("users")
-//           .doc(userId)
-//           .collection("notifications");
-//         for (const reminder of reminders) {
-//           await notificationsRef.add(reminder);
-//         }
-//       });
-//       console.log("Event reminders sent successfully.");
-//     } catch (error) {
-//       console.error("Error sending event reminders:", error);
-//     }
-//   }
-// );
+        // Prepare reminders for each event
+        const reminders = eventsSnapshot.docs.map((eventDoc) => {
+          const eventData = eventDoc.data();
+          return {
+            message: `Reminder: "${eventData.eventName}" is happening soon!`,
+            date: now,
+            link: `/events/${eventDoc.id}`,
+            isRead: false,
+          };
+        });
+
+        // Add each reminder as a notification for the user
+        const notificationsRef = db
+          .collection("users")
+          .doc(userId)
+          .collection("notifications");
+        for (const reminder of reminders) {
+          await notificationsRef.add(reminder);
+        }
+      });
+      console.log("Event reminders sent successfully.");
+    } catch (error) {
+      console.error("Error sending event reminders:", error);
+    }
+  }
+);
