@@ -8,7 +8,6 @@ import { useState, useEffect } from "react"
 import { useAuth } from "@/context/AuthContext"
 import { Event } from "@/components/types"
 import { useToast } from "@/hooks/use-toast"
-import { updateAttendance } from "@/lib/eventUtils"
 
 // Firebase Imports
 import { db } from "@/lib/firebase"

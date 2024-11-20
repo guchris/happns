@@ -198,6 +198,22 @@ export default async function CityPage({ params }: CityPageProps) {
                     <div className="flex flex-col max-w-[880px] mx-auto px-4">
                         <CategoryEventGrid events={eventsByCity} category="fitness" city={cityData.slug} />
                     </div>
+
+
+                    {/* Contact Us Card */}
+                    <div className="flex-1 mx-auto max-w-[880px] px-4 space-y-4">
+                        <Card className="w-full bg-neutral-50 border-none">
+                            <CardHeader>
+                                <CardTitle className="text-lg font-semibold">don&apos;t see an event?</CardTitle>
+                                <CardDescription className="mt-2 text-sm">
+                                    We strive to keep {cityData.name}&apos;s events curated and up-to-date, but we know we might miss something amazing. If there&apos;s an event you think should be listed, let us know! Whether it's a hidden gem, a community meetup, or a major happening, we&apos;d love to hear from you.
+                                </CardDescription>
+                                <Link href="/contact">
+                                    <Button variant="default" className="mt-4">contact us</Button>
+                                </Link>
+                            </CardHeader>
+                        </Card>
+                    </div>
                 </div>
             </div>
             
