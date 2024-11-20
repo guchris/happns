@@ -1,11 +1,8 @@
+"use client"
+
 // Next Imports
 import Link from "next/link"
 import Image from "next/image"
-
-// Shadcn Imports
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Separator } from "@/components/ui/separator"
-import { Badge } from "@/components/ui/badge"
 
 // App Imports
 import { Event } from "@/components/types"
@@ -15,6 +12,12 @@ import EventComments from "@/components/event-comments"
 import ClientButton from "@/components/client-button"
 import { categoryOptions, formatOptions, neighborhoodOptions } from "@/lib/selectOptions"
 import { formatEventDate, formatEventCost } from "@/lib/eventUtils"
+import { useAuth } from "@/context/AuthContext"
+
+// Shadcn Imports
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Separator } from "@/components/ui/separator"
+import { Badge } from "@/components/ui/badge"
 
 // Other Imports
 import { differenceInDays, parseISO, addDays, format } from "date-fns"
@@ -24,6 +27,7 @@ interface EventDisplayProps {
 }
 
 export function EventDisplay({ event }: EventDisplayProps) {
+    const { user } = useAuth();
     const today = new Date();
 
     const categoryLabels = event?.category?.map(cat => categoryOptions.find(option => option.value === cat)?.label || "Unknown") || [];
@@ -184,30 +188,38 @@ export function EventDisplay({ event }: EventDisplayProps) {
                         </div>
 
                         <Separator />
-                        
+
                         {/* Event Stats */}
-                        <div className="flex items-center gap-4">
-                            <div className="flex-1 p-4">
-                                <div className="text-sm font-medium text-muted-foreground">clicks</div>
-                                <div className="text-sm font-medium">
-                                    {event.clicks}
+                        {user ? (
+                            <div className="flex items-center gap-4">
+                                <div className="flex-1 p-4">
+                                    <div className="text-sm font-medium text-muted-foreground">clicks</div>
+                                    <div className="text-sm font-medium">
+                                        {event.clicks}
+                                    </div>
+                                </div>
+                                <Separator orientation="vertical" className="h-auto self-stretch" />
+                                <div className="flex-1 p-4">
+                                    <div className="text-sm font-medium text-muted-foreground">going</div>
+                                    <div className="text-sm font-medium">
+                                        {event.attendanceSummary.yesCount}
+                                    </div>
+                                </div>
+                                <Separator orientation="vertical" className="h-auto self-stretch" />
+                                <div className="flex-1 p-4">
+                                    <div className="text-sm font-medium text-muted-foreground">maybe</div>
+                                    <div className="text-sm font-medium">
+                                        {event.attendanceSummary.maybeCount}
+                                    </div>
                                 </div>
                             </div>
-                            <Separator orientation="vertical" className="h-auto self-stretch" />
-                            <div className="flex-1 p-4">
-                                <div className="text-sm font-medium text-muted-foreground">going</div>
-                                <div className="text-sm font-medium">
-                                    {event.attendanceSummary.yesCount}
-                                </div>
+                        ) : (
+                            <div className="p-4 text-sm text-muted-foreground">
+                                please <a href={`/auth`} className="underline">
+                                    login
+                                </a> to view event stats
                             </div>
-                            <Separator orientation="vertical" className="h-auto self-stretch" />
-                            <div className="flex-1 p-4">
-                                <div className="text-sm font-medium text-muted-foreground">maybe</div>
-                                <div className="text-sm font-medium">
-                                    {event.attendanceSummary.maybeCount}
-                                </div>
-                            </div>
-                        </div>
+                        )}
 
                         <Separator />
 

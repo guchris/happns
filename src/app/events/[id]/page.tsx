@@ -12,6 +12,9 @@ import Footer from "@/components/footer"
 import { doc, getDoc, updateDoc, increment } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 
+// Context Imports
+import { AuthProvider } from "@/context/AuthContext";
+
 // Shadcn Imports
 import { Separator } from "@/components/ui/separator"
 import { TooltipProvider } from "@/components/ui/tooltip"
@@ -82,15 +85,17 @@ export default async function EventPage({ params }: EventPageProps) {
     const event = { ...eventData, id };
 
     return (
-        <TooltipProvider>
-            <div className="min-h-screen flex flex-col">
-                <TopBar title={`happns/${slugify(event.name)}`} />
-                <Separator />
-                <div className="flex-1 overflow-y-auto">
-                    <EventDisplay event={event} />
+        <AuthProvider>
+            <TooltipProvider>
+                <div className="min-h-screen flex flex-col">
+                    <TopBar title={`happns/${slugify(event.name)}`} />
+                    <Separator />
+                    <div className="flex-1 overflow-y-auto">
+                        <EventDisplay event={event} />
+                    </div>
+                    <Footer />
                 </div>
-                <Footer />
-            </div>
-        </TooltipProvider>
+            </TooltipProvider>
+        </AuthProvider>
     );
 };
