@@ -9,7 +9,7 @@ import { Separator } from "@/components/ui/separator"
 export default function AdminPage() {
     return (
         <div className="min-h-screen flex flex-col">
-            <TopBar title={`happns/about`} />
+            <TopBar title={`happns/admin`} />
             <Separator />
             <div className="flex-1 px-4 py-8 mx-auto space-y-4 max-w-[880px] w-full">
                 <NotificationForm />

@@ -19,11 +19,50 @@ import { useForm } from "react-hook-form"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form"
+import { Select, SelectGroup, SelectLabel, SelectItem, SelectContent, SelectTrigger, SelectValue } from "@/components/ui/select"
+
+const notificationGroups = [
+    {
+        label: "general notifications",
+        items: [
+            { value: "info", label: "info" },
+            { value: "success", label: "success" },
+            { value: "warning", label: "warning" },
+            { value: "error", label: "error" },
+        ],
+    },
+    {
+        label: "event notifications",
+        items: [
+            { value: "eventReminder", label: "event reminder" },
+            { value: "newEvent", label: "new event" },
+            { value: "trendingEvent", label: "trending event" },
+            { value: "eventUpdate", label: "event update" },
+            { value: "eventDeadline", label: "event deadline" },
+        ],
+    },
+    {
+        label: "user notifications",
+        items: [
+            { value: "commentInteraction", label: "comment/interaction" },
+            { value: "friendActivity", label: "friend activity" },
+        ],
+    },
+    {
+        label: "admin notifications",
+        items: [
+            { value: "promotion", label: "promotion or offer" },
+            { value: "curatorMessage", label: "curator message" },
+            { value: "systemUpdate", label: "system update" },
+            { value: "accountActivity", label: "account activity" },
+        ],
+    },
+];
 
 const notificationSchema = z.object({
-    type: z.string().min(1, "Type is required"),
-    message: z.string().min(1, "Message is required"),
-    link: z.string().url("Invalid URL").optional().or(z.literal("")),
+    type: z.string().min(1, "type is required"),
+    message: z.string().min(1, "message is required"),
+    link: z.string().url("invalid url").optional().or(z.literal("")),
 });
 
 type NotificationFormValues = z.infer<typeof notificationSchema>;
@@ -95,7 +134,27 @@ export default function NotificationForm() {
                             <FormItem>
                                 <FormLabel>type</FormLabel>
                                 <FormControl>
-                                    <Input {...field} />
+                                    <Select
+                                        onValueChange={field.onChange}
+                                        value={field.value}
+                                        defaultValue=""
+                                    >
+                                        <SelectTrigger className="w-full">
+                                            <SelectValue placeholder="select a type" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {notificationGroups.map((group) => (
+                                                <SelectGroup key={group.label}>
+                                                    <SelectLabel>{group.label}</SelectLabel>
+                                                    {group.items.map((item) => (
+                                                        <SelectItem key={item.value} value={item.value}>
+                                                            {item.label}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectGroup>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
