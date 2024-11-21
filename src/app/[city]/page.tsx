@@ -206,7 +206,7 @@ export default async function CityPage({ params }: CityPageProps) {
                             <CardHeader>
                                 <CardTitle className="text-lg font-semibold">don&apos;t see an event?</CardTitle>
                                 <CardDescription className="mt-2 text-sm">
-                                    We strive to keep {cityData.name}&apos;s events curated and up-to-date, but we know we might miss something amazing. If there&apos;s an event you think should be listed, let us know! Whether it's a hidden gem, a community meetup, or a major happening, we&apos;d love to hear from you.
+                                    {`We strive to keep ${cityData.name}'s events curated and up-to-date, but we know we might miss something amazing. If there's an event you think should be listed, let us know! Whether it's a hidden gem, a community meetup, or a major happening, we'd love to hear from you.`}
                                 </CardDescription>
                                 <Link href="/contact">
                                     <Button variant="default" className="mt-4">contact us</Button>
