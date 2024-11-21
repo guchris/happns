@@ -214,9 +214,14 @@ export default function ProfilePage() {
                             {userInfo.selectedCity && (
                                 <div className="text-sm font-medium flex items-center space-x-2">
                                     <span className="text-muted-foreground w-10">city</span>
-                                    <Badge variant="outline" className="inline-block">
-                                        {userInfo.selectedCity}
-                                    </Badge>
+                                    <Link href={`/${userInfo.selectedCity.toLowerCase()}`} passHref>
+                                        <Badge 
+                                            variant="outline"
+                                            className="inline-block"
+                                        >
+                                            {userInfo.selectedCity}
+                                        </Badge>
+                                    </Link>
                                 </div>
                             )}
 

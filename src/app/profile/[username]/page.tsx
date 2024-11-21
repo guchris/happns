@@ -1,6 +1,7 @@
 // Next and React Imports
 import { Metadata } from "next"
 import Image from "next/image"
+import Link from "next/link"
 
 // App Imports
 import { TopBar } from "@/components/top-bar"
@@ -161,9 +162,14 @@ export default async function PublicProfilePage({ params }: { params: { username
                             {userInfo.selectedCity && (
                                 <div className="text-sm font-medium flex items-center space-x-2">
                                     <span className="text-muted-foreground w-10">city</span>
-                                    <Badge variant="outline" className="inline-block">
-                                        {userInfo.selectedCity}
-                                    </Badge>
+                                    <Link href={`/${userInfo.selectedCity.toLowerCase()}`} passHref>
+                                        <Badge 
+                                            variant="outline"
+                                            className="inline-block"
+                                        >
+                                            {userInfo.selectedCity}
+                                        </Badge>
+                                    </Link>
                                 </div>
                             )}
 
