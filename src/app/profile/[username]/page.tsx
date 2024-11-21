@@ -69,6 +69,7 @@ export default async function PublicProfilePage({ params }: { params: { username
     const username = params.username;
     let userInfo: User | null = null;
     let bookmarkCount: number = 0;
+    let attendedCount: number = 0;
     let bookmarkedEvents: any[] = [];
 
     try {
@@ -84,6 +85,14 @@ export default async function PublicProfilePage({ params }: { params: { username
             const bookmarksRef = collection(userDoc.ref, "user-bookmarks");
             const bookmarksSnapshot = await getDocs(bookmarksRef);
             bookmarkCount = bookmarksSnapshot.size;
+
+            // Fetch attended events count
+            const attendanceRef = collection(userDoc.ref, "user-attendance");
+            const attendanceSnapshot = await getDocs(attendanceRef);
+            const attendedEvents = attendanceSnapshot.docs.filter(
+                (doc) => doc.data().status === "yes"
+            );
+            attendedCount = attendedEvents.length;
 
             // Fetch the actual event details for each bookmark
             const eventPromises = bookmarksSnapshot.docs.map(async (bookmarkDoc) => {
@@ -199,7 +208,7 @@ export default async function PublicProfilePage({ params }: { params: { username
                         <div className="flex-1 p-4">
                             <div className="text-sm font-medium text-muted-foreground">attended</div>
                             <div className="text-sm font-medium">
-                                0 events attended
+                                {attendedCount} events attended
                             </div>
                         </div>
                     </div>

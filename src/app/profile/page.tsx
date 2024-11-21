@@ -34,6 +34,7 @@ export default function ProfilePage() {
     const [calendarLink, setCalendarLink] = useState<string>("");
     const [userInfo, setUserInfo] = useState<any>(null);
     const [bookmarkCount, setBookmarkCount] = useState<number>(0);
+    const [attendedCount, setAttendedCount] = useState<number>(0);
     const [bookmarkedEvents, setBookmarkedEvents] = useState<any[]>([]);
 
     useEffect(() => {
@@ -58,6 +59,14 @@ export default function ProfilePage() {
                     const bookmarksRef = collection(userRef, "user-bookmarks");
                     const bookmarksSnapshot = await getDocs(bookmarksRef);
                     setBookmarkCount(bookmarksSnapshot.size);
+
+                    // Fetch attended events count
+                    const attendanceRef = collection(userRef, "user-attendance");
+                    const attendanceSnapshot = await getDocs(attendanceRef);
+                    const attendedEvents = attendanceSnapshot.docs.filter(
+                        (doc) => doc.data().status === "yes"
+                    );
+                    setAttendedCount(attendedEvents.length);
 
                     // Fetch the actual event details for each bookmark
                     const eventPromises = bookmarksSnapshot.docs.map(async (bookmarkDoc) => {
@@ -252,7 +261,7 @@ export default function ProfilePage() {
                         <div className="flex-1 p-4">
                             <div className="text-sm font-medium text-muted-foreground">attended</div>
                             <div className="text-sm font-medium">
-                                0 events attended
+                                {attendedCount} events attended
                             </div>
                         </div>
                     </div>
