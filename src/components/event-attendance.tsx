@@ -33,24 +33,33 @@ const EventAttendanceActions = ({ event }: EventAttendanceActionsProps) => {
                     const attendanceSnap = await getDoc(attendanceRef);
                     if (attendanceSnap.exists()) {
                         setAttendanceStatus(attendanceSnap.data().status); // Set initial attendance status
+                    } else {
+                        setAttendanceStatus(null); // Reset to null if no status exists
                     }
                 } catch (error) {
                     console.error("Error fetching attendance status: ", error);
                 }
             };
             fetchAttendanceStatus();
+        } else {
+            setAttendanceStatus(null); // Reset to null if user or event is null
         }
     }, [user, event]);
 
     const handleAttendanceChange = async (status: "yes" | "maybe" | "no") => {
+        if (!event || !user) {
+            console.error("Event or user is undefined.");
+            return;
+        }
+
         if (attendanceStatus === status) {
             // If the button is already selected, unselect it by setting to null
             setAttendanceStatus(null); // No attendance selected
-            await updateAttendance(event!.id, user!.uid, null); // Pass null to remove attendance in Firestore
+            await updateAttendance(event!.id, user.uid, null); // Pass null to remove attendance in Firestore
         } else {
             // Set the new status if it’s different and update in Firestore
             setAttendanceStatus(status);
-            await updateAttendance(event!.id, user!.uid, status);
+            await updateAttendance(event!.id, user.uid, status);
         }
     };
 

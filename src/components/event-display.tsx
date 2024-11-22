@@ -86,7 +86,7 @@ export function EventDisplay({ event }: EventDisplayProps) {
                                 )}
 
                                 <div className="flex items-center justify-center mb-2">
-                                    <EventAttendance event={event} />
+                                    <EventAttendance key={event.id} event={event} />
                                 </div>
 
                                 {/* Event Name, Date, and Time */}
