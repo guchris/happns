@@ -8,6 +8,7 @@ import { TopBar } from "@/components/top-bar"
 import Footer from "@/components/footer"
 import EmptyPage from "@/components/empty-page"
 import EventGridBookmarkTabs from "@/components/event-grid-bookmark-tabs"
+import EventGridAttendanceTabs from "@/components/event-grid-attendance-tabs"
 import { User } from "@/components/types"
 import { getInitials } from "@/lib/userUtils"
 
@@ -73,6 +74,10 @@ export default async function PublicProfilePage({ params }: { params: { username
     let attendedCount: number = 0;
     let bookmarkedEvents: any[] = [];
 
+    let attendingEvents: any[] = [];
+    let maybeEvents: any[] = [];
+    let notAttendingEvents: any[] = [];
+
     try {
         const usersRef = collection(db, "users");
         const userQuery = query(usersRef, where("username", "==", username));
@@ -90,10 +95,23 @@ export default async function PublicProfilePage({ params }: { params: { username
             // Fetch attended events count
             const attendanceRef = collection(userDoc.ref, "user-attendance");
             const attendanceSnapshot = await getDocs(attendanceRef);
-            const attendedEvents = attendanceSnapshot.docs.filter(
-                (doc) => doc.data().status === "yes"
-            );
-            attendedCount = attendedEvents.length;
+            
+            for (const attendanceDoc of attendanceSnapshot.docs) {
+                const { status } = attendanceDoc.data();
+                const eventId = attendanceDoc.id;
+                const eventRef = doc(db, "events", eventId);
+                const eventDoc = await getDoc(eventRef);
+    
+                if (eventDoc.exists()) {
+                    const eventData = { id: eventId, ...eventDoc.data() };
+                    if (status === "yes") attendingEvents.push(eventData);
+                    if (status === "maybe") maybeEvents.push(eventData);
+                    if (status === "not") notAttendingEvents.push(eventData);
+                }
+            }
+
+            // Update the attended count
+            attendedCount = attendingEvents.length;
 
             // Fetch the actual event details for each bookmark
             const eventPromises = bookmarksSnapshot.docs.map(async (bookmarkDoc) => {
@@ -218,6 +236,15 @@ export default async function PublicProfilePage({ params }: { params: { username
                             </div>
                         </div>
                     </div>
+
+                    <Separator />
+
+                    {/* User Attendance Events */}
+                    <EventGridAttendanceTabs
+                        attendingEvents={attendingEvents}
+                        maybeEvents={maybeEvents}
+                        notAttendingEvents={notAttendingEvents}
+                    />
 
                     <Separator />
 
