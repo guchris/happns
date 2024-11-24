@@ -11,6 +11,7 @@ import { TopBar } from "@/components/top-bar"
 import Footer from "@/components/footer"
 import EmptyPage from "@/components/empty-page"
 import EventGridBookmarkTabs from "@/components/event-grid-bookmark-tabs"
+import EventGridAttendanceTabs from "@/components/event-grid-attendance-tabs"
 import { toast } from "@/hooks/use-toast" 
 import { getInitials } from "@/lib/userUtils"
 
@@ -36,6 +37,9 @@ export default function ProfilePage() {
     const [bookmarkCount, setBookmarkCount] = useState<number>(0);
     const [attendedCount, setAttendedCount] = useState<number>(0);
     const [bookmarkedEvents, setBookmarkedEvents] = useState<any[]>([]);
+    const [attendingEvents, setAttendingEvents] = useState<any[]>([]);
+    const [maybeEvents, setMaybeEvents] = useState<any[]>([]);
+    const [notAttendingEvents, setNotAttendingEvents] = useState<any[]>([]);
 
     useEffect(() => {
         if (user?.uid) {
@@ -63,10 +67,31 @@ export default function ProfilePage() {
                     // Fetch attended events count
                     const attendanceRef = collection(userRef, "user-attendance");
                     const attendanceSnapshot = await getDocs(attendanceRef);
-                    const attendedEvents = attendanceSnapshot.docs.filter(
-                        (doc) => doc.data().status === "yes"
-                    );
-                    setAttendedCount(attendedEvents.length);
+                    const attending = [];
+                    const maybe = [];
+                    const notAttending = [];
+
+                    for (const attendanceDoc of attendanceSnapshot.docs) {
+                        const { status } = attendanceDoc.data();
+                        const eventId = attendanceDoc.id;
+                        const eventRef = doc(db, "events", eventId);
+                        const eventDoc = await getDoc(eventRef);
+                    
+                        if (eventDoc.exists()) {
+                            const eventData = { id: eventId, ...eventDoc.data() };
+                            if (status === "yes") attending.push(eventData);
+                            if (status === "maybe") maybe.push(eventData);
+                            if (status === "not") notAttending.push(eventData);
+                        }
+                    }
+
+                    // Update state with categorized events
+                    setAttendingEvents(attending);
+                    setMaybeEvents(maybe);
+                    setNotAttendingEvents(notAttending);
+
+                    // Update attended count for stats display
+                    setAttendedCount(attending.length);
 
                     // Fetch the actual event details for each bookmark
                     const eventPromises = bookmarksSnapshot.docs.map(async (bookmarkDoc) => {
@@ -314,6 +339,15 @@ export default function ProfilePage() {
                             </Collapsible>
                         </div>
                     </div>
+
+                    <Separator />
+                    
+                    {/* User Attendance Events */}
+                    <EventGridAttendanceTabs
+                        attendingEvents={attendingEvents}
+                        maybeEvents={maybeEvents}
+                        notAttendingEvents={notAttendingEvents}
+                    />
 
                     <Separator />
 
