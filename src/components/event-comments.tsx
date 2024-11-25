@@ -17,7 +17,6 @@ import { collection, addDoc, getDocs, query, orderBy, onSnapshot } from "firebas
 
 // Shadcn Imports
 import { Separator } from "@/components/ui/separator"
-import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
@@ -29,23 +28,33 @@ const mentionStyle = {
     control: {
         fontSize: "14px",
         fontWeight: "normal",
+        border: "1px solid #e5e7eb",
+        borderRadius: "0.375rem",
+        padding: "0.75rem",
+        minHeight: "4rem",
+        lineHeight: "1.5",
+        backgroundColor: "white",
     },
     highlighter: {
         overflow: "hidden",
     },
     input: {
         margin: 0,
+        padding: "0.75rem",
+        fontSize: "inherit",
+        fontWeight: "inherit",
     },
     suggestions: {
         list: {
             backgroundColor: "white",
             border: "1px solid #ccc",
             fontSize: "14px",
+            borderRadius: "0.375rem",
         },
         item: {
             padding: "5px 15px",
             "&focused": {
-                backgroundColor: "#cee4e5",
+                backgroundColor: "#f3f4f6",
             },
         },
     },
@@ -167,16 +176,10 @@ const EventComments = ({ eventId }: EventCommentsProps) => {
             {/* Add a Comment */}
             {user ? (
                 <div className="p-4 space-y-2">
-                    {/* <Textarea
-                        placeholder="add a comment"
-                        value={newComment}
-                        onChange={(e) => setNewComment(e.target.value)}
-                        disabled={loading}
-                    /> */}
                     <MentionsInput
                         style={mentionStyle}
                         value={newComment}
-                        onChange={(event, newValue) => setNewComment(newValue)} // Correct handling of MentionsInput onChange
+                        onChange={(event, newValue) => setNewComment(newValue)}
                         placeholder="add a comment and/or mention @username"
                     >
                         <Mention
