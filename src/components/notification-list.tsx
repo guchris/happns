@@ -1,3 +1,6 @@
+// Next Imports
+import { useRouter } from "next/navigation"
+
 // App Imports
 import { Notification } from "@/components/types"
 import { formatDistanceToNow } from "date-fns"
@@ -8,6 +11,7 @@ interface NotificationListProps {
 }
 
 export function NotificationList({ notifications, onMarkAsRead }: NotificationListProps) {
+    const router = useRouter();
 
     return (
         <div className="space-y-2">
@@ -17,7 +21,12 @@ export function NotificationList({ notifications, onMarkAsRead }: NotificationLi
                     className={`p-4 rounded-md cursor-pointer border ${
                         notification.isRead ? "bg-white border-gray-100" : "bg-gray-100 border-transparent"
                     }`}
-                    onClick={() => onMarkAsRead(notification.id)}
+                    onClick={() => {
+                        onMarkAsRead(notification.id);
+                        if (notification.link) {
+                            router.push(notification.link);
+                        }
+                    }}
                 >
                     <div className="flex justify-between items-center mb-2">
                         {/* Notification Type */}
