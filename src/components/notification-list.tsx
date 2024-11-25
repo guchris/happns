@@ -69,19 +69,21 @@ function getBadgeClass(type: string): string {
         case "eventUpdate":
             return "bg-orange-100 text-orange-600";
         case "eventDeadline":
-            return "bg-pink-100 text-pink-600";
+            return "bg-orange-200 text-orange-700";
         case "commentInteraction":
-            return "bg-gray-100 text-gray-600";
+            return "bg-cyan-100 text-cyan-600";
         case "friendActivity":
             return "bg-amber-100 text-amber-600";
         case "promotion":
-            return "bg-fuchsia-100 text-fuchsia-600";
+            return "bg-pink-100 text-pink-600";
         case "curatorMessage":
-            return "bg-cyan-100 text-cyan-600";
+            return "bg-cyan-200 text-cyan-700";
         case "systemUpdate":
             return "bg-lime-100 text-lime-600";
         case "accountActivity":
             return "bg-rose-100 text-rose-600";
+        case "mention":
+            return "bg-purple-200 text-purple-700";
         default:
             return "bg-gray-100 text-gray-600";
     }

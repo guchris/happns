@@ -13,7 +13,7 @@ import { extractMentions } from "@/lib/commentUtils"
 
 // Firebase Imports
 import { db } from "@/lib/firebase"
-import { collection, addDoc, getDocs, query, orderBy, onSnapshot } from "firebase/firestore"
+import { collection, addDoc, getDocs, query, where, orderBy, onSnapshot } from "firebase/firestore"
 
 // Shadcn Imports
 import { Separator } from "@/components/ui/separator"
@@ -103,6 +103,7 @@ const EventComments = ({ eventId }: EventCommentsProps) => {
         try {
             const mentionedUsernames = extractMentions(newComment);
             const commentRef = collection(db, `events/${eventId}/comments`);
+
             await addDoc(commentRef, {
                 username: userData.username || "Anonymous",
                 content: newComment.trim(),
@@ -110,6 +111,33 @@ const EventComments = ({ eventId }: EventCommentsProps) => {
                 timestamp: new Date(),
                 profilePicture: userData.profilePicture || null,
             });
+
+            // Notify mentioned users
+            for (const username of mentionedUsernames) {
+
+                // Reference the 'usernames' collection
+                const usernamesRef = collection(db, "usernames");
+
+                // Query Firestore for the user document matching the username
+                const q = query(usernamesRef, where("__name__", "==", username));
+                const userDoc = await getDocs(q);
+
+                if (!userDoc.empty) {
+                    const userId = userDoc.docs[0].data().uid;
+
+                    // Add a notification to the `user-notifications` subcollection for the mentioned user
+                    const notificationsRef = collection(db, `users/${userId}/notifications`);
+                    
+                    await addDoc(notificationsRef, {
+                        type: "mention",
+                        message: `${userData.username} mentioned you in a comment`,
+                        date: new Date(),
+                        link: `/events/${eventId}`,
+                        isRead: false,
+                    });
+                }
+            }
+
             setNewComment("");
         } catch (error) {
             console.error("Error posting comment: ", error);
