@@ -6,8 +6,10 @@ import { useState, useEffect } from "react"
 
 // App Imports
 import { useAuth } from "@/context/AuthContext"
+import { User } from "@/components/types"
 import { Event } from "@/components/types"
 import { useToast } from "@/hooks/use-toast"
+import SuggestEditDialog from "@/components/dialog-suggest-edit"
 
 // Firebase Imports
 import { db } from "@/lib/firebase"
@@ -152,10 +154,20 @@ const EventActions = ({ event }: EventActionsProps) => {
                             }}
                         >
                             <Pencil className="h-4 w-4" />
-                            <span className="sr-only">Edit Event</span>
+                            <span className="sr-only">edit event</span>
                         </Button>
                     </TooltipTrigger>
-                    <TooltipContent>Edit Event</TooltipContent>
+                    <TooltipContent>edit event</TooltipContent>
+                </Tooltip>
+            )}
+
+            {/* Suggest Edit Button */}
+            {user && (
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <SuggestEditDialog event={event} user={user} />
+                    </TooltipTrigger>
+                    <TooltipContent>suggest edits</TooltipContent>
                 </Tooltip>
             )}
 
@@ -175,12 +187,12 @@ const EventActions = ({ event }: EventActionsProps) => {
                                 <Bookmark className="h-4 w-4" />
                             )}
                             <span className="sr-only">
-                                {isBookmarked ? "Remove Bookmark" : "Bookmark"}
+                                {isBookmarked ? "remove bookmark" : "bookmark"}
                             </span>
                         </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                        {isBookmarked ? "Remove Bookmark" : "Bookmark"}
+                        {isBookmarked ? "remove bookmark" : "bookmark"}
                     </TooltipContent>
                 </Tooltip>
             )}
@@ -190,10 +202,10 @@ const EventActions = ({ event }: EventActionsProps) => {
                 <TooltipTrigger asChild>
                     <Button variant="ghost" size="icon" disabled={isDisabled} onClick={addToCalendar}>
                         <CalendarPlus className="h-4 w-4" />
-                        <span className="sr-only">Add to Calendar</span>
+                        <span className="sr-only">add to calendar</span>
                     </Button>
                 </TooltipTrigger>
-                <TooltipContent>Add to Calendar</TooltipContent>
+                <TooltipContent>add to calendar</TooltipContent>
             </Tooltip>
 
             {/* Link Button */}
@@ -201,10 +213,10 @@ const EventActions = ({ event }: EventActionsProps) => {
                 <TooltipTrigger asChild>
                     <Button variant="ghost" size="icon" disabled={isDisabled} onClick={handleCopyEventLink}>
                         <LinkIcon className="h-4 w-4" />
-                        <span className="sr-only">Event Link</span>
+                        <span className="sr-only">event link</span>
                     </Button>
                 </TooltipTrigger>
-                <TooltipContent>Event Link</TooltipContent>
+                <TooltipContent>event link</TooltipContent>
             </Tooltip>
         </div>
     );
