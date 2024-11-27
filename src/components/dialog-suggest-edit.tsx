@@ -4,7 +4,6 @@
 import { useState } from "react"
 
 // App Imports
-import { User } from "@/components/types"
 import { Event } from "@/components/types"
 import { useToast } from "@/hooks/use-toast"
 
@@ -51,7 +50,7 @@ const SuggestEditDialog = ({ event, user }: SuggestEditDialogProps) => {
                 title: "edit suggestion submitted",
                 description: "your suggestion has been successfully submitted",
             });
-    
+
             // Clear the form
             setSubject("");
             setDescription("");

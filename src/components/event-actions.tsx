@@ -6,7 +6,6 @@ import { useState, useEffect } from "react"
 
 // App Imports
 import { useAuth } from "@/context/AuthContext"
-import { User } from "@/components/types"
 import { Event } from "@/components/types"
 import { useToast } from "@/hooks/use-toast"
 import SuggestEditDialog from "@/components/dialog-suggest-edit"
@@ -138,7 +137,7 @@ const EventActions = ({ event }: EventActionsProps) => {
 
     return (
         <div className="flex items-center gap-2">
-
+            
             {/* Curator Edit Button */}
             {user && userData?.role === "curator" && (
                 <Tooltip>
