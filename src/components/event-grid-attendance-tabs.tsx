@@ -92,7 +92,7 @@ const EventList = ({ events }: { events: Event[] }) => {
             ))}
         </div>
     ) : (
-        <p className="text-sm text-muted-foreground">no events in this category</p>
+        <p className="text-sm text-muted-foreground">no attending events</p>
     );
 };
 
