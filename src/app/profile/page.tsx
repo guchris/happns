@@ -31,7 +31,7 @@ import { ExclamationTriangleIcon, CopyIcon, Pencil1Icon, Share2Icon } from "@rad
 
 export default function ProfilePage() {
     const inputRef = useRef<HTMLInputElement>(null);
-    const { user, loading } = useAuth();
+    const { user, loading: authLoading } = useAuth();
     const [calendarLink, setCalendarLink] = useState<string>("");
     const [userInfo, setUserInfo] = useState<any>(null);
     const [bookmarkCount, setBookmarkCount] = useState<number>(0);
@@ -40,6 +40,7 @@ export default function ProfilePage() {
     const [attendingEvents, setAttendingEvents] = useState<any[]>([]);
     const [maybeEvents, setMaybeEvents] = useState<any[]>([]);
     const [notAttendingEvents, setNotAttendingEvents] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         if (user?.uid) {
@@ -106,6 +107,8 @@ export default function ProfilePage() {
                     setBookmarkedEvents(validEvents);
                 } catch (error) {
                     console.error("Error fetching user data: ", error);
+                } finally {
+                    setLoading(false);
                 }
             };
 
@@ -153,7 +156,7 @@ export default function ProfilePage() {
             });
     };
 
-    if (loading) {
+    if (authLoading || loading) {
         return <EmptyPage title="happns/profile" description="loading..." />;
     }
 
