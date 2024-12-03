@@ -75,7 +75,7 @@ export function Event({ events, city }: EventProps) {
                 setSelectedCategories([categoryOption]);
             }
         }
-    }, [urlCategory]);
+    }, [urlCategory])
 
     useEffect(() => {
         if (user) {
@@ -88,7 +88,7 @@ export function Event({ events, city }: EventProps) {
 
             fetchBookmarkedEvents();
         }
-    }, [user]);
+    }, [user])
 
     useEffect(() => {
         setEvent((prevEvent) => ({
@@ -111,7 +111,7 @@ export function Event({ events, city }: EventProps) {
             eventEndDate === today
         );
     };
-
+    
     // Filtered events based on selected filters
     const filteredEvents = events.filter((e) => {
         const eventStart = parseISO(e.startDate);
@@ -312,6 +312,7 @@ export function Event({ events, city }: EventProps) {
                                 items={filteredEvents}
                                 isVerticalLayout={isVerticalLayout}
                                 isFilterActive={isFilterActive}
+                                startDate={startDate}
                             />
                         )}
                     </div>
@@ -451,6 +452,7 @@ export function Event({ events, city }: EventProps) {
                                     items={filteredEvents}
                                     isVerticalLayout={isVerticalLayout}
                                     isFilterActive={isFilterActive}
+                                    startDate={startDate}
                                 />
                             </div>
                         )}

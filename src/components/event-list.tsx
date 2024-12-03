@@ -29,42 +29,53 @@ interface EventListProps {
     items: Event[]
     isVerticalLayout: boolean
     isFilterActive: boolean
+    startDate: Date | undefined;
 }
 
-export function EventList({ items, isVerticalLayout, isFilterActive }: EventListProps) {
+export function EventList({ items, isVerticalLayout, isFilterActive, startDate }: EventListProps) {
 
     const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" });
+    const startDateFilter = startDate
+        ? startDate.toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" })
+        : today; // Use the selected start date or today if no start date is provided
 
-    // Group events by display date (today if within range, otherwise start date)
     const eventsByDate = items.reduce((acc, item) => {
-        const startDate = item.startDate;
-        const endDate = item.endDate;
-
-        // Ensure multi-day events appear under today if today is within their date range
-        const isTodayInRange = today >= startDate && today <= endDate;
-
-        if (isTodayInRange) {
-            if (!acc[today]) acc[today] = [];
-            acc[today].push(item);
-        } else if (startDate > today) {
-            if (!acc[startDate]) acc[startDate] = [];
-            acc[startDate].push(item);
-        }
-
+        const eventStartDate = parseISO(item.startDate); // Convert to Date object
+        const eventEndDate = parseISO(item.endDate); // Convert to Date object
+        const filterDate = startDate ? startDate : new Date(); // Already a Date object
+        const todayDate = parseISO(today); // Convert 'today' string to Date object
+    
+        // Determine the first applicable date for the event
+        const applicableDate =
+            eventStartDate >= filterDate
+                ? eventStartDate // Use the event's start date if it's after or equal to the filter
+                : filterDate >= eventStartDate && filterDate <= eventEndDate
+                ? filterDate // Use the filtered start date if it falls in the event's range
+                : todayDate >= eventStartDate && todayDate <= eventEndDate
+                ? todayDate // Use today if it falls in the event's range
+                : null;
+    
+        // If no applicable date is found, skip the event
+        if (!applicableDate) return acc;
+    
+        const formattedDate = applicableDate.toISOString().split("T")[0]; // Format date as 'yyyy-MM-dd'
+    
+        // Only add the event to the first applicable collapsible
+        if (!acc[formattedDate]) acc[formattedDate] = [];
+        acc[formattedDate].push(item);
+    
         return acc;
     }, {} as Record<string, Event[]>);
 
-    // Sort the events in each collapsible by date and then alphabetically by name
-    Object.keys(eventsByDate).forEach(date => {
+    // Sort events within each collapsible
+    Object.keys(eventsByDate).forEach((date) => {
         eventsByDate[date] = sortEventsByDateAndName(eventsByDate[date]);
     });
 
-    // Sort the collapsibles by date, ensuring today comes first
-    const sortedDates = Object.keys(eventsByDate).sort((a, b) => {
-        if (a === today) return -1; // Ensure today's collapsible is first
-        if (b === today) return 1;
-        return parseISO(a).getTime() - parseISO(b).getTime();
-    });
+    // Sort the collapsible dates chronologically
+    const sortedDates = Object.keys(eventsByDate)
+        .filter((date) => eventsByDate[date].length > 0) // Exclude empty groups
+        .sort((a, b) => parseISO(a).getTime() - parseISO(b).getTime());
 
     return (
         <ScrollArea className="h-full overflow-y-auto">
