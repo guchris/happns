@@ -13,6 +13,7 @@ interface EventGridAttendanceTabsProps {
     attendingEvents: Event[];
     maybeEvents: Event[];
     notAttendingEvents: Event[];
+    isLoading: boolean;
 }
 
 // Helper function to sort events by date and then alphabetically
@@ -35,10 +36,19 @@ const EventGridAttendanceTabs = ({
     attendingEvents,
     maybeEvents,
     notAttendingEvents,
+    isLoading,
 }: EventGridAttendanceTabsProps) => {
     const sortedAttendingEvents = sortEvents(attendingEvents);
     const sortedMaybeEvents = sortEvents(maybeEvents);
     const sortedNotAttendingEvents = sortEvents(notAttendingEvents);
+
+    if (isLoading) {
+        return (
+            <div className="p-4 space-y-2">
+                <p className="text-sm text-muted-foreground">loading attending events...</p>
+            </div>
+        )
+    }
 
     return (
         <div className="p-4 space-y-2">

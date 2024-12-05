@@ -244,12 +244,16 @@ export default async function PublicProfilePage({ params }: { params: { username
                         attendingEvents={attendingEvents}
                         maybeEvents={maybeEvents}
                         notAttendingEvents={notAttendingEvents}
+                        isLoading={false}
                     />
 
                     <Separator />
 
                     {/* User Bookmarked Events */}
-                    <EventGridBookmarkTabs bookmarkedEvents={bookmarkedEvents} />
+                    <EventGridBookmarkTabs
+                        bookmarkedEvents={bookmarkedEvents}
+                        isLoading={false}
+                    />
 
                 </div>
             )}

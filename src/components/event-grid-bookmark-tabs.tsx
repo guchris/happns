@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 interface EventGridBookmarkTabsProps {
     bookmarkedEvents: Event[];
+    isLoading: boolean;
 }
 
 // Helper function to sort upcoming events by closest date and then alphabetically
@@ -68,9 +69,17 @@ function filterPastEvents(events: Event[]) {
     });
 }
 
-const EventGridBookmarkTabs = ({ bookmarkedEvents }: EventGridBookmarkTabsProps) => {
+const EventGridBookmarkTabs = ({ bookmarkedEvents, isLoading }: EventGridBookmarkTabsProps) => {
     const upcomingEvents = sortUpcomingEvents(filterUpcomingEvents(bookmarkedEvents));
     const pastEvents = sortPastEvents(filterPastEvents(bookmarkedEvents));
+
+    if (isLoading) {
+        return (
+            <div className="p-4 space-y-2">
+                <p className="text-sm text-muted-foreground">loading bookmarked events...</p>
+            </div>
+        )
+    }
 
     return (
         <div className="p-4 space-y-2">
