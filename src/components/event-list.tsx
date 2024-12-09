@@ -142,103 +142,94 @@ function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: Collaps
 
     return (
         <div>
-            {events.length > 0 ? (
-                <Collapsible defaultOpen={isOpen} className="p-4" onOpenChange={() => setIsOpen(!isOpen)}>
-                    <CollapsibleTrigger className="flex w-full justify-between text-left text-sm font-semibold py-0.5 gap-1">
-                        {/* Left-aligned date */}
-                            <span>{triggerDate}</span>
-
-                        {/* Right-aligned number of events */}
-                        <div className="flex items-center">
-                            <span className="text-muted-foreground">{`${events.length}`}</span>
-                            {isOpen ? <Minus className="w-4 h-4 ml-2" /> : <Plus className="w-4 h-4 ml-2" />}
-                        </div>
-                    </CollapsibleTrigger>
-                    <CollapsibleContent className="space-y-2 pt-2">
-                        {events.map((item) => {
-                            const startDate = parseISO(item.startDate);
-                            const endDate = parseISO(item.endDate);
-                        
-                            // Calculate the index of the collapsible date relative to the event's start date
-                            const collapsibleDate = parseISO(date);
-                            const dateIndex = differenceInDays(collapsibleDate, startDate);
-                        
-                            // Use dateIndex to get the corresponding time entry for this collapsible date
-                            let timeEntry = item.times[dateIndex];
-
-                            // If timeEntry is undefined and times array has only one entry, use that single entry
-                            if (!timeEntry && item.times.length === 1) {
-                                timeEntry = item.times[0];
-                            }
-
-                            // Check if timeEntry exists before trying to format the time
-                            const formattedTime = timeEntry
-                                ? `${timeEntry.startTime} - ${timeEntry.endTime}`
-                                : "Time not available";
-                        
-                            // Format the display date for rendering
-                            const formattedDate = startDate.getTime() === endDate.getTime()
-                                ? format(startDate, "MMM d")
-                                : `${format(startDate, "MMM d")} - ${format(endDate, "MMM d")}`;
-
-                            return (
-                                <button
-                                    key={item.id}
-                                    className={cn(
-                                        // If isVerticalLayout is true, apply flex-col (image on top, text below), else apply flex-row for mobile
-                                        `${isVerticalLayout ? 'flex-col' : 'flex-row'} flex w-full items-start gap-4 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent`,
-                                        event.selected === item.id && "bg-muted"
-                                    )}
-                                    onClick={() => handleEventClick(item.id)}
-                                >
-                                    <Image
-                                        src={item.image || "/tempFlyer1.svg"}
-                                        alt={item.name}
-                                        width={150}
-                                        height={150}
-                                        loading="lazy"
-                                        className={cn(
-                                            isVerticalLayout ? "w-full" : "w-28", "object-cover rounded-lg md:w-40 md:h-40"
-                                        )}
-                                    />
-                                    <div className="flex flex-col gap-2 w-full">
-                                        <div className="flex flex-col gap-1">
-                                            <div className="line-clamp-1 font-semibold">{item.name}</div>
-                                            <div className="line-clamp-1 text-xs font-medium hidden md:inline-flex">{formattedDate}</div>
-                                            <div className="line-clamp-1 text-xs font-medium">{formattedTime}</div>
-                                        </div>
-                                        <div className="line-clamp-2 text-xs text-muted-foreground">
-                                            {item.details}
-                                        </div>
-                                        <div className="hidden md:inline-flex">
-                                            <Badge variant="outline" className="inline-block">
-                                                {item.clicks} clicks
-                                            </Badge>
-                                        </div>
-                                        <div className="inline-flex gap-1 flex-wrap">
-                                            {item.category.map((cat, index) => {
-                                                const categoryLabel = categoryOptions.find(option => option.value === cat)?.label || "Unknown";
-                                                return (
-                                                    <Badge key={index} variant="secondary" className="inline-block">
-                                                        {categoryLabel}
-                                                    </Badge>
-                                                );
-                                            })}
-                                        </div>
-                                    </div>
-                                </button>
-                            );
-                        })}
-                    </CollapsibleContent>
-                </Collapsible>
-            ) : (
-                <div className="p-4 text-muted-foreground text-sm">
-                    {/* Display date without being clickable if no events */}
-                    <div className="flex justify-between">
+            <Collapsible defaultOpen={isOpen} className="p-4" onOpenChange={() => setIsOpen(!isOpen)}>
+                <CollapsibleTrigger className="flex w-full justify-between text-left text-sm font-semibold py-0.5 gap-1">
+                    {/* Left-aligned date */}
                         <span>{triggerDate}</span>
+
+                    {/* Right-aligned number of events */}
+                    <div className="flex items-center">
+                        <span className="text-muted-foreground">{`${events.length}`}</span>
+                        {isOpen ? <Minus className="w-4 h-4 ml-2" /> : <Plus className="w-4 h-4 ml-2" />}
                     </div>
-                </div>
-            )}
+                </CollapsibleTrigger>
+                <CollapsibleContent className="space-y-2 pt-2">
+                    {events.map((item) => {
+                        const startDate = parseISO(item.startDate);
+                        const endDate = parseISO(item.endDate);
+                    
+                        // Calculate the index of the collapsible date relative to the event's start date
+                        const collapsibleDate = parseISO(date);
+                        const dateIndex = differenceInDays(collapsibleDate, startDate);
+                    
+                        // Use dateIndex to get the corresponding time entry for this collapsible date
+                        let timeEntry = item.times[dateIndex];
+
+                        // If timeEntry is undefined and times array has only one entry, use that single entry
+                        if (!timeEntry && item.times.length === 1) {
+                            timeEntry = item.times[0];
+                        }
+
+                        // Check if timeEntry exists before trying to format the time
+                        const formattedTime = timeEntry
+                            ? `${timeEntry.startTime} - ${timeEntry.endTime}`
+                            : "Time not available";
+                    
+                        // Format the display date for rendering
+                        const formattedDate = startDate.getTime() === endDate.getTime()
+                            ? format(startDate, "MMM d")
+                            : `${format(startDate, "MMM d")} - ${format(endDate, "MMM d")}`;
+
+                        return (
+                            <button
+                                key={item.id}
+                                className={cn(
+                                    // If isVerticalLayout is true, apply flex-col (image on top, text below), else apply flex-row for mobile
+                                    `${isVerticalLayout ? 'flex-col' : 'flex-row'} flex w-full items-start gap-4 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent`,
+                                    event.selected === item.id && "bg-muted"
+                                )}
+                                onClick={() => handleEventClick(item.id)}
+                            >
+                                <Image
+                                    src={item.image || "/tempFlyer1.svg"}
+                                    alt={item.name}
+                                    width={150}
+                                    height={150}
+                                    loading="lazy"
+                                    className={cn(
+                                        isVerticalLayout ? "w-full" : "w-28", "object-cover rounded-lg md:w-40 md:h-40"
+                                    )}
+                                />
+                                <div className="flex flex-col gap-2 w-full">
+                                    <div className="flex flex-col gap-1">
+                                        <div className="line-clamp-1 font-semibold">{item.name}</div>
+                                        <div className="line-clamp-1 text-xs font-medium hidden md:inline-flex">{formattedDate}</div>
+                                        <div className="line-clamp-1 text-xs font-medium">{formattedTime}</div>
+                                    </div>
+                                    <div className="line-clamp-2 text-xs text-muted-foreground">
+                                        {item.details}
+                                    </div>
+                                    {/* <div className="hidden md:inline-flex">
+                                        <Badge variant="outline" className="inline-block">
+                                            {item.clicks} clicks
+                                        </Badge>
+                                    </div> */}
+                                    <div className="inline-flex gap-1 flex-wrap">
+                                        {item.category.map((cat, index) => {
+                                            const categoryLabel = categoryOptions.find(option => option.value === cat)?.label || "Unknown";
+                                            return (
+                                                <Badge key={index} variant="secondary" className="inline-block">
+                                                    {categoryLabel}
+                                                </Badge>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            </button>
+                        );
+                    })}
+                </CollapsibleContent>
+            </Collapsible>
             {!isLastItem && <Separator />}
         </div>
     )
