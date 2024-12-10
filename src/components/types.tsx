@@ -28,6 +28,7 @@ export interface Event {
         maybeCount: number;
         noCount: number;
     };
+    eventDurationType: "single" | "multi" | "extended";
 }
 
 export interface User {

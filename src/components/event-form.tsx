@@ -45,7 +45,6 @@ import { CalendarIcon, ExclamationTriangleIcon } from "@radix-ui/react-icons"
 import { FieldErrors } from "react-hook-form"
 
 
-
 // Schema for form validation
 const eventFormSchema = z.object({
     category: z
@@ -127,7 +126,10 @@ const eventFormSchema = z.object({
             message: "Start time must be in HH:mm AM/PM format.",
         })
         .optional(),
-    varyingTimes: z.boolean().optional().default(false)
+    varyingTimes: z.boolean().optional().default(false),
+    eventDurationType: z.enum(["single", "multi", "extended"], {
+        required_error: "Please select an event type.",
+    }),
 }).refine((data) => {
     const isSingleDayEvent = data.startDate.toDateString() === data.endDate.toDateString();
     
@@ -224,7 +226,9 @@ export default function EventForm() {
                             dailyTimes: eventData.times && eventData.times.length > 1 ? eventData.times : [],
                             startTime: hasMultipleTimes ? undefined : eventData.times[0]?.startTime,
                             endTime: hasMultipleTimes ? undefined : eventData.times[0]?.endTime,
+                            eventDurationType: eventData.eventDurationType || "single"
                         });
+
                         setVaryingTimes(hasMultipleTimes);
                         if (hasMultipleTimes) {
                             setDailyTimes(eventData.times.map((time: { startTime: string; endTime: string }) => ({
@@ -318,6 +322,7 @@ export default function EventForm() {
                 maybeCount: 0,
                 noCount: 0,
             },
+            eventDurationType: data.eventDurationType
         };
 
         try {
@@ -567,6 +572,32 @@ export default function EventForm() {
                     />
 
                     <Separator />
+
+                    <FormField
+                        control={form.control}
+                        name="eventDurationType"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Event Type</FormLabel>
+                                <Select
+                                    onValueChange={field.onChange}
+                                    value={field.value}
+                                >
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="select event type" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        <SelectItem value="single">single day</SelectItem>
+                                        <SelectItem value="multi">multi-day</SelectItem>
+                                        <SelectItem value="extended">extended</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
 
                     <div className="grid grid-cols-2 gap-4 w-full">
                         <FormField

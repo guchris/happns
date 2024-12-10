@@ -209,11 +209,22 @@ function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: Collaps
                                     <div className="line-clamp-2 text-xs text-muted-foreground">
                                         {item.details}
                                     </div>
-                                    {/* <div className="hidden md:inline-flex">
-                                        <Badge variant="outline" className="inline-block">
-                                            {item.clicks} clicks
+                                    <div className="hidden md:inline-flex">
+                                        <Badge
+                                            className={cn(
+                                                "inline-block",
+                                                item.eventDurationType === "single" && "bg-green-200 text-black",
+                                                item.eventDurationType === "multi" && "bg-blue-200 text-black",
+                                                item.eventDurationType === "extended" && "bg-purple-200 text-black"
+                                            )}
+                                        >
+                                            {item.eventDurationType === "single"
+                                                ? "single day"
+                                                : item.eventDurationType === "multi"
+                                                ? "multi-day"
+                                                : "extended"}
                                         </Badge>
-                                    </div> */}
+                                    </div>
                                     <div className="inline-flex gap-1 flex-wrap">
                                         {item.category.map((cat, index) => {
                                             const categoryLabel = categoryOptions.find(option => option.value === cat)?.label || "Unknown";

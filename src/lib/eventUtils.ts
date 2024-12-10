@@ -33,6 +33,7 @@ export function mapFirestoreEvents(doc: QueryDocumentSnapshot<DocumentData>): Ev
         neighborhood: doc.data().neighborhood,
         startDate: doc.data().startDate,
         times: doc.data().times,
+        eventDurationType: doc.data().eventDurationType,
         attendanceSummary: {
             yesCount: doc.data().attendanceSummary?.yesCount || 0,
             maybeCount: doc.data().attendanceSummary?.maybeCount || 0,
@@ -58,6 +59,7 @@ export function mapFirestoreEvent(doc: DocumentSnapshot): Event {
         neighborhood: doc.data()?.neighborhood,
         startDate: doc.data()?.startDate,
         times: doc.data()?.times,
+        eventDurationType: doc.data()?.eventDurationType,
         attendanceSummary: {
             yesCount: doc.data()?.attendanceSummary?.yesCount || 0,
             maybeCount: doc.data()?.attendanceSummary?.maybeCount || 0,
