@@ -5,6 +5,7 @@ import Link from "next/link"
 import Image from "next/image"
 
 // App Imports
+import { cn } from "@/lib/utils"
 import { Event } from "@/components/types"
 import EventActions from "@/components/event-actions"
 import EventAttendance from "@/components/event-attendance"
@@ -123,6 +124,25 @@ export function EventDisplay({ event }: EventDisplayProps) {
                         {/* Event Category, Format, Neighborhood */}
                         <div className="flex-1 whitespace-pre-wrap p-4 grid gap-4">
                             <div className="grid gap-1">
+                                <div className="text-sm font-medium">
+                                    <span className="text-muted-foreground">event duration: </span>
+                                    {event.eventDurationType && (
+                                        <Badge
+                                            className={cn(
+                                                "inline-block mr-1",
+                                                event.eventDurationType === "single" && "bg-green-200 text-black",
+                                                event.eventDurationType === "multi" && "bg-blue-200 text-black",
+                                                event.eventDurationType === "extended" && "bg-purple-200 text-black"
+                                            )}
+                                        >
+                                            {event.eventDurationType === "single"
+                                                ? "Single Day"
+                                                : event.eventDurationType === "multi"
+                                                ? "Multi-Day"
+                                                : "Extended"}
+                                        </Badge>
+                                    )}
+                                </div>
                                 <div className="text-sm font-medium">
                                     <span className="text-muted-foreground">categories: </span>
                                     {categoryLabels.map((label, index) => (
