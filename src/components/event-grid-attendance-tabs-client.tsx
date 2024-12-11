@@ -13,7 +13,7 @@ import { getFutureEvents, sortEventsByDateAndName } from "@/lib/eventUtils"
 
 // Firebase Imports
 import { db } from "@/lib/firebase";
-import { doc, getDoc, collection, getDocs } from "firebase/firestore"
+import { collection, getDocs, query, where, doc } from "firebase/firestore"
 
 // Shadcn Imports
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -29,33 +29,43 @@ const EventGridAttendanceTabsClient = () => {
         if (user?.uid) {
             const fetchAttendanceData = async () => {
                 setIsLoading(true);
+
+                // Step 1: Fetch attendance records for the user
                 const userRef = doc(db, "users", user.uid);
                 const attendanceRef = collection(userRef, "user-attendance");
                 const attendanceSnapshot = await getDocs(attendanceRef);
 
-                const attending: Event[] = [];
-                const maybe: Event[] = [];
-                // const notAttending: Event[] = [];
+                const eventIdsByStatus = {
+                    yes: [] as string[],
+                    maybe: [] as string[],
+                };
 
-                for (const attendanceDoc of attendanceSnapshot.docs) {
-                    const { status } = attendanceDoc.data();
-                    const eventId = attendanceDoc.id;
-
-                    const eventRef = doc(db, "events", eventId);
-                    const eventDoc = await getDoc(eventRef);
-
-                    if (eventDoc.exists()) {
-                        const eventData = { id: eventId, ...eventDoc.data() } as Event;
-                        if (status === "yes") attending.push(eventData);
-                        if (status === "maybe") maybe.push(eventData);
-                        // if (status === "not") notAttending.push(eventData);
+                // Categorize event IDs by status
+                attendanceSnapshot.docs.forEach((doc) => {
+                    const { status } = doc.data() as { status?: string };
+                
+                    if (status === "yes" || status === "maybe") {
+                        // Push the event ID only if the status is valid
+                        eventIdsByStatus[status].push(doc.id);
                     }
-                }
+                });
+
+                // Step 2: Fetch all events in batches
+                const fetchEvents = async (eventIds: string[]): Promise<Event[]> => {
+                    if (eventIds.length === 0) return [];
+                    const eventsQuery = query(collection(db, "events"), where("__name__", "in", eventIds));
+                    const eventsSnapshot = await getDocs(eventsQuery);
+                    return eventsSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Event));
+                };
+
+                const [attending, maybe] = await Promise.all([
+                    fetchEvents(eventIdsByStatus.yes),
+                    fetchEvents(eventIdsByStatus.maybe),
+                ]);
 
                 const today = new Date();
                 setAttendingEvents(sortEventsByDateAndName(getFutureEvents(attending, today)));
                 setMaybeEvents(sortEventsByDateAndName(getFutureEvents(maybe, today)));
-                // setNotAttendingEvents(sortEventsByDateAndName(getFutureEvents(notAttending, today)));
 
                 setIsLoading(false);
             };
