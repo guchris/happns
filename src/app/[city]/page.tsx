@@ -144,6 +144,21 @@ export default async function CityPage({ params }: CityPageProps) {
                         </Card>
                     </div>
 
+                    {/* Events Section */}
+                    <div className="flex flex-col max-w-[880px] mx-auto px-4">
+                        <div className="space-y-4">
+                            <div>
+                                <h2 className="text-xl font-semibold">happnings in {cityData.slug}</h2>
+                            </div>
+                            <EventGrid events={eventsByCity} />
+                        </div>
+                    </div>
+
+                    {/* Top Events Section */}
+                    <div className="flex flex-col max-w-[880px] mx-auto px-4">
+                        <TopEventsGrid events={eventsByCity} />
+                    </div>
+
                     {/* Curators Section */}
                     <div className="flex flex-col max-w-[880px] mx-auto px-4 space-y-4">
                         <h2 className="text-xl font-semibold">meet the curators</h2>
@@ -167,21 +182,6 @@ export default async function CityPage({ params }: CityPageProps) {
                                 </Card>
                             ))}
                         </div>
-                    </div>
-
-                    {/* Events Section */}
-                    <div className="flex flex-col max-w-[880px] mx-auto px-4">
-                        <div className="space-y-4">
-                            <div>
-                                <h2 className="text-xl font-semibold">happnings in {cityData.slug}</h2>
-                            </div>
-                            <EventGrid events={eventsByCity} />
-                        </div>
-                    </div>
-
-                    {/* Top Events Section */}
-                    <div className="flex flex-col max-w-[880px] mx-auto px-4">
-                        <TopEventsGrid events={eventsByCity} />
                     </div>
 
                     {/* Music Events Section */}

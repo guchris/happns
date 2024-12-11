@@ -28,6 +28,7 @@ const EventGridAttendanceTabsClient = () => {
     useEffect(() => {
         if (user?.uid) {
             const fetchAttendanceData = async () => {
+                if (!user) return;
                 setIsLoading(true);
 
                 // Step 1: Fetch attendance records for the user
@@ -76,6 +77,10 @@ const EventGridAttendanceTabsClient = () => {
             setIsLoading(false);
         }
     }, [user]);
+
+    if (!user) {
+        return null;
+    }
     
     return (
         <div className="flex-1 max-w-[880px] md:max-w-[700px] lg:max-w-[880px] mx-auto p-4 space-y-4">
