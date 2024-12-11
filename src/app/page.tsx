@@ -7,7 +7,7 @@ import CitySelector from "@/components/city-selector"
 import EventCarousel from "@/components/event-carousel"
 import CityGrid from "@/components/city-grid"
 import EventGridDynamic from "@/components/event-grid-dynamic"
-import EventGridAttending from "@/components/event-grid-attending"
+import EventGridAttendanceTabsClient from "@/components/event-grid-attendance-tabs-client"
 import EventGridBookmark from "@/components/event-grid-bookmark"
 import WelcomeCard from "@/components/card-welcome"
 import JoinCard from "@/components/card-join"
@@ -143,7 +143,7 @@ export default async function Home() {
 						<WelcomeCard />
 
 						{/* Attending Events Grid */}
-						<EventGridAttending />
+						<EventGridAttendanceTabsClient />
 
 						{/* Bookmarked Events Grid */}
 						<EventGridBookmark />

@@ -22,7 +22,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 
 // Other Imports
 import { Plus, Minus } from "lucide-react"
-import { format, parse, parseISO, isWithinInterval, eachDayOfInterval, differenceInDays } from "date-fns"
+import { format, parseISO, differenceInDays } from "date-fns"
 
 
 interface EventListProps {
@@ -219,10 +219,10 @@ function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: Collaps
                                             )}
                                         >
                                             {item.eventDurationType === "single"
-                                                ? "single day"
+                                                ? "Single Day"
                                                 : item.eventDurationType === "multi"
-                                                ? "multi-day"
-                                                : "extended"}
+                                                ? "Multi-Day"
+                                                : "Extended"}
                                         </Badge>
                                     </div>
                                     <div className="inline-flex gap-1 flex-wrap">
