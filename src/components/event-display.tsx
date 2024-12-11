@@ -121,15 +121,17 @@ export function EventDisplay({ event }: EventDisplayProps) {
 
                         <Separator />
 
-                        {/* Event Category, Format, Neighborhood */}
-                        <div className="flex-1 whitespace-pre-wrap p-4 grid gap-4">
-                            <div className="grid gap-1">
-                                <div className="text-sm font-medium">
-                                    <span className="text-muted-foreground">event duration: </span>
-                                    {event.eventDurationType && (
+                        {/* Event Badge Details */}
+                        <div className="flex whitespace-pre-wrap p-4 grid gap-4">
+                            <div className="grid gap-2">
+
+                                {/* Event Duration */}
+                                {event.eventDurationType && (
+                                    <div className="text-sm font-medium flex items-center space-x-2">
+                                        <span className="text-muted-foreground w-28">event duration</span>
                                         <Badge
                                             className={cn(
-                                                "inline-block mr-1",
+                                                "inline-block",
                                                 event.eventDurationType === "single" && "bg-green-200 text-black",
                                                 event.eventDurationType === "multi" && "bg-blue-200 text-black",
                                                 event.eventDurationType === "extended" && "bg-purple-200 text-black"
@@ -141,37 +143,49 @@ export function EventDisplay({ event }: EventDisplayProps) {
                                                 ? "Multi-Day"
                                                 : "Extended"}
                                         </Badge>
-                                    )}
-                                </div>
-                                <div className="text-sm font-medium">
-                                    <span className="text-muted-foreground">categories: </span>
-                                    {categoryLabels.map((label, index) => (
-                                        <Badge key={index} variant="outline" className="inline-block mr-1">
-                                            {label}
-                                        </Badge>
-                                    ))}
-                                </div>
-                                <div className="text-sm font-medium">
-                                    <span className="text-muted-foreground">neighborhood: </span>
+                                    </div>
+                                )}
+
+                                {/* Categories */}
+                                {categoryLabels.length > 0 && (
+                                    <div className="text-sm font-medium flex items-center space-x-2">
+                                        <span className="text-muted-foreground w-28">categories</span>
+                                        <div className="flex flex-wrap gap-2">
+                                            {categoryLabels.map((label, index) => (
+                                                <Badge key={index} variant="outline" className="inline-block">
+                                                    {label}
+                                                </Badge>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Neighborhood */}
+                                <div className="text-sm font-medium flex items-center space-x-2">
+                                    <span className="text-muted-foreground w-28">neighborhood</span>
                                     <Badge variant="outline" className="inline-block">
                                         {neighborhoodLabel}
                                     </Badge>
                                 </div>
-                                <div className="text-sm font-medium">
-                                    <span className="text-muted-foreground">format: </span>
+
+                                {/* Format */}
+                                <div className="text-sm font-medium flex items-center space-x-2">
+                                    <span className="text-muted-foreground w-28">format</span>
                                     <Badge variant="outline" className="inline-block">
                                         {formatLabel}
                                     </Badge>
                                 </div>
-                                <div className="text-sm font-medium">
-                                    <span className="text-muted-foreground">days away: </span>
+
+                                {/* Days Away */}
+                                <div className="text-sm font-medium flex items-center space-x-2">
+                                    <span className="text-muted-foreground w-28">days away</span>
                                     <Badge variant="outline" className="inline-block">
                                         {daysAwayLabel}
                                     </Badge>
                                 </div>
                             </div>
                         </div>
-
+                        
                         <Separator />
                         
                         {/* Event Location and Cost */}
