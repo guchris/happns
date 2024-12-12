@@ -2,7 +2,8 @@
 
 // Next and React Imports
 import { useRouter } from "next/navigation"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
+import React from "react"
 
 // App Imports
 import { useAuth } from "@/context/AuthContext"
@@ -20,7 +21,7 @@ import { Button } from "@/components/ui/button"
 
 // Other Imports
 import { parse } from 'date-fns'
-import { Bookmark, BookmarkCheck, CalendarPlus, Link as LinkIcon, Pencil } from "lucide-react"
+import { Download, Bookmark, BookmarkCheck, CalendarPlus, Link as LinkIcon, Pencil } from "lucide-react"
 
 interface EventActionsProps {
     event: Event | null;
@@ -135,6 +136,91 @@ const EventActions = ({ event }: EventActionsProps) => {
         }
     };
 
+    const generateAndDownloadImage = () => {
+        if (!event) return;
+
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        if (!ctx) {
+            console.error("Canvas context not available.");
+            return;
+        }
+
+        // Set canvas dimensions
+        const width = 1000;
+        const height = 1000;
+        canvas.width = width;
+        canvas.height = height;
+
+        // Draw background
+        ctx.fillStyle = "#ffffff"; // White background
+        ctx.fillRect(0, 0, width, height);
+
+        // Draw event image
+        if (event.image) {
+            const img = new Image();
+            img.src = event.image;
+            img.crossOrigin = "anonymous"; // Avoid CORS issues
+
+            img.onload = () => {
+                const imgWidth = width * 0.8; // 80% of canvas width
+                const imgHeight = height * 0.4; // 40% of canvas height
+                const imgX = (width - imgWidth) / 2;
+                const imgY = 50;
+
+                ctx.drawImage(img, imgX, imgY, imgWidth, imgHeight);
+
+                // Draw text after the image has loaded
+                drawText(ctx, width, height);
+                triggerDownload(canvas);
+            };
+
+            img.onerror = () => {
+                console.error("Failed to load event image. Rendering text only.");
+                drawText(ctx, width, height);
+                triggerDownload(canvas);
+            };
+        } else {
+            // If no image, render text only
+            drawText(ctx, width, height);
+            triggerDownload(canvas);
+        }
+    };
+
+    const drawText = (ctx: CanvasRenderingContext2D, width: number, height: number) => {
+        const textPadding = 20;
+
+        // Draw event name
+        ctx.fillStyle = "#000000";
+        ctx.font = "bold 36px Inter";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "top";
+        ctx.fillText(event!.name || "Event Name", width / 2, height * 0.5 + textPadding);
+
+        // Draw event dates
+        ctx.font = "24px Inter";
+        ctx.fillText(`${event!.startDate} - ${event!.endDate}`, width / 2, height * 0.6 + textPadding);
+
+        // Draw branding
+        ctx.fillStyle = "#ff4500"; // Brand color
+        ctx.font = "18px Inter";
+        ctx.fillText("Powered by happns", width / 2, height - 50);
+    };
+
+    const triggerDownload = (canvas: HTMLCanvasElement) => {
+        const link = document.createElement("a");
+        link.download = `${event!.name?.replace(/\s+/g, "_") || "event_image"}.png`;
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+
+        // Show toast notification
+        toast({
+            title: "Image Downloaded",
+            description: `The shareable event image for "${event!.name}" has been downloaded successfully.`,
+        });
+    };
+
     return (
         <div className="flex items-center gap-2">
             
@@ -217,6 +303,24 @@ const EventActions = ({ event }: EventActionsProps) => {
                 </TooltipTrigger>
                 <TooltipContent>event link</TooltipContent>
             </Tooltip>
+
+            {/* Download Shareable Image Button */}
+            {event && (
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            disabled={!event}
+                            onClick={generateAndDownloadImage}
+                        >
+                            <Download className="h-4 w-4" />
+                            <span className="sr-only">download shareable image</span>
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>download shareable image</TooltipContent>
+                </Tooltip>
+            )}
         </div>
     );
 };
