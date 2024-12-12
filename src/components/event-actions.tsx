@@ -10,6 +10,7 @@ import { useAuth } from "@/context/AuthContext"
 import { Event } from "@/components/types"
 import { useToast } from "@/hooks/use-toast"
 import SuggestEditDialog from "@/components/dialog-suggest-edit"
+import { formatEventDate } from "@/lib/eventUtils"
 
 // Firebase Imports
 import { db } from "@/lib/firebase"
@@ -148,8 +149,8 @@ const EventActions = ({ event }: EventActionsProps) => {
         }
 
         // Set canvas dimensions
-        const width = 1000;
-        const height = 1000;
+        const width = 1080;
+        const height = 1920;
         canvas.width = width;
         canvas.height = height;
 
@@ -162,51 +163,64 @@ const EventActions = ({ event }: EventActionsProps) => {
             const img = new Image();
             img.src = event.image;
             img.crossOrigin = "anonymous"; // Avoid CORS issues
-
+            console.log("Attempting to load image:", event.image);
+    
             img.onload = () => {
                 const imgWidth = width * 0.8; // 80% of canvas width
                 const imgHeight = height * 0.4; // 40% of canvas height
                 const imgX = (width - imgWidth) / 2;
                 const imgY = 50;
-
+    
                 ctx.drawImage(img, imgX, imgY, imgWidth, imgHeight);
-
+                console.log("Image successfully loaded and drawn on canvas.");
+    
                 // Draw text after the image has loaded
                 drawText(ctx, width, height);
                 triggerDownload(canvas);
             };
-
+    
             img.onerror = () => {
                 console.error("Failed to load event image. Rendering text only.");
                 drawText(ctx, width, height);
                 triggerDownload(canvas);
             };
         } else {
-            // If no image, render text only
+            console.warn("No event image provided. Rendering text only.");
             drawText(ctx, width, height);
             triggerDownload(canvas);
         }
     };
 
     const drawText = (ctx: CanvasRenderingContext2D, width: number, height: number) => {
-        const textPadding = 20;
-
-        // Draw event name
+        const textPadding = 40; // Padding from the top and left
+        const lineSpacing = 20; // Spacing between lines
+    
+        // Calculate positions
+        let currentY = textPadding;
+    
+        // Draw "happns/"
         ctx.fillStyle = "#000000";
-        ctx.font = "bold 36px Inter";
-        ctx.textAlign = "center";
+        ctx.font = "36px Arial";
+        ctx.textAlign = "left";
         ctx.textBaseline = "top";
-        ctx.fillText(event!.name || "Event Name", width / 2, height * 0.5 + textPadding);
-
-        // Draw event dates
-        ctx.font = "24px Inter";
-        ctx.fillText(`${event!.startDate} - ${event!.endDate}`, width / 2, height * 0.6 + textPadding);
-
-        // Draw branding
-        ctx.fillStyle = "#ff4500"; // Brand color
-        ctx.font = "18px Inter";
-        ctx.fillText("Powered by happns", width / 2, height - 50);
+        ctx.fillText("happns/", textPadding, currentY);
+    
+        // Move to the next line
+        currentY += 40 + lineSpacing;
+    
+        // Draw event name
+        ctx.font = "44px Arial"; // Larger font for event name
+        ctx.fillText(event!.name || "Event Name", textPadding, currentY);
+    
+        // Move to the next line
+        currentY += 40 + lineSpacing;
+    
+        // Draw formatted event dates
+        const formattedDate = formatEventDate(event!.startDate, event!.endDate);
+        ctx.font = "36px Arial";
+        ctx.fillText(formattedDate, textPadding, currentY);
     };
+    
 
     const triggerDownload = (canvas: HTMLCanvasElement) => {
         const link = document.createElement("a");
