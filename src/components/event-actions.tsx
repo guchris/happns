@@ -139,63 +139,37 @@ const EventActions = ({ event }: EventActionsProps) => {
 
     const generateAndDownloadImage = () => {
         if (!event) return;
-
+    
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
-
+    
         if (!ctx) {
             console.error("Canvas context not available.");
             return;
         }
-
+    
         // Set canvas dimensions
         const width = 1080;
         const height = 1920;
         canvas.width = width;
         canvas.height = height;
-
+    
         // Draw background
         ctx.fillStyle = "#ffffff"; // White background
         ctx.fillRect(0, 0, width, height);
-
-        // Draw event image
-        if (event.image) {
-            const img = new Image();
-            img.src = event.image;
-            img.crossOrigin = "anonymous"; // Avoid CORS issues
-            console.log("Attempting to load image:", event.image);
     
-            img.onload = () => {
-                const imgWidth = width * 0.8; // 80% of canvas width
-                const imgHeight = height * 0.4; // 40% of canvas height
-                const imgX = (width - imgWidth) / 2;
-                const imgY = 50;
-    
-                ctx.drawImage(img, imgX, imgY, imgWidth, imgHeight);
-                console.log("Image successfully loaded and drawn on canvas.");
-    
-                // Draw text after the image has loaded
-                drawText(ctx, width, height);
-                triggerDownload(canvas);
-            };
-    
-            img.onerror = () => {
-                console.error("Failed to load event image. Rendering text only.");
-                drawText(ctx, width, height);
-                triggerDownload(canvas);
-            };
-        } else {
-            console.warn("No event image provided. Rendering text only.");
-            drawText(ctx, width, height);
-            triggerDownload(canvas);
-        }
+        // Draw text and image
+        const textBottomY = drawText(ctx, width, height);
+        drawEventImage(ctx, textBottomY, width, height);
     };
-
-    const drawText = (ctx: CanvasRenderingContext2D, width: number, height: number) => {
-        const textPadding = 40; // Padding from the top and left
-        const lineSpacing = 20; // Spacing between lines
     
-        // Calculate positions
+    const drawText = (
+        ctx: CanvasRenderingContext2D,
+        width: number,
+        height: number
+    ): number => {
+        const textPadding = 100; // Padding from the top and left
+        const lineSpacing = 20; // Spacing between lines
         let currentY = textPadding;
     
         // Draw "happns/"
@@ -209,18 +183,58 @@ const EventActions = ({ event }: EventActionsProps) => {
         currentY += 40 + lineSpacing;
     
         // Draw event name
-        ctx.font = "44px Arial"; // Larger font for event name
+        ctx.font = "44px Arial";
         ctx.fillText(event!.name || "Event Name", textPadding, currentY);
     
         // Move to the next line
-        currentY += 40 + lineSpacing;
+        currentY += 50 + lineSpacing;
     
         // Draw formatted event dates
         const formattedDate = formatEventDate(event!.startDate, event!.endDate);
         ctx.font = "36px Arial";
         ctx.fillText(formattedDate, textPadding, currentY);
+    
+        // Return the bottom Y-coordinate of the text
+        return currentY + 50; // Add extra spacing below the text
     };
     
+    const drawEventImage = (
+        ctx: CanvasRenderingContext2D,
+        textBottomY: number,
+        width: number,
+        height: number
+    ) => {
+
+        if (!event?.image) {
+            console.error("No event image provided.");
+            triggerDownload(ctx.canvas); // Proceed with text-only image if no image exists
+            return;
+        }
+
+        const img = new Image();
+        img.src = event.image;
+        console.log("Event image URL:", event?.image);
+        img.crossOrigin = "anonymous"; // Avoid CORS issues
+    
+        img.onload = () => {
+            // Calculate square dimensions
+            const maxImageSize = width * 0.6; // 60% of canvas width
+            const imgSize = Math.min(maxImageSize, height * 0.4); // Constrain by both width and height
+            const imgX = (width - imgSize) / 2; // Center horizontally
+            const imgY = textBottomY + 20; // Place below the text with padding
+    
+            // Draw the image as a square
+            ctx.drawImage(img, imgX, imgY, imgSize, imgSize);
+            console.log("Image successfully drawn on canvas.");
+
+            triggerDownload(ctx.canvas); // Trigger download after image is drawn
+        };
+    
+        img.onerror = () => {
+            console.error("Failed to load placeholder image. Skipping image rendering.");
+            triggerDownload(ctx.canvas); // Proceed with text-only image
+        };
+    };
 
     const triggerDownload = (canvas: HTMLCanvasElement) => {
         const link = document.createElement("a");
