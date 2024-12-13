@@ -197,7 +197,10 @@ function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: Collaps
                                     height={150}
                                     loading="lazy"
                                     className={cn(
-                                        isVerticalLayout ? "w-full" : "w-28", "object-cover rounded-lg md:w-40 md:h-40"
+                                        isVerticalLayout 
+                                            ? "w-full" 
+                                            : "w-28 md:w-32 md:h-32",
+                                        "object-cover rounded-lg"
                                     )}
                                 />
                                 <div className="flex flex-col gap-2 w-full">
@@ -206,7 +209,7 @@ function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: Collaps
                                         <div className="line-clamp-1 text-xs font-medium hidden md:inline-flex">{formattedDate}</div>
                                         <div className="line-clamp-1 text-xs font-medium">{formattedTime}</div>
                                     </div>
-                                    <div className="line-clamp-2 text-xs text-muted-foreground">
+                                    <div className="line-clamp-2 text-xs text-muted-foreground md:hidden">
                                         {item.details}
                                     </div>
                                     <div className="hidden md:inline-flex">
@@ -226,6 +229,20 @@ function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: Collaps
                                         </Badge>
                                     </div>
                                     <div className="inline-flex gap-1 flex-wrap">
+                                        <Badge
+                                            className={cn(
+                                                "inline-block md:hidden",
+                                                item.eventDurationType === "single" && "bg-green-200 text-black",
+                                                item.eventDurationType === "multi" && "bg-blue-200 text-black",
+                                                item.eventDurationType === "extended" && "bg-purple-200 text-black"
+                                            )}
+                                        >
+                                            {item.eventDurationType === "single"
+                                                ? "Single Day"
+                                                : item.eventDurationType === "multi"
+                                                ? "Multi-Day"
+                                                : "Extended"}
+                                        </Badge>
                                         {item.category.map((cat, index) => {
                                             const categoryLabel = categoryOptions.find(option => option.value === cat)?.label || "Unknown";
                                             return (
