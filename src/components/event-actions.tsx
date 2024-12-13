@@ -164,64 +164,6 @@ const EventActions = ({ event }: EventActionsProps) => {
         // Draw text and image inside the gray background
         drawTextAndImage(ctx, event, bgX, bgY, bgWidth, bgHeight);
     };
-    
-    const drawText = (
-        ctx: CanvasRenderingContext2D,
-        width: number,
-        height: number
-    ): number => {
-        const padding = 40;
-        const lineSpacing = 20;
-        const grayBackgroundColor = "#FAFAFA";
-        const grayTextColor = "#78716C";
-
-        // Gray background dimensions
-        const bgWidth = width * 0.8; // 80% of canvas width
-        const bgHeight = height * 0.6; // 60% of canvas height
-        const bgX = (width - bgWidth) / 2; // Center horizontally
-        const bgY = (height - bgHeight) / 2; // Center vertically
-
-        // Draw rounded gray background
-        const borderRadius = 20;
-        ctx.fillStyle = grayBackgroundColor;
-        ctx.beginPath();
-        ctx.moveTo(bgX + borderRadius, bgY);
-        ctx.arcTo(bgX + bgWidth, bgY, bgX + bgWidth, bgY + bgHeight, borderRadius);
-        ctx.arcTo(bgX + bgWidth, bgY + bgHeight, bgX, bgY + bgHeight, borderRadius);
-        ctx.arcTo(bgX, bgY + bgHeight, bgX, bgY, borderRadius);
-        ctx.arcTo(bgX, bgY, bgX + bgWidth, bgY, borderRadius);
-        ctx.closePath();
-        ctx.fill();
-
-        // Text positioning within the gray background
-        let currentY = bgY + padding; // Start inside the gray background
-        const textX = bgX + padding; // Align text with padding
-
-        // Draw "happns/"
-        ctx.fillStyle = "#000000"; // Black text
-        ctx.font = "bold 36px Arial";
-        ctx.textAlign = "left";
-        ctx.textBaseline = "top";
-        ctx.fillText("happns/", textX, currentY);
-
-        // Move to next line
-        currentY += 40 + lineSpacing;
-
-        // Draw event name
-        ctx.font = "bold 44px Arial";
-        ctx.fillText(event!.name || "Event Name", textX, currentY);
-
-        // Move to next line
-        currentY += 50 + lineSpacing;
-
-        // Draw formatted event dates
-        const formattedDate = formatEventDate(event!.startDate, event!.endDate);
-        ctx.fillStyle = grayTextColor; // Gray text
-        ctx.font = "36px Arial";
-        ctx.fillText(formattedDate, textX, currentY);
-    
-        return bgY + bgHeight; // Return the bottom Y-coordinate of the gray background
-    };
 
     const drawRoundedImage = (
         ctx: CanvasRenderingContext2D,
@@ -338,63 +280,31 @@ const EventActions = ({ event }: EventActionsProps) => {
             triggerDownload(ctx.canvas); // Proceed with text-only image
         };
     };
-    
-    const drawEventImage = (
-        ctx: CanvasRenderingContext2D,
-        textBottomY: number,
-        width: number,
-        height: number
-    ) => {
-
-        if (!event?.image) {
-            console.error("No event image provided.");
-            triggerDownload(ctx.canvas); // Proceed with text-only image if no image exists
-            return;
-        }
-
-        const img = new Image();
-        img.src = event.image;
-        img.crossOrigin = "anonymous"; // Avoid CORS issues
-    
-        img.onload = () => {
-            // Calculate square dimensions
-            const maxImageSize = width * 0.8; // 80% of canvas width
-            const imgSize = Math.min(maxImageSize, height * 0.4); // Constrain by both width and height
-            const imgX = (width - imgSize) / 2; // Center horizontally
-            const imgY = textBottomY + 20; // Place below the text with padding
-            
-            // Add rounded corners
-            ctx.save();
-            ctx.beginPath();
-            ctx.moveTo(imgX + 20, imgY); // Top-left corner
-            ctx.arcTo(imgX + imgSize, imgY, imgX + imgSize, imgY + imgSize, 20); // Top-right corner
-            ctx.arcTo(imgX + imgSize, imgY + imgSize, imgX, imgY + imgSize, 20); // Bottom-right corner
-            ctx.arcTo(imgX, imgY + imgSize, imgX, imgY, 20); // Bottom-left corner
-            ctx.arcTo(imgX, imgY, imgX + imgSize, imgY, 20); // Close path
-            ctx.clip();
-            ctx.drawImage(img, imgX, imgY, imgSize, imgSize);
-            ctx.restore();
-
-            triggerDownload(ctx.canvas); // Trigger download after image is drawn
-        };
-    
-        img.onerror = () => {
-            console.error("Failed to load placeholder image. Skipping image rendering.");
-            triggerDownload(ctx.canvas); // Proceed with text-only image
-        };
-    };
 
     const triggerDownload = (canvas: HTMLCanvasElement) => {
+        const dataUrl = canvas.toDataURL("image/png");
         const link = document.createElement("a");
+        link.href = dataUrl;
         link.download = `happns_${event!.name?.replace(/\s+/g, "_") || "happns_event_image"}.png`;
-        link.href = canvas.toDataURL("image/png");
-        link.click();
-
-        // Show toast notification
-        toast({
-            title: "Image Downloaded",
-            description: `The shareable event image for "${event!.name}" has been downloaded successfully.`,
-        });
+    
+        // For mobile devices, show a toast and provide a previewable/downloadable image
+        if (/Mobi|Android/i.test(navigator.userAgent)) {
+            // Open the image in a new tab for easier saving
+            window.open(dataUrl, "_blank");
+            toast({
+                title: "Image Ready",
+                description: "Tap and hold the image to save it to your Photos app.",
+            });
+        } else {
+            // For desktops, trigger the download directly
+            link.click();
+    
+            // Show toast notification for desktop
+            toast({
+                title: "Image Downloaded",
+                description: `The shareable event image for "${event!.name}" has been downloaded successfully.`,
+            });
+        }
     };
 
     return (
