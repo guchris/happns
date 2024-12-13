@@ -155,7 +155,7 @@ const EventActions = ({ event }: EventActionsProps) => {
         canvas.height = height;
     
         // Draw background
-        ctx.fillStyle = "#ffffff"; // White background
+        ctx.fillStyle = "#fafafa";
         ctx.fillRect(0, 0, width, height);
     
         // Draw gray background
@@ -191,19 +191,48 @@ const EventActions = ({ event }: EventActionsProps) => {
         ctx.restore();
     };
 
+    const wrapText = (
+        ctx: CanvasRenderingContext2D,
+        text: string,
+        x: number,
+        y: number,
+        maxWidth: number,
+        lineHeight: number
+    ) => {
+        const words = text.split(" ");
+        let line = "";
+        let currentY = y;
+    
+        for (let i = 0; i < words.length; i++) {
+            const testLine = line + words[i] + " ";
+            const metrics = ctx.measureText(testLine);
+            const testWidth = metrics.width;
+    
+            if (testWidth > maxWidth && i > 0) {
+                ctx.fillText(line, x, currentY);
+                line = words[i] + " ";
+                currentY += lineHeight;
+            } else {
+                line = testLine;
+            }
+        }
+        ctx.fillText(line, x, currentY); // Draw the last line
+        return currentY + lineHeight; // Return the updated Y position
+    };    
+
     const drawGrayBackground = (
         ctx: CanvasRenderingContext2D,
         width: number,
         height: number
     ): { bgX: number; bgY: number; bgWidth: number; bgHeight: number } => {
         const bgWidth = width * 0.8; // 80% of canvas width
-        const bgHeight = height * 0.65; // 65% of canvas height
+        const bgHeight = height * 0.7; // 70% of canvas height
         const bgX = (width - bgWidth) / 2; // Center horizontally
         const bgY = (height - bgHeight) / 2; // Center vertically
     
         // Draw rounded gray background
         const borderRadius = 20;
-        ctx.fillStyle = "#FAFAFA"; // Light gray background color
+        ctx.fillStyle = "#ffffff";
         ctx.beginPath();
         ctx.moveTo(bgX + borderRadius, bgY);
         ctx.arcTo(bgX + bgWidth, bgY, bgX + bgWidth, bgY + bgHeight, borderRadius);
@@ -225,12 +254,12 @@ const EventActions = ({ event }: EventActionsProps) => {
         bgHeight: number
     ) => {
         const padding = 40; // Padding inside the gray background
-        const verticalPadding = 20; // Additional vertical padding above "happns/"
+        const verticalPadding = 40; // Additional vertical padding above "happns/"
         let currentY = bgY + padding + verticalPadding; // Start with extra padding above "happns/"
     
         // Draw "happns/"
         ctx.fillStyle = "#000000"; // Black text
-        ctx.font = "bold 40px Arial";
+        ctx.font = "bold 44px Arial";
         ctx.textAlign = "left";
         ctx.textBaseline = "top";
         ctx.fillText("happns/", bgX + padding, currentY);
@@ -257,18 +286,22 @@ const EventActions = ({ event }: EventActionsProps) => {
     
             // Draw event name
             ctx.fillStyle = "#000000"; // Black text
-            ctx.font = "bold 40px Arial";
-            ctx.fillText(event.name || "Event Name", bgX + padding, textStartY);
-    
-            // Move to next line for date
-            const dateY = textStartY + 75;
+            ctx.font = "bold 44px Arial";
+            const maxTextWidth = bgWidth - 2 * padding; // Text width matches the gray background
+            const wrappedTextBottomY = wrapText(ctx, event.name || "Event Name", bgX + padding, textStartY, maxTextWidth, 50);
+
+            // Add extra spacing below the wrapped text
+            const extraSpacing = 30;
+            const dateStartY = wrappedTextBottomY + extraSpacing;
+
+            // Draw event date
             ctx.fillStyle = "#78716C"; // Gray text color
-            ctx.font = "36px Arial";
+            ctx.font = "40px Arial";
             const formattedDate = formatEventDate(event.startDate, event.endDate);
-            ctx.fillText(formattedDate, bgX + padding, dateY);
-    
-            // Move to next line for time
-            const timeY = dateY + 40;
+            ctx.fillText(formattedDate, bgX + padding, dateStartY);
+
+            // Draw event time
+            const timeY = dateStartY + 50; // Add spacing below the date
             ctx.fillText(`${event.times[0].startTime} - ${event.times[0].endTime}`, bgX + padding, timeY);
     
             console.log("Image and text successfully drawn on canvas.");
@@ -283,29 +316,38 @@ const EventActions = ({ event }: EventActionsProps) => {
 
     const triggerDownload = (canvas: HTMLCanvasElement) => {
         const dataUrl = canvas.toDataURL("image/png");
+        const fileName = `happns_${event!.name?.replace(/\s+/g, "_") || "happns_event_image"}.png`;
+    
         const link = document.createElement("a");
         link.href = dataUrl;
-        link.download = `happns_${event!.name?.replace(/\s+/g, "_") || "happns_event_image"}.png`;
+        link.download = fileName;
     
-        // For mobile devices, show a toast and provide a previewable/downloadable image
         if (/Mobi|Android/i.test(navigator.userAgent)) {
-            // Open the image in a new tab for easier saving
-            window.open(dataUrl, "_blank");
+            // Mobile: Trigger the download directly
+            link.style.display = "none"; // Hide the link
+            document.body.appendChild(link); // Add it to the DOM
+            link.click(); // Trigger the download
+            document.body.removeChild(link); // Remove the link after download
+    
+            // Toast notification for mobile
             toast({
-                title: "Image Ready",
-                description: "Tap and hold the image to save it to your Photos app.",
+                title: "Image Downloaded",
+                description: "The image has been downloaded to your device. Check your Downloads folder or Photos app.",
             });
         } else {
-            // For desktops, trigger the download directly
-            link.click();
+            // Desktop: Trigger the download directly
+            link.style.display = "none"; // Hide the link
+            document.body.appendChild(link); // Add it to the DOM
+            link.click(); // Trigger the download
+            document.body.removeChild(link); // Remove the link after download
     
-            // Show toast notification for desktop
+            // Toast notification for desktop
             toast({
                 title: "Image Downloaded",
                 description: `The shareable event image for "${event!.name}" has been downloaded successfully.`,
             });
         }
-    };
+    };    
 
     return (
         <div className="flex items-center gap-2">
