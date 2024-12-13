@@ -158,9 +158,11 @@ const EventActions = ({ event }: EventActionsProps) => {
         ctx.fillStyle = "#ffffff"; // White background
         ctx.fillRect(0, 0, width, height);
     
-        // Draw text and image
-        const textBottomY = drawText(ctx, width, height);
-        drawEventImage(ctx, textBottomY, width, height);
+        // Draw gray background
+        const { bgX, bgY, bgWidth, bgHeight } = drawGrayBackground(ctx, width, height);
+
+        // Draw text and image inside the gray background
+        drawTextAndImage(ctx, event, bgX, bgY, bgWidth, bgHeight);
     };
     
     const drawText = (
@@ -168,34 +170,173 @@ const EventActions = ({ event }: EventActionsProps) => {
         width: number,
         height: number
     ): number => {
-        const textPadding = 100; // Padding from the top and left
-        const lineSpacing = 20; // Spacing between lines
-        let currentY = textPadding;
-    
+        const padding = 40;
+        const lineSpacing = 20;
+        const grayBackgroundColor = "#FAFAFA";
+        const grayTextColor = "#78716C";
+
+        // Gray background dimensions
+        const bgWidth = width * 0.8; // 80% of canvas width
+        const bgHeight = height * 0.6; // 60% of canvas height
+        const bgX = (width - bgWidth) / 2; // Center horizontally
+        const bgY = (height - bgHeight) / 2; // Center vertically
+
+        // Draw rounded gray background
+        const borderRadius = 20;
+        ctx.fillStyle = grayBackgroundColor;
+        ctx.beginPath();
+        ctx.moveTo(bgX + borderRadius, bgY);
+        ctx.arcTo(bgX + bgWidth, bgY, bgX + bgWidth, bgY + bgHeight, borderRadius);
+        ctx.arcTo(bgX + bgWidth, bgY + bgHeight, bgX, bgY + bgHeight, borderRadius);
+        ctx.arcTo(bgX, bgY + bgHeight, bgX, bgY, borderRadius);
+        ctx.arcTo(bgX, bgY, bgX + bgWidth, bgY, borderRadius);
+        ctx.closePath();
+        ctx.fill();
+
+        // Text positioning within the gray background
+        let currentY = bgY + padding; // Start inside the gray background
+        const textX = bgX + padding; // Align text with padding
+
         // Draw "happns/"
-        ctx.fillStyle = "#000000";
-        ctx.font = "36px Arial";
+        ctx.fillStyle = "#000000"; // Black text
+        ctx.font = "bold 36px Arial";
         ctx.textAlign = "left";
         ctx.textBaseline = "top";
-        ctx.fillText("happns/", textPadding, currentY);
-    
-        // Move to the next line
+        ctx.fillText("happns/", textX, currentY);
+
+        // Move to next line
         currentY += 40 + lineSpacing;
-    
+
         // Draw event name
-        ctx.font = "44px Arial";
-        ctx.fillText(event!.name || "Event Name", textPadding, currentY);
-    
-        // Move to the next line
+        ctx.font = "bold 44px Arial";
+        ctx.fillText(event!.name || "Event Name", textX, currentY);
+
+        // Move to next line
         currentY += 50 + lineSpacing;
-    
+
         // Draw formatted event dates
         const formattedDate = formatEventDate(event!.startDate, event!.endDate);
+        ctx.fillStyle = grayTextColor; // Gray text
         ctx.font = "36px Arial";
-        ctx.fillText(formattedDate, textPadding, currentY);
+        ctx.fillText(formattedDate, textX, currentY);
     
-        // Return the bottom Y-coordinate of the text
-        return currentY + 50; // Add extra spacing below the text
+        return bgY + bgHeight; // Return the bottom Y-coordinate of the gray background
+    };
+
+    const drawRoundedImage = (
+        ctx: CanvasRenderingContext2D,
+        img: HTMLImageElement,
+        x: number,
+        y: number,
+        width: number,
+        height: number,
+        borderRadius: number
+    ) => {
+        // Draw a rounded rectangle for the image clipping path
+        ctx.beginPath();
+        ctx.moveTo(x + borderRadius, y);
+        ctx.arcTo(x + width, y, x + width, y + height, borderRadius);
+        ctx.arcTo(x + width, y + height, x, y + height, borderRadius);
+        ctx.arcTo(x, y + height, x, y, borderRadius);
+        ctx.arcTo(x, y, x + width, y, borderRadius);
+        ctx.closePath();
+        ctx.clip(); // Clip the canvas to the rounded rectangle
+    
+        // Draw the image
+        ctx.drawImage(img, x, y, width, height);
+    
+        // Restore the canvas state to avoid clipping other elements
+        ctx.restore();
+    };
+
+    const drawGrayBackground = (
+        ctx: CanvasRenderingContext2D,
+        width: number,
+        height: number
+    ): { bgX: number; bgY: number; bgWidth: number; bgHeight: number } => {
+        const bgWidth = width * 0.8; // 80% of canvas width
+        const bgHeight = height * 0.65; // 65% of canvas height
+        const bgX = (width - bgWidth) / 2; // Center horizontally
+        const bgY = (height - bgHeight) / 2; // Center vertically
+    
+        // Draw rounded gray background
+        const borderRadius = 20;
+        ctx.fillStyle = "#FAFAFA"; // Light gray background color
+        ctx.beginPath();
+        ctx.moveTo(bgX + borderRadius, bgY);
+        ctx.arcTo(bgX + bgWidth, bgY, bgX + bgWidth, bgY + bgHeight, borderRadius);
+        ctx.arcTo(bgX + bgWidth, bgY + bgHeight, bgX, bgY + bgHeight, borderRadius);
+        ctx.arcTo(bgX, bgY + bgHeight, bgX, bgY, borderRadius);
+        ctx.arcTo(bgX, bgY, bgX + bgWidth, bgY, borderRadius);
+        ctx.closePath();
+        ctx.fill();
+    
+        return { bgX, bgY, bgWidth, bgHeight };
+    };
+
+    const drawTextAndImage = (
+        ctx: CanvasRenderingContext2D,
+        event: Event,
+        bgX: number,
+        bgY: number,
+        bgWidth: number,
+        bgHeight: number
+    ) => {
+        const padding = 40; // Padding inside the gray background
+        const verticalPadding = 20; // Additional vertical padding above "happns/"
+        let currentY = bgY + padding + verticalPadding; // Start with extra padding above "happns/"
+    
+        // Draw "happns/"
+        ctx.fillStyle = "#000000"; // Black text
+        ctx.font = "bold 40px Arial";
+        ctx.textAlign = "left";
+        ctx.textBaseline = "top";
+        ctx.fillText("happns/", bgX + padding, currentY);
+    
+        // Move to next section for the image
+        currentY += 100;
+    
+        // Draw the event image
+        const img = new Image();
+        img.src = event.image;
+        console.log("Event image URL:", event?.image);
+        img.crossOrigin = "anonymous"; // Avoid CORS issues
+    
+        img.onload = () => {
+            const imgSize = bgWidth - 2 * padding; // Image width matches gray background minus padding
+            const imgX = bgX + padding; // Left-align inside the gray background
+            const imgY = currentY; // Position the image below the "happns/" text
+            const borderRadius = 20; // Rounded corners for the image
+            ctx.save(); // Save the current canvas state before clipping
+            drawRoundedImage(ctx, img, imgX, imgY, imgSize, imgSize, borderRadius); // Draw the rounded image
+    
+            // Move to the section below the image
+            const textStartY = imgY + imgSize + 75; // Add some spacing below the image
+    
+            // Draw event name
+            ctx.fillStyle = "#000000"; // Black text
+            ctx.font = "bold 40px Arial";
+            ctx.fillText(event.name || "Event Name", bgX + padding, textStartY);
+    
+            // Move to next line for date
+            const dateY = textStartY + 75;
+            ctx.fillStyle = "#78716C"; // Gray text color
+            ctx.font = "36px Arial";
+            const formattedDate = formatEventDate(event.startDate, event.endDate);
+            ctx.fillText(formattedDate, bgX + padding, dateY);
+    
+            // Move to next line for time
+            const timeY = dateY + 40;
+            ctx.fillText(`${event.times[0].startTime} - ${event.times[0].endTime}`, bgX + padding, timeY);
+    
+            console.log("Image and text successfully drawn on canvas.");
+            triggerDownload(ctx.canvas); // Trigger download after everything is drawn
+        };
+    
+        img.onerror = () => {
+            console.error("Failed to load event image. Skipping image rendering.");
+            triggerDownload(ctx.canvas); // Proceed with text-only image
+        };
     };
     
     const drawEventImage = (
@@ -213,19 +354,26 @@ const EventActions = ({ event }: EventActionsProps) => {
 
         const img = new Image();
         img.src = event.image;
-        console.log("Event image URL:", event?.image);
         img.crossOrigin = "anonymous"; // Avoid CORS issues
     
         img.onload = () => {
             // Calculate square dimensions
-            const maxImageSize = width * 0.6; // 60% of canvas width
+            const maxImageSize = width * 0.8; // 80% of canvas width
             const imgSize = Math.min(maxImageSize, height * 0.4); // Constrain by both width and height
             const imgX = (width - imgSize) / 2; // Center horizontally
             const imgY = textBottomY + 20; // Place below the text with padding
-    
-            // Draw the image as a square
+            
+            // Add rounded corners
+            ctx.save();
+            ctx.beginPath();
+            ctx.moveTo(imgX + 20, imgY); // Top-left corner
+            ctx.arcTo(imgX + imgSize, imgY, imgX + imgSize, imgY + imgSize, 20); // Top-right corner
+            ctx.arcTo(imgX + imgSize, imgY + imgSize, imgX, imgY + imgSize, 20); // Bottom-right corner
+            ctx.arcTo(imgX, imgY + imgSize, imgX, imgY, 20); // Bottom-left corner
+            ctx.arcTo(imgX, imgY, imgX + imgSize, imgY, 20); // Close path
+            ctx.clip();
             ctx.drawImage(img, imgX, imgY, imgSize, imgSize);
-            console.log("Image successfully drawn on canvas.");
+            ctx.restore();
 
             triggerDownload(ctx.canvas); // Trigger download after image is drawn
         };
@@ -238,7 +386,7 @@ const EventActions = ({ event }: EventActionsProps) => {
 
     const triggerDownload = (canvas: HTMLCanvasElement) => {
         const link = document.createElement("a");
-        link.download = `${event!.name?.replace(/\s+/g, "_") || "event_image"}.png`;
+        link.download = `happns_${event!.name?.replace(/\s+/g, "_") || "happns_event_image"}.png`;
         link.href = canvas.toDataURL("image/png");
         link.click();
 
