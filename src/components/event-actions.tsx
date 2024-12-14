@@ -319,11 +319,24 @@ const EventActions = ({ event }: EventActionsProps) => {
     
         if (/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) {
             // For mobile devices
-            window.open(dataUrl, "_blank"); // Open the image in a new tab
-            toast({
-                title: "Image Ready",
-                description: "Tap and hold the image to save it to your Photos app.",
-            });
+            const newTab = window.open("", "_blank");
+            if (newTab) {
+                newTab.document.body.style.margin = "0"; // Remove margin for full image view
+                newTab.document.body.style.display = "flex";
+                newTab.document.body.style.justifyContent = "center";
+                newTab.document.body.style.alignItems = "center";
+                const img = newTab.document.createElement("img");
+                img.src = dataUrl;
+                img.style.maxWidth = "100%"; // Ensure the image fits the screen
+                img.style.maxHeight = "100%"; // Ensure the image fits the screen
+                newTab.document.body.appendChild(img);
+            } else {
+                toast({
+                    title: "Error",
+                    description: "Unable to open the image. Please try again.",
+                    variant: "destructive",
+                });
+            }
         } else {
             // For desktop devices
             const link = document.createElement("a");
@@ -339,6 +352,7 @@ const EventActions = ({ event }: EventActionsProps) => {
             });
         }
     };
+    
     
 
     return (
