@@ -316,38 +316,30 @@ const EventActions = ({ event }: EventActionsProps) => {
 
     const triggerDownload = (canvas: HTMLCanvasElement) => {
         const dataUrl = canvas.toDataURL("image/png");
-        const fileName = `happns_${event!.name?.replace(/\s+/g, "_") || "happns_event_image"}.png`;
     
-        const link = document.createElement("a");
-        link.href = dataUrl;
-        link.download = fileName;
-    
-        if (/Mobi|Android/i.test(navigator.userAgent)) {
-            // Mobile: Trigger the download directly
-            link.style.display = "none"; // Hide the link
-            document.body.appendChild(link); // Add it to the DOM
-            link.click(); // Trigger the download
-            document.body.removeChild(link); // Remove the link after download
-    
-            // Toast notification for mobile
+        if (/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) {
+            // For mobile devices
+            window.open(dataUrl, "_blank"); // Open the image in a new tab
             toast({
-                title: "Image Downloaded",
-                description: "The image has been downloaded to your device. Check your Downloads folder or Photos app.",
+                title: "Image Ready",
+                description: "Tap and hold the image to save it to your Photos app.",
             });
         } else {
-            // Desktop: Trigger the download directly
-            link.style.display = "none"; // Hide the link
-            document.body.appendChild(link); // Add it to the DOM
-            link.click(); // Trigger the download
-            document.body.removeChild(link); // Remove the link after download
+            // For desktop devices
+            const link = document.createElement("a");
+            link.href = dataUrl;
+            link.download = `happns_${event!.name?.replace(/\s+/g, "_") || "happns_event_image"}.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
     
-            // Toast notification for desktop
             toast({
                 title: "Image Downloaded",
                 description: `The shareable event image for "${event!.name}" has been downloaded successfully.`,
             });
         }
-    };    
+    };
+    
 
     return (
         <div className="flex items-center gap-2">
