@@ -102,12 +102,12 @@ export default function CitySelector({ cities }: CitySelectorProps) {
                 <>
                     <Select value={selectedCity ?? undefined} onValueChange={(value) => setSelectedCity(value)}>
                         <SelectTrigger>
-                            <SelectValue>{cities.find((city) => city.slug === selectedCity)?.name || "Select your city"}</SelectValue>
+                            <SelectValue>{cities.find((city) => city.slug === selectedCity)?.name.toLowerCase() || "select your city"}</SelectValue>
                         </SelectTrigger>
                         <SelectContent>
                             {cities.map((city) => (
                                 <SelectItem key={city.slug} value={city.slug}>
-                                    {city.name}
+                                    {city.name.toLowerCase()}
                                 </SelectItem>
                             ))}
                         </SelectContent>
@@ -121,7 +121,7 @@ export default function CitySelector({ cities }: CitySelectorProps) {
             ) : (
                 // Fallback UI in case `selectedCity` fails to set
                 <div>
-                    <p>Error: Could not set city</p>
+                    <p>error: could not set city</p>
                 </div>
             )}
         </div>
