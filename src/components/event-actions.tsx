@@ -17,12 +17,13 @@ import { db } from "@/lib/firebase"
 import { doc, getDoc, setDoc, deleteDoc } from "firebase/firestore"
 
 // Shadcn Imports
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { Button } from "@/components/ui/button"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 // Other Imports
 import { parse } from 'date-fns'
-import { Download, Bookmark, BookmarkCheck, CalendarPlus, Link as LinkIcon, Pencil } from "lucide-react"
+import { Send, Download, Bookmark, BookmarkCheck, CalendarPlus, Link as LinkIcon, Pencil } from "lucide-react"
 
 interface EventActionsProps {
     event: Event | null;
@@ -427,34 +428,31 @@ const EventActions = ({ event }: EventActionsProps) => {
                 <TooltipContent>add to calendar</TooltipContent>
             </Tooltip>
 
-            {/* Link Button */}
+            {/* Share Button Options */}
             <Tooltip>
                 <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" disabled={isDisabled} onClick={handleCopyEventLink}>
-                        <LinkIcon className="h-4 w-4" />
-                        <span className="sr-only">event link</span>
-                    </Button>
-                </TooltipTrigger>
-                <TooltipContent>event link</TooltipContent>
-            </Tooltip>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" disabled={isDisabled}>
+                                <Send className="h-4 w-4" />
+                                <span className="sr-only">share options</span>
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            {/* Copy Link Option */}
+                            <DropdownMenuItem onClick={handleCopyEventLink}>
+                                copy event link
+                            </DropdownMenuItem>
 
-            {/* Download Shareable Image Button */}
-            {event && (
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            disabled={!event}
-                            onClick={generateAndDownloadImage}
-                        >
-                            <Download className="h-4 w-4" />
-                            <span className="sr-only">download shareable image</span>
-                        </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>download shareable image</TooltipContent>
-                </Tooltip>
-            )}
+                            {/* Download Shareable Image Option */}
+                            <DropdownMenuItem onClick={generateAndDownloadImage}>
+                                download shareable image
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </TooltipTrigger>
+                <TooltipContent>share options</TooltipContent>
+            </Tooltip>
         </div>
     );
 };
