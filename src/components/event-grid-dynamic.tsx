@@ -50,7 +50,8 @@ const EventGridDynamic = ({ cities }: EventGridDynamicProps) => {
             }
         });
 
-        return closestCity.slug;
+        // return closestCity.slug;
+        return "seattle";
     };
 
     // Scroll the tabs list into view when the active tab changes, if needed

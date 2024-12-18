@@ -39,7 +39,8 @@ export default function CitySelector({ cities }: CitySelectorProps) {
         }
         });
 
-        return closestCity.slug; // Return the slug of the closest city
+        // return closestCity.slug; // Return the slug of the closest city
+        return "seattle";
     };
 
     // Set city selection
