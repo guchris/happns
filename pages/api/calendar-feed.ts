@@ -32,15 +32,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(400).json({ error: 'Missing user ID' });
     }
 
-    // Fetch user's bookmarked events from Firestore
-    const bookmarksRef = db.collection('users').doc(userId).collection('user-bookmarks');
-    const snapshot = await bookmarksRef.get();
+    // Fetch user's attendance events from Firestore
+    const attendanceRef = db.collection('users').doc(userId).collection('user-attendance');
+    const snapshot = await attendanceRef.where('status', 'in', ['yes', 'maybe']).get();
 
     if (snapshot.empty) {
         return res.status(404).json({ error: 'No events found for user' });
     }
 
-    // Collect event IDs from bookmarks
+    // Collect event IDs
     const eventIds: string[] = [];
     snapshot.forEach(doc => {
         eventIds.push(doc.id);
