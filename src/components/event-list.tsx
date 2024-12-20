@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils"
 import { Event } from "@/components/types"
 import { useEvent } from "@/hooks/use-event"
 import { categoryOptions } from "@/lib/selectOptions"
-import { sortEventsByDateAndName } from "@/lib/eventUtils"
+import { sortEventsByTypeAndDateAndName } from "@/lib/eventUtils"
 
 // Firebase Imports
 import { db } from "@/lib/firebase"
@@ -69,7 +69,7 @@ export function EventList({ items, isVerticalLayout, isFilterActive, startDate }
 
     // Sort events within each collapsible
     Object.keys(eventsByDate).forEach((date) => {
-        eventsByDate[date] = sortEventsByDateAndName(eventsByDate[date]);
+        eventsByDate[date] = sortEventsByTypeAndDateAndName(eventsByDate[date]);
     });
 
     // Sort the collapsible dates chronologically

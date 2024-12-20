@@ -351,11 +351,32 @@ export const getEventTabs = ( event: Event, todayStr: string, tomorrowStr: strin
 
 
 /**
- * Sorts events first by eventDurationType, then by start date, and finally alphabetically by name for events with the same date.
+ * Sorts events first by start date and then alphabetically by name for events with the same date.
  * @param events - Array of Event objects.
  * @returns {Event[]} - Array of sorted events.
  */
 export function sortEventsByDateAndName(events: Event[]): Event[] {
+    return events.sort((a, b) => {
+        const dateA = new Date(a.startDate);
+        const dateB = new Date(b.startDate);
+
+        // First, sort by startDate
+        if (dateA < dateB) return -1;
+        if (dateA > dateB) return 1;
+
+        // If startDate is the same, sort by name alphabetically
+        return a.name.localeCompare(b.name);
+    });
+}
+
+
+
+/**
+ * Sorts events first by eventDurationType, then by start date, and finally alphabetically by name for events with the same date.
+ * @param events - Array of Event objects.
+ * @returns {Event[]} - Array of sorted events.
+ */
+export function sortEventsByTypeAndDateAndName(events: Event[]): Event[] {
     return events.sort((a, b) => {
         const durationOrder = ["single", "multi", "extended"];
         const durationA = durationOrder.indexOf(a.eventDurationType);
@@ -377,7 +398,6 @@ export function sortEventsByDateAndName(events: Event[]): Event[] {
         return a.name.localeCompare(b.name);
     });
 }
-
 
 
 
