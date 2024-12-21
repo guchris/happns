@@ -47,12 +47,12 @@ export function EventList({ items, isVerticalLayout, isFilterActive, startDate }
     
         // Determine the first applicable date for the event
         const applicableDate =
-            eventStartDate >= filterDate
-                ? eventStartDate // Use the event's start date if it's after or equal to the filter
+            todayDate >= eventStartDate && todayDate <= eventEndDate
+                ? todayDate // Use today if it falls in the event's range
                 : filterDate >= eventStartDate && filterDate <= eventEndDate
                 ? filterDate // Use the filtered start date if it falls in the event's range
-                : todayDate >= eventStartDate && todayDate <= eventEndDate
-                ? todayDate // Use today if it falls in the event's range
+                : eventStartDate >= filterDate
+                ? eventStartDate // Use the event's start date if it's after or equal to the filter
                 : null;
     
         // If no applicable date is found, skip the event
