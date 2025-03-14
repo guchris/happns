@@ -4,6 +4,7 @@ import { ColumnDef } from "@tanstack/react-table"
 import { Badge } from "@/components/ui/badge"
 import { DataTableColumnHeader } from "@/components/data-table-column-header"
 import { Checkbox } from "@/components/ui/checkbox"
+import { ExternalLink } from "lucide-react"
 
 // This type matches our Firestore event structure
 export type PendingEvent = {
@@ -43,7 +44,7 @@ export const columns: ColumnDef<PendingEvent>[] = [
   {
     accessorKey: "status",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Status" />
+      <DataTableColumnHeader column={column} title="status" />
     ),
     cell: ({ row }) => {
       const status = row.getValue("status") as string
@@ -57,34 +58,32 @@ export const columns: ColumnDef<PendingEvent>[] = [
   {
     accessorKey: "name",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Name" />
-    ),
-    cell: ({ row }) => {
-      const link = row.original.link
-      return link ? (
-        <a 
-          href={link} 
-          target="_blank" 
-          rel="noopener noreferrer"
-          className="text-blue-600 hover:underline"
-        >
-          {row.getValue("name")}
-        </a>
-      ) : (
-        row.getValue("name")
-      )
-    },
-  },
-  {
-    accessorKey: "category",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Category" />
+      <DataTableColumnHeader column={column} title="name" />
     ),
   },
   {
     accessorKey: "location",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Location" />
+      <DataTableColumnHeader column={column} title="location" />
     ),
+  },
+  {
+    accessorKey: "link",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="link" />
+    ),
+    cell: ({ row }) => {
+      const link = row.getValue("link") as string
+      return link ? (
+        <a 
+          href={link} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <ExternalLink className="h-4 w-4" />
+        </a>
+      ) : null
+    },
   },
 ] 
