@@ -133,68 +133,75 @@ async function scrapeEvents(): Promise<Event[]> {
             return []
         }
 
-        try {
-            const $card = $(eventCards[0])
-            
-            // Get link and title from the event-title section
-            const $titleLink = $card.find("h2.event-title a")
-            const link = $titleLink.attr("href") || ""
-            const previewName = $titleLink.text().trim()
-            
-            // Get category
-            const category = [$card.find("a.fw-bold.text-uppercase").text().trim()]
-            
-            // Get location details
-            const locationName = $card.find("div.location-name a").text().trim()
-            
-            // Get price
-            const priceStr = $card.find("ul.event-tags li").first().text().trim()
-            
-            // Get image
-            const image = $card.find("img.img-responsive").attr("src") || ""
+        const events: Event[] = []
 
-            if (!link) {
-                return []
-            }
+        // Process all event cards
+        for (const card of eventCards) {
+            try {
+                const $card = $(card)
+                
+                // Get link and title from the event-title section
+                const $titleLink = $card.find("h2.event-title a")
+                const link = $titleLink.attr("href") || ""
+                const previewName = $titleLink.text().trim()
+                
+                // Get category
+                const category = [$card.find("a.fw-bold.text-uppercase").text().trim()]
+                
+                // Get location details
+                const locationName = $card.find("div.location-name a").text().trim()
+                
+                // Get price
+                const priceStr = $card.find("ul.event-tags li").first().text().trim()
+                
+                // Get image
+                const image = $card.find("img.img-responsive").attr("src") || ""
 
-            // Get details from the event page
-            const eventDetails = await scrapeEventDetails(link)
-            
-            // Parse the price
-            const cost = await parsePriceString(priceStr)
-
-            const event: Event = {
-                id: "", // Will be assigned by Firestore
-                name: eventDetails.name || previewName,
-                link,
-                startDate: eventDetails.startDate,
-                endDate: eventDetails.endDate,
-                times: eventDetails.times,
-                location: eventDetails.location || locationName || "Location TBD",
-                details: eventDetails.details,
-                category,
-                city: "seattle",
-                clicks: 0,
-                cost,
-                format: "in-person",
-                gmaps: "",
-                image,
-                neighborhood: "",
-                eventDurationType: "single",
-                status: "pending",
-                attendanceSummary: {
-                    yesCount: 0,
-                    maybeCount: 0,
-                    noCount: 0
+                if (!link) {
+                    continue
                 }
-            }
 
-            console.log("Event details:", JSON.stringify(event, null, 2))
-            return [event]
-        } catch (error) {
-            console.error("Error processing event:", error)
-            return []
+                // Get details from the event page
+                const eventDetails = await scrapeEventDetails(link)
+                
+                // Parse the price
+                const cost = await parsePriceString(priceStr)
+
+                const event: Event = {
+                    id: "", // Will be assigned by Firestore
+                    name: eventDetails.name || previewName,
+                    link,
+                    startDate: eventDetails.startDate,
+                    endDate: eventDetails.endDate,
+                    times: eventDetails.times,
+                    location: eventDetails.location || locationName || "Location TBD",
+                    details: eventDetails.details,
+                    category,
+                    city: "seattle",
+                    clicks: 0,
+                    cost,
+                    format: "in-person",
+                    gmaps: "",
+                    image,
+                    neighborhood: "",
+                    eventDurationType: "single",
+                    status: "pending",
+                    attendanceSummary: {
+                        yesCount: 0,
+                        maybeCount: 0,
+                        noCount: 0
+                    }
+                }
+
+                events.push(event)
+            } catch (error) {
+                console.error("Error processing event card:", error)
+                // Continue with next event if one fails
+                continue
+            }
         }
+
+        return events
     } catch (error) {
         console.error("Error scraping events:", error)
         throw error
