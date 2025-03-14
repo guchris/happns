@@ -4,7 +4,7 @@ import { Event } from "@/components/types"
 import { format, parse } from "date-fns"
 
 // Firebase Admin imports
-import { getFirestore } from "firebase-admin/firestore"fe
+import { getFirestore } from "firebase-admin/firestore"
 import { initializeApp, getApps, cert } from "firebase-admin/app"
 
 // Initialize Firebase Admin if not already initialized
