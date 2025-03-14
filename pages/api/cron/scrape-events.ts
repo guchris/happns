@@ -145,9 +145,6 @@ async function scrapeEvents(): Promise<Event[]> {
                 const link = $titleLink.attr("href") || ""
                 const previewName = $titleLink.text().trim()
                 
-                // Get category
-                const category = [$card.find("a.fw-bold.text-uppercase").text().trim()]
-                
                 // Get location details
                 const locationName = $card.find("div.location-name a").text().trim()
                 
@@ -176,7 +173,7 @@ async function scrapeEvents(): Promise<Event[]> {
                     times: eventDetails.times,
                     location: eventDetails.location || locationName || "Location TBD",
                     details: eventDetails.details,
-                    category,
+                    category: [], // Set empty array for category
                     city: "seattle",
                     clicks: 0,
                     cost,
