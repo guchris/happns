@@ -2,71 +2,202 @@ import { NextApiRequest, NextApiResponse } from "next"
 import * as cheerio from "cheerio"
 import { Event } from "@/components/types"
 import { format, parse } from "date-fns"
-import { db } from "@/lib/firebase"
-import { collection, query, where, getDocs, addDoc } from "firebase/firestore"
+
+// Firebase Admin imports
+import { getFirestore } from "firebase-admin/firestore"
+import { initializeApp, getApps, cert } from "firebase-admin/app"
+
+// Initialize Firebase Admin if not already initialized
+if (!getApps().length) {
+    initializeApp({
+        credential: cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY!)),
+        databaseURL: "https://happns-default-rtdb.firebaseio.com"
+    });
+}
+
+const db = getFirestore()
 
 // Reuse the same headers and helper functions from the original scraper
 const headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-    'Accept-Language': 'en-US,en;q=0.5',
-    'Connection': 'keep-alive',
-    'Upgrade-Insecure-Requests': '1'
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.5",
+    "Connection": "keep-alive",
+    "Upgrade-Insecure-Requests": "1"
 }
 
 // Helper function to check if an event already exists in either collection
 async function eventExists(link: string): Promise<boolean> {
-    // Check approved events collection
-    const eventsRef = collection(db, "events")
-    const eventsQuery = query(eventsRef, where("link", "==", link))
-    const eventsSnapshot = await getDocs(eventsQuery)
-    
-    if (!eventsSnapshot.empty) {
-        return true
-    }
+    try {
+        // Check approved events collection
+        const eventsSnapshot = await db.collection("events").where("link", "==", link).get()
+        
+        if (!eventsSnapshot.empty) {
+            return true
+        }
 
-    // Check pending events collection
-    const pendingEventsRef = collection(db, "pending-events")
-    const pendingQuery = query(pendingEventsRef, where("link", "==", link))
-    const pendingSnapshot = await getDocs(pendingQuery)
-    
-    return !pendingSnapshot.empty
+        // Check pending events collection
+        const pendingSnapshot = await db.collection("pending-events").where("link", "==", link).get()
+        
+        return !pendingSnapshot.empty
+    } catch (error) {
+        console.error("Error checking if event exists:", error)
+        return false
+    }
 }
 
 async function scrapeEventDetails(url: string): Promise<{
+    name: string;
+    startDate: string;
+    endDate: string;
+    times: { startTime: string; endTime: string; }[];
+    location: string;
     details: string;
-    category: string[];
-    fullName: string;
 }> {
     try {
         const response = await fetch(url, { headers })
         const html = await response.text()
         const $ = cheerio.load(html)
 
-        // Get event description
-        const details = $(".event-description").text().trim()
+        // Get event name from the detail page
+        const name = $("h1.event-title").text().trim()
 
-        // Get the full event name from the event page
-        const fullName = $("h1.event-title").text().trim()
+        // Get location from the detail page - try different selectors
+        let location = ""
+        const locationSelectors = [
+            "div.location-name a",
+            "div.venue-name a",
+            "div.location a",
+            "div.venue a"
+        ]
+        
+        for (const selector of locationSelectors) {
+            const text = $(selector).text().trim()
+            if (text) {
+                location = text
+                break
+            }
+        }
 
-        // Get categories from tags
-        const categories = $(".event-tags .tag")
-            .map((_, el) => $(el).text().trim())
-            .get()
-            .filter(tag => tag !== "")
+        // Get description from the detail page - try different selectors
+        let details = ""
+        const detailsSelectors = [
+            "div.event-description",
+            "div.description",
+            "div.event-details",
+            "div.details"
+        ]
+        
+        for (const selector of detailsSelectors) {
+            const text = $(selector).text().trim()
+            if (text) {
+                details = text
+                break
+            }
+        }
 
         return {
-            details,
-            category: categories,
-            fullName
+            name,
+            startDate: "",
+            endDate: "",
+            times: [],
+            location,
+            details
         }
     } catch (error) {
         console.error(`Error scraping event details from ${url}:`, error)
-        return {
-            details: "",
-            category: [],
-            fullName: ""
+        throw error
+    }
+}
+
+async function scrapeEvents(): Promise<Event[]> {
+    try {
+        const response = await fetch("https://everout.com/seattle/events/", {
+            headers: {
+                ...headers,
+                "Cache-Control": "no-cache",
+                "Pragma": "no-cache",
+                "Sec-Fetch-Dest": "document",
+                "Sec-Fetch-Mode": "navigate",
+                "Sec-Fetch-Site": "none",
+                "Sec-Fetch-User": "?1"
+            }
+        })
+        const html = await response.text()
+        const $ = cheerio.load(html)
+        
+        // Find all event cards - they are divs with class "event list-item"
+        const eventCards = $("div.event.list-item").toArray()
+
+        if (eventCards.length === 0) {
+            return []
         }
+
+        try {
+            const $card = $(eventCards[0])
+            
+            // Get link and title from the event-title section
+            const $titleLink = $card.find("h2.event-title a")
+            const link = $titleLink.attr("href") || ""
+            const previewName = $titleLink.text().trim()
+            
+            // Get category
+            const category = [$card.find("a.fw-bold.text-uppercase").text().trim()]
+            
+            // Get location details
+            const locationName = $card.find("div.location-name a").text().trim()
+            
+            // Get price
+            const priceStr = $card.find("ul.event-tags li").first().text().trim()
+            
+            // Get image
+            const image = $card.find("img.img-responsive").attr("src") || ""
+
+            if (!link) {
+                return []
+            }
+
+            // Get details from the event page
+            const eventDetails = await scrapeEventDetails(link)
+            
+            // Parse the price
+            const cost = await parsePriceString(priceStr)
+
+            const event: Event = {
+                id: "", // Will be assigned by Firestore
+                name: eventDetails.name || previewName,
+                link,
+                startDate: eventDetails.startDate,
+                endDate: eventDetails.endDate,
+                times: eventDetails.times,
+                location: eventDetails.location || locationName || "Location TBD",
+                details: eventDetails.details,
+                category,
+                city: "seattle",
+                clicks: 0,
+                cost,
+                format: "in-person",
+                gmaps: "",
+                image,
+                neighborhood: "",
+                eventDurationType: "single",
+                status: "pending",
+                attendanceSummary: {
+                    yesCount: 0,
+                    maybeCount: 0,
+                    noCount: 0
+                }
+            }
+
+            console.log("Event details:", JSON.stringify(event, null, 2))
+            return [event]
+        } catch (error) {
+            console.error("Error processing event:", error)
+            return []
+        }
+    } catch (error) {
+        console.error("Error scraping events:", error)
+        throw error
     }
 }
 
@@ -74,37 +205,100 @@ async function parseDateAndTime(dateStr: string, timeStr: string): Promise<{
     startDate: string;
     endDate: string;
     times: { startTime: string; endTime: string; }[];
-    eventDurationType: "single" | "multi" | "extended";
+    eventDurationType: string;
 }> {
     try {
-        // Parse the date string (e.g., "Monday Dec 25" or "Dec 25")
-        const date = parse(dateStr, "EEEE MMM d", new Date())
-        
-        // Parse time string (e.g., "7:30 pm" or "7:30 pm - 9:30 pm")
-        let startTime = ""
-        let endTime = ""
-        
-        if (timeStr) {
-            const timeParts = timeStr.split("-").map(t => t.trim())
-            startTime = timeParts[0]
-            endTime = timeParts[1] || ""
+        console.log("Parsing date and time...")
+        console.log(`Date string: "${dateStr}"`)
+        console.log(`Time string: "${timeStr}"`)
+
+        // Initialize return values
+        let startDate = ""
+        let endDate = ""
+        let times: { startTime: string; endTime: string; }[] = []
+        let eventDurationType = "single"
+
+        if (!dateStr) {
+            console.log("No date string provided")
+            return { startDate, endDate, times, eventDurationType }
         }
 
+        // Handle date parsing
+        const dateMatch = dateStr.match(/(\w+ \d{1,2}(?:, \d{4})?)/g)
+        if (dateMatch) {
+            // Convert date to YYYY-MM-DD format
+            const parsedDate = new Date(dateMatch[0])
+            if (!isNaN(parsedDate.getTime())) {
+                const year = parsedDate.getFullYear()
+                const month = String(parsedDate.getMonth() + 1).padStart(2, '0')
+                const day = String(parsedDate.getDate()).padStart(2, '0')
+                startDate = `${year}-${month}-${day}`
+                endDate = startDate
+            }
+        }
+
+        // Handle time parsing
+        if (timeStr) {
+            // Extract time using regex
+            const timeMatch = timeStr.match(/(\d{1,2}(?::\d{2})?\s*(?:AM|PM))\s*(?:-\s*(\d{1,2}(?::\d{2})?\s*(?:AM|PM)))?/i)
+            if (timeMatch) {
+                const startTimeStr = timeMatch[1]
+                const endTimeStr = timeMatch[2]
+
+                // Parse start time
+                const startTimeParts = startTimeStr.match(/(\d{1,2})(?::(\d{2}))?\s*(AM|PM)/i)
+                if (startTimeParts) {
+                    let hours = parseInt(startTimeParts[1])
+                    const minutes = startTimeParts[2] ? startTimeParts[2] : "00"
+                    const period = startTimeParts[3].toUpperCase()
+
+                    // Convert to 12-hour format
+                    if (period === "PM" && hours < 12) hours += 12
+                    if (period === "AM" && hours === 12) hours = 0
+
+                    const formattedStartTime = `${String(hours).padStart(2, '0')}:${minutes} ${period}`
+
+                    // Parse end time if it exists
+                    let formattedEndTime = ""
+                    if (endTimeStr) {
+                        const endTimeParts = endTimeStr.match(/(\d{1,2})(?::(\d{2}))?\s*(AM|PM)/i)
+                        if (endTimeParts) {
+                            let endHours = parseInt(endTimeParts[1])
+                            const endMinutes = endTimeParts[2] ? endTimeParts[2] : "00"
+                            const endPeriod = endTimeParts[3].toUpperCase()
+
+                            if (endPeriod === "PM" && endHours < 12) endHours += 12
+                            if (endPeriod === "AM" && endHours === 12) endHours = 0
+
+                            formattedEndTime = `${String(endHours).padStart(2, '0')}:${endMinutes} ${endPeriod}`
+                        }
+                    }
+
+                    times.push({
+                        startTime: formattedStartTime,
+                        endTime: formattedEndTime || formattedStartTime
+                    })
+                }
+            }
+        }
+
+        console.log("Parsed date and time:")
+        console.log(`Start date: ${startDate}`)
+        console.log(`End date: ${endDate}`)
+        console.log("Times:", times)
+
         return {
-            startDate: date.toISOString(),
-            endDate: date.toISOString(), // Assuming single-day event for now
-            times: [{
-                startTime,
-                endTime
-            }],
-            eventDurationType: "single"
+            startDate,
+            endDate,
+            times,
+            eventDurationType
         }
     } catch (error) {
         console.error("Error parsing date and time:", error)
         return {
-            startDate: new Date().toISOString(),
-            endDate: new Date().toISOString(),
-            times: [{ startTime: "", endTime: "" }],
+            startDate: "",
+            endDate: "",
+            times: [],
             eventDurationType: "single"
         }
     }
@@ -143,110 +337,45 @@ async function parsePriceString(priceStr: string): Promise<{
     }
 }
 
-async function scrapeEvents(): Promise<Event[]> {
-    try {
-        // Fetch the webpage with headers
-        const response = await fetch("https://everout.com/seattle/top-events/", { headers })
-        const html = await response.text()
-        
-        // Load the HTML into cheerio
-        const $ = cheerio.load(html)
-        
-        // Find the "Recommended Events by Day" section
-        const newEvents: Event[] = []
-        
-        // Each day's events are in a section with class "day-section"
-        for (const daySection of $(".day-section").toArray()) {
-            const $daySection = $(daySection)
-            
-            // Get the date from the section header
-            const dateStr = $daySection.find(".date").text().trim()
-            
-            // Get all events for this day
-            for (const eventItem of $daySection.find(".event-item").toArray()) {
-                const $event = $(eventItem)
-                const link = $event.find("a").attr("href") || ""
-
-                // Skip if we've already scraped this event
-                if (await eventExists(link)) {
-                    console.log(`Skipping existing event: ${link}`)
-                    continue
-                }
-
-                const previewName = $event.find(".event-title").text().trim()
-                const location = $event.find(".venue-name").text().trim()
-                const timeStr = $event.find(".time").text().trim()
-                const image = $event.find("img").attr("src") || ""
-                const priceStr = $event.find(".price").text().trim()
-
-                // Get additional details from event page
-                const { details, category, fullName } = await scrapeEventDetails(link)
-                
-                // Parse date and time
-                const dateTime = await parseDateAndTime(dateStr, timeStr)
-                
-                // Parse price
-                const cost = await parsePriceString(priceStr)
-
-                // Create event object with required fields and default values
-                const event: Event = {
-                    id: "", // This will be assigned when saved to the database
-                    name: fullName || previewName,
-                    location,
-                    link,
-                    image,
-                    startDate: dateTime.startDate,
-                    endDate: dateTime.endDate,
-                    times: dateTime.times,
-                    category,
-                    city: "seattle",
-                    clicks: 0,
-                    cost,
-                    details,
-                    format: "in-person",
-                    gmaps: "",
-                    neighborhood: "",
-                    attendanceSummary: {
-                        yesCount: 0,
-                        maybeCount: 0,
-                        noCount: 0
-                    },
-                    eventDurationType: dateTime.eventDurationType,
-                    status: "pending"
-                }
-                
-                // Add the event to the pending-events collection
-                const pendingEventsRef = collection(db, "pending-events")
-                const docRef = await addDoc(pendingEventsRef, event)
-                event.id = docRef.id
-                
-                newEvents.push(event)
-            }
-        }
-        
-        return newEvents
-    } catch (error) {
-        console.error("Error scraping events:", error)
-        throw error
-    }
-}
-
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
-    // Verify the request is from Vercel Cron
-    const authHeader = req.headers.authorization
-    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-        return res.status(401).json({ success: false, message: "Unauthorized" })
+    // Verify the request is from Vercel Cron (skip in development)
+    if (process.env.NODE_ENV === "production") {
+        const authHeader = req.headers.authorization
+        if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+            return res.status(401).json({ success: false, message: "Unauthorized" })
+        }
     }
 
     try {
         const newEvents = await scrapeEvents()
+        const eventsToAdd = []
+        
+        // Check each event and only add if it doesn't exist
+        for (const event of newEvents) {
+            const exists = await eventExists(event.link)
+            if (!exists) {
+                eventsToAdd.push(event)
+            }
+        }
+
+        if (eventsToAdd.length > 0) {
+            // Add new events to pending-events collection
+            const batch = db.batch()
+            for (const event of eventsToAdd) {
+                const docRef = db.collection("pending-events").doc()
+                event.id = docRef.id // Assign the Firestore document ID
+                batch.set(docRef, event)
+            }
+            await batch.commit()
+        }
+
         return res.status(200).json({ 
             success: true, 
-            message: `Successfully scraped ${newEvents.length} new events`,
-            events: newEvents 
+            message: `Found ${newEvents.length} events, added ${eventsToAdd.length} new events`,
+            events: eventsToAdd 
         })
     } catch (error) {
         console.error("Error in handler:", error)
