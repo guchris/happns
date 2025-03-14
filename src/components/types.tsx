@@ -29,6 +29,7 @@ export interface Event {
         noCount: number;
     };
     eventDurationType: "single" | "multi" | "extended";
+    status?: "pending" | "approved" | "rejected";
 }
 
 export interface User {
