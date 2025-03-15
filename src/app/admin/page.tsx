@@ -15,8 +15,8 @@ export default function AdminPage() {
   const [pendingEvents, setPendingEvents] = useState<PendingEvent[]>([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    const fetchPendingEvents = async () => {
+  const fetchPendingEvents = async () => {
+    try {
       const querySnapshot = await getDocs(collection(db, "pending-events"))
       const events = querySnapshot.docs.map((doc) => ({
         id: doc.id,
@@ -24,8 +24,13 @@ export default function AdminPage() {
       })) as PendingEvent[]
       setPendingEvents(events)
       setLoading(false)
+    } catch (error) {
+      console.error("Error fetching pending events:", error)
+      setLoading(false)
     }
+  }
 
+  useEffect(() => {
     fetchPendingEvents()
   }, [])
 
@@ -46,7 +51,11 @@ export default function AdminPage() {
             {loading ? (
               <div>Loading...</div>
             ) : (
-              <DataTable columns={columns} data={pendingEvents} />
+              <DataTable 
+                columns={columns} 
+                data={pendingEvents} 
+                onStatusChange={fetchPendingEvents}
+              />
             )}
           </TabsContent>
         </Tabs>

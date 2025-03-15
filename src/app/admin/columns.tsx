@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { DataTableColumnHeader } from "@/components/data-table-column-header"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ExternalLink } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 // This type matches our Firestore event structure
 export type PendingEvent = {
@@ -49,7 +50,14 @@ export const columns: ColumnDef<PendingEvent>[] = [
     cell: ({ row }) => {
       const status = row.getValue("status") as string
       return (
-        <Badge variant={status === "pending" ? "secondary" : "default"}>
+        <Badge 
+          variant="outline"
+          className={cn(
+            status === "pending" && "border-orange-200 bg-orange-100 text-orange-900 hover:bg-orange-100 hover:text-orange-900",
+            status === "approved" && "border-green-200 bg-green-100 text-green-900 hover:bg-green-100 hover:text-green-900",
+            status === "rejected" && "border-red-200 bg-red-100 text-red-900 hover:bg-red-100 hover:text-red-900"
+          )}
+        >
           {status}
         </Badge>
       )

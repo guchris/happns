@@ -7,6 +7,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
 
 // Shadcn Imports
 import { Toaster } from "@/components/ui/toaster"
+import { Toaster as SonnerToaster } from "sonner"
 
 // Context Imports
 import { AuthProvider } from "@/context/AuthContext";
@@ -28,6 +29,7 @@ export default function RootLayout({
 					<Analytics />
 					<SpeedInsights />
 					<Toaster />
+					<SonnerToaster />
 				</body>
 			</html>
 		</AuthProvider>
