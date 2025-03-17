@@ -100,7 +100,7 @@ async function scrapeEventDetails(url: string): Promise<{
             name,
             startDate: "",
             endDate: "",
-            times: [],
+            times: [{ startTime: "", endTime: "" }], // Return empty times array with correct structure
             location,
             details
         }
