@@ -115,11 +115,7 @@ export function DataTable<TData extends { id: string }, TValue>({
   }
 
   const handleEdit = () => {
-    const selectedRows = table.getSelectedRowModel().rows
-    if (selectedRows.length === 1) {
-      const event = selectedRows[0].original as any
-      router.push(`/event-form?id=${event.id}&mode=edit`)
-    }
+    // Do nothing for now
   }
 
   const handleClearAll = async () => {

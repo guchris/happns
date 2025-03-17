@@ -14,7 +14,7 @@ export default function EventFormPage() {
 
     return (
         <Suspense>
-            <EventForm mode={mode} />
+            <EventForm />
         </Suspense>
     );
 }
