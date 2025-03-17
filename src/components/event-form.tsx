@@ -150,42 +150,22 @@ const eventFormSchema = z.object({
 
 type EventFormValues = z.infer<typeof eventFormSchema>
 
-interface EventFormProps {
-  initialData?: any
-  mode?: "create" | "edit"
-}
-
-export default function EventForm({ initialData, mode = "create" }: EventFormProps) {
+export default function EventForm() {
     const router = useRouter();
     const { toast } = useToast();
 
-    const [loading, setLoading] = useState(false);
-    const [varyingTimes, setVaryingTimes] = useState(false);
-    const [startDate, setStartDate] = useState<Date | undefined>(initialData?.startDate ? new Date(initialData.startDate) : undefined);
-    const [endDate, setEndDate] = useState<Date | undefined>(initialData?.endDate ? new Date(initialData.endDate) : undefined);
-    const [times, setTimes] = useState<{ startTime: string; endTime: string }[]>(
-        initialData?.times || [{ startTime: "", endTime: "" }]
-    );
-
+    // Initialize form with default values
     const form = useForm<EventFormValues>({
         resolver: zodResolver(eventFormSchema),
+        mode: "onChange",
         defaultValues: {
-            name: initialData?.name || "",
-            link: initialData?.link || "",
-            location: initialData?.location || "",
-            details: initialData?.details || "",
-            category: initialData?.category || [],
-            image: initialData?.image || "",
-            format: initialData?.format || "in-person",
-            gmaps: initialData?.gmaps || "",
-            city: initialData?.city || "",
-            neighborhood: initialData?.neighborhood || "",
-            cost: initialData?.cost || { type: "single", value: 0 },
-            eventDurationType: initialData?.eventDurationType || "single",
+            cost: { type: "single", value: 0 },
+            format: "in-person",
+            varyingTimes: false,
         },
-    });
+    })
 
-    const { user, loading: authLoading, userData } = useAuth();
+    const { user, loading, userData } = useAuth();
     const searchParams = useSearchParams();
     const eventId = searchParams ? searchParams.get("id") : null;
 
@@ -194,12 +174,15 @@ export default function EventForm({ initialData, mode = "create" }: EventFormPro
     const [neighborhoodsForCity, setNeighborhoodsForCity] = useState<Option[]>([]);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [clicks, setClicks] = useState(0);
+    const [varyingTimes, setVaryingTimes] = useState(false);
     const [dailyTimes, setDailyTimes] = useState([{ date: new Date(), startTime: "", endTime: "" }]);
 
+    const startDate = form.watch("startDate");
+    const endDate = form.watch("endDate");
     const startDateFormatted = startDate ? format(startDate, "yyyy-MM-dd") : null;
     const endDateFormatted = endDate ? format(endDate, "yyyy-MM-dd") : null;
 
-    const hasPermission = !authLoading && user && userData?.role === "curator";
+    const hasPermission = !loading && user && userData?.role === "curator";
 
     const onError = (errors: FieldErrors<EventFormValues>) => {
         console.log("Form submission errors:", errors);
@@ -218,8 +201,7 @@ export default function EventForm({ initialData, mode = "create" }: EventFormPro
         if (eventId) {
             // If there's an event ID in the URL, fetch the event data for editing
             const fetchEvent = async () => {
-                const collectionRef = mode === "edit" ? "pending-events" : "events";
-                const eventDoc = await getDoc(doc(db, collectionRef, eventId));
+                const eventDoc = await getDoc(doc(db, "events", eventId));
                 if (eventDoc.exists()) {
                     const eventData = eventDoc.data();
 
@@ -264,7 +246,7 @@ export default function EventForm({ initialData, mode = "create" }: EventFormPro
             };
             fetchEvent();
         }
-    }, [eventId, mode]);
+    }, [eventId]);
 
     // Updates dailyTimes state based on the interval between start and end dates
     useEffect(() => {
@@ -285,43 +267,90 @@ export default function EventForm({ initialData, mode = "create" }: EventFormPro
     };
 
     // Form submission handler
-    const onSubmit = async (values: EventFormValues) => {
-        try {
-            setLoading(true);
-            const eventData = {
-                ...values,
-                startDate: startDate?.toISOString(),
-                endDate: endDate?.toISOString(),
-                times: varyingTimes ? times : [{ startTime: times[0].startTime, endTime: times[0].endTime }],
-                status: mode === "edit" ? initialData.status : "pending",
-            };
+    const onSubmit = async (data: EventFormValues) => {
+        
+        const storage = getStorage();
+        const eventsCollectionRef = collection(db, "events");
+        
+        const startDate = data.startDate.toISOString().split('T')[0];
+        const endDate = data.endDate.toISOString().split('T')[0];
 
-            if (mode === "edit" && initialData?.id) {
-                // Update existing event
-                const eventRef = doc(db, "pending-events", initialData.id);
-                await updateDoc(eventRef, eventData);
+        const times = varyingTimes ? data.dailyTimes : [{ startTime: data.startTime, endTime: data.endTime }];
+
+        const uploadImage = async () => {
+            if (data.image && typeof data.image !== "string") {
+                const uuid = uuidv4();
+                const storageRef = ref(storage, `event_images/${uuid}`);
+                const uploadTask = uploadBytesResumable(storageRef, data.image);
+
+                return new Promise<string>((resolve, reject) => {
+                    uploadTask.on("state_changed", () => {}, (error) => {
+                        console.error("Upload failed:", error);
+                        reject(error);
+                    }, async () => {
+                        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                        resolve(downloadURL);
+                    });
+                });
+            } else if (typeof data.image === "string") {
+                return data.image; // Use existing URL if already a string
             } else {
-                // Create new event
-                const eventsRef = collection(db, "pending-events");
-                await addDoc(eventsRef, eventData);
+                return null; // If no image provided, return null
             }
+        };
 
-            toast({
-                title: mode === "edit" ? "event updated" : "event created",
-                description: mode === "edit" ? "the event has been updated" : "the event has been created",
-            });
-            router.push("/admin");
+        const imageUrl = await uploadImage();
+
+        const eventData = {
+            category: data.category,
+            city: data.city,
+            clicks: clicks,
+            cost: data.cost,
+            details: data.details,
+            startDate,
+            endDate,
+            times,
+            format: data.format,
+            gmaps: data.gmaps,
+            image: imageUrl,
+            link: data.link,
+            location: data.location,
+            name: data.name,
+            neighborhood: data.neighborhood,
+            attendanceSummary: {
+                yesCount: 0,
+                maybeCount: 0,
+                noCount: 0,
+            },
+            eventDurationType: data.eventDurationType
+        };
+
+        try {
+            if (eventId) {
+                // If eventId exists, update the existing event
+                await updateDoc(doc(db, "events", eventId), eventData);
+                toast({
+                    title: "Event Updated",
+                    description: data.name,
+                });
+            } else {
+                // If no eventId, create a new event
+                await addDoc(eventsCollectionRef, eventData);
+                toast({
+                    title: "Event Created",
+                    description: data.name,
+                });
+            }
+            router.push("/"); // Navigate to the previous or home page after saving
         } catch (error) {
             console.error("Error saving event:", error);
             toast({
-                title: "error",
-                description: "failed to save event",
+                title: "Error",
+                description: "Failed to save the event.",
                 variant: "destructive",
             });
-        } finally {
-            setLoading(false);
         }
-    };
+    }
 
     if (loading) {
         return <EmptyPage title="happns/event-form" description="loading..." />;
@@ -891,9 +920,7 @@ export default function EventForm({ initialData, mode = "create" }: EventFormPro
                         )}
                     />
 
-                    <Button type="submit" disabled={loading}>
-                        {loading ? "saving..." : mode === "edit" ? "update event" : "create event"}
-                    </Button>
+                    <Button type="submit">{eventId ? "Save" : "Submit"}</Button>
                     
                 </form>
             </Form>
