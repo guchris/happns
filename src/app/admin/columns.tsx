@@ -2,7 +2,6 @@
 
 import { ColumnDef } from "@tanstack/react-table"
 import { Badge } from "@/components/ui/badge"
-import { DataTableColumnHeader } from "@/components/data-table-column-header"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ExternalLink } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -44,9 +43,7 @@ export const columns: ColumnDef<PendingEvent>[] = [
   },
   {
     accessorKey: "status",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="status" />
-    ),
+    header: "status",
     cell: ({ row }) => {
       const status = row.getValue("status") as string
       return (
@@ -65,21 +62,15 @@ export const columns: ColumnDef<PendingEvent>[] = [
   },
   {
     accessorKey: "name",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="name" />
-    ),
+    header: "name",
   },
   {
     accessorKey: "location",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="location" />
-    ),
+    header: "location",
   },
   {
     accessorKey: "link",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="link" />
-    ),
+    header: "link",
     cell: ({ row }) => {
       const link = row.getValue("link") as string
       return link ? (

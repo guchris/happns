@@ -223,11 +223,10 @@ export function DataTable<TData extends { id: string }, TValue>({
                 {headerGroup.headers.map((header) => (
                   <TableHead key={header.id}>
                     {!header.isPlaceholder && (
-                      <DataTableColumnHeader 
-                        column={header.column} 
-                        table={table} 
-                        title={header.column.columnDef.header as string} 
-                      />
+                      flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )
                     )}
                   </TableHead>
                 ))}
