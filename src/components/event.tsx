@@ -2,7 +2,7 @@
 
 // React Imports
 import * as React from "react"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { useSearchParams } from "next/navigation"
 
 // App Imports
@@ -30,7 +30,7 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/componen
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet"
 
 // Other Imports
-import { CalendarIcon, SectionIcon, ContainerIcon } from "@radix-ui/react-icons"
+import { CalendarIcon } from "@radix-ui/react-icons"
 import { parseISO, format } from "date-fns"
 
 interface EventProps {
@@ -56,6 +56,7 @@ export function Event({ events, city }: EventProps) {
 
     const [startDate, setStartDate] = useState<Date | undefined>(new Date());
     const [endDate, setEndDate] = useState<Date | undefined>(undefined);
+    const [hasSelectedStartDate, setHasSelectedStartDate] = useState(false);
 
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -168,16 +169,21 @@ export function Event({ events, city }: EventProps) {
         setSearchQuery("")
     }
 
+    const handleStartDateSelect = (date: Date | undefined) => {
+        setStartDate(date);
+        setHasSelectedStartDate(true);
+    };
+
     return (
         <TooltipProvider delayDuration={0}>
             {/* Mobile View */}
             <div className="md:hidden">
                 {!event.selected ? (
                     <div>
-                        <div className="flex items-center px-4 py-2">
+                        <div className="flex items-center gap-2 px-4 py-2">
                             <Sheet>
                                 <SheetTrigger asChild>
-                                    <Button variant="secondary" className="w-full">Filters</Button>
+                                    <Button variant="secondary" className="w-auto min-w-[90px]">Filters</Button>
                                 </SheetTrigger>
                                 <SheetContent side="bottom">
                                     <div className="p-4">
@@ -189,7 +195,7 @@ export function Event({ events, city }: EventProps) {
                                                             variant="outline"
                                                             className="pl-3 text-left font-normal"
                                                         >
-                                                            {startDate ? format(startDate, "MMM d, yyyy") : "Start Date"}
+                                                            {hasSelectedStartDate && startDate ? format(startDate, "MMM d, yyyy") : "Start Date"}
                                                             <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                                         </Button>
                                                     </PopoverTrigger>
@@ -197,7 +203,7 @@ export function Event({ events, city }: EventProps) {
                                                         <Calendar
                                                             mode="single"
                                                             selected={startDate}
-                                                            onSelect={setStartDate}
+                                                            onSelect={handleStartDateSelect}
                                                         />
                                                     </PopoverContent>
                                                 </Popover>
@@ -234,15 +240,6 @@ export function Event({ events, city }: EventProps) {
                                                 </div>
                                             )}
 
-                                            {/* Search Input */}
-                                            <Input
-                                                type="text"
-                                                placeholder="Search"
-                                                value={searchQuery}
-                                                onChange={(e) => setSearchQuery(e.target.value)}
-                                                className="w-full"
-                                            />
-
                                             {/* Category MultiSelect */}
                                             <MultiSelect
                                                 options={categoryOptions}
@@ -269,6 +266,13 @@ export function Event({ events, city }: EventProps) {
                                     </div>
                                 </SheetContent>
                             </Sheet>
+                            <Input
+                                type="text"
+                                placeholder="Search"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="flex-1"
+                            />
                         </div>
                         <Separator />
                         {filteredEvents.length === 0 ? (
@@ -295,6 +299,15 @@ export function Event({ events, city }: EventProps) {
                 <div className="min-w-[250px] max-w-[250px] p-4 space-y-4">
                     <form className="space-y-4">
 
+                        {/* Search Input */}
+                        <Input
+                            type="text"
+                            placeholder="Search"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="w-full"
+                        />
+
                         {/* Start Date */}
                         <Popover>
                             <PopoverTrigger asChild>
@@ -302,7 +315,7 @@ export function Event({ events, city }: EventProps) {
                                     variant="outline"
                                     className="pl-3 text-left font-normal w-full"
                                 >
-                                    {startDate ? format(startDate, "MMM d, yyyy") : "Start Date"}
+                                    {hasSelectedStartDate && startDate ? format(startDate, "MMM d, yyyy") : "Start Date"}
                                     <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                 </Button>
                             </PopoverTrigger>
@@ -310,7 +323,7 @@ export function Event({ events, city }: EventProps) {
                                 <Calendar
                                     mode="single"
                                     selected={startDate}
-                                    onSelect={setStartDate}
+                                    onSelect={handleStartDateSelect}
                                 />
                             </PopoverContent>
                         </Popover>
@@ -346,15 +359,6 @@ export function Event({ events, city }: EventProps) {
                                 <span className="text-sm">Bookmarked</span>
                             </div>
                         )}
-
-                        {/* Search Input */}
-                        <Input
-                            type="text"
-                            placeholder="Search"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full"
-                        />
 
                         {/* Category MultiSelect */}
                         <MultiSelect
