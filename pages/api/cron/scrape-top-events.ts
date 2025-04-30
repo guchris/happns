@@ -81,7 +81,8 @@ async function scrapeEventDetails(url: string): Promise<{
         for (const selector of locationSelectors) {
             const text = $(selector).text().trim()
             if (text) {
-                location = text
+                // Remove "(Seattle)" and any extra whitespace
+                location = text.replace(/\s*\(Seattle\)\s*/, "").trim()
                 console.log("Found location:", location)
                 break
             }
@@ -178,9 +179,9 @@ async function scrapeTopEvents(): Promise<Event[]> {
         }
 
         const events: Event[] = []
-        // Only process the first 3 events
-        const cardsToProcess = eventCards.slice(0, 3)
-        console.log("Processing first 3 events")
+        // Process first 20 events
+        const cardsToProcess = eventCards.slice(0, 20)
+        console.log(`Processing first 20 events (${cardsToProcess.length} found)`)
 
         for (const card of cardsToProcess) {
             try {
@@ -291,6 +292,9 @@ export default async function handler(
         const newEvents = await scrapeTopEvents()
         const eventsToAdd = []
         
+        console.log("\n=== Scraper Summary ===")
+        console.log(`Total events found: ${newEvents.length}`)
+        
         // Check each event and only add if it doesn't exist
         for (const event of newEvents) {
             const exists = await eventExists(event.link)
@@ -299,7 +303,14 @@ export default async function handler(
             }
         }
 
+        console.log(`New events to be added: ${eventsToAdd.length}`)
+        console.log(`Events already in database: ${newEvents.length - eventsToAdd.length}`)
+        
         if (eventsToAdd.length > 0) {
+            console.log("\nNew events:")
+            eventsToAdd.forEach((event, index) => {
+                console.log(`${index + 1}. ${event.name} @ ${event.location}`)
+            })
             // Add new events to pending-events collection
             const batch = db.batch()
             for (const event of eventsToAdd) {

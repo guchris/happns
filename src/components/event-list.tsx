@@ -27,12 +27,11 @@ import { format, parseISO, differenceInDays } from "date-fns"
 
 interface EventListProps {
     items: Event[]
-    isVerticalLayout: boolean
     isFilterActive: boolean
     startDate: Date | undefined;
 }
 
-export function EventList({ items, isVerticalLayout, isFilterActive, startDate }: EventListProps) {
+export function EventList({ items, isFilterActive, startDate }: EventListProps) {
 
     const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" });
     const startDateFilter = startDate
@@ -88,7 +87,6 @@ export function EventList({ items, isVerticalLayout, isFilterActive, startDate }
                                 date={date}
                                 events={eventsByDate[date]}
                                 isLastItem={index === sortedDates.length - 1}
-                                isVerticalLayout={isVerticalLayout}
                             />
                         </div>
                     );
@@ -102,10 +100,9 @@ interface CollapsibleItemProps {
     date: string
     events: Event[]
     isLastItem: boolean
-    isVerticalLayout: boolean
 }
 
-function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: CollapsibleItemProps) {
+function CollapsibleItem({ date, events, isLastItem }: CollapsibleItemProps) {
     const [isOpen, setIsOpen] = useState(events.length > 0)
     const [event, setEvent] = useEvent()
     const router = useRouter()
@@ -184,8 +181,7 @@ function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: Collaps
                             <button
                                 key={item.id}
                                 className={cn(
-                                    // If isVerticalLayout is true, apply flex-col (image on top, text below), else apply flex-row for mobile
-                                    `${isVerticalLayout ? 'flex-col' : 'flex-row'} flex w-full items-start gap-4 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent`,
+                                    'flex flex-row w-full items-start gap-4 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent',
                                     event.selected === item.id && "bg-muted"
                                 )}
                                 onClick={() => handleEventClick(item.id)}
@@ -197,41 +193,19 @@ function CollapsibleItem({ date, events, isLastItem, isVerticalLayout }: Collaps
                                     height={150}
                                     loading="lazy"
                                     className={cn(
-                                        isVerticalLayout 
-                                            ? "w-full" 
-                                            : "w-28 md:w-32 md:h-32",
-                                        "object-cover rounded-lg"
+                                        "w-24 object-cover rounded-lg"
                                     )}
                                 />
                                 <div className="flex flex-col gap-2 w-full">
                                     <div className="flex flex-col gap-1">
                                         <div className="line-clamp-1 font-semibold">{item.name}</div>
-                                        <div className="line-clamp-1 text-xs font-medium hidden md:inline-flex">{formattedDate}</div>
+                                        <div className="line-clamp-1 text-xs font-medium">{formattedDate}</div>
                                         <div className="line-clamp-1 text-xs font-medium">{formattedTime}</div>
-                                    </div>
-                                    <div className="line-clamp-2 text-xs text-muted-foreground md:hidden">
-                                        {item.details}
-                                    </div>
-                                    <div className="hidden md:inline-flex">
-                                        <Badge
-                                            className={cn(
-                                                "inline-block",
-                                                item.eventDurationType === "single" && "bg-green-200 text-black",
-                                                item.eventDurationType === "multi" && "bg-blue-200 text-black",
-                                                item.eventDurationType === "extended" && "bg-purple-200 text-black"
-                                            )}
-                                        >
-                                            {item.eventDurationType === "single"
-                                                ? "Single Day"
-                                                : item.eventDurationType === "multi"
-                                                ? "Multi-Day"
-                                                : "Extended"}
-                                        </Badge>
                                     </div>
                                     <div className="inline-flex gap-1 flex-wrap">
                                         <Badge
                                             className={cn(
-                                                "inline-block md:hidden",
+                                                "inline-block",
                                                 item.eventDurationType === "single" && "bg-green-200 text-black",
                                                 item.eventDurationType === "multi" && "bg-blue-200 text-black",
                                                 item.eventDurationType === "extended" && "bg-purple-200 text-black"

@@ -46,8 +46,6 @@ export function Event({ events, city }: EventProps) {
     const [bookmarkedEventIds, setBookmarkedEventIds] = React.useState<string[]>([]);
     const [showBookmarkedEvents, setShowBookmarkedEvents] = React.useState(false);
 
-    const [isVerticalLayout, setIsVerticalLayout] = React.useState(false);
-
     const [selectedCategories, setSelectedCategories] = useState<Option[]>([]);
     const selectedCategoryValues = selectedCategories.map(category => category.value);
     const searchParams = useSearchParams();
@@ -296,21 +294,13 @@ export function Event({ events, city }: EventProps) {
                                     </div>
                                 </SheetContent>
                             </Sheet>
-                            <Button
-                                variant="outline"
-                                className="ml-2"
-                                onClick={() => setIsVerticalLayout(prev => !prev)}
-                            >
-                                {isVerticalLayout ? <SectionIcon /> : <ContainerIcon />}
-                            </Button>
                         </div>
                         <Separator />
                         {filteredEvents.length === 0 ? (
-                            <div className="p-8 text-center text-muted-foreground">No events</div>
+                            <div className="p-8 text-center text-muted-foreground">no events</div>
                         ) : (
                             <EventList
                                 items={filteredEvents}
-                                isVerticalLayout={isVerticalLayout}
                                 isFilterActive={isFilterActive}
                                 startDate={startDate}
                             />
@@ -450,7 +440,6 @@ export function Event({ events, city }: EventProps) {
                                 <Separator />
                                 <EventList
                                     items={filteredEvents}
-                                    isVerticalLayout={isVerticalLayout}
                                     isFilterActive={isFilterActive}
                                     startDate={startDate}
                                 />
