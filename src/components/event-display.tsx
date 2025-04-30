@@ -11,7 +11,7 @@ import EventActions from "@/components/event-actions"
 import EventAttendance from "@/components/event-attendance"
 import EventComments from "@/components/event-comments"
 import ClientButton from "@/components/client-button"
-import { categoryOptions, formatOptions, neighborhoodOptions } from "@/lib/selectOptions"
+import { categoryOptions } from "@/lib/selectOptions"
 import { formatEventDate, formatEventCost } from "@/lib/eventUtils"
 import { useAuth } from "@/context/AuthContext"
 
@@ -32,10 +32,7 @@ export function EventDisplay({ event }: EventDisplayProps) {
     const today = new Date();
 
     const categoryLabels = event?.category?.map(cat => categoryOptions.find(option => option.value === cat)?.label || "Unknown") || [];
-    const formatLabel = formatOptions.find(option => option.value === event?.format)?.label || "Unknown";
     const city = event?.city || "";
-    const neighborhoodsForCity = neighborhoodOptions[city] || [];
-    const neighborhoodLabel = neighborhoodsForCity.find(option => option.value === event?.neighborhood)?.label || "Unknown";
 
     // Calculate the number of days away from the event start date
     const startDate = event?.startDate ? parseISO(event.startDate) : null;
@@ -159,22 +156,6 @@ export function EventDisplay({ event }: EventDisplayProps) {
                                         </div>
                                     </div>
                                 )}
-
-                                {/* Neighborhood */}
-                                <div className="text-sm font-medium flex items-center space-x-2">
-                                    <span className="text-muted-foreground w-28">neighborhood</span>
-                                    <Badge variant="outline" className="inline-block">
-                                        {neighborhoodLabel}
-                                    </Badge>
-                                </div>
-
-                                {/* Format */}
-                                <div className="text-sm font-medium flex items-center space-x-2">
-                                    <span className="text-muted-foreground w-28">format</span>
-                                    <Badge variant="outline" className="inline-block">
-                                        {formatLabel}
-                                    </Badge>
-                                </div>
 
                                 {/* Days Away */}
                                 <div className="text-sm font-medium flex items-center space-x-2">

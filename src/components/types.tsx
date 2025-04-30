@@ -10,14 +10,12 @@ export interface Event {
     };
     details: string;
     endDate: string;
-    format: string;
     gmaps: string;
     id: string;
     image: string;
     link: string;
     location: string;
     name: string;
-    neighborhood: string;
     startDate: string;
     times: {
         startTime: string;

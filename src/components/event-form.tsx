@@ -13,7 +13,7 @@ import MultiSelect, { Option } from "@/components/multi-select"
 import EmptyPage from "@/components/empty-page"
 import { useToast } from "@/hooks/use-toast"
 import { cn } from "@/lib/utils"
-import { cityOptions, categoryOptions, formatOptions, neighborhoodOptions } from "@/lib/selectOptions"
+import { cityOptions, categoryOptions } from "@/lib/selectOptions"
 
 // Firebase Imports
 import { db } from "@/lib/firebase"
@@ -90,7 +90,6 @@ const eventFormSchema = z.object({
             message: "End time must be in HH:mm AM/PM format.",
         })
         .optional(),
-    format: z.enum(["in-person", "online", "hybrid"], { required_error: "Please select a format." }),
     gmaps: z
         .string()
         .url({
@@ -118,7 +117,6 @@ const eventFormSchema = z.object({
         .max(50, {
             message: "Name must not be longer than 50 characters.",
         }),
-    neighborhood: z.string({ required_error: "A neighborhood is required." }),
     startDate: z.date({ required_error: "A start date is required." }),
     startTime: z
         .string()
@@ -160,7 +158,6 @@ export default function EventForm() {
         mode: "onChange",
         defaultValues: {
             cost: { type: "single", value: 0 },
-            format: "in-person",
             varyingTimes: false,
         },
     })
@@ -171,7 +168,6 @@ export default function EventForm() {
 
     // Local state to track various form-specific values
     const [selectedCity, setSelectedCity] = useState<string | null>(null);
-    const [neighborhoodsForCity, setNeighborhoodsForCity] = useState<Option[]>([]);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [clicks, setClicks] = useState(0);
     const [varyingTimes, setVaryingTimes] = useState(false);
@@ -187,14 +183,6 @@ export default function EventForm() {
     const onError = (errors: FieldErrors<EventFormValues>) => {
         console.log("Form submission errors:", errors);
     };
-
-    // Updates the neighborhood options whenever the selected city changes
-    useEffect(() => {
-        if (selectedCity) {
-            // Update neighborhoods based on the selected city
-            setNeighborhoodsForCity(neighborhoodOptions[selectedCity] || []);
-        }
-    }, [selectedCity]);
 
     // If editing an existint event, fetches event data from Firestore and updates the form fields
     useEffect(() => {
@@ -310,13 +298,11 @@ export default function EventForm() {
             startDate,
             endDate,
             times,
-            format: data.format,
             gmaps: data.gmaps,
             image: imageUrl,
             link: data.link,
             location: data.location,
             name: data.name,
-            neighborhood: data.neighborhood,
             attendanceSummary: {
                 yesCount: 0,
                 maybeCount: 0,
@@ -433,30 +419,6 @@ export default function EventForm() {
                                 <FormDescription>
                                     Select up to 3
                                 </FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="format"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Event Format</FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                    <FormControl>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select a format" />
-                                        </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                        {formatOptions.map((option) => (
-                                            <SelectItem key={option.value} value={option.value}>
-                                                {option.label}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -802,30 +764,6 @@ export default function EventForm() {
 
                     <Separator />
 
-                    <FormField
-                        control={form.control}
-                        name="neighborhood"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Neighborhood</FormLabel>
-                                <Select onValueChange={field.onChange} value={field.value}>
-                                    <FormControl>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select a neighborhood" />
-                                        </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                        {neighborhoodsForCity.map((option) => (
-                                            <SelectItem key={option.value} value={option.value}>
-                                                {option.label}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
                     <FormField
                         control={form.control}
                         name="location"

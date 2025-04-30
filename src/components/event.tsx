@@ -11,7 +11,7 @@ import { EventDisplay } from "@/components/event-display"
 import MultiSelect, { Option } from '@/components/multi-select'
 import { useEvent } from "@/hooks/use-event"
 import { type Event } from "@/components/types"
-import { categoryOptions, formatOptions, neighborhoodOptions, costOptions } from "@/lib/selectOptions"
+import { categoryOptions, costOptions } from "@/lib/selectOptions"
 
 // Firebase Imports
 import { db } from "@/lib/firebase"
@@ -51,11 +51,6 @@ export function Event({ events, city }: EventProps) {
     const searchParams = useSearchParams();
     const urlCategory = searchParams?.get("category") || "";
 
-    const [selectedFormats, setSelectedFormats] = useState<Option[]>([]);
-    const selectedFormatValues = selectedFormats.map(format => format.value);
-    const [selectedNeighborhoods, setSelectedNeighborhoods] = useState<Option[]>([]);
-    const neighborhoodsForCity = neighborhoodOptions[city] || [];
-    const selectedNeighborhoodValues = selectedNeighborhoods.map(neighborhood => neighborhood.value);
     const [selectedCosts, setSelectedCosts] = useState<Option[]>([]);
     const selectedCostValues = selectedCosts.map(cost => cost.value);
 
@@ -64,7 +59,7 @@ export function Event({ events, city }: EventProps) {
 
     const [searchQuery, setSearchQuery] = useState("");
 
-    const isFilterActive = selectedCategories.length > 0 || selectedFormats.length > 0 || selectedNeighborhoods.length > 0 || selectedCosts.length > 0 || searchQuery.length > 0 || showBookmarkedEvents;
+    const isFilterActive = selectedCategories.length > 0 || selectedCosts.length > 0 || searchQuery.length > 0 || showBookmarkedEvents;
 
     useEffect(() => {
         if (urlCategory) {
@@ -159,8 +154,6 @@ export function Event({ events, city }: EventProps) {
         return (
             (!startDate || isInDateRange) &&
             isCategoryMatch &&
-            (selectedFormatValues.length === 0 || selectedFormatValues.includes(e.format)) &&
-            (selectedNeighborhoodValues.length === 0 || selectedNeighborhoodValues.includes(e.neighborhood)) &&
             isCostMatch &&
             shouldShowEvent &&
             isSearchMatch
@@ -169,8 +162,6 @@ export function Event({ events, city }: EventProps) {
 
     const handleClearAll = () => {
         setSelectedCategories([])
-        setSelectedFormats([])
-        setSelectedNeighborhoods([])
         setSelectedCosts([])
         setStartDate(new Date())
         setEndDate(undefined)
@@ -258,22 +249,6 @@ export function Event({ events, city }: EventProps) {
                                                 value={selectedCategories}
                                                 onChange={setSelectedCategories}
                                                 placeholder="Category"
-                                            />
-
-                                            {/* Format MultiSelect */}
-                                            <MultiSelect
-                                                options={formatOptions}
-                                                value={selectedFormats}
-                                                onChange={setSelectedFormats}
-                                                placeholder="Format"
-                                            />
-
-                                            {/* Neighborhood MultiSelect */}
-                                            <MultiSelect
-                                                options={neighborhoodsForCity}
-                                                value={selectedNeighborhoods}
-                                                onChange={setSelectedNeighborhoods}
-                                                placeholder="Neighborhood"
                                             />
 
                                             {/* Cost MultiSelect */}
@@ -389,22 +364,6 @@ export function Event({ events, city }: EventProps) {
                             placeholder="Category"
                         />
 
-                        {/* Format MultiSelect */}
-                        <MultiSelect
-                            options={formatOptions}
-                            value={selectedFormats}
-                            onChange={setSelectedFormats}
-                            placeholder="Format"
-                        />
-
-                        {/* Neighborhood MultiSelect */}
-                        <MultiSelect
-                            options={neighborhoodsForCity}
-                            value={selectedNeighborhoods}
-                            onChange={setSelectedNeighborhoods}
-                            placeholder="Neighborhood"
-                        />
-                        
                         {/* Cost MultiSelect */}
                         <MultiSelect
                             options={costOptions}
