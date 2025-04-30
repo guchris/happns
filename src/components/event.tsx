@@ -8,6 +8,7 @@ import { useSearchParams } from "next/navigation"
 // App Imports
 import { EventList } from "@/components/event-list"
 import { EventDisplay } from "@/components/event-display"
+import { EventCalendarView } from "@/components/event-calendar-view"
 import MultiSelect, { Option } from '@/components/multi-select'
 import { useEvent } from "@/hooks/use-event"
 import { type Event } from "@/components/types"
@@ -30,7 +31,7 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/componen
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet"
 
 // Other Imports
-import { CalendarIcon } from "@radix-ui/react-icons"
+import { CalendarIcon, MixerHorizontalIcon } from "@radix-ui/react-icons"
 import { parseISO, format } from "date-fns"
 
 interface EventProps {
@@ -41,10 +42,16 @@ interface EventProps {
 export function Event({ events, city }: EventProps) {
     const [event, setEvent] = useEvent()
     const defaultLayout = [50,50]
+    const [currentDate, setCurrentDate] = useState<Date | null>(null)
 
     const { user } = useAuth();
     const [bookmarkedEventIds, setBookmarkedEventIds] = React.useState<string[]>([]);
     const [showBookmarkedEvents, setShowBookmarkedEvents] = React.useState(false);
+    const [viewMode, setViewMode] = useState<"list" | "calendar">(
+        typeof window !== "undefined" 
+            ? localStorage.getItem("eventViewMode") as "list" | "calendar" || "list"
+            : "list"
+    );
 
     const [selectedCategories, setSelectedCategories] = useState<Option[]>([]);
     const selectedCategoryValues = selectedCategories.map(category => category.value);
@@ -61,6 +68,13 @@ export function Event({ events, city }: EventProps) {
     const [searchQuery, setSearchQuery] = useState("");
 
     const isFilterActive = selectedCategories.length > 0 || selectedCosts.length > 0 || searchQuery.length > 0 || showBookmarkedEvents;
+
+    // Initialize currentDate on the client side only
+    useEffect(() => {
+        if (!currentDate) {
+            setCurrentDate(startDate || new Date())
+        }
+    }, [startDate, currentDate])
 
     useEffect(() => {
         if (urlCategory) {
@@ -90,6 +104,12 @@ export function Event({ events, city }: EventProps) {
             selected: null,
         }))
     }, [setEvent])
+
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            localStorage.setItem("eventViewMode", viewMode)
+        }
+    }, [viewMode])
 
     const isEventInRange = (eventStart: Date, eventEnd: Date, rangeStart: Date, rangeEnd?: Date) => {
         const effectiveRangeEnd = rangeEnd || new Date(9999, 11, 31);
@@ -183,7 +203,9 @@ export function Event({ events, city }: EventProps) {
                         <div className="flex items-center gap-2 px-4 py-2">
                             <Sheet>
                                 <SheetTrigger asChild>
-                                    <Button variant="secondary" className="w-auto min-w-[90px]">Filters</Button>
+                                    <Button variant="secondary" className="w-auto min-w-[44px] flex items-center justify-center p-0">
+                                        <MixerHorizontalIcon className="w-5 h-5" />
+                                    </Button>
                                 </SheetTrigger>
                                 <SheetContent side="bottom">
                                     <div className="p-4">
@@ -273,17 +295,32 @@ export function Event({ events, city }: EventProps) {
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 className="flex-1"
                             />
+                            <Button
+                                variant={viewMode === "calendar" ? "secondary" : "ghost"}
+                                size="icon"
+                                onClick={() => setViewMode(viewMode === "list" ? "calendar" : "list")}
+                            >
+                                <CalendarIcon className="h-5 w-5" />
+                            </Button>
                         </div>
                         <Separator />
                         {filteredEvents.length === 0 ? (
                             <div className="p-8 text-center text-muted-foreground">no events</div>
-                        ) : (
+                        ) : viewMode === "list" ? (
                             <EventList
                                 items={filteredEvents}
                                 isFilterActive={isFilterActive}
                                 startDate={startDate}
                             />
-                        )}
+                        ) : currentDate ? (
+                            <EventCalendarView
+                                items={filteredEvents}
+                                isFilterActive={isFilterActive}
+                                startDate={startDate || new Date()}
+                                currentDate={currentDate}
+                                setCurrentDate={setCurrentDate}
+                            />
+                        ) : null}
                     </div>
                 ) : (
                     <EventDisplay 
@@ -399,13 +436,30 @@ export function Event({ events, city }: EventProps) {
                                     <p className="text-sm text-muted-foreground py-0.5">
                                         showing {filteredEvents.length} event{filteredEvents.length !== 1 ? 's' : ''}
                                     </p>
+                                    <Button
+                                        variant={viewMode === "calendar" ? "secondary" : "ghost"}
+                                        size="icon"
+                                        onClick={() => setViewMode(viewMode === "list" ? "calendar" : "list")}
+                                    >
+                                        <CalendarIcon className="h-5 w-5" />
+                                    </Button>
                                 </div>
                                 <Separator />
-                                <EventList
-                                    items={filteredEvents}
-                                    isFilterActive={isFilterActive}
-                                    startDate={startDate}
-                                />
+                                {viewMode === "list" ? (
+                                    <EventList
+                                        items={filteredEvents}
+                                        isFilterActive={isFilterActive}
+                                        startDate={startDate}
+                                    />
+                                ) : currentDate ? (
+                                    <EventCalendarView
+                                        items={filteredEvents}
+                                        isFilterActive={isFilterActive}
+                                        startDate={startDate || new Date()}
+                                        currentDate={currentDate}
+                                        setCurrentDate={setCurrentDate}
+                                    />
+                                ) : null}
                             </div>
                         )}
                     </ResizablePanel>
