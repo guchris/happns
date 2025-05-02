@@ -84,8 +84,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         // Parse time
         const firstTimeEntry = event.times[0];
-        const eventStart = parse(`${event.startDate} ${firstTimeEntry.startTime}`, "yyyy-MM-dd h:mm a", new Date());
-        const eventEnd = parse(`${event.endDate} ${firstTimeEntry.endTime}`, "yyyy-MM-dd h:mm a", new Date());
+        const eventStart = parse(`${event.startDate} ${firstTimeEntry.startTime}`, "yyyy-MM-dd HH:mm", new Date());
+        const eventEnd = parse(`${event.endDate} ${firstTimeEntry.endTime}`, "yyyy-MM-dd HH:mm", new Date());
 
         // Check if the parsed times are valid
         if (!isValid(eventStart) || !isValid(eventEnd)) {

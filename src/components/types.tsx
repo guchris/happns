@@ -18,7 +18,9 @@ export interface Event {
     name: string;
     startDate: string;
     times: {
+        /** Military time, 24-hour format, e.g. "13:45" */
         startTime: string;
+        /** Military time, 24-hour format, e.g. "21:30" */
         endTime: string;
     }[];
     attendanceSummary: {

@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation"
 // App Imports
 import { Event } from "@/components/types"
 import { useEvent } from "@/hooks/use-event"
-import { sortEventsByTypeAndDateAndName } from "@/lib/eventUtils"
+import { sortEventsByTypeAndDateAndName, formatEventTime } from "@/lib/eventUtils"
 import { categoryOptions } from "@/lib/selectOptions"
 
 // Shadcn Imports
@@ -31,9 +31,7 @@ interface EventCalendarViewProps {
 }
 
 export function EventCalendarView({ 
-    items, 
-    isFilterActive, 
-    startDate,
+    items,
     currentDate,
     setCurrentDate 
 }: EventCalendarViewProps) {
@@ -132,7 +130,7 @@ export function EventCalendarView({
 
                             // Check if timeEntry exists before trying to format the time
                             const formattedTime = timeEntry
-                                ? `${timeEntry.startTime} - ${timeEntry.endTime}`
+                                ? formatEventTime(`${timeEntry.startTime} - ${timeEntry.endTime}`)
                                 : "Time not available"
 
                             // Format the display date for rendering

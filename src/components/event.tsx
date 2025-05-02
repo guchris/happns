@@ -6,7 +6,7 @@ import { useEffect, useState, useRef } from "react"
 import { useSearchParams } from "next/navigation"
 
 // App Imports
-import { EventList } from "@/components/event-list"
+import { EventListView } from "@/components/event-list-view"
 import { EventDisplay } from "@/components/event-display"
 import { EventCalendarView } from "@/components/event-calendar-view"
 import MultiSelect, { Option } from '@/components/multi-select'
@@ -32,7 +32,7 @@ import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/s
 
 // Other Imports
 import { CalendarIcon, MixerHorizontalIcon } from "@radix-ui/react-icons"
-import { parseISO, format } from "date-fns"
+import { parse, format as formatDateFns, parseISO } from "date-fns"
 
 interface EventProps {
     events: Event[]
@@ -225,7 +225,7 @@ export function Event({ events, city }: EventProps) {
                                                             variant="outline"
                                                             className="pl-3 text-left font-normal"
                                                         >
-                                                            {hasSelectedStartDate && startDate ? format(startDate, "MMM d, yyyy") : "Start Date"}
+                                                            {hasSelectedStartDate && startDate ? formatDateFns(startDate, "MMM d, yyyy") : "Start Date"}
                                                             <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                                         </Button>
                                                     </PopoverTrigger>
@@ -244,7 +244,7 @@ export function Event({ events, city }: EventProps) {
                                                             variant="outline"
                                                             className="pl-3 text-left font-normal"
                                                         >
-                                                            {endDate ? format(endDate, "MMM d, yyyy") : "End Date"}
+                                                            {endDate ? formatDateFns(endDate, "MMM d, yyyy") : "End Date"}
                                                             <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                                         </Button>
                                                     </PopoverTrigger>
@@ -315,7 +315,7 @@ export function Event({ events, city }: EventProps) {
                         {filteredEvents.length === 0 ? (
                             <div className="p-8 text-center text-muted-foreground">no events</div>
                         ) : viewMode === "list" ? (
-                            <EventList
+                            <EventListView
                                 items={filteredEvents}
                                 isFilterActive={isFilterActive}
                                 startDate={startDate}
@@ -360,7 +360,7 @@ export function Event({ events, city }: EventProps) {
                                     variant="outline"
                                     className="pl-3 text-left font-normal w-full"
                                 >
-                                    {hasSelectedStartDate && startDate ? format(startDate, "MMM d, yyyy") : "Start Date"}
+                                    {hasSelectedStartDate && startDate ? formatDateFns(startDate, "MMM d, yyyy") : "Start Date"}
                                     <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                 </Button>
                             </PopoverTrigger>
@@ -380,7 +380,7 @@ export function Event({ events, city }: EventProps) {
                                     variant="outline"
                                     className="pl-3 text-left font-normal w-full"
                                 >
-                                    {endDate ? format(endDate, "MMM d, yyyy") : "End Date"}
+                                    {endDate ? formatDateFns(endDate, "MMM d, yyyy") : "End Date"}
                                     <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                 </Button>
                             </PopoverTrigger>
@@ -454,7 +454,7 @@ export function Event({ events, city }: EventProps) {
                                 </div>
                                 <Separator />
                                 {viewMode === "list" ? (
-                                    <EventList
+                                    <EventListView
                                         items={filteredEvents}
                                         isFilterActive={isFilterActive}
                                         startDate={startDate}

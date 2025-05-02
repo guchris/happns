@@ -10,7 +10,7 @@ import { useAuth } from "@/context/AuthContext"
 import { City, Event } from "@/components/types"
 import { calculateDistance } from "@/lib/geoUtils"
 import { sortEventsByDateAndName, formatEventDate, getEventsByCity, getTodayAndTomorrow, getWeekendDays, getEventTabs } from "@/lib/eventUtils"
-
+import { EventListView } from "@/components/event-list-view"
 
 // Firebase Imports
 import { db } from "@/lib/firebase"
@@ -176,15 +176,15 @@ const EventGridDynamic = ({ cities }: EventGridDynamicProps) => {
                     </div>
 
                     <TabsContent value="today">
-                        {isLoading ? <p className="text-sm text-muted-foreground">loading events...</p> : <EventList events={filteredEvents} />}
+                        {isLoading ? <p className="text-sm text-muted-foreground">loading events...</p> : <EventListView items={filteredEvents} isFilterActive={false} startDate={undefined} />}
                     </TabsContent>
 
                     <TabsContent value="tomorrow">
-                        {isLoading ? <p className="text-sm text-muted-foreground">loading events...</p> : <EventList events={filteredEvents} />}
+                        {isLoading ? <p className="text-sm text-muted-foreground">loading events...</p> : <EventListView items={filteredEvents} isFilterActive={false} startDate={undefined} />}
                     </TabsContent>
 
                     <TabsContent value="weekend">
-                        {isLoading ? <p className="text-sm text-muted-foreground">loading events...</p> : <EventList events={filteredEvents} />}
+                        {isLoading ? <p className="text-sm text-muted-foreground">loading events...</p> : <EventListView items={filteredEvents} isFilterActive={false} startDate={undefined} />}
                     </TabsContent>
                 </Tabs>
             </div>

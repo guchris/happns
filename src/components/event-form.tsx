@@ -61,15 +61,15 @@ const eventFormSchema = z.object({
     }).default({ type: "single", value: 0 }),
     dailyTimes: z.array(z.object({
         startTime: z.string()
-            .regex(/^(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)$/i, {
-                message: "Start time must be in HH:mm AM/PM format.",
+            .regex(/^([01][0-9]|2[0-3]):[0-5][0-9]$/, {
+                message: "Start time must be in 24-hour HH:mm format.",
             })
             .nullable()
             .optional()
             .or(z.literal("")),
         endTime: z.string()
-            .regex(/^(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)$/i, {
-                message: "End time must be in HH:mm AM/PM format.",
+            .regex(/^([01][0-9]|2[0-3]):[0-5][0-9]$/, {
+                message: "End time must be in 24-hour HH:mm format.",
             })
             .nullable()
             .optional()
@@ -86,8 +86,8 @@ const eventFormSchema = z.object({
     endDate: z.date({ required_error: "An end date is required." }),
     endTime: z
         .string()
-        .regex(/^(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)$/i, {
-            message: "End time must be in HH:mm AM/PM format.",
+        .regex(/^([01][0-9]|2[0-3]):[0-5][0-9]$/, {
+            message: "End time must be in 24-hour HH:mm format.",
         })
         .optional(),
     gmaps: z
@@ -120,8 +120,8 @@ const eventFormSchema = z.object({
     startDate: z.date({ required_error: "A start date is required." }),
     startTime: z
         .string()
-        .regex(/^(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)$/i, {
-            message: "Start time must be in HH:mm AM/PM format.",
+        .regex(/^([01][0-9]|2[0-3]):[0-5][0-9]$/, {
+            message: "Start time must be in 24-hour HH:mm format.",
         })
         .optional(),
     varyingTimes: z.boolean().optional().default(false),
@@ -656,11 +656,11 @@ export default function EventForm() {
                                 <span className="w-1/5"></span>
                                 <div className="w-2/5">
                                     <span className="text-sm font-medium">Start Times</span>
-                                    <span className="text-sm font-normal text-muted-foreground block">HH:mm AM/PM</span>
+                                    <span className="text-sm font-normal text-muted-foreground block">24-hour (HH:mm)</span>
                                 </div>
                                 <div className="w-2/5">
                                     <span className="text-sm font-medium">End Times</span>
-                                    <span className="text-sm font-normal text-muted-foreground block">HH:mm AM/PM</span>
+                                    <span className="text-sm font-normal text-muted-foreground block">24-hour (HH:mm)</span>
                                 </div>
                             </div>
                         
@@ -685,7 +685,7 @@ export default function EventForm() {
                                                 <Input
                                                     {...field}
                                                     placeholder="start time"
-                                                    pattern="(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)"
+                                                    pattern="([01][0-9]|2[0-3]):[0-5][0-9]"
                                                     value={field.value ?? ""}
                                                 />
                                                 </FormControl>
@@ -704,7 +704,7 @@ export default function EventForm() {
                                                     <Input
                                                         {...field}
                                                         placeholder="end time"
-                                                        pattern="(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)"
+                                                        pattern="([01][0-9]|2[0-3]):[0-5][0-9]"
                                                         value={field.value ?? ""}
                                                     />
                                                 </FormControl>
@@ -728,11 +728,11 @@ export default function EventForm() {
                                                 type="text"
                                                 {...field}
                                                 placeholder="Enter start time"
-                                                pattern="(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)"
+                                                pattern="([01][0-9]|2[0-3]):[0-5][0-9]"
                                             />
                                         </FormControl>
                                         <FormDescription>
-                                            HH:mm AM/PM
+                                            24-hour (HH:mm)
                                         </FormDescription>
                                         <FormMessage />
                                     </FormItem>
@@ -749,11 +749,11 @@ export default function EventForm() {
                                                 type="text"
                                                 {...field}
                                                 placeholder="Enter end time"
-                                                pattern="(0[1-9]|1[0-2]):[0-5][0-9]\s?(AM|PM)"
+                                                pattern="([01][0-9]|2[0-3]):[0-5][0-9]"
                                             />
                                         </FormControl>
                                         <FormDescription>
-                                            HH:mm AM/PM
+                                            24-hour (HH:mm)
                                         </FormDescription>
                                         <FormMessage />
                                     </FormItem>

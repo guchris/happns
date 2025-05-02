@@ -210,25 +210,18 @@ export function formatEventDate(startDateString: string, endDateString: string) 
 
 /**
  * Formats event time.
- * @param timeString - The time string to format.
+ * @param timeString - The time string to format (24-hour, XX:XX or "XX:XX - XX:XX").
  * @returns {string} - The formatted time.
  */
 export function formatEventTime(timeString: string) {
     if (timeString.includes(" - ")) {
-        // Handle time ranges like "09:00 AM - 05:00 PM"
+        // Handle time ranges like "13:00 - 21:00"
         const [startTime, endTime] = timeString.split(" - ");
-        const parsedStartTime = parse(startTime.trim(), "hh:mm a", new Date());
-        const parsedEndTime = parse(endTime.trim(), "hh:mm a", new Date());
-
-        // Format the times to remove unnecessary zeros
-        const formattedStartTime = format(parsedStartTime, "h:mm a"); // "9:00 AM"
-        const formattedEndTime = format(parsedEndTime, "h:mm a");     // "5:00 PM"
-        
-        return `${formattedStartTime} - ${formattedEndTime}`;
+        // No AM/PM conversion needed, just trim and return
+        return `${startTime.trim()} - ${endTime.trim()}`;
     } else {
-        // Handle single time like "09:00 AM"
-        const parsedTime = parse(timeString.trim(), "hh:mm a", new Date());
-        return format(parsedTime, "h:mm a"); // "9:00 AM"
+        // Handle single time like "13:00"
+        return timeString.trim();
     }
 }
 

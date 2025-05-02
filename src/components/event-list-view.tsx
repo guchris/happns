@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils"
 import { Event } from "@/components/types"
 import { useEvent } from "@/hooks/use-event"
 import { categoryOptions } from "@/lib/selectOptions"
-import { sortEventsByTypeAndDateAndName } from "@/lib/eventUtils"
+import { sortEventsByTypeAndDateAndName, formatEventTime } from "@/lib/eventUtils"
 
 // Firebase Imports
 import { db } from "@/lib/firebase"
@@ -25,14 +25,13 @@ import { Plus, Minus } from "lucide-react"
 import { format, parseISO, differenceInDays } from "date-fns"
 
 
-interface EventListProps {
+interface EventListViewProps {
     items: Event[]
     isFilterActive: boolean
     startDate: Date | undefined;
 }
 
-export function EventList({ items, isFilterActive, startDate }: EventListProps) {
-
+export function EventListView({ items, isFilterActive, startDate }: EventListViewProps) {
     const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" });
     const startDateFilter = startDate
         ? startDate.toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" })
@@ -169,7 +168,7 @@ function CollapsibleItem({ date, events, isLastItem }: CollapsibleItemProps) {
 
                         // Check if timeEntry exists before trying to format the time
                         const formattedTime = timeEntry
-                            ? `${timeEntry.startTime} - ${timeEntry.endTime}`
+                            ? formatEventTime(`${timeEntry.startTime} - ${timeEntry.endTime}`)
                             : "Time not available";
                     
                         // Format the display date for rendering

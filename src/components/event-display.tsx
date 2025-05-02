@@ -12,7 +12,7 @@ import EventAttendance from "@/components/event-attendance"
 import EventComments from "@/components/event-comments"
 import ClientButton from "@/components/client-button"
 import { categoryOptions } from "@/lib/selectOptions"
-import { formatEventDate, formatEventCost } from "@/lib/eventUtils"
+import { formatEventDate, formatEventCost, formatEventTime } from "@/lib/eventUtils"
 import { useAuth } from "@/context/AuthContext"
 
 // Shadcn Imports
@@ -95,7 +95,7 @@ export function EventDisplay({ event }: EventDisplayProps) {
                                     {/* Conditionally render either the single time or times array */}
                                     {event.times.length === 1 ? (
                                         <div className="text-sm font-medium">
-                                            {`${event.times[0].startTime} - ${event.times[0].endTime}`}
+                                            {formatEventTime(`${event.times[0].startTime} - ${event.times[0].endTime}`)}
                                         </div>
                                     ) : (
                                         <div className="text-sm font-medium max-h-12 overflow-y-auto">
@@ -106,7 +106,7 @@ export function EventDisplay({ event }: EventDisplayProps) {
                                                 return (
                                                     <div key={index} className="flex items-center font-normal">
                                                         <span className="inline-block w-20">{formattedDate}</span>
-                                                        <span>{`${time.startTime} - ${time.endTime}`}</span>
+                                                        <span>{formatEventTime(`${time.startTime} - ${time.endTime}`)}</span>
                                                     </div>
                                                 );
                                             })}
