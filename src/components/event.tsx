@@ -69,12 +69,20 @@ export function Event({ events, city }: EventProps) {
 
     const isFilterActive = selectedCategories.length > 0 || selectedCosts.length > 0 || searchQuery.length > 0 || showBookmarkedEvents;
 
-    // Initialize currentDate on the client side only
+    // Initialize currentDate from localStorage or default to today
     useEffect(() => {
-        if (!currentDate) {
-            setCurrentDate(startDate || new Date())
+        if (!currentDate && typeof window !== "undefined") {
+            const savedDate = localStorage.getItem("eventCurrentDate");
+            setCurrentDate(savedDate ? new Date(savedDate) : startDate || new Date());
         }
-    }, [startDate, currentDate])
+    }, [startDate, currentDate]);
+
+    // Save currentDate to localStorage whenever it changes
+    useEffect(() => {
+        if (currentDate && typeof window !== "undefined") {
+            localStorage.setItem("eventCurrentDate", currentDate.toISOString());
+        }
+    }, [currentDate]);
 
     useEffect(() => {
         if (urlCategory) {
@@ -432,7 +440,7 @@ export function Event({ events, city }: EventProps) {
                             <div className="p-8 text-center text-muted-foreground">No events</div>
                         ) : (
                             <div className="flex flex-col h-full">
-                                <div className="flex justify-between items-center p-4">
+                                <div className="flex justify-between items-center px-4 py-2">
                                     <p className="text-sm text-muted-foreground py-0.5">
                                         showing {filteredEvents.length} event{filteredEvents.length !== 1 ? 's' : ''}
                                     </p>

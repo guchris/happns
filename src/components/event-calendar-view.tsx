@@ -1,8 +1,9 @@
 "use client"
 
 // React Imports
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 
 // App Imports
 import { Event } from "@/components/types"
@@ -37,6 +38,17 @@ export function EventCalendarView({
     setCurrentDate 
 }: EventCalendarViewProps) {
     const [event, setEvent] = useEvent()
+    const router = useRouter()
+    const [isMobile, setIsMobile] = useState(false)
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth <= 768)
+        }
+        handleResize() // Check on mount
+        window.addEventListener("resize", handleResize)
+        return () => window.removeEventListener("resize", handleResize)
+    }, [])
 
     // Get events for the current day
     const eventsForDay = items.filter((item) => {
@@ -61,7 +73,13 @@ export function EventCalendarView({
     }
 
     const handleEventClick = async (eventId: string) => {
-        setEvent({ ...event, selected: eventId })
+        if (isMobile) {
+            // Save the current date before navigating
+            localStorage.setItem("eventCurrentDate", currentDate.toISOString());
+            router.push(`/events/${eventId}`)
+        } else {
+            setEvent({ ...event, selected: eventId })
+        }
     }
 
     return (
