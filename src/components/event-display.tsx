@@ -95,7 +95,7 @@ export function EventDisplay({ event }: EventDisplayProps) {
                                     {/* Conditionally render either the single time or times array */}
                                     {event.times.length === 1 ? (
                                         <div className="text-sm font-medium">
-                                            {formatEventTime(`${event.times[0].startTime} - ${event.times[0].endTime}`)}
+                                            {`${formatEventTime(event.times[0].startTime)} - ${formatEventTime(event.times[0].endTime)}`}
                                         </div>
                                     ) : (
                                         <div className="text-sm font-medium max-h-12 overflow-y-auto">
@@ -106,7 +106,7 @@ export function EventDisplay({ event }: EventDisplayProps) {
                                                 return (
                                                     <div key={index} className="flex items-center font-normal">
                                                         <span className="inline-block w-20">{formattedDate}</span>
-                                                        <span>{formatEventTime(`${time.startTime} - ${time.endTime}`)}</span>
+                                                        <span>{`${formatEventTime(time.startTime)} - ${formatEventTime(time.endTime)}`}</span>
                                                     </div>
                                                 );
                                             })}

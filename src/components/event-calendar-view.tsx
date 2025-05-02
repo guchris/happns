@@ -130,7 +130,7 @@ export function EventCalendarView({
 
                             // Check if timeEntry exists before trying to format the time
                             const formattedTime = timeEntry
-                                ? formatEventTime(`${timeEntry.startTime} - ${timeEntry.endTime}`)
+                                ? `${formatEventTime(timeEntry.startTime)} - ${formatEventTime(timeEntry.endTime)}`
                                 : "Time not available"
 
                             // Format the display date for rendering

@@ -207,22 +207,20 @@ export function formatEventDate(startDateString: string, endDateString: string) 
     }
 }
 
-
 /**
- * Formats event time.
- * @param timeString - The time string to format (24-hour, XX:XX or "XX:XX - XX:XX").
- * @returns {string} - The formatted time.
+ * Converts a 24-hour (military) time string (e.g., '06:20', '14:05') to 'h:mm AM/PM' format (e.g., '6:20 AM', '2:05 PM').
+ * Removes any prefixed zero from the hour.
+ * @param time24 - The 24-hour time string.
+ * @returns {string} - The formatted time string.
  */
-export function formatEventTime(timeString: string) {
-    if (timeString.includes(" - ")) {
-        // Handle time ranges like "13:00 - 21:00"
-        const [startTime, endTime] = timeString.split(" - ");
-        // No AM/PM conversion needed, just trim and return
-        return `${startTime.trim()} - ${endTime.trim()}`;
-    } else {
-        // Handle single time like "13:00"
-        return timeString.trim();
-    }
+export function formatEventTime(time24: string): string {
+    if (!/^([01][0-9]|2[0-3]):[0-5][0-9]$/.test(time24)) return time24;
+    const [hourStr, minute] = time24.split(":");
+    let hour = parseInt(hourStr, 10);
+    const ampm = hour >= 12 ? "PM" : "AM";
+    hour = hour % 12;
+    if (hour === 0) hour = 12;
+    return `${hour}:${minute} ${ampm}`;
 }
 
 
