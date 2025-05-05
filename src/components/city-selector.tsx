@@ -63,25 +63,25 @@ export default function CitySelector({ cities }: CitySelectorProps) {
             }
 
             // If no default city, fallback to geolocation
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const userLat = position.coords.latitude;
-                        const userLon = position.coords.longitude;
-                        const closestCitySlug = findClosestCity(userLat, userLon);
-                        setSelectedCity(closestCitySlug);
-                        setIsLoading(false);
-                    },
-                    (error) => {
-                        console.error("Error getting user location:", error);
-                        setSelectedCity("seattle"); // Fallback city if geolocation fails
-                        setIsLoading(false);
-                    }
-                );
-            } else {
+            // if (navigator.geolocation) {
+            //     navigator.geolocation.getCurrentPosition(
+            //         (position) => {
+            //             const userLat = position.coords.latitude;
+            //             const userLon = position.coords.longitude;
+            //             const closestCitySlug = findClosestCity(userLat, userLon);
+            //             setSelectedCity(closestCitySlug);
+            //             setIsLoading(false);
+            //         },
+            //         (error) => {
+            //             console.error("Error getting user location:", error);
+            //             setSelectedCity("seattle"); // Fallback city if geolocation fails
+            //             setIsLoading(false);
+            //         }
+            //     );
+            // } else {
                 setSelectedCity("seattle"); // Fallback city if geolocation is unavailable
                 setIsLoading(false);
-            }
+            // }
         };
 
         loadUserCity();
