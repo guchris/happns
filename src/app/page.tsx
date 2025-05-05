@@ -140,22 +140,22 @@ export default async function Home() {
 					<div className="py-12 space-y-8">
 
 						{/* Welcome Card */}
-						<WelcomeCard />
+						{/* <WelcomeCard /> */}
 
 						{/* Attending Events Grid */}
-						<EventGridAttendanceTabsClient />
+						{/* <EventGridAttendanceTabsClient /> */}
 
 						{/* Bookmarked Events Grid */}
-						<EventGridBookmark />
+						{/* <EventGridBookmark /> */}
 
 						{/* Events Grid */}
-						<EventGridDynamic cities={cities} />
+						{/* <EventGridDynamic cities={cities} /> */}
 
 						{/* Join Card */}
-						<JoinCard />
+						{/* <JoinCard /> */}
 
 						{/* City Grid */}
-						<CityGrid cities={cities} />
+						{/* <CityGrid cities={cities} /> */}
 
 					</div>
 				</div>
