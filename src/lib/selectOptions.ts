@@ -38,7 +38,7 @@ export const costOptions = [
 
 export const cityOptions = [
     { value: "seattle", label: "Seattle" },
-    { value: "portland", label: "Portland" },
-    { value: "los-angeles", label: "Los Angeles" },
-    { value: "san-francisco", label: "San Francisco" },
+    // { value: "portland", label: "Portland" },
+    // { value: "los-angeles", label: "Los Angeles" },
+    // { value: "san-francisco", label: "San Francisco" },
 ];

@@ -157,6 +157,7 @@ export default function EventForm() {
         resolver: zodResolver(eventFormSchema),
         mode: "onChange",
         defaultValues: {
+            city: "seattle",
             cost: { type: "single", value: 0 },
             varyingTimes: false,
         },
