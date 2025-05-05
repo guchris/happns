@@ -10,10 +10,13 @@ import { columns, PendingEvent } from "./columns"
 import Footer from "@/components/footer"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Separator } from "@/components/ui/separator"
+import { useAuth } from "@/context/AuthContext"
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
+import { ExclamationTriangleIcon } from "@radix-ui/react-icons"
 
 export default function AdminPage() {
   const [pendingEvents, setPendingEvents] = useState<PendingEvent[]>([])
-  const [loading, setLoading] = useState(true)
+  const { user, userData } = useAuth();
 
   const fetchPendingEvents = async () => {
     try {
@@ -23,16 +26,34 @@ export default function AdminPage() {
         ...doc.data(),
       })) as PendingEvent[]
       setPendingEvents(events)
-      setLoading(false)
     } catch (error) {
       console.error("Error fetching pending events:", error)
-      setLoading(false)
     }
   }
 
   useEffect(() => {
     fetchPendingEvents()
   }, [])
+
+  const hasPermission = user && userData?.role === "curator";
+  if (!hasPermission) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <TopBar title="happns/admin" />
+        <Separator />
+        <div className="px-4">
+          <Alert className="max-w-3xl my-6 mx-auto p-4">
+            <ExclamationTriangleIcon className="h-4 w-4" />
+            <AlertTitle>Not Authorized</AlertTitle>
+            <AlertDescription>
+              You do not have permission to view this page. Please <a href="/" className="text-blue-500">return to the homepage</a>.
+            </AlertDescription>
+          </Alert>
+        </div>
+        <Footer className="mt-auto" />
+      </div>
+    )
+  }
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -48,15 +69,11 @@ export default function AdminPage() {
             <NotificationForm />
           </TabsContent>
           <TabsContent value="pending-events" className="space-y-4">
-            {loading ? (
-              <div>Loading...</div>
-            ) : (
-              <DataTable 
-                columns={columns} 
-                data={pendingEvents} 
-                onStatusChange={fetchPendingEvents}
-              />
-            )}
+            <DataTable 
+              columns={columns} 
+              data={pendingEvents} 
+              onStatusChange={fetchPendingEvents}
+            />
           </TabsContent>
         </Tabs>
       </main>
