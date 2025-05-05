@@ -158,10 +158,10 @@ export function EventCalendarView({
                                         )}
                                     />
                                     <div className="flex flex-col gap-2 w-full">
-                                        <div className="flex flex-col gap-1">
-                                            <div className="line-clamp-1 font-semibold">{item.name}</div>
-                                            <div className="line-clamp-1 text-xs font-medium">{formattedDate}</div>
-                                            <div className="line-clamp-1 text-xs font-medium">{formattedTime}</div>
+                                        <div className="flex flex-col">
+                                            <div className="line-clamp-1 text-base font-semibold">{item.name}</div>
+                                            <div className="line-clamp-1 text-sm font-medium">{formattedDate}</div>
+                                            <div className="line-clamp-1 text-sm font-medium">{formattedTime}</div>
                                         </div>
                                         <div className="inline-flex gap-1 flex-wrap">
                                             <Badge
