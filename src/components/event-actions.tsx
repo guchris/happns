@@ -104,16 +104,48 @@ const EventActions = ({ event }: EventActionsProps) => {
 
     function getGoogleCalendarLink(event: Event) {
         const firstTimeEntry = event.times[0];
-    
-        // Parse the start and end times with the correct format
-        const eventStartDateTime = parse(`${event.startDate} ${firstTimeEntry.startTime}`, "yyyy-MM-dd h:mm a", new Date());
-        const eventEndDateTime = parse(`${event.endDate} ${firstTimeEntry.endTime}`, "yyyy-MM-dd h:mm a", new Date());
-    
-        // Convert to ISO string format and remove unwanted characters
-        const startDateTime = eventStartDateTime.toISOString().replace(/-|:|\.\d\d\d/g, "");
-        const endDateTime = eventEndDateTime.toISOString().replace(/-|:|\.\d\d\d/g, "");
-    
-        return `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.name)}&dates=${startDateTime}/${endDateTime}&details=${encodeURIComponent(event.details)}&location=${encodeURIComponent(event.location)}&sf=true&output=xml`;
+
+        // Log the values for debugging
+        console.log("Parsing start:", event.startDate, firstTimeEntry.startTime);
+        console.log("Parsing end:", event.endDate, firstTimeEntry.endTime);
+
+        // Parse using 24-hour format
+        const eventStartDateTime = parse(
+            `${event.startDate} ${firstTimeEntry.startTime}`,
+            "yyyy-MM-dd HH:mm",
+            new Date()
+        );
+        const eventEndDateTime = parse(
+            `${event.endDate} ${firstTimeEntry.endTime}`,
+            "yyyy-MM-dd HH:mm",
+            new Date()
+        );
+
+        // Check for invalid dates
+        if (isNaN(eventStartDateTime.getTime()) || isNaN(eventEndDateTime.getTime())) {
+            console.error("Invalid date(s) for Google Calendar link:", {
+                start: event.startDate,
+                startTime: firstTimeEntry.startTime,
+                end: event.endDate,
+                endTime: firstTimeEntry.endTime,
+            });
+            return "#";
+        }
+
+        const formatForCalendar = (date: Date) =>
+            date
+                .toISOString()
+                .replace(/[-:]/g, "")
+                .replace(/\.\d{3}Z$/, "Z"); // Keep the T and Z
+
+        const startDateTime = formatForCalendar(eventStartDateTime);
+        const endDateTime = formatForCalendar(eventEndDateTime);
+
+        return `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
+            event.name || "Event"
+        )}&dates=${startDateTime}/${endDateTime}&details=${encodeURIComponent(
+            event.details || ""
+        )}&location=${encodeURIComponent(event.location || "")}&sf=true&output=xml`;
     }
 
     const addToCalendar = () => {
