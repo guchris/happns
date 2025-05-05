@@ -119,10 +119,10 @@ export default async function Home() {
 				<TopBar title="happns" />
 				<Separator />
 
-				<div className="flex-1 overflow-y-auto">
+				<div className="flex-1 flex flex-col justify-center overflow-y-auto">
 
 					{/* Hero Section */}
-					<div className="flex flex-col max-w-[880px] md:max-w-[700px] lg:max-w-[880px] mx-auto py-16 p-4 space-y-8 items-center lg:flex-row lg:space-x-12">
+					<div className="flex flex-col max-w-[880px] md:max-w-[700px] lg:max-w-[880px] mx-auto p-4 space-y-8 items-center lg:flex-row lg:space-x-12">
 						
 						{/* Left Section: Slogan, City Selector */}
 						<div className="lg:w-1/2 space-y-4">
@@ -135,9 +135,9 @@ export default async function Home() {
 
 					</div>
 					
-					<Separator />
+					{/* <Separator /> */}
 
-					<div className="py-12 space-y-8">
+					{/* <div className="py-12 space-y-8"> */}
 
 						{/* Welcome Card */}
 						{/* <WelcomeCard /> */}
@@ -157,7 +157,7 @@ export default async function Home() {
 						{/* City Grid */}
 						{/* <CityGrid cities={cities} /> */}
 
-					</div>
+					{/* </div> */}
 				</div>
 
 				<Footer />

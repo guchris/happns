@@ -195,13 +195,13 @@ function CollapsibleItem({ date, events, isLastItem }: CollapsibleItemProps) {
                                         "w-24 object-cover rounded-lg"
                                     )}
                                 />
-                                <div className="flex flex-col gap-2 w-full">
+                                <div className="flex flex-col gap-2 w-full min-w-0">
                                     <div className="flex flex-col gap-1">
                                         <div className="line-clamp-1 font-semibold">{item.name}</div>
                                         <div className="line-clamp-1 text-xs font-medium">{formattedDate}</div>
                                         <div className="line-clamp-1 text-xs font-medium">{formattedTime}</div>
                                     </div>
-                                    <div className="inline-flex gap-1 flex-wrap">
+                                    <div className="inline-flex gap-1 whitespace-nowrap overflow-hidden text-ellipsis w-full max-w-full">
                                         <Badge
                                             className={cn(
                                                 "inline-block",

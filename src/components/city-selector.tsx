@@ -28,16 +28,16 @@ export default function CitySelector({ cities }: CitySelectorProps) {
 
     // Function to find the closest city based on the user's location
     const findClosestCity = (userLat: number, userLon: number) => {
-        let closestCity = cities[0];
-        let minDistance = calculateDistance(userLat, userLon, cities[0].lat, cities[0].lon);
+        // let closestCity = cities[0];
+        // let minDistance = calculateDistance(userLat, userLon, cities[0].lat, cities[0].lon);
 
-        cities.forEach((city) => {
-        const distance = calculateDistance(userLat, userLon, city.lat, city.lon);
-        if (distance < minDistance) {
-            closestCity = city;
-            minDistance = distance;
-        }
-        });
+        // cities.forEach((city) => {
+        // const distance = calculateDistance(userLat, userLon, city.lat, city.lon);
+        // if (distance < minDistance) {
+        //     closestCity = city;
+        //     minDistance = distance;
+        // }
+        // });
 
         // return closestCity.slug; // Return the slug of the closest city
         return "seattle";
