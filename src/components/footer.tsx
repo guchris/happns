@@ -13,7 +13,7 @@ export default function Footer({ className }: FooterProps) {
                 <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
                     {/* Left-aligned copyright text */}
                     <span className="text-sm font-medium text-center md:text-left">
-                        © 2024 happns
+                        © 2025 happns
                     </span>
 
                     {/* Right-aligned links */}

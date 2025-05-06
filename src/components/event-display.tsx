@@ -71,7 +71,7 @@ export function EventDisplay({ event }: EventDisplayProps) {
 
                                 {/* Event Image */}
                                 {event.image && (
-                                    <div className="flex justify-center mb-4">
+                                    <div className="flex justify-center my-4">
                                         <Image
                                             src={event.image || "/tempFlyer1.svg"}
                                             alt={event.name}
@@ -83,9 +83,11 @@ export function EventDisplay({ event }: EventDisplayProps) {
                                     </div>
                                 )}
 
-                                <div className="flex items-center justify-center mb-2">
-                                    <EventAttendance key={event.id} event={event} />
-                                </div>
+                                {user && (
+                                    <div className="flex items-center justify-center mb-2">
+                                        <EventAttendance key={event.id} event={event} />
+                                    </div>
+                                )}
 
                                 {/* Event Name, Date, and Time */}
                                 <div className="grid gap-1">
@@ -94,7 +96,7 @@ export function EventDisplay({ event }: EventDisplayProps) {
 
                                     {/* Conditionally render either the single time or times array */}
                                     {event.times.length === 1 ? (
-                                        <div className="text-sm font-medium">
+                                        <div className="text-base font-medium">
                                             {`${formatEventTime(event.times[0].startTime)} - ${formatEventTime(event.times[0].endTime)}`}
                                         </div>
                                     ) : (
