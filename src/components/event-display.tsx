@@ -190,7 +190,11 @@ export function EventDisplay({ event }: EventDisplayProps) {
                             <div className="flex-1 p-4">
                                 <div className="text-sm font-medium text-muted-foreground">cost</div>
                                 <div className="text-sm font-medium">
-                                    {event?.cost ? formatEventCost(event.cost) : "N/A"}
+                                    {event?.cost && (typeof event.cost === 'number' ? event.cost === 0 : event.cost.value === 0)
+                                        ? 'FREE'
+                                        : event?.cost
+                                            ? formatEventCost(event.cost)
+                                            : 'N/A'}
                                 </div>
                             </div>
                         </div>
