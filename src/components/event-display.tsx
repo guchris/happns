@@ -122,7 +122,7 @@ export function EventDisplay({ event }: EventDisplayProps) {
                                                     variant="ghost"
                                                     size="sm"
                                                     type="button"
-                                                    className="mt-1 px-2 py-1 h-auto text-xs"
+                                                    className="mt-1 px-2 py-1 h-auto text-xs bg-accent"
                                                     onClick={() => setShowAllTimes((prev) => !prev)}
                                                 >
                                                     {showAllTimes

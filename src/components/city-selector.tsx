@@ -88,21 +88,23 @@ export default function CitySelector({ cities }: CitySelectorProps) {
     }, [user, cities]);
 
     return (
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 w-full">
             {isLoading ? (
                 // Temporary loading placeholder
-                <>  
+                <>
                     <Select>
-                        <SelectTrigger disabled>
+                        <SelectTrigger disabled className="flex-1 min-w-0 h-10">
                             <SelectValue placeholder="loading location..." />
                         </SelectTrigger>
                     </Select>
-                    <Button disabled>explore</Button>
+                    <Link href="#" className="flex-1">
+                        <Button disabled className="w-full h-10">explore</Button>
+                    </Link>
                 </>
             ) : selectedCity ? (
                 <>
                     <Select value={selectedCity ?? undefined} onValueChange={(value) => setSelectedCity(value)}>
-                        <SelectTrigger>
+                        <SelectTrigger className="flex-1 min-w-0 h-10">
                             <SelectValue>{cities.find((city) => city.slug === selectedCity)?.name.toLowerCase() || "select your city"}</SelectValue>
                         </SelectTrigger>
                         <SelectContent>
@@ -115,8 +117,8 @@ export default function CitySelector({ cities }: CitySelectorProps) {
                     </Select>
 
                     {/* Explore Button */}
-                    <Link href={`/${selectedCity}/explore`}>
-                        <Button>explore</Button>
+                    <Link href={`/${selectedCity}/explore`} className="flex-1">
+                        <Button className="w-full h-10">explore</Button>
                     </Link>
                 </>
             ) : (
