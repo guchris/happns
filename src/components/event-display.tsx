@@ -32,6 +32,8 @@ interface EventDisplayProps {
 export function EventDisplay({ event }: EventDisplayProps) {
     const { user } = useAuth();
     const today = new Date();
+    const [showAllTimes, setShowAllTimes] = useState(false);
+    const maxVisible = 3;
 
     const categoryLabels = event?.category?.map(cat => categoryOptions.find(option => option.value === cat)?.label || "Unknown") || [];
     const city = event?.city || "";
@@ -102,40 +104,33 @@ export function EventDisplay({ event }: EventDisplayProps) {
                                             {`${formatEventTime(event.times[0].startTime)} - ${formatEventTime(event.times[0].endTime)}`}
                                         </div>
                                     ) : (
-                                        (() => {
-                                            const [showAllTimes, setShowAllTimes] = useState(false);
-                                            const maxVisible = 3;
-                                            const timesToShow = showAllTimes ? event.times : event.times.slice(0, maxVisible);
-                                            return (
-                                                <div className="grid gap-1">
-                                                    {timesToShow.map((time, idx) => {
-                                                        const currentDate = startDate ? addDays(startDate, idx) : null;
-                                                        const formattedDate = currentDate ? format(currentDate, 'EEE, MMM d') : '';
-                                                        return (
-                                                            <div key={idx} className="flex items-center">
-                                                                <span className="font-medium w-28 min-w-max">{formattedDate}</span>
-                                                                <span className="text-muted-foreground">
-                                                                    {`${formatEventTime(time.startTime)} - ${formatEventTime(time.endTime)}`}
-                                                                </span>
-                                                            </div>
-                                                        );
-                                                    })}
-                                                    {event.times.length > maxVisible && (
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="sm"
-                                                            type="button"
-                                                            className="mt-1 px-2 py-1 h-auto text-xs"
-                                                            onClick={() => setShowAllTimes((prev) => !prev)}
-                                                        >
-                                                            {showAllTimes
-                                                                ? 'Show less'
-                                                                : `Show ${event.times.length - maxVisible} more...`}
-                                                        </Button>
-                                                    )}
-                                                </div>
-                                            );
-                                        })()
+                                        <div className="grid gap-1">
+                                            {(showAllTimes ? event.times : event.times.slice(0, maxVisible)).map((time: any, idx: number) => {
+                                                const currentDate = startDate ? addDays(startDate, idx) : null;
+                                                const formattedDate = currentDate ? format(currentDate, 'EEE, MMM d') : '';
+                                                return (
+                                                    <div key={idx} className="flex items-center">
+                                                        <span className="font-medium w-28 min-w-max">{formattedDate}</span>
+                                                        <span className="text-muted-foreground">
+                                                            {`${formatEventTime(time.startTime)} - ${formatEventTime(time.endTime)}`}
+                                                        </span>
+                                                    </div>
+                                                );
+                                            })}
+                                            {event.times.length > maxVisible && (
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    type="button"
+                                                    className="mt-1 px-2 py-1 h-auto text-xs"
+                                                    onClick={() => setShowAllTimes((prev) => !prev)}
+                                                >
+                                                    {showAllTimes
+                                                        ? 'Show less'
+                                                        : `Show ${event.times.length - maxVisible} more...`}
+                                                </Button>
+                                            )}
+                                        </div>
                                     )}
                                 </div>
                             </div>
