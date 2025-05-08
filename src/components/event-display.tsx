@@ -19,9 +19,11 @@ import { useAuth } from "@/context/AuthContext"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 
 // Other Imports
 import { differenceInDays, parseISO, addDays, format } from "date-fns"
+import React, { useState } from "react"
 
 interface EventDisplayProps {
     event: Event | null;
@@ -100,19 +102,40 @@ export function EventDisplay({ event }: EventDisplayProps) {
                                             {`${formatEventTime(event.times[0].startTime)} - ${formatEventTime(event.times[0].endTime)}`}
                                         </div>
                                     ) : (
-                                        <div className="text-sm font-medium max-h-12 overflow-y-auto">
-                                            {event.times?.map((time, index) => {
-                                                const currentDate = startDate ? addDays(startDate, index) : null;
-                                                const formattedDate = currentDate ? format(currentDate, 'MMM d') : '';
-
-                                                return (
-                                                    <div key={index} className="flex items-center font-normal">
-                                                        <span className="inline-block w-20">{formattedDate}</span>
-                                                        <span>{`${formatEventTime(time.startTime)} - ${formatEventTime(time.endTime)}`}</span>
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
+                                        (() => {
+                                            const [showAllTimes, setShowAllTimes] = useState(false);
+                                            const maxVisible = 3;
+                                            const timesToShow = showAllTimes ? event.times : event.times.slice(0, maxVisible);
+                                            return (
+                                                <div className="grid gap-1">
+                                                    {timesToShow.map((time, idx) => {
+                                                        const currentDate = startDate ? addDays(startDate, idx) : null;
+                                                        const formattedDate = currentDate ? format(currentDate, 'EEE, MMM d') : '';
+                                                        return (
+                                                            <div key={idx} className="flex items-center">
+                                                                <span className="font-medium w-28 min-w-max">{formattedDate}</span>
+                                                                <span className="text-muted-foreground">
+                                                                    {`${formatEventTime(time.startTime)} - ${formatEventTime(time.endTime)}`}
+                                                                </span>
+                                                            </div>
+                                                        );
+                                                    })}
+                                                    {event.times.length > maxVisible && (
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            type="button"
+                                                            className="mt-1 px-2 py-1 h-auto text-xs"
+                                                            onClick={() => setShowAllTimes((prev) => !prev)}
+                                                        >
+                                                            {showAllTimes
+                                                                ? 'Show less'
+                                                                : `Show ${event.times.length - maxVisible} more...`}
+                                                        </Button>
+                                                    )}
+                                                </div>
+                                            );
+                                        })()
                                     )}
                                 </div>
                             </div>
