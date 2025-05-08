@@ -451,3 +451,15 @@ export async function updateAttendance(eventId: string, userId: string, status: 
         console.error("Error updating attendance: ", error);
     }
 }
+
+export function getShortWebsite(url: string) {
+    try {
+        let { hostname } = new URL(url);
+        if (hostname.startsWith("www.")) {
+            hostname = hostname.slice(4);
+        }
+        return hostname + "/...";
+    } catch {
+        return url;
+    }
+}

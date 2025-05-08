@@ -12,7 +12,7 @@ import EventAttendance from "@/components/event-attendance"
 import EventComments from "@/components/event-comments"
 import ClientButton from "@/components/client-button"
 import { categoryOptions } from "@/lib/selectOptions"
-import { formatEventDate, formatEventCost, formatEventTime } from "@/lib/eventUtils"
+import { formatEventDate, formatEventCost, formatEventTime, getShortWebsite } from "@/lib/eventUtils"
 import { useAuth } from "@/context/AuthContext"
 
 // Shadcn Imports
@@ -172,13 +172,20 @@ export function EventDisplay({ event }: EventDisplayProps) {
                         <Separator />
                         
                         {/* Event Location and Cost */}
-                        <div className="flex items-center gap-4">
-                            <div className="flex-1 p-4">
-                                <div className="text-sm font-medium text-muted-foreground">location</div>
-                                <Link href={event.gmaps} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-black underline">
-                                    {event.location}
-                                </Link>
-                            </div>
+                        <div className="flex items-center">
+                            <Link href={event.link} passHref legacyBehavior>
+                                <a
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex-1 p-4 block cursor-pointer hover:bg-muted transition"
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <div className="text-sm font-medium text-muted-foreground">location</div>
+                                    <div className="line-clamp-1 text-sm font-medium text-black underline break-words">
+                                        {event.location}
+                                    </div>
+                                </a>
+                            </Link>
                             <Separator orientation="vertical" className="h-auto self-stretch" />
                             <div className="flex-1 p-4">
                                 <div className="text-sm font-medium text-muted-foreground">cost</div>
@@ -191,18 +198,19 @@ export function EventDisplay({ event }: EventDisplayProps) {
                         <Separator />
 
                         {/* Event Website */}
-                        <div className="flex-1 p-4">
-                            <div className="text-sm font-medium text-muted-foreground">external website</div>
-                            <Link href={event.link} passHref legacyBehavior>
-                                <a
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="line-clamp-1 text-sm font-medium text-black underline break-words"
-                                >
-                                    {event.link}
-                                </a>
-                            </Link>
-                        </div>
+                        <Link href={event.link} passHref legacyBehavior>
+                            <a
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex-1 p-4 block cursor-pointer hover:bg-muted transition"
+                                style={{ textDecoration: 'none' }}
+                            >
+                                <div className="text-sm font-medium text-muted-foreground">website</div>
+                                <div className="line-clamp-1 text-sm font-medium text-black underline break-words">
+                                    {getShortWebsite(event.link)}
+                                </div>
+                            </a>
+                        </Link>
 
                         <Separator />
 
