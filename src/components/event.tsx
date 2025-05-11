@@ -69,18 +69,29 @@ export function Event({ events, city }: EventProps) {
 
     const isFilterActive = selectedCategories.length > 0 || selectedCosts.length > 0 || searchQuery.length > 0 || showBookmarkedEvents;
 
-    // Initialize currentDate from localStorage or default to today
+    // Initialize currentDate from localStorage or default to today (with 1 hour expiration)
     useEffect(() => {
         if (!currentDate && typeof window !== "undefined") {
             const savedDate = localStorage.getItem("eventCurrentDate");
-            setCurrentDate(savedDate ? new Date(savedDate) : startDate || new Date());
+            const savedTimestamp = localStorage.getItem("eventCurrentDateTimestamp");
+            const now = Date.now();
+            if (savedDate && savedTimestamp) {
+                const timestamp = parseInt(savedTimestamp, 10);
+                // 1 hour = 3600000 ms
+                if (!isNaN(timestamp) && now - timestamp <= 3600000) {
+                    setCurrentDate(new Date(savedDate));
+                    return;
+                }
+            }
+            setCurrentDate(startDate || new Date());
         }
     }, [startDate, currentDate]);
 
-    // Save currentDate to localStorage whenever it changes
+    // Save currentDate to localStorage whenever it changes (with timestamp)
     useEffect(() => {
         if (currentDate && typeof window !== "undefined") {
             localStorage.setItem("eventCurrentDate", currentDate.toISOString());
+            localStorage.setItem("eventCurrentDateTimestamp", Date.now().toString());
         }
     }, [currentDate]);
 
