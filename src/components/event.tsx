@@ -222,7 +222,10 @@ export function Event({ events, city }: EventProps) {
                         <div className="flex items-center gap-2 px-4 py-2">
                             <Sheet>
                                 <SheetTrigger asChild>
-                                    <Button variant="secondary" className="w-auto min-w-[44px] flex items-center justify-center p-0">
+                                    <Button
+                                        variant="outline"
+                                        className={`w-auto min-w-[44px] flex items-center justify-center p-0${isFilterActive ? " bg-secondary" : ""}`}
+                                    >
                                         <MixerHorizontalIcon className="w-5 h-5" />
                                     </Button>
                                 </SheetTrigger>
@@ -315,9 +318,10 @@ export function Event({ events, city }: EventProps) {
                                 className="flex-1"
                             />
                             <Button
-                                variant={viewMode === "calendar" ? "secondary" : "ghost"}
+                                variant="outline"
                                 size="icon"
                                 onClick={() => setViewMode(viewMode === "list" ? "calendar" : "list")}
+                                className={viewMode === "calendar" ? "bg-secondary" : ""}
                             >
                                 <CalendarIcon className="h-5 w-5" />
                             </Button>
@@ -456,9 +460,10 @@ export function Event({ events, city }: EventProps) {
                                         showing {filteredEvents.length} event{filteredEvents.length !== 1 ? 's' : ''}
                                     </p>
                                     <Button
-                                        variant={viewMode === "calendar" ? "secondary" : "ghost"}
+                                        variant="outline"
                                         size="icon"
                                         onClick={() => setViewMode(viewMode === "list" ? "calendar" : "list")}
+                                        className={viewMode === "calendar" ? "bg-secondary" : ""}
                                     >
                                         <CalendarIcon className="h-5 w-5" />
                                     </Button>
