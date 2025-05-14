@@ -162,6 +162,12 @@ export function Event({ events, city }: EventProps) {
         }
     }, []);
 
+    useEffect(() => {
+        if (viewMode) {
+            localStorage.setItem("eventViewMode", viewMode);
+        }
+    }, [viewMode]);
+
     const isEventInRange = (eventStart: Date, eventEnd: Date, rangeStart: Date, rangeEnd?: Date) => {
         const effectiveRangeEnd = rangeEnd || new Date(9999, 11, 31);
         const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" });
@@ -396,16 +402,16 @@ export function Event({ events, city }: EventProps) {
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 className="flex-1"
                             />
-                            {hasMounted && (
-                                <Button
-                                    variant="outline"
-                                    size="icon"
-                                    onClick={() => setViewMode(viewMode === "list" ? "calendar" : "list")}
-                                    className={viewMode === "calendar" ? "bg-secondary" : ""}
-                                >
-                                    <CalendarIcon className="h-5 w-5" />
-                                </Button>
-                            )}
+                            {/* Calendar toggle button: show non-selected state as placeholder until hasMounted is true */}
+                            <Button
+                                variant="outline"
+                                size="icon"
+                                onClick={() => setViewMode(viewMode === "list" ? "calendar" : "list")}
+                                className={hasMounted && viewMode === "calendar" ? "bg-secondary" : ""}
+                                disabled={!hasMounted}
+                            >
+                                <CalendarIcon className="h-5 w-5" />
+                            </Button>
                         </div>
                         <Separator />
                         {filteredEvents.length === 0 ? (
@@ -612,16 +618,16 @@ export function Event({ events, city }: EventProps) {
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                         className="flex-1 min-w-0"
                                     />
-                                    {hasMounted && (
-                                        <Button
-                                            variant="outline"
-                                            size="icon"
-                                            onClick={() => setViewMode(viewMode === "list" ? "calendar" : "list")}
-                                            className={viewMode === "calendar" ? "bg-secondary" : ""}
-                                        >
-                                            <CalendarIcon className="h-5 w-5" />
-                                        </Button>
-                                    )}
+                                    {/* Calendar toggle button: show non-selected state as placeholder until hasMounted is true */}
+                                    <Button
+                                        variant="outline"
+                                        size="icon"
+                                        onClick={() => setViewMode(viewMode === "list" ? "calendar" : "list")}
+                                        className={hasMounted && viewMode === "calendar" ? "bg-secondary" : ""}
+                                        disabled={!hasMounted}
+                                    >
+                                        <CalendarIcon className="h-5 w-5" />
+                                    </Button>
                                 </div>
                                 <Separator />
                                 {viewMode === "list" ? (
