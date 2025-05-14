@@ -16,14 +16,14 @@ import { collection, getDocs, query, where } from "firebase/firestore"
 // Shadcn Imports
 import { Separator } from "@/components/ui/separator"
 
-type ExploreCityPageProps = {
+type CityEventsPageProps = {
     params: {
         city: string;
     };
 };
 
 // Metadata for SEO
-export async function generateMetadata({ params }: ExploreCityPageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: CityEventsPageProps): Promise<Metadata> {
     const city = params.city || "";
     const cityLabel = cityOptions.find(option => option.value === city)?.label || "City";
 
@@ -46,7 +46,7 @@ export async function generateMetadata({ params }: ExploreCityPageProps): Promis
     };
 }
 
-export default async function ExploreCityPage({ params }: ExploreCityPageProps) {
+export default async function CityEventsPage({ params }: CityEventsPageProps) {
     const city = params.city || "";
 
     if (!city) {

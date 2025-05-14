@@ -69,6 +69,9 @@ export function Event({ events, city }: EventProps) {
 
     const isFilterActive = selectedCategories.length > 0 || selectedCosts.length > 0 || searchQuery.length > 0 || showBookmarkedEvents;
 
+    // Add showFilters state
+    const [showFilters, setShowFilters] = useState(false);
+
     // Initialize currentDate from localStorage or default to today (with 1 hour expiration)
     useEffect(() => {
         if (!currentDate && typeof window !== "undefined") {
@@ -354,100 +357,84 @@ export function Event({ events, city }: EventProps) {
 
             {/* Desktop View */}
             <div className="hidden md:flex h-full items-stretch">
-
-                {/* Filters Section */}
-                <div className="min-w-[250px] max-w-[250px] p-4 space-y-4">
-                    <form className="space-y-4">
-
-                        {/* Search Input */}
-                        <Input
-                            type="text"
-                            placeholder="Search"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full"
-                        />
-
-                        {/* Start Date */}
-                        <Popover>
-                            <PopoverTrigger asChild>
-                                <Button
-                                    variant="outline"
-                                    className="pl-3 text-left font-normal w-full"
-                                >
-                                    {hasSelectedStartDate && startDate ? formatDateFns(startDate, "MMM d, yyyy") : "Start Date"}
-                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0">
-                                <Calendar
-                                    mode="single"
-                                    selected={startDate}
-                                    onSelect={handleStartDateSelect}
-                                />
-                            </PopoverContent>
-                        </Popover>
-
-                        {/* End Date */}
-                        <Popover>
-                            <PopoverTrigger asChild>
-                                <Button
-                                    variant="outline"
-                                    className="pl-3 text-left font-normal w-full"
-                                >
-                                    {endDate ? formatDateFns(endDate, "MMM d, yyyy") : "End Date"}
-                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0">
-                                <Calendar
-                                    mode="single"
-                                    selected={endDate}
-                                    onSelect={setEndDate}
-                                />
-                            </PopoverContent>
-                        </Popover>
-                        
-                        {/* Bookmarks Toogle */}
-                        {user && (
-                            <div className="flex items-center border border-[hsl(var(--border))] rounded-md px-2 py-1.5">
-                                <Switch
-                                    checked={showBookmarkedEvents}
-                                    onCheckedChange={setShowBookmarkedEvents}
-                                    className="mx-2"
-                                />
-                                <span className="text-sm">Bookmarked</span>
-                            </div>
-                        )}
-
-                        {/* Category MultiSelect */}
-                        <MultiSelect
-                            options={categoryOptions}
-                            value={selectedCategories}
-                            onChange={setSelectedCategories}
-                            placeholder="Category"
-                        />
-
-                        {/* Cost MultiSelect */}
-                        <MultiSelect
-                            options={costOptions}
-                            value={selectedCosts}
-                            onChange={setSelectedCosts}
-                            placeholder="Cost"
-                        />
-
-                        <Button variant="outline" onClick={handleClearAll} className="w-full">
-                            Reset
-                        </Button>
-                    </form>
-                </div>
-
-                <Separator orientation="vertical" />
-
+                {/* Filters Section - only show if showFilters is true */}
+                {showFilters && (
+                    <div className="min-w-[250px] max-w-[250px] p-4 space-y-4">
+                        <form className="space-y-4">
+                            {/* Start Date */}
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        className="pl-3 text-left font-normal w-full"
+                                    >
+                                        {hasSelectedStartDate && startDate ? formatDateFns(startDate, "MMM d, yyyy") : "Start Date"}
+                                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto p-0">
+                                    <Calendar
+                                        mode="single"
+                                        selected={startDate}
+                                        onSelect={handleStartDateSelect}
+                                    />
+                                </PopoverContent>
+                            </Popover>
+                            {/* End Date */}
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        className="pl-3 text-left font-normal w-full"
+                                    >
+                                        {endDate ? formatDateFns(endDate, "MMM d, yyyy") : "End Date"}
+                                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto p-0">
+                                    <Calendar
+                                        mode="single"
+                                        selected={endDate}
+                                        onSelect={setEndDate}
+                                    />
+                                </PopoverContent>
+                            </Popover>
+                            {/* Bookmarks Toggle */}
+                            {user && (
+                                <div className="flex items-center border border-[hsl(var(--border))] rounded-md px-2 py-1.5">
+                                    <Switch
+                                        checked={showBookmarkedEvents}
+                                        onCheckedChange={setShowBookmarkedEvents}
+                                        className="mx-2"
+                                    />
+                                    <span className="text-sm">Bookmarked</span>
+                                </div>
+                            )}
+                            {/* Category MultiSelect */}
+                            <MultiSelect
+                                options={categoryOptions}
+                                value={selectedCategories}
+                                onChange={setSelectedCategories}
+                                placeholder="Category"
+                            />
+                            {/* Cost MultiSelect */}
+                            <MultiSelect
+                                options={costOptions}
+                                value={selectedCosts}
+                                onChange={setSelectedCosts}
+                                placeholder="Cost"
+                            />
+                            <Button variant="outline" onClick={handleClearAll} className="w-full">
+                                Reset
+                            </Button>
+                        </form>
+                    </div>
+                )}
+                {/* Only show vertical separator if filters are open */}
+                {showFilters && <Separator orientation="vertical" />}
                 <ResizablePanelGroup
                     direction="horizontal"
-                    onLayout={(sizes: number[]) => {
-                    }}
+                    onLayout={(sizes: number[]) => {}}
                     className="h-full items-stretch"
                 >
                     <ResizablePanel defaultSize={defaultLayout[0]} minSize={30} className="h-full overflow-y-auto">
@@ -455,10 +442,23 @@ export function Event({ events, city }: EventProps) {
                             <div className="p-8 text-center text-muted-foreground">No events</div>
                         ) : (
                             <div className="flex flex-col h-full">
-                                <div className="flex justify-between items-center px-4 py-2">
-                                    <p className="text-sm text-muted-foreground py-0.5">
-                                        showing {filteredEvents.length} event{filteredEvents.length !== 1 ? 's' : ''}
-                                    </p>
+                                <div className="flex items-center px-4 py-2 gap-2">
+                                    {/* Toggle Filters Button */}
+                                    <Button
+                                        variant="outline"
+                                        size="icon"
+                                        onClick={() => setShowFilters((prev) => !prev)}
+                                        className={`${showFilters ? ' bg-secondary' : ''}`}
+                                    >
+                                        <MixerHorizontalIcon className="h-5 w-5" />
+                                    </Button>
+                                    <Input
+                                        type="text"
+                                        placeholder="Search"
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        className="flex-1 min-w-0"
+                                    />
                                     <Button
                                         variant="outline"
                                         size="icon"
@@ -487,9 +487,7 @@ export function Event({ events, city }: EventProps) {
                             </div>
                         )}
                     </ResizablePanel>
-
                     <ResizableHandle withHandle />
-
                     <ResizablePanel defaultSize={defaultLayout[1]} minSize={30} className="h-full overflow-y-auto">
                         <div className="flex flex-col h-full">
                             {filteredEvents.length > 0 && (

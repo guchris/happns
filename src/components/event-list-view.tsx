@@ -219,7 +219,7 @@ function CollapsibleItem({ date, events, isLastItem }: CollapsibleItemProps) {
                                         {item.category.map((cat, index) => {
                                             const categoryLabel = categoryOptions.find(option => option.value === cat)?.label || "Unknown";
                                             return (
-                                                <Badge key={index} variant="secondary" className="inline-block">
+                                                <Badge key={index} variant="outline" className="inline-block">
                                                     {categoryLabel}
                                                 </Badge>
                                             );
