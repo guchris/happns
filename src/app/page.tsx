@@ -1,5 +1,6 @@
 // Next Imports
 import { Metadata } from "next"
+import Link from "next/link"
 
 // App Imports
 import { TopBar } from "@/components/top-bar"
@@ -118,22 +119,28 @@ export default async function Home() {
 			<div className="flex flex-col min-h-screen">
 				<TopBar title="happns" />
 				<Separator />
+				<Link href="/seattle/explore" className="w-full block">
+					<div className="flex items-center h-14 px-4 text-lg font-normal hover:bg-neutral-100 transition cursor-pointer">
+						discover curated events in seattle --&gt;
+					</div>
+				</Link>
+				<Separator />
 
 				<div className="flex-1 flex flex-col justify-center overflow-y-auto">
 
 					{/* Hero Section */}
-					<div className="flex flex-col max-w-[880px] md:max-w-[700px] lg:max-w-[880px] mx-auto p-4 space-y-8 items-center lg:flex-row lg:space-x-12">
+					{/* <div className="flex flex-col max-w-[880px] md:max-w-[700px] lg:max-w-[880px] mx-auto p-4 space-y-8 items-center lg:flex-row lg:space-x-12"> */}
 						
 						{/* Left Section: Slogan, City Selector */}
-						<div className="lg:w-1/2 space-y-4">
+						{/* <div className="lg:w-1/2 space-y-4">
 							<h2 className="text-3xl font-bold">discover curated events happning in your city</h2>
 							<CitySelector cities={cities} />
-						</div>
+						</div> */}
 
 						{/* Right Section: Event Photo Carousel */}
-						<EventCarousel carouselEvents={carouselEvents} />
+						{/* <EventCarousel carouselEvents={carouselEvents} /> */}
 
-					</div>
+					{/* </div> */}
 					
 					{/* <Separator /> */}
 
