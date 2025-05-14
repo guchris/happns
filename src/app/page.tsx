@@ -107,7 +107,7 @@ export default async function Home() {
 	const carouselEvents = await fetchCarouselEvents();
 
 	return (
-		<div>
+		<div className="flex flex-col min-h-screen">
 			{/* Intro Animation */}
 			<div className="intro-animation">
 				<h1>
@@ -116,7 +116,7 @@ export default async function Home() {
 			</div>
 
 			{/* Main Content */}
-			<div className="flex flex-col min-h-screen">
+			<div className="flex flex-col flex-1">
 				<TopBar title="happns" />
 				<Separator />
 				<Link href="/seattle" className="w-full block">
@@ -194,10 +194,8 @@ export default async function Home() {
 
 					{/* </div> */}
 				</div>
-
-				<Footer />
-
 			</div>
+			<Footer />
 		</div>
 	);
 }
