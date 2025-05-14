@@ -29,7 +29,7 @@ const CategoryEventGrid = ({ events, category, city }: CategoryEventGridProps) =
         <div className="space-y-4">
             <div className="flex justify-between items-center">
                 <Badge variant="secondary" className="text-lg rounded-lg">{category}</Badge>
-                <Link href={`/${city}/explore?category=${category}`} className="text-sm font-medium text-black hover:underline">
+                <Link href={`/${city}?category=${category}`} className="text-sm font-medium text-black hover:underline">
                     see more
                 </Link>
             </div>

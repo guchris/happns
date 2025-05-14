@@ -119,11 +119,39 @@ export default async function Home() {
 			<div className="flex flex-col min-h-screen">
 				<TopBar title="happns" />
 				<Separator />
-				<Link href="/seattle/explore" className="w-full block">
-					<div className="flex items-center h-14 px-4 text-lg font-normal hover:bg-neutral-100 transition cursor-pointer">
-						discover curated events in seattle --&gt;
+				<Link href="/seattle" className="w-full block">
+					<div className="flex items-center justify-between h-14 px-4 text-lg font-semibold hover:bg-neutral-100 transition cursor-pointer">
+						<span>happns/seattle</span>
+						<span>--&gt;</span>
 					</div>
 				</Link>
+				<Separator />
+				<Link href="/portland" className="w-full block">
+					<div className="flex items-center justify-between h-14 px-4 text-lg font-semibold hover:bg-neutral-100 transition cursor-pointer">
+						<span>happns/portland</span>
+						<span>--&gt;</span>
+					</div>
+				</Link>
+				<Separator />
+				<div className="flex items-center justify-between h-14 px-4 text-lg font-semibold text-neutral-200 cursor-not-allowed select-none">
+					<span>happns/vancouver</span>
+					<span>--&gt;</span>
+				</div>
+				<Separator />
+				<div className="flex items-center justify-between h-14 px-4 text-lg font-semibold text-neutral-200 cursor-not-allowed select-none">
+					<span>happns/san-francisco</span>
+					<span>--&gt;</span>
+				</div>
+				<Separator />
+				<div className="flex items-center justify-between h-14 px-4 text-lg font-semibold text-neutral-200 cursor-not-allowed select-none">
+					<span>happns/los-angeles</span>
+					<span>--&gt;</span>
+				</div>
+				<Separator />
+				<div className="flex items-center justify-between h-14 px-4 text-lg font-semibold text-neutral-200 cursor-not-allowed select-none">
+					<span>happns/san-diego</span>
+					<span>--&gt;</span>
+				</div>
 				<Separator />
 
 				<div className="flex-1 flex flex-col justify-center overflow-y-auto">

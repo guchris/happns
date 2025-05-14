@@ -117,7 +117,7 @@ export default function CitySelector({ cities }: CitySelectorProps) {
                     </Select>
 
                     {/* Explore Button */}
-                    <Link href={`/${selectedCity}/explore`} className="flex-1">
+                    <Link href={`/${selectedCity}`} className="flex-1">
                         <Button className="w-full h-10">explore</Button>
                     </Link>
                 </>

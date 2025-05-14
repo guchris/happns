@@ -28,7 +28,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar"
 import { Input } from "@/components/ui/input"
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable"
-import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet"
+import { Drawer, DrawerTrigger, DrawerContent, DrawerClose } from "@/components/ui/drawer"
 
 // Other Imports
 import { CalendarIcon, MixerHorizontalIcon } from "@radix-ui/react-icons"
@@ -220,16 +220,16 @@ export function Event({ events, city }: EventProps) {
                 {!event.selected ? (
                     <div>
                         <div className="flex items-center gap-2 px-4 py-2">
-                            <Sheet>
-                                <SheetTrigger asChild>
+                            <Drawer>
+                                <DrawerTrigger asChild>
                                     <Button
                                         variant="outline"
                                         className={`w-auto min-w-[44px] flex items-center justify-center p-0${isFilterActive ? " bg-secondary" : ""}`}
                                     >
                                         <MixerHorizontalIcon className="w-5 h-5" />
                                     </Button>
-                                </SheetTrigger>
-                                <SheetContent side="bottom">
+                                </DrawerTrigger>
+                                <DrawerContent>
                                     <div className="p-4">
                                         <form className="space-y-4">
                                             <div className="grid grid-cols-1 gap-4 w-full">
@@ -303,13 +303,13 @@ export function Event({ events, city }: EventProps) {
                                             <Button variant="outline" onClick={handleClearAll} className="w-full">
                                                 Reset
                                             </Button>
-                                            <SheetClose asChild>
+                                            <DrawerClose asChild>
                                                 <Button className="w-full mt-4">Apply Filters</Button>
-                                            </SheetClose>
+                                            </DrawerClose>
                                         </form>
                                     </div>
-                                </SheetContent>
-                            </Sheet>
+                                </DrawerContent>
+                            </Drawer>
                             <Input
                                 type="text"
                                 placeholder="Search"
