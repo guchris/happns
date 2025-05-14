@@ -29,6 +29,7 @@ import { Calendar } from "@/components/ui/calendar"
 import { Input } from "@/components/ui/input"
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable"
 import { Drawer, DrawerTrigger, DrawerContent, DrawerClose } from "@/components/ui/drawer"
+import { Badge } from "@/components/ui/badge"
 
 // Other Imports
 import { CalendarIcon, MixerHorizontalIcon } from "@radix-ui/react-icons"
@@ -47,11 +48,7 @@ export function Event({ events, city }: EventProps) {
     const { user } = useAuth();
     const [bookmarkedEventIds, setBookmarkedEventIds] = React.useState<string[]>([]);
     const [showBookmarkedEvents, setShowBookmarkedEvents] = React.useState(false);
-    const [viewMode, setViewMode] = useState<"list" | "calendar">(
-        typeof window !== "undefined" 
-            ? localStorage.getItem("eventViewMode") as "list" | "calendar" || "list"
-            : "list"
-    );
+    const [viewMode, setViewMode] = useState<"list" | "calendar" | undefined>(undefined);
 
     const [selectedCategories, setSelectedCategories] = useState<Option[]>([]);
     const selectedCategoryValues = selectedCategories.map(category => category.value);
@@ -69,8 +66,39 @@ export function Event({ events, city }: EventProps) {
 
     const isFilterActive = selectedCategories.length > 0 || selectedCosts.length > 0 || searchQuery.length > 0 || showBookmarkedEvents;
 
-    // Add showFilters state
-    const [showFilters, setShowFilters] = useState(false);
+    // Add showFilters state with localStorage persistence (1 hour)
+    const [showFilters, setShowFilters] = useState(() => {
+        if (typeof window !== "undefined") {
+            const saved = localStorage.getItem("eventShowFilters");
+            const savedTimestamp = localStorage.getItem("eventShowFiltersTimestamp");
+            const now = Date.now();
+            if (saved && savedTimestamp) {
+                const timestamp = parseInt(savedTimestamp, 10);
+                if (!isNaN(timestamp) && now - timestamp <= 3600000) {
+                    return saved === "true";
+                }
+            }
+        }
+        return false;
+    });
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            localStorage.setItem("eventShowFilters", showFilters.toString());
+            localStorage.setItem("eventShowFiltersTimestamp", Date.now().toString());
+        }
+    }, [showFilters]);
+
+    // Add showCategories state
+    const [showCategories, setShowCategories] = useState(true);
+
+    // Add showCosts state
+    const [showCosts, setShowCosts] = useState(true);
+
+    // Add hasMounted state
+    const [hasMounted, setHasMounted] = useState(false);
+    useEffect(() => {
+        setHasMounted(true);
+    }, []);
 
     // Initialize currentDate from localStorage or default to today (with 1 hour expiration)
     useEffect(() => {
@@ -129,9 +157,10 @@ export function Event({ events, city }: EventProps) {
 
     useEffect(() => {
         if (typeof window !== "undefined") {
-            localStorage.setItem("eventViewMode", viewMode)
+            const saved = localStorage.getItem("eventViewMode");
+            setViewMode((saved as "list" | "calendar") || "list");
         }
-    }, [viewMode])
+    }, []);
 
     const isEventInRange = (eventStart: Date, eventEnd: Date, rangeStart: Date, rangeEnd?: Date) => {
         const effectiveRangeEnd = rangeEnd || new Date(9999, 11, 31);
@@ -227,9 +256,9 @@ export function Event({ events, city }: EventProps) {
                                 <DrawerTrigger asChild>
                                     <Button
                                         variant="outline"
-                                        className={`w-auto min-w-[44px] flex items-center justify-center p-0${isFilterActive ? " bg-secondary" : ""}`}
+                                        className={`w-auto min-w-[40px] flex items-center justify-center p-0${isFilterActive ? " bg-secondary" : ""}`}
                                     >
-                                        <MixerHorizontalIcon className="w-5 h-5" />
+                                        <MixerHorizontalIcon className="h-5 w-5" />
                                     </Button>
                                 </DrawerTrigger>
                                 <DrawerContent>
@@ -303,11 +332,58 @@ export function Event({ events, city }: EventProps) {
                                                 placeholder="Cost"
                                             />
 
+                                            {/* Expandable Cost Section below MultiSelect */}
+                                            <div>
+                                                <div className="flex items-center justify-between mb-2">
+                                                    <span className="text-base font-semibold">cost</span>
+                                                    <button
+                                                        type="button"
+                                                        className="p-1"
+                                                        onClick={() => setShowCosts(prev => !prev)}
+                                                        aria-label={showCosts ? 'Hide cost filters' : 'Show cost filters'}
+                                                    >
+                                                        {showCosts ? (
+                                                            <span className="inline-block align-middle">{/* minus icon */}
+                                                                <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12" /></svg>
+                                                            </span>
+                                                        ) : (
+                                                            <span className="inline-block align-middle">{/* plus icon */}
+                                                                <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+                                                            </span>
+                                                        )}
+                                                    </button>
+                                                </div>
+                                                {showCosts && (
+                                                    <div className="flex flex-wrap gap-2 mb-2">
+                                                        {costOptions.map(option => (
+                                                            <Badge
+                                                                key={option.value}
+                                                                variant={selectedCosts.some(cost => cost.value === option.value) ? "default" : "outline"}
+                                                                onClick={e => {
+                                                                    e.preventDefault();
+                                                                    setSelectedCosts(prev => {
+                                                                        const exists = prev.some(cost => cost.value === option.value);
+                                                                        if (exists) {
+                                                                            return prev.filter(cost => cost.value !== option.value);
+                                                                        } else {
+                                                                            return [...prev, option];
+                                                                        }
+                                                                    });
+                                                                }}
+                                                                className="cursor-pointer select-none"
+                                                            >
+                                                                {option.label}
+                                                            </Badge>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </div>
+
                                             <Button variant="outline" onClick={handleClearAll} className="w-full">
-                                                Reset
+                                                clear
                                             </Button>
                                             <DrawerClose asChild>
-                                                <Button className="w-full mt-4">Apply Filters</Button>
+                                                <Button className="w-full mt-4">apply</Button>
                                             </DrawerClose>
                                         </form>
                                     </div>
@@ -320,14 +396,16 @@ export function Event({ events, city }: EventProps) {
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 className="flex-1"
                             />
-                            <Button
-                                variant="outline"
-                                size="icon"
-                                onClick={() => setViewMode(viewMode === "list" ? "calendar" : "list")}
-                                className={viewMode === "calendar" ? "bg-secondary" : ""}
-                            >
-                                <CalendarIcon className="h-5 w-5" />
-                            </Button>
+                            {hasMounted && (
+                                <Button
+                                    variant="outline"
+                                    size="icon"
+                                    onClick={() => setViewMode(viewMode === "list" ? "calendar" : "list")}
+                                    className={viewMode === "calendar" ? "bg-secondary" : ""}
+                                >
+                                    <CalendarIcon className="h-5 w-5" />
+                                </Button>
+                            )}
                         </div>
                         <Separator />
                         {filteredEvents.length === 0 ? (
@@ -358,80 +436,155 @@ export function Event({ events, city }: EventProps) {
             {/* Desktop View */}
             <div className="hidden md:flex h-full items-stretch">
                 {/* Filters Section - only show if showFilters is true */}
-                {showFilters && (
-                    <div className="min-w-[250px] max-w-[250px] p-4 space-y-4">
-                        <form className="space-y-4">
-                            {/* Start Date */}
-                            <Popover>
-                                <PopoverTrigger asChild>
-                                    <Button
-                                        variant="outline"
-                                        className="pl-3 text-left font-normal w-full"
+                {hasMounted && showFilters && (
+                    <div className="min-w-[250px] max-w-[250px] space-y-4">
+                        <form>
+                            {/* Dates */}
+                            <div className="p-4 space-y-4">
+
+                                {/* Start Date */}
+                                <Popover>
+                                    <PopoverTrigger asChild>
+                                        <Button
+                                            variant="outline"
+                                            className="pl-3 text-left font-normal w-full"
+                                        >
+                                            {hasSelectedStartDate && startDate ? formatDateFns(startDate, "MMM d, yyyy") : "Start Date"}
+                                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-auto p-0">
+                                        <Calendar
+                                            mode="single"
+                                            selected={startDate}
+                                            onSelect={handleStartDateSelect}
+                                        />
+                                    </PopoverContent>
+                                </Popover>
+
+                                {/* End Date */}
+                                <Popover>
+                                    <PopoverTrigger asChild>
+                                        <Button
+                                            variant="outline"
+                                            className="pl-3 text-left font-normal w-full"
+                                        >
+                                            {endDate ? formatDateFns(endDate, "MMM d, yyyy") : "End Date"}
+                                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-auto p-0">
+                                        <Calendar
+                                            mode="single"
+                                            selected={endDate}
+                                            onSelect={setEndDate}
+                                        />
+                                    </PopoverContent>
+                                </Popover>
+                            </div>
+
+                            <Separator />
+
+                            {/* Category */}
+                            <div className="p-4">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-base font-semibold">category</span>
+                                    <button
+                                        type="button"
+                                        className="p-1"
+                                        onClick={() => setShowCategories(prev => !prev)}
+                                        aria-label={showCategories ? 'Hide categories' : 'Show categories'}
                                     >
-                                        {hasSelectedStartDate && startDate ? formatDateFns(startDate, "MMM d, yyyy") : "Start Date"}
-                                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                    </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-auto p-0">
-                                    <Calendar
-                                        mode="single"
-                                        selected={startDate}
-                                        onSelect={handleStartDateSelect}
-                                    />
-                                </PopoverContent>
-                            </Popover>
-                            {/* End Date */}
-                            <Popover>
-                                <PopoverTrigger asChild>
-                                    <Button
-                                        variant="outline"
-                                        className="pl-3 text-left font-normal w-full"
-                                    >
-                                        {endDate ? formatDateFns(endDate, "MMM d, yyyy") : "End Date"}
-                                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                    </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-auto p-0">
-                                    <Calendar
-                                        mode="single"
-                                        selected={endDate}
-                                        onSelect={setEndDate}
-                                    />
-                                </PopoverContent>
-                            </Popover>
-                            {/* Bookmarks Toggle */}
-                            {user && (
-                                <div className="flex items-center border border-[hsl(var(--border))] rounded-md px-2 py-1.5">
-                                    <Switch
-                                        checked={showBookmarkedEvents}
-                                        onCheckedChange={setShowBookmarkedEvents}
-                                        className="mx-2"
-                                    />
-                                    <span className="text-sm">Bookmarked</span>
+                                        {showCategories ? (
+                                            <span className="inline-block align-middle">{/* minus icon */}
+                                                <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12" /></svg>
+                                            </span>
+                                        ) : (
+                                            <span className="inline-block align-middle">{/* plus icon */}
+                                                <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+                                            </span>
+                                        )}
+                                    </button>
                                 </div>
-                            )}
-                            {/* Category MultiSelect */}
-                            <MultiSelect
-                                options={categoryOptions}
-                                value={selectedCategories}
-                                onChange={setSelectedCategories}
-                                placeholder="Category"
-                            />
-                            {/* Cost MultiSelect */}
-                            <MultiSelect
-                                options={costOptions}
-                                value={selectedCosts}
-                                onChange={setSelectedCosts}
-                                placeholder="Cost"
-                            />
-                            <Button variant="outline" onClick={handleClearAll} className="w-full">
-                                Reset
-                            </Button>
+                                {showCategories && (
+                                    <div className="flex flex-wrap gap-2 mt-2">
+                                        {categoryOptions.map(option => (
+                                            <Badge
+                                                key={option.value}
+                                                variant={selectedCategories.some(cat => cat.value === option.value) ? "default" : "outline"}
+                                                onClick={e => {
+                                                    e.preventDefault();
+                                                    setSelectedCategories(prev => {
+                                                        const exists = prev.some(cat => cat.value === option.value);
+                                                        if (exists) {
+                                                            return prev.filter(cat => cat.value !== option.value);
+                                                        } else {
+                                                            return [...prev, option];
+                                                        }
+                                                    });
+                                                }}
+                                                className="cursor-pointer select-none"
+                                            >
+                                                {option.label}
+                                            </Badge>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+
+                            <Separator />
+
+                            {/* Cost */}
+                            <div className="p-4">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-base font-semibold">cost</span>
+                                    <button
+                                        type="button"
+                                        className="p-1"
+                                        onClick={() => setShowCosts(prev => !prev)}
+                                        aria-label={showCosts ? 'Hide cost filters' : 'Show cost filters'}
+                                    >
+                                        {showCosts ? (
+                                            <span className="inline-block align-middle">{/* minus icon */}
+                                                <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12" /></svg>
+                                            </span>
+                                        ) : (
+                                            <span className="inline-block align-middle">{/* plus icon */}
+                                                <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+                                            </span>
+                                        )}
+                                    </button>
+                                </div>
+                                {showCosts && (
+                                    <div className="flex flex-wrap gap-2 mt-2">
+                                        {costOptions.map(option => (
+                                            <Badge
+                                                key={option.value}
+                                                variant={selectedCosts.some(cost => cost.value === option.value) ? "default" : "outline"}
+                                                onClick={e => {
+                                                    e.preventDefault();
+                                                    setSelectedCosts(prev => {
+                                                        const exists = prev.some(cost => cost.value === option.value);
+                                                        if (exists) {
+                                                            return prev.filter(cost => cost.value !== option.value);
+                                                        } else {
+                                                            return [...prev, option];
+                                                        }
+                                                    });
+                                                }}
+                                                className="cursor-pointer select-none"
+                                            >
+                                                {option.label}
+                                            </Badge>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
                         </form>
                     </div>
                 )}
                 {/* Only show vertical separator if filters are open */}
-                {showFilters && <Separator orientation="vertical" />}
+                {hasMounted && showFilters && <Separator orientation="vertical" />}
                 <ResizablePanelGroup
                     direction="horizontal"
                     onLayout={(sizes: number[]) => {}}
@@ -448,7 +601,7 @@ export function Event({ events, city }: EventProps) {
                                         variant="outline"
                                         size="icon"
                                         onClick={() => setShowFilters((prev) => !prev)}
-                                        className={`${showFilters ? ' bg-secondary' : ''}`}
+                                        className={`${hasMounted && showFilters ? ' bg-secondary' : ''}`}
                                     >
                                         <MixerHorizontalIcon className="h-5 w-5" />
                                     </Button>
@@ -459,14 +612,16 @@ export function Event({ events, city }: EventProps) {
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                         className="flex-1 min-w-0"
                                     />
-                                    <Button
-                                        variant="outline"
-                                        size="icon"
-                                        onClick={() => setViewMode(viewMode === "list" ? "calendar" : "list")}
-                                        className={viewMode === "calendar" ? "bg-secondary" : ""}
-                                    >
-                                        <CalendarIcon className="h-5 w-5" />
-                                    </Button>
+                                    {hasMounted && (
+                                        <Button
+                                            variant="outline"
+                                            size="icon"
+                                            onClick={() => setViewMode(viewMode === "list" ? "calendar" : "list")}
+                                            className={viewMode === "calendar" ? "bg-secondary" : ""}
+                                        >
+                                            <CalendarIcon className="h-5 w-5" />
+                                        </Button>
+                                    )}
                                 </div>
                                 <Separator />
                                 {viewMode === "list" ? (
