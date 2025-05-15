@@ -271,46 +271,44 @@ export function Event({ events, city }: EventProps) {
                                     <form>
                                         {/* Dates */}
                                         <div className="p-4 space-y-4">
-
-                                            {/* Start Date */}
-                                            <Popover>
-                                                <PopoverTrigger asChild>
-                                                    <Button
-                                                        variant="outline"
-                                                        className="pl-3 text-left font-normal w-full"
-                                                    >
-                                                        {hasSelectedStartDate && startDate ? formatDateFns(startDate, "MMM d, yyyy") : "start date"}
-                                                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                                    </Button>
-                                                </PopoverTrigger>
-                                                <PopoverContent className="w-auto p-0">
-                                                    <Calendar
-                                                        mode="single"
-                                                        selected={startDate}
-                                                        onSelect={handleStartDateSelect}
-                                                    />
-                                                </PopoverContent>
-                                            </Popover>
-                                            
-                                            {/* End Date */}
-                                            <Popover>
-                                                <PopoverTrigger asChild>
-                                                    <Button
-                                                        variant="outline"
-                                                        className="pl-3 text-left font-normal w-full"
-                                                    >
-                                                        {endDate ? formatDateFns(endDate, "MMM d, yyyy") : "end date"}
-                                                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                                    </Button>
-                                                </PopoverTrigger>
-                                                <PopoverContent className="w-auto p-0">
-                                                    <Calendar
-                                                        mode="single"
-                                                        selected={endDate}
-                                                        onSelect={setEndDate}
-                                                    />
-                                                </PopoverContent>
-                                            </Popover>
+                                            <div className="flex gap-2">
+                                                <Popover>
+                                                    <PopoverTrigger asChild>
+                                                        <Button
+                                                            variant="outline"
+                                                            className="pl-3 text-left font-normal w-full w-1/2"
+                                                        >
+                                                            {hasSelectedStartDate && startDate ? formatDateFns(startDate, "MMM d, yyyy") : "start date"}
+                                                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                        </Button>
+                                                    </PopoverTrigger>
+                                                    <PopoverContent className="w-auto p-0">
+                                                        <Calendar
+                                                            mode="single"
+                                                            selected={startDate}
+                                                            onSelect={handleStartDateSelect}
+                                                        />
+                                                    </PopoverContent>
+                                                </Popover>
+                                                <Popover>
+                                                    <PopoverTrigger asChild>
+                                                        <Button
+                                                            variant="outline"
+                                                            className="pl-3 text-left font-normal w-full w-1/2"
+                                                        >
+                                                            {endDate ? formatDateFns(endDate, "MMM d, yyyy") : "end date"}
+                                                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                        </Button>
+                                                    </PopoverTrigger>
+                                                    <PopoverContent className="w-auto p-0">
+                                                        <Calendar
+                                                            mode="single"
+                                                            selected={endDate}
+                                                            onSelect={setEndDate}
+                                                        />
+                                                    </PopoverContent>
+                                                </Popover>
+                                            </div>
                                         </div>
 
                                         <Separator />
@@ -318,7 +316,7 @@ export function Event({ events, city }: EventProps) {
                                         {/* Category */}
                                         <div className="p-4">
                                             <div className="flex items-center justify-between mb-2">
-                                                <span className="text-base font-semibold">category</span>
+                                                <span className="text-base font-semibold hidden md:inline">category</span>
                                             </div>
                                             <div className="flex flex-wrap gap-2">
                                                 {categoryOptions.map(option => (
@@ -336,7 +334,7 @@ export function Event({ events, city }: EventProps) {
                                                                 }
                                                             });
                                                         }}
-                                                        className="cursor-pointer select-none"
+                                                        className="cursor-pointer select-none px-3 py-1.5 text-sm min-w-[36px] min-h-[36px] md:px-2.5 md:py-0.5 md:text-xs md:min-w-0 md:min-h-0"
                                                     >
                                                         {option.label}
                                                     </Badge>
@@ -349,7 +347,7 @@ export function Event({ events, city }: EventProps) {
                                         {/* Cost */}
                                         <div className="p-4">
                                             <div className="flex items-center justify-between mb-2">
-                                                <span className="text-base font-semibold">cost</span>
+                                                <span className="text-base font-semibold hidden md:inline">cost</span>
                                             </div>
                                             <div className="flex flex-wrap gap-2">
                                                 {costOptions.map(option => (
@@ -367,7 +365,7 @@ export function Event({ events, city }: EventProps) {
                                                                 }
                                                             });
                                                         }}
-                                                        className="cursor-pointer select-none"
+                                                        className="cursor-pointer select-none px-3 py-1.5 text-sm min-w-[36px] min-h-[36px] md:px-2.5 md:py-0.5 md:text-xs md:min-w-0 md:min-h-0"
                                                     >
                                                         {option.label}
                                                     </Badge>
@@ -377,10 +375,13 @@ export function Event({ events, city }: EventProps) {
 
                                         <Separator />
                                         
-                                        <div className="p-4">
-                                            <Button variant="outline" onClick={handleClearAll} className="w-full">
+                                        <div className="p-4 flex gap-2">
+                                            <Button type="button" variant="outline" onClick={handleClearAll} className="w-1/2">
                                                 clear
                                             </Button>
+                                            <DrawerClose asChild>
+                                                <Button className="w-1/2">apply</Button>
+                                            </DrawerClose>
                                         </div>
                                     </form>
                                 </DrawerContent>
@@ -484,7 +485,7 @@ export function Event({ events, city }: EventProps) {
                             {/* Category */}
                             <div className="p-4">
                                 <div className="hidden md:flex items-center justify-between">
-                                    <span className="text-base font-semibold">category</span>
+                                    <span className="text-base font-semibold hidden md:inline">category</span>
                                     <button
                                         type="button"
                                         className="p-1"
@@ -519,7 +520,7 @@ export function Event({ events, city }: EventProps) {
                                                         }
                                                     });
                                                 }}
-                                                className="cursor-pointer select-none"
+                                                className="cursor-pointer select-none px-3 py-1.5 text-sm min-w-[36px] min-h-[36px] md:px-2.5 md:py-0.5 md:text-xs md:min-w-0 md:min-h-0"
                                             >
                                                 {option.label}
                                             </Badge>
@@ -533,7 +534,7 @@ export function Event({ events, city }: EventProps) {
                             {/* Cost */}
                             <div className="p-4">
                                 <div className="hidden md:flex items-center justify-between">
-                                    <span className="text-base font-semibold">cost</span>
+                                    <span className="text-base font-semibold hidden md:inline">cost</span>
                                     <button
                                         type="button"
                                         className="p-1"
@@ -568,7 +569,7 @@ export function Event({ events, city }: EventProps) {
                                                         }
                                                     });
                                                 }}
-                                                className="cursor-pointer select-none"
+                                                className="cursor-pointer select-none px-3 py-1.5 text-sm min-w-[36px] min-h-[36px] md:px-2.5 md:py-0.5 md:text-xs md:min-w-0 md:min-h-0"
                                             >
                                                 {option.label}
                                             </Badge>
