@@ -29,6 +29,14 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
+    /* Safe viewport height for mobile browsers */
+    --safe-vh: 100vh;
+  }
+
+  @supports (height: 100dvh) {
+    :root {
+      --safe-vh: 100dvh;
+    }
   }
 
   .dark {

@@ -79,7 +79,13 @@ const config = {
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out'
-  		}
+  		},
+  		minHeight: {
+  			'safe-screen': 'var(--safe-vh)',
+  		},
+  		height: {
+  			'safe-screen': 'var(--safe-vh)',
+  		},
   	}
   },
   plugins: [require("tailwindcss-animate")],

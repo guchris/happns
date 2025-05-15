@@ -107,7 +107,7 @@ export default async function Home() {
 	const carouselEvents = await fetchCarouselEvents();
 
 	return (
-		<div className="flex flex-col min-h-screen">
+		<div className="flex flex-col min-h-safe-screen">
 			{/* Intro Animation */}
 			<div className="intro-animation">
 				<h1>
