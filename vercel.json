@@ -1,1 +1,0 @@
-{"crons":[{"path":"/api/cron/scrape-events","schedule":"0 * * * *"},{"path":"/api/cron/scrape-top-events","schedule":"0 * * * *"}]}
