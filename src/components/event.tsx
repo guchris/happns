@@ -40,6 +40,154 @@ interface EventProps {
     city: string
 }
 
+function EventCategoryBadges({ selectedCategories, setSelectedCategories }: {
+  selectedCategories: Option[];
+  setSelectedCategories: React.Dispatch<React.SetStateAction<Option[]>>;
+}) {
+  return (
+    <>
+      {categoryOptions.map(option => (
+        <Badge
+          key={option.value}
+          variant={selectedCategories.some(cat => cat.value === option.value) ? "default" : "outline"}
+          onClick={e => {
+            e.preventDefault();
+            setSelectedCategories(prev => {
+              const exists = prev.some(cat => cat.value === option.value);
+              if (exists) {
+                return prev.filter(cat => cat.value !== option.value);
+              } else {
+                return [...prev, option];
+              }
+            });
+          }}
+          className="cursor-pointer select-none px-3 py-1.5 text-sm min-w-[36px] min-h-[36px] md:px-2.5 md:py-0.5 md:text-xs md:min-w-0 md:min-h-0"
+        >
+          {option.label}
+        </Badge>
+      ))}
+    </>
+  );
+}
+
+function EventCostBadges({ selectedCosts, setSelectedCosts }: {
+  selectedCosts: Option[];
+  setSelectedCosts: React.Dispatch<React.SetStateAction<Option[]>>;
+}) {
+  return (
+    <>
+      {costOptions.map(option => (
+        <Badge
+          key={option.value}
+          variant={selectedCosts.some(cost => cost.value === option.value) ? "default" : "outline"}
+          onClick={e => {
+            e.preventDefault();
+            setSelectedCosts(prev => {
+              const exists = prev.some(cost => cost.value === option.value);
+              if (exists) {
+                return prev.filter(cost => cost.value !== option.value);
+              } else {
+                return [...prev, option];
+              }
+            });
+          }}
+          className="cursor-pointer select-none px-3 py-1.5 text-sm min-w-[36px] min-h-[36px] md:px-2.5 md:py-0.5 md:text-xs md:min-w-0 md:min-h-0"
+        >
+          {option.label}
+        </Badge>
+      ))}
+    </>
+  );
+}
+
+function EventDatePickers({
+  startDate,
+  endDate,
+  onStartDate,
+  onEndDate,
+  hasSelectedStartDate,
+  setHasSelectedStartDate,
+  layout = "col"
+}: {
+  startDate: Date | undefined;
+  endDate: Date | undefined;
+  onStartDate: (date: Date | undefined) => void;
+  onEndDate: (date: Date | undefined) => void;
+  hasSelectedStartDate: boolean;
+  setHasSelectedStartDate: (v: boolean) => void;
+  layout?: "row" | "col";
+}) {
+  return (
+    <div className={`flex gap-2 ${layout === "row" ? "flex-row" : "flex-col"}`}>
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            className="pl-3 text-left font-normal w-full"
+          >
+            {hasSelectedStartDate && startDate ? formatDateFns(startDate, "MMM d, yyyy") : "start date"}
+            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0">
+          <Calendar
+            mode="single"
+            selected={startDate}
+            onSelect={date => {
+              onStartDate(date);
+              setHasSelectedStartDate(true);
+            }}
+          />
+        </PopoverContent>
+      </Popover>
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            className="pl-3 text-left font-normal w-full"
+          >
+            {endDate ? formatDateFns(endDate, "MMM d, yyyy") : "end date"}
+            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0">
+          <Calendar
+            mode="single"
+            selected={endDate}
+            onSelect={onEndDate}
+          />
+        </PopoverContent>
+      </Popover>
+    </div>
+  );
+}
+
+function EventFilterActions({ onClear, onApply, isMobile }: {
+  onClear: () => void;
+  onApply?: () => void;
+  isMobile: boolean;
+}) {
+  if (isMobile) {
+    return (
+      <div className="p-4 flex gap-2">
+        <Button type="button" variant="outline" onClick={onClear} className="w-1/2">
+          clear
+        </Button>
+        <DrawerClose asChild>
+          <Button className="w-1/2" type="button" onClick={onApply}>apply</Button>
+        </DrawerClose>
+      </div>
+    );
+  }
+  return (
+    <div className="p-4">
+      <Button type="button" variant="outline" onClick={onClear} className="w-full">
+        clear
+      </Button>
+    </div>
+  );
+}
+
 export function Event({ events, city }: EventProps) {
     const [event, setEvent] = useEvent()
     const defaultLayout = [50,50]
@@ -271,118 +419,34 @@ export function Event({ events, city }: EventProps) {
                                     <form>
                                         {/* Dates */}
                                         <div className="p-4 space-y-4">
-                                            <div className="flex gap-2">
-                                                <Popover>
-                                                    <PopoverTrigger asChild>
-                                                        <Button
-                                                            variant="outline"
-                                                            className="pl-3 text-left font-normal w-full w-1/2"
-                                                        >
-                                                            {hasSelectedStartDate && startDate ? formatDateFns(startDate, "MMM d, yyyy") : "start date"}
-                                                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                                        </Button>
-                                                    </PopoverTrigger>
-                                                    <PopoverContent className="w-auto p-0">
-                                                        <Calendar
-                                                            mode="single"
-                                                            selected={startDate}
-                                                            onSelect={handleStartDateSelect}
-                                                        />
-                                                    </PopoverContent>
-                                                </Popover>
-                                                <Popover>
-                                                    <PopoverTrigger asChild>
-                                                        <Button
-                                                            variant="outline"
-                                                            className="pl-3 text-left font-normal w-full w-1/2"
-                                                        >
-                                                            {endDate ? formatDateFns(endDate, "MMM d, yyyy") : "end date"}
-                                                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                                        </Button>
-                                                    </PopoverTrigger>
-                                                    <PopoverContent className="w-auto p-0">
-                                                        <Calendar
-                                                            mode="single"
-                                                            selected={endDate}
-                                                            onSelect={setEndDate}
-                                                        />
-                                                    </PopoverContent>
-                                                </Popover>
-                                            </div>
+                                            <EventDatePickers
+                                                startDate={startDate}
+                                                endDate={endDate}
+                                                onStartDate={handleStartDateSelect}
+                                                onEndDate={setEndDate}
+                                                hasSelectedStartDate={hasSelectedStartDate}
+                                                setHasSelectedStartDate={setHasSelectedStartDate}
+                                                layout="row"
+                                            />
                                         </div>
 
                                         <Separator />
 
                                         {/* Category */}
-                                        <div className="p-4">
-                                            <div className="flex items-center justify-between mb-2">
-                                                <span className="text-base font-semibold hidden md:inline">category</span>
-                                            </div>
-                                            <div className="flex flex-wrap gap-2">
-                                                {categoryOptions.map(option => (
-                                                    <Badge
-                                                        key={option.value}
-                                                        variant={selectedCategories.some(cat => cat.value === option.value) ? "default" : "outline"}
-                                                        onClick={e => {
-                                                            e.preventDefault();
-                                                            setSelectedCategories(prev => {
-                                                                const exists = prev.some(cat => cat.value === option.value);
-                                                                if (exists) {
-                                                                    return prev.filter(cat => cat.value !== option.value);
-                                                                } else {
-                                                                    return [...prev, option];
-                                                                }
-                                                            });
-                                                        }}
-                                                        className="cursor-pointer select-none px-3 py-1.5 text-sm min-w-[36px] min-h-[36px] md:px-2.5 md:py-0.5 md:text-xs md:min-w-0 md:min-h-0"
-                                                    >
-                                                        {option.label}
-                                                    </Badge>
-                                                ))}
-                                            </div>
+                                        <div className="flex flex-wrap p-4 gap-2">
+                                            <EventCategoryBadges selectedCategories={selectedCategories} setSelectedCategories={setSelectedCategories} />
                                         </div>
 
                                         <Separator />
 
                                         {/* Cost */}
-                                        <div className="p-4">
-                                            <div className="flex items-center justify-between mb-2">
-                                                <span className="text-base font-semibold hidden md:inline">cost</span>
-                                            </div>
-                                            <div className="flex flex-wrap gap-2">
-                                                {costOptions.map(option => (
-                                                    <Badge
-                                                        key={option.value}
-                                                        variant={selectedCosts.some(cost => cost.value === option.value) ? "default" : "outline"}
-                                                        onClick={e => {
-                                                            e.preventDefault();
-                                                            setSelectedCosts(prev => {
-                                                                const exists = prev.some(cost => cost.value === option.value);
-                                                                if (exists) {
-                                                                    return prev.filter(cost => cost.value !== option.value);
-                                                                } else {
-                                                                    return [...prev, option];
-                                                                }
-                                                            });
-                                                        }}
-                                                        className="cursor-pointer select-none px-3 py-1.5 text-sm min-w-[36px] min-h-[36px] md:px-2.5 md:py-0.5 md:text-xs md:min-w-0 md:min-h-0"
-                                                    >
-                                                        {option.label}
-                                                    </Badge>
-                                                ))}
-                                            </div>
+                                        <div className="flex flex-wrap p-4 gap-2">
+                                            <EventCostBadges selectedCosts={selectedCosts} setSelectedCosts={setSelectedCosts} />
                                         </div>
 
                                         <Separator />
                                         
-                                        <div className="p-4 flex gap-2">
-                                            <Button type="button" variant="outline" onClick={handleClearAll} className="w-1/2">
-                                                clear
-                                            </Button>
-                                            <DrawerClose asChild>
-                                                <Button className="w-1/2">apply</Button>
-                                            </DrawerClose>
-                                        </div>
+                                        <EventFilterActions onClear={handleClearAll} isMobile={true} />
                                     </form>
                                 </DrawerContent>
                             </Drawer>
@@ -438,116 +502,38 @@ export function Event({ events, city }: EventProps) {
                         <form>
                             {/* Dates */}
                             <div className="p-4 space-y-4">
-
-                                {/* Start Date */}
-                                <Popover>
-                                    <PopoverTrigger asChild>
-                                        <Button
-                                            variant="outline"
-                                            className="pl-3 text-left font-normal w-full"
-                                        >
-                                            {hasSelectedStartDate && startDate ? formatDateFns(startDate, "MMM d, yyyy") : "start date"}
-                                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                        </Button>
-                                    </PopoverTrigger>
-                                    <PopoverContent className="w-auto p-0">
-                                        <Calendar
-                                            mode="single"
-                                            selected={startDate}
-                                            onSelect={handleStartDateSelect}
-                                        />
-                                    </PopoverContent>
-                                </Popover>
-
-                                {/* End Date */}
-                                <Popover>
-                                    <PopoverTrigger asChild>
-                                        <Button
-                                            variant="outline"
-                                            className="pl-3 text-left font-normal w-full"
-                                        >
-                                            {endDate ? formatDateFns(endDate, "MMM d, yyyy") : "end date"}
-                                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                        </Button>
-                                    </PopoverTrigger>
-                                    <PopoverContent className="w-auto p-0">
-                                        <Calendar
-                                            mode="single"
-                                            selected={endDate}
-                                            onSelect={setEndDate}
-                                        />
-                                    </PopoverContent>
-                                </Popover>
+                                <EventDatePickers
+                                    startDate={startDate}
+                                    endDate={endDate}
+                                    onStartDate={handleStartDateSelect}
+                                    onEndDate={setEndDate}
+                                    hasSelectedStartDate={hasSelectedStartDate}
+                                    setHasSelectedStartDate={setHasSelectedStartDate}
+                                    layout="col"
+                                />
                             </div>
 
                             <Separator />
 
                             {/* Category */}
-                            <div className="p-4">
-                                <div className="hidden md:flex flex-wrap gap-2 mt-2">
-                                    {categoryOptions.map(option => (
-                                        <Badge
-                                            key={option.value}
-                                            variant={selectedCategories.some(cat => cat.value === option.value) ? "default" : "outline"}
-                                            onClick={e => {
-                                                e.preventDefault();
-                                                setSelectedCategories(prev => {
-                                                    const exists = prev.some(cat => cat.value === option.value);
-                                                    if (exists) {
-                                                        return prev.filter(cat => cat.value !== option.value);
-                                                    } else {
-                                                        return [...prev, option];
-                                                    }
-                                                });
-                                            }}
-                                            className="cursor-pointer select-none px-3 py-1.5 text-sm min-w-[36px] min-h-[36px] md:px-2.5 md:py-0.5 md:text-xs md:min-w-0 md:min-h-0"
-                                        >
-                                            {option.label}
-                                        </Badge>
-                                    ))}
-                                </div>
+                            <div className="hidden md:flex flex-wrap p-4 gap-2 mt-2">
+                                <EventCategoryBadges selectedCategories={selectedCategories} setSelectedCategories={setSelectedCategories} />
                             </div>
 
                             <Separator />
 
                             {/* Cost */}
-                            <div className="p-4">
-                                <div className="hidden md:flex flex-wrap gap-2 mt-2">
-                                    {costOptions.map(option => (
-                                        <Badge
-                                            key={option.value}
-                                            variant={selectedCosts.some(cost => cost.value === option.value) ? "default" : "outline"}
-                                            onClick={e => {
-                                                e.preventDefault();
-                                                setSelectedCosts(prev => {
-                                                    const exists = prev.some(cost => cost.value === option.value);
-                                                    if (exists) {
-                                                        return prev.filter(cost => cost.value !== option.value);
-                                                    } else {
-                                                        return [...prev, option];
-                                                    }
-                                                });
-                                            }}
-                                            className="cursor-pointer select-none px-3 py-1.5 text-sm min-w-[36px] min-h-[36px] md:px-2.5 md:py-0.5 md:text-xs md:min-w-0 md:min-h-0"
-                                        >
-                                            {option.label}
-                                        </Badge>
-                                    ))}
-                                </div>
+                            <div className="hidden md:flex flex-wrap p-4 gap-2 mt-2">
+                                <EventCostBadges selectedCosts={selectedCosts} setSelectedCosts={setSelectedCosts} />
                             </div>
 
                             <Separator />
                             
-                            {/* Clear Button */}
-                            <div className="p-4">
-                                <Button type="button" variant="outline" onClick={handleClearAll} className="w-full">
-                                    clear
-                                </Button>
-                            </div>
+                            <EventFilterActions onClear={handleClearAll} isMobile={false} />
                         </form>
                     </div>
                 )}
-                {/* Only show vertical separator if filters are open */}
+
                 {hasMounted && showFilters && <Separator orientation="vertical" />}
                 <ResizablePanelGroup
                     direction="horizontal"
