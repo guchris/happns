@@ -195,7 +195,7 @@ const EventComments = ({ eventId }: EventCommentsProps) => {
                         </div>
                     ))
                 ) : (
-                    <p className="text-sm text-muted-foreground">no comments yet</p>
+                    <p className="text-sm text-muted-foreground">No comments yet</p>
                 )}
             </div>
 
@@ -229,7 +229,7 @@ const EventComments = ({ eventId }: EventCommentsProps) => {
                 </div>
             ) : (
                 <div className="p-4 text-sm text-muted-foreground">
-                    please <a href={`/auth?redirect=${encodeURIComponent(redirectUrl || "/")}`} className="underline">
+                    Please <a href={`/auth?redirect=${encodeURIComponent(redirectUrl || "/")}`} className="underline">
                         login
                     </a> to post a comment
                 </div>

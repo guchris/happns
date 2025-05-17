@@ -145,7 +145,7 @@ export function EventDisplay({ event }: EventDisplayProps) {
                                 {/* Event Duration */}
                                 {event.eventDurationType && (
                                     <div className="text-sm font-medium flex items-center space-x-2">
-                                        <span className="text-muted-foreground w-28">event duration</span>
+                                        <span className="text-muted-foreground w-28">Event Duration</span>
                                         <Badge
                                             className={cn(
                                                 "inline-block",
@@ -166,7 +166,7 @@ export function EventDisplay({ event }: EventDisplayProps) {
                                 {/* Categories */}
                                 {categoryLabels.length > 0 && (
                                     <div className="text-sm font-medium flex items-center space-x-2">
-                                        <span className="text-muted-foreground w-28">categories</span>
+                                        <span className="text-muted-foreground w-28">Categories</span>
                                         <div className="flex flex-wrap gap-2">
                                             {categoryLabels.map((label, index) => (
                                                 <Badge key={index} variant="outline" className="inline-block">
@@ -179,7 +179,7 @@ export function EventDisplay({ event }: EventDisplayProps) {
 
                                 {/* Days Away */}
                                 <div className="text-sm font-medium flex items-center space-x-2">
-                                    <span className="text-muted-foreground w-28">days away</span>
+                                    <span className="text-muted-foreground w-28">Days Away</span>
                                     <Badge variant="outline" className="inline-block">
                                         {daysAwayLabel}
                                     </Badge>
@@ -198,7 +198,7 @@ export function EventDisplay({ event }: EventDisplayProps) {
                                     className="flex-1 p-4 block cursor-pointer hover:bg-muted transition"
                                     style={{ textDecoration: 'none' }}
                                 >
-                                    <div className="text-sm font-medium text-muted-foreground">location</div>
+                                    <div className="text-sm font-medium text-muted-foreground">Location</div>
                                     <div className="line-clamp-1 text-sm font-medium text-black underline break-words">
                                         {event.location}
                                     </div>
@@ -206,7 +206,7 @@ export function EventDisplay({ event }: EventDisplayProps) {
                             </Link>
                             <Separator orientation="vertical" className="h-auto self-stretch" />
                             <div className="flex-1 p-4">
-                                <div className="text-sm font-medium text-muted-foreground">cost</div>
+                                <div className="text-sm font-medium text-muted-foreground">Cost</div>
                                 <div className="text-sm font-medium">
                                     {event?.cost && (typeof event.cost === 'number' ? event.cost === 0 : event.cost.value === 0)
                                         ? 'FREE'
@@ -227,7 +227,7 @@ export function EventDisplay({ event }: EventDisplayProps) {
                                 className="flex-1 p-4 block cursor-pointer hover:bg-muted transition"
                                 style={{ textDecoration: 'none' }}
                             >
-                                <div className="text-sm font-medium text-muted-foreground">website</div>
+                                <div className="text-sm font-medium text-muted-foreground">Website</div>
                                 <div className="line-clamp-1 text-sm font-medium text-black underline break-words">
                                     {getShortWebsite(event.link)}
                                 </div>
@@ -240,21 +240,21 @@ export function EventDisplay({ event }: EventDisplayProps) {
                         {user ? (
                             <div className="flex items-center gap-4">
                                 <div className="flex-1 p-4">
-                                    <div className="text-sm font-medium text-muted-foreground">clicks</div>
+                                    <div className="text-sm font-medium text-muted-foreground">Clicks</div>
                                     <div className="text-sm font-medium">
                                         {event.clicks}
                                     </div>
                                 </div>
                                 <Separator orientation="vertical" className="h-auto self-stretch" />
                                 <div className="flex-1 p-4">
-                                    <div className="text-sm font-medium text-muted-foreground">going</div>
+                                    <div className="text-sm font-medium text-muted-foreground">Going</div>
                                     <div className="text-sm font-medium">
                                         {event.attendanceSummary.yesCount}
                                     </div>
                                 </div>
                                 <Separator orientation="vertical" className="h-auto self-stretch" />
                                 <div className="flex-1 p-4">
-                                    <div className="text-sm font-medium text-muted-foreground">maybe</div>
+                                    <div className="text-sm font-medium text-muted-foreground">Maybe</div>
                                     <div className="text-sm font-medium">
                                         {event.attendanceSummary.maybeCount}
                                     </div>
@@ -262,7 +262,7 @@ export function EventDisplay({ event }: EventDisplayProps) {
                             </div>
                         ) : (
                             <div className="p-4 text-sm text-muted-foreground">
-                                please <a href={`/auth`} className="underline">
+                                Please <a href={`/auth`} className="underline">
                                     login
                                 </a> to view event stats
                             </div>
@@ -282,7 +282,7 @@ export function EventDisplay({ event }: EventDisplayProps) {
                     </div>
                 ) : (
                     <div className="p-8 text-center text-muted-foreground">
-                        no event selected
+                        No event selected
                     </div>
                 )}
             </div>

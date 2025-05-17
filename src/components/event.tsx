@@ -125,7 +125,7 @@ function EventDatePickers({
             variant="outline"
             className="pl-3 text-left font-normal w-full"
           >
-            {hasSelectedStartDate && startDate ? formatDateFns(startDate, "MMM d, yyyy") : "start date"}
+            {hasSelectedStartDate && startDate ? formatDateFns(startDate, "MMM d, yyyy") : "Start Date"}
             <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
           </Button>
         </PopoverTrigger>
@@ -146,7 +146,7 @@ function EventDatePickers({
             variant="outline"
             className="pl-3 text-left font-normal w-full"
           >
-            {endDate ? formatDateFns(endDate, "MMM d, yyyy") : "end date"}
+            {endDate ? formatDateFns(endDate, "MMM d, yyyy") : "End Date"}
             <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
           </Button>
         </PopoverTrigger>
@@ -171,7 +171,7 @@ function EventFilterActions({ onClear, onApply, isMobile }: {
     return (
       <div className="p-4 flex gap-2">
         <Button type="button" variant="outline" onClick={onClear} className="w-1/2">
-          clear
+          Clear
         </Button>
         <DrawerClose asChild>
           <Button className="w-1/2" type="button" onClick={onApply}>apply</Button>
@@ -182,7 +182,7 @@ function EventFilterActions({ onClear, onApply, isMobile }: {
   return (
     <div className="p-4">
       <Button type="button" variant="outline" onClick={onClear} className="w-full">
-        clear
+        Clear
       </Button>
     </div>
   );
@@ -470,7 +470,7 @@ export function Event({ events, city }: EventProps) {
                         </div>
                         <Separator />
                         {filteredEvents.length === 0 ? (
-                            <div className="p-8 text-center text-muted-foreground">no events</div>
+                            <div className="p-8 text-center text-muted-foreground">No events</div>
                         ) : viewMode === "list" ? (
                             <EventListView
                                 items={filteredEvents}
