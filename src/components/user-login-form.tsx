@@ -139,7 +139,7 @@ export function UserLoginForm({ className, onSuccess, ...props }: UserLoginFormP
                 <div className="grid gap-2">
                     <div className="grid gap-1">
                         <Label className="sr-only" htmlFor="email">
-                            email
+                            Email
                         </Label>
                         <Input
                             id="email"
@@ -156,7 +156,7 @@ export function UserLoginForm({ className, onSuccess, ...props }: UserLoginFormP
                     </div>
                     <div className="grid gap-1">
                         <Label className="sr-only" htmlFor="password">
-                            password
+                            Password
                         </Label>
                         <Input
                             id="password"
@@ -176,7 +176,7 @@ export function UserLoginForm({ className, onSuccess, ...props }: UserLoginFormP
                         {isLoading && (
                             <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
                         )}
-                        login
+                        Login
                     </Button>
                 </div>
             </form>

@@ -406,10 +406,10 @@ const EventActions = ({ event }: EventActionsProps) => {
                             }}
                         >
                             <Pencil className="h-4 w-4" />
-                            <span className="sr-only">edit event</span>
+                            <span className="sr-only">Edit Event</span>
                         </Button>
                     </TooltipTrigger>
-                    <TooltipContent>edit event</TooltipContent>
+                    <TooltipContent>Edit Event</TooltipContent>
                 </Tooltip>
             )}
 
@@ -419,7 +419,7 @@ const EventActions = ({ event }: EventActionsProps) => {
                     <TooltipTrigger asChild>
                         <SuggestEditDialog event={event} user={user} />
                     </TooltipTrigger>
-                    <TooltipContent>suggest edits</TooltipContent>
+                    <TooltipContent>Suggest Edits</TooltipContent>
                 </Tooltip>
             )}
 
@@ -439,12 +439,12 @@ const EventActions = ({ event }: EventActionsProps) => {
                                 <Bookmark className="h-4 w-4" />
                             )}
                             <span className="sr-only">
-                                {isBookmarked ? "remove bookmark" : "bookmark"}
+                                {isBookmarked ? "Remove Nookmark" : "Nookmark"}
                             </span>
                         </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                        {isBookmarked ? "remove bookmark" : "bookmark"}
+                        {isBookmarked ? "Remove Nookmark" : "Nookmark"}
                     </TooltipContent>
                 </Tooltip>
             )}
@@ -454,10 +454,10 @@ const EventActions = ({ event }: EventActionsProps) => {
                 <TooltipTrigger asChild>
                     <Button variant="ghost" size="icon" disabled={isDisabled} onClick={addToCalendar}>
                         <CalendarPlus className="h-4 w-4" />
-                        <span className="sr-only">add to calendar</span>
+                        <span className="sr-only">Add to Calendar</span>
                     </Button>
                 </TooltipTrigger>
-                <TooltipContent>add to calendar</TooltipContent>
+                <TooltipContent>Add to Calendar</TooltipContent>
             </Tooltip>
 
             {/* Share Button Options */}
@@ -467,23 +467,23 @@ const EventActions = ({ event }: EventActionsProps) => {
                         <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="icon" disabled={isDisabled}>
                                 <Send className="h-4 w-4" />
-                                <span className="sr-only">share options</span>
+                                <span className="sr-only">Share</span>
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                             {/* Copy Link Option */}
                             <DropdownMenuItem onClick={handleCopyEventLink}>
-                                copy event link
+                                Copy Event Link
                             </DropdownMenuItem>
 
                             {/* Download Shareable Image Option */}
                             <DropdownMenuItem onClick={generateAndDownloadImage}>
-                                download shareable image
+                                Download Image
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </TooltipTrigger>
-                <TooltipContent>share options</TooltipContent>
+                <TooltipContent>Share</TooltipContent>
             </Tooltip>
         </div>
     );
