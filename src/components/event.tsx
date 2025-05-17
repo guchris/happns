@@ -9,7 +9,6 @@ import { useSearchParams } from "next/navigation"
 import { EventListView } from "@/components/event-list-view"
 import { EventDisplay } from "@/components/event-display"
 import { EventCalendarView } from "@/components/event-calendar-view"
-import MultiSelect, { Option } from '@/components/multi-select'
 import { useEvent } from "@/hooks/use-event"
 import { type Event } from "@/components/types"
 import { categoryOptions, costOptions } from "@/lib/selectOptions"
