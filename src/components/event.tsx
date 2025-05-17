@@ -12,6 +12,8 @@ import { EventCalendarView } from "@/components/event-calendar-view"
 import { useEvent } from "@/hooks/use-event"
 import { type Event } from "@/components/types"
 import { categoryOptions, costOptions } from "@/lib/selectOptions"
+import MultiSelect from '@/components/multi-select'
+import type { Option } from '@/components/multi-select'
 
 // Firebase Imports
 import { db } from "@/lib/firebase"
