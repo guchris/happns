@@ -17,6 +17,7 @@ import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 
 import { doc, setDoc, getDoc } from "firebase/firestore"
 
 // Shadcn Imports
+import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -76,15 +77,15 @@ export function UserLoginForm({ className, onSuccess, ...props }: UserLoginFormP
                 await setDoc(doc(db, "usernames", newUser.username), { uid: user.uid })
 
                 toast({
-                    title: "Account Successfully Created!",
-                    description: "Account data updates are located in the settings."
+                    title: "Account Created",
+                    description: "Welcome to the happns community!"
                 })
             } else {
 
                 // If user exists, show signed-in message
                 toast({
                     title: "Signed In",
-                    description: `Welcome back.`
+                    description: `Welcome back`
                 })
             }
 
@@ -115,7 +116,7 @@ export function UserLoginForm({ className, onSuccess, ...props }: UserLoginFormP
 
             toast({
                 title: "Signed In",
-                description: `Welcome back.`
+                description: `Welcome Back`
             })
 
             setIsAuthenticated(true);
@@ -159,7 +160,7 @@ export function UserLoginForm({ className, onSuccess, ...props }: UserLoginFormP
                         </Label>
                         <Input
                             id="password"
-                            placeholder="your password"
+                            placeholder="password"
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
@@ -179,16 +180,7 @@ export function UserLoginForm({ className, onSuccess, ...props }: UserLoginFormP
                     </Button>
                 </div>
             </form>
-            <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-background px-2 text-muted-foreground">
-                        Or continue with
-                    </span>
-                </div>
-            </div>
+            <Separator />
             <Button
                 onClick={handleGoogleSignIn}
                 disabled={isLoading}

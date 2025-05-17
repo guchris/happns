@@ -16,6 +16,7 @@ import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } f
 import { doc, setDoc, getDoc } from "firebase/firestore"
 
 // Shadcn Imports
+import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -188,7 +189,7 @@ export function UserSignupForm({ className, onSuccess, ...props }: UserSignupFor
                         </Label>
                         <Input
                             id="name"
-                            placeholder="your name"
+                            placeholder="Name"
                             type="text"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
@@ -202,7 +203,7 @@ export function UserSignupForm({ className, onSuccess, ...props }: UserSignupFor
                         </Label>
                         <Input
                             id="username"
-                            placeholder="your username"
+                            placeholder="Username"
                             type="text"
                             value={username}
                             onChange={(e) => setUsername(e.target.value.toLowerCase())}
@@ -236,7 +237,7 @@ export function UserSignupForm({ className, onSuccess, ...props }: UserSignupFor
                         </Label>
                         <Input
                             id="password"
-                            placeholder="your password"
+                            placeholder="Password"
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
@@ -252,20 +253,11 @@ export function UserSignupForm({ className, onSuccess, ...props }: UserSignupFor
                         {isLoading && (
                             <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
                         )}
-                        sign up
+                        Sign Up
                     </Button>
                 </div>
             </form>
-            <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-background px-2 text-muted-foreground">
-                        Or continue with
-                    </span>
-                </div>
-            </div>
+            <Separator />
             <Button
                 onClick={handleGoogleSignIn}
                 disabled={isLoading}
