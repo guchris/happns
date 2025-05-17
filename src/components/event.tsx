@@ -123,10 +123,10 @@ function EventDatePickers({
         <PopoverTrigger asChild>
           <Button
             variant="outline"
-            className="pl-3 text-left font-normal w-full"
+            className="pl-3 text-left font-normal w-full h-12 md:h-auto text-base md:text-sm"
           >
             {hasSelectedStartDate && startDate ? formatDateFns(startDate, "MMM d, yyyy") : "Start Date"}
-            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+            <CalendarIcon className="ml-auto h-5 w-5 opacity-50" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0">
@@ -144,10 +144,10 @@ function EventDatePickers({
         <PopoverTrigger asChild>
           <Button
             variant="outline"
-            className="pl-3 text-left font-normal w-full"
+            className="pl-3 text-left font-normal w-full h-12 md:h-auto text-base md:text-sm"
           >
             {endDate ? formatDateFns(endDate, "MMM d, yyyy") : "End Date"}
-            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+            <CalendarIcon className="ml-auto h-5 w-5 opacity-50" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0">
