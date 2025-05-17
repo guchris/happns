@@ -484,98 +484,65 @@ export function Event({ events, city }: EventProps) {
 
                             {/* Category */}
                             <div className="p-4">
-                                <div className="hidden md:flex items-center justify-between">
-                                    <span className="text-base font-semibold hidden md:inline">category</span>
-                                    <button
-                                        type="button"
-                                        className="p-1"
-                                        onClick={() => setShowCategories(prev => !prev)}
-                                        aria-label={showCategories ? 'Hide categories' : 'Show categories'}
-                                    >
-                                        {showCategories ? (
-                                            <span className="inline-block align-middle">{/* minus icon */}
-                                                <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12" /></svg>
-                                            </span>
-                                        ) : (
-                                            <span className="inline-block align-middle">{/* plus icon */}
-                                                <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
-                                            </span>
-                                        )}
-                                    </button>
+                                <div className="hidden md:flex flex-wrap gap-2 mt-2">
+                                    {categoryOptions.map(option => (
+                                        <Badge
+                                            key={option.value}
+                                            variant={selectedCategories.some(cat => cat.value === option.value) ? "default" : "outline"}
+                                            onClick={e => {
+                                                e.preventDefault();
+                                                setSelectedCategories(prev => {
+                                                    const exists = prev.some(cat => cat.value === option.value);
+                                                    if (exists) {
+                                                        return prev.filter(cat => cat.value !== option.value);
+                                                    } else {
+                                                        return [...prev, option];
+                                                    }
+                                                });
+                                            }}
+                                            className="cursor-pointer select-none px-3 py-1.5 text-sm min-w-[36px] min-h-[36px] md:px-2.5 md:py-0.5 md:text-xs md:min-w-0 md:min-h-0"
+                                        >
+                                            {option.label}
+                                        </Badge>
+                                    ))}
                                 </div>
-                                {showCategories && (
-                                    <div className="hidden md:flex flex-wrap gap-2 mt-2">
-                                        {categoryOptions.map(option => (
-                                            <Badge
-                                                key={option.value}
-                                                variant={selectedCategories.some(cat => cat.value === option.value) ? "default" : "outline"}
-                                                onClick={e => {
-                                                    e.preventDefault();
-                                                    setSelectedCategories(prev => {
-                                                        const exists = prev.some(cat => cat.value === option.value);
-                                                        if (exists) {
-                                                            return prev.filter(cat => cat.value !== option.value);
-                                                        } else {
-                                                            return [...prev, option];
-                                                        }
-                                                    });
-                                                }}
-                                                className="cursor-pointer select-none px-3 py-1.5 text-sm min-w-[36px] min-h-[36px] md:px-2.5 md:py-0.5 md:text-xs md:min-w-0 md:min-h-0"
-                                            >
-                                                {option.label}
-                                            </Badge>
-                                        ))}
-                                    </div>
-                                )}
                             </div>
 
                             <Separator />
 
                             {/* Cost */}
                             <div className="p-4">
-                                <div className="hidden md:flex items-center justify-between">
-                                    <span className="text-base font-semibold hidden md:inline">cost</span>
-                                    <button
-                                        type="button"
-                                        className="p-1"
-                                        onClick={() => setShowCosts(prev => !prev)}
-                                        aria-label={showCosts ? 'Hide cost filters' : 'Show cost filters'}
-                                    >
-                                        {showCosts ? (
-                                            <span className="inline-block align-middle">{/* minus icon */}
-                                                <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12" /></svg>
-                                            </span>
-                                        ) : (
-                                            <span className="inline-block align-middle">{/* plus icon */}
-                                                <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
-                                            </span>
-                                        )}
-                                    </button>
+                                <div className="hidden md:flex flex-wrap gap-2 mt-2">
+                                    {costOptions.map(option => (
+                                        <Badge
+                                            key={option.value}
+                                            variant={selectedCosts.some(cost => cost.value === option.value) ? "default" : "outline"}
+                                            onClick={e => {
+                                                e.preventDefault();
+                                                setSelectedCosts(prev => {
+                                                    const exists = prev.some(cost => cost.value === option.value);
+                                                    if (exists) {
+                                                        return prev.filter(cost => cost.value !== option.value);
+                                                    } else {
+                                                        return [...prev, option];
+                                                    }
+                                                });
+                                            }}
+                                            className="cursor-pointer select-none px-3 py-1.5 text-sm min-w-[36px] min-h-[36px] md:px-2.5 md:py-0.5 md:text-xs md:min-w-0 md:min-h-0"
+                                        >
+                                            {option.label}
+                                        </Badge>
+                                    ))}
                                 </div>
-                                {showCosts && (
-                                    <div className="hidden md:flex flex-wrap gap-2 mt-2">
-                                        {costOptions.map(option => (
-                                            <Badge
-                                                key={option.value}
-                                                variant={selectedCosts.some(cost => cost.value === option.value) ? "default" : "outline"}
-                                                onClick={e => {
-                                                    e.preventDefault();
-                                                    setSelectedCosts(prev => {
-                                                        const exists = prev.some(cost => cost.value === option.value);
-                                                        if (exists) {
-                                                            return prev.filter(cost => cost.value !== option.value);
-                                                        } else {
-                                                            return [...prev, option];
-                                                        }
-                                                    });
-                                                }}
-                                                className="cursor-pointer select-none px-3 py-1.5 text-sm min-w-[36px] min-h-[36px] md:px-2.5 md:py-0.5 md:text-xs md:min-w-0 md:min-h-0"
-                                            >
-                                                {option.label}
-                                            </Badge>
-                                        ))}
-                                    </div>
-                                )}
+                            </div>
+
+                            <Separator />
+                            
+                            {/* Clear Button */}
+                            <div className="p-4">
+                                <Button type="button" variant="outline" onClick={handleClearAll} className="w-full">
+                                    clear
+                                </Button>
                             </div>
                         </form>
                     </div>
