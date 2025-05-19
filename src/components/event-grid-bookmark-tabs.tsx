@@ -76,19 +76,19 @@ const EventGridBookmarkTabs = ({ bookmarkedEvents, isLoading }: EventGridBookmar
     if (isLoading) {
         return (
             <div className="p-4 space-y-2">
-                <p className="text-sm text-muted-foreground">loading bookmarked events...</p>
+                <p className="text-sm text-muted-foreground">Loading bookmarked events...</p>
             </div>
         )
     }
 
     return (
         <div className="p-4 space-y-2">
-            <div className="text-sm font-medium text-muted-foreground">bookmarked events</div>
+            <div className="text-sm font-medium text-muted-foreground">Bookmarked Events</div>
 
             <Tabs defaultValue="upcoming">
                 <TabsList>
-                    <TabsTrigger value="upcoming">upcoming</TabsTrigger>
-                    <TabsTrigger value="past">past</TabsTrigger>
+                    <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
+                    <TabsTrigger value="past">Past</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="upcoming">
@@ -129,7 +129,7 @@ const EventList = ({ events }: { events: Event[] }) => {
             ))}
         </div>
     ) : (
-        <p className="text-sm text-muted-foreground">no bookmarked events</p>
+        <p className="text-sm text-muted-foreground">No Bookmarked Events</p>
     );
 };
 

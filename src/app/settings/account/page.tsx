@@ -77,18 +77,18 @@ function DeleteAccountDialog() {
     return (
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-                <Button variant="destructive">delete account</Button>
+                <Button variant="destructive">Delete Account</Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>are you sure?</DialogTitle>
+                    <DialogTitle>Are you sure?</DialogTitle>
                     <DialogDescription>
-                        this action cannot be undone - this will permanently delete your account and remove your data from our servers
+                        This action cannot be undone - this will permanently delete your account and remove your data from our servers.
                     </DialogDescription>
                 </DialogHeader>
                 <DialogFooter>
-                    <Button variant="secondary" onClick={() => setIsDialogOpen(false)}>cancel</Button>
-                    <Button variant="destructive" onClick={handleDelete}>delete</Button>
+                    <Button variant="secondary" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
+                    <Button variant="destructive" onClick={handleDelete}>Delete</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
@@ -166,13 +166,13 @@ export default function SettingsAccountPage() {
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-lg font-semibold">account</h1>
+                <h1 className="text-lg font-semibold">Account</h1>
                 <p className="text-sm text-muted-foreground">
-                    update your account settings, set your preferred language and timezone
+                    Update your account settings
                 </p>
             </div>
-            <div className="space-y-2">
-                <h2 className="text-base font-medium">default city</h2>
+            {/* <div className="space-y-2">
+                <h2 className="text-base font-medium">Default City</h2>
                 <Select onValueChange={handleCityChange} value={selectedCity} disabled={loading}>
                     <SelectTrigger>
                         <SelectValue placeholder="Select a city" />
@@ -184,7 +184,7 @@ export default function SettingsAccountPage() {
                         ))}
                     </SelectContent>
                 </Select>
-            </div>
+            </div> */}
             <DeleteAccountDialog />
         </div>
     )

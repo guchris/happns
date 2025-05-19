@@ -194,9 +194,9 @@ export default function ProfileForm() {
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-lg font-semibold">profile</h1>
+                <h1 className="text-lg font-semibold">Profile</h1>
                 <p className="text-sm text-muted-foreground">
-                    configure your profile
+                    Configure your profile
                 </p>
             </div>
             <Form {...form}>
@@ -208,7 +208,7 @@ export default function ProfileForm() {
                             name="profilePicture"
                             render={() => (
                                 <FormItem>
-                                    <FormLabel>profile picture</FormLabel>
+                                    <FormLabel>Profile Picture</FormLabel>
                                     <Avatar className="h-24 w-24 mb-2">
                                         {editProfilePicture ? (
                                             <Image
@@ -243,7 +243,7 @@ export default function ProfileForm() {
                             name="name"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>name</FormLabel>
+                                    <FormLabel>Name</FormLabel>
                                     <FormControl>
                                         <Input {...field} placeholder="Enter your name" />
                                     </FormControl>
@@ -257,7 +257,7 @@ export default function ProfileForm() {
                             name="username"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>username</FormLabel>
+                                    <FormLabel>Username</FormLabel>
                                     <FormControl>
                                         <Input
                                             {...field}
@@ -276,7 +276,7 @@ export default function ProfileForm() {
                             name="email"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>email</FormLabel>
+                                    <FormLabel>Email</FormLabel>
                                     <FormControl>
                                         <Input {...field} placeholder="Enter your email" />
                                     </FormControl>
@@ -298,7 +298,7 @@ export default function ProfileForm() {
                             )}
                         />
 
-                        <Button type="submit" disabled={!isModified}>update profile</Button>
+                        <Button type="submit" disabled={!isModified}>Update Profile</Button>
                     </div>
                 </form>
             </Form>

@@ -107,9 +107,9 @@ export function NotificationsForm() {
     return (
         <div className="space-y-6">
             <div>
-                <h1 className="text-lg font-semibold">notifications</h1>
+                <h1 className="text-lg font-semibold">Notifications</h1>
                 <p className="text-sm text-muted-foreground">
-                    configure how you receive email notifications
+                    Configure how you receive email notifications
                 </p>
             </div>
             <Form {...form}>
@@ -122,10 +122,10 @@ export function NotificationsForm() {
                                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                                     <div className="space-y-0.5">
                                     <FormLabel className="text-sm">
-                                        communication emails
+                                        Communication Emails
                                     </FormLabel>
                                     <FormDescription className="text-sm">
-                                        receive emails about your account activity
+                                        Receive emails about your account activity
                                     </FormDescription>
                                     </div>
                                     <FormControl>
@@ -141,10 +141,10 @@ export function NotificationsForm() {
                                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                                     <div className="space-y-0.5">
                                     <FormLabel className="text-sm">
-                                        marketing emails
+                                        Marketing Emails
                                     </FormLabel>
                                     <FormDescription>
-                                        receive emails about new features, partnerships, and more
+                                        Receive emails about new features, partnerships, and more
                                     </FormDescription>
                                     </div>
                                     <FormControl>
@@ -159,9 +159,11 @@ export function NotificationsForm() {
                             render={({ field }) => (
                                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                                     <div className="space-y-0.5">
-                                    <FormLabel className="text-sm">roundup emails</FormLabel>
+                                    <FormLabel className="text-sm">
+                                        Roundup Emails
+                                    </FormLabel>
                                     <FormDescription>
-                                        receive weekly roundup emails of events in your city
+                                        Receive weekly roundup emails of events in your city
                                     </FormDescription>
                                     </div>
                                     <FormControl>
@@ -171,7 +173,7 @@ export function NotificationsForm() {
                             )}
                         />
                     </div>
-                    <Button type="submit">update notifications</Button>
+                    <Button type="submit">Update Notifications</Button>
                 </form>
             </Form>
         </div>

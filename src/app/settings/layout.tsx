@@ -19,15 +19,15 @@ import { ExclamationTriangleIcon } from "@radix-ui/react-icons"
 
 const sidebarNavItems = [
     {
-        title: "profile",
+        title: "Profile",
         href: "/settings"
     },
     {
-        title: "account",
+        title: "Account",
         href: "/settings/account"
     },
     {
-        title: "notifications",
+        title: "Notifications",
         href: "/settings/notifications"
     }
 ]

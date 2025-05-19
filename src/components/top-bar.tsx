@@ -194,10 +194,10 @@ export const TopBar: React.FC<TopBarProps> = ({ title }) => {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="w-96 max-h-96 bg-white shadow-lg rounded-lg p-4 mr-14">
                                 <DropdownMenuLabel className="text-base flex justify-between items-center">
-                                    notifications
+                                    Notifications
                                     {unreadCount > 0 && (
                                         <Button variant="link" className="text-xs px-0" onClick={markAllAsRead}>
-                                            mark all as read
+                                            Mark all as read
                                         </Button>
                                     )}
                                 </DropdownMenuLabel>
@@ -243,19 +243,19 @@ export const TopBar: React.FC<TopBarProps> = ({ title }) => {
 
                             {userData.role === "curator" && (
                                 <DropdownMenuItem>
-                                    <Link href="/event-form" className="w-full">add event</Link>
+                                    <Link href="/event-form" className="w-full">Add Event</Link>
                                 </DropdownMenuItem>
                             )}
 
                             <DropdownMenuItem>
-                                <Link href="/profile" className="w-full">profile</Link>
+                                <Link href="/profile" className="w-full">Profile</Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem>
-                                <Link href="/settings" className="w-full">settings</Link>
+                                <Link href="/settings" className="w-full">Settings</Link>
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem onClick={handleSignOut}>
-                                <Link href="/" className="w-full">logout</Link>
+                                <Link href="/" className="w-full">Log Out</Link>
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>

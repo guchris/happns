@@ -229,7 +229,7 @@ export default function ProfilePage() {
 
                             {/* Email */}
                             <div className="text-sm font-medium flex items-center space-x-2">
-                                <span className="text-muted-foreground w-10">email</span>
+                                <span className="text-muted-foreground w-10">Email</span>
                                 <Badge variant="outline" className="inline-block">
                                     {userInfo.email}
                                 </Badge>
@@ -238,7 +238,7 @@ export default function ProfilePage() {
                             {/* City */}
                             {userInfo.selectedCity && (
                                 <div className="text-sm font-medium flex items-center space-x-2">
-                                    <span className="text-muted-foreground w-10">city</span>
+                                    <span className="text-muted-foreground w-10">City</span>
                                     <Link href={`/${userInfo.selectedCity.toLowerCase()}`} passHref>
                                         <Badge 
                                             variant="outline"
@@ -252,7 +252,7 @@ export default function ProfilePage() {
 
                             {/* Role */}
                             <div className="text-sm font-medium flex items-center space-x-2">
-                                <span className="text-muted-foreground w-10">role</span>
+                                <span className="text-muted-foreground w-10">Role</span>
                                 <Badge variant="outline" className="inline-block">
                                     {userInfo.role}
                                 </Badge>
@@ -261,7 +261,7 @@ export default function ProfilePage() {
                             {/* Instagram Handle */}
                             {userInfo.instagram && (
                                 <div className="text-sm font-medium flex items-center space-x-2">
-                                    <span className="text-muted-foreground w-10">insta</span>
+                                    <span className="text-muted-foreground w-10">Insta</span>
                                     <Badge variant="outline" className="inline-block">
                                         <a 
                                             href={`https://www.instagram.com/${userInfo.instagram}`}
@@ -282,14 +282,14 @@ export default function ProfilePage() {
                     {/* User Stats */}
                     <div className="flex items-center gap-4">
                         <div className="flex-1 p-4">
-                            <div className="text-sm font-medium text-muted-foreground">bookmarked</div>
+                            <div className="text-sm font-medium text-muted-foreground">Bookmarked</div>
                             <div className="text-sm font-medium">
                                 {bookmarkCount} events bookmarked
                             </div>
                         </div>
                         <Separator orientation="vertical" className="h-auto self-stretch" />
                         <div className="flex-1 p-4">
-                            <div className="text-sm font-medium text-muted-foreground">attended</div>
+                            <div className="text-sm font-medium text-muted-foreground">Attended</div>
                             <div className="text-sm font-medium">
                                 {attendedCount} events attended
                             </div>
@@ -300,10 +300,10 @@ export default function ProfilePage() {
 
                     {/* User Calendar Link */}
                     <div className="flex-col p-4 space-y-2">
-                        <div className="text-sm font-medium text-muted-foreground">google calendar subscription link</div>
+                        <div className="text-sm font-medium text-muted-foreground">Google Calendar Subscription Link</div>
                         <div className="space-y-2">
                             <p className="text-sm">
-                                subscribe to your bookmarked events by adding this link to your gcal
+                                Subscribe to your bookmarked events by adding this link to your gcal.
                             </p>
                             <div className="flex space-x-2">
                                 <Input ref={inputRef} value={calendarLink} readOnly />
@@ -314,7 +314,7 @@ export default function ProfilePage() {
                             </div>
                             <Collapsible>
                                 <CollapsibleTrigger asChild>
-                                    <Button variant="outline">instructions</Button>
+                                    <Button variant="outline">Instructions</Button>
                                 </CollapsibleTrigger>
                                 <CollapsibleContent className="pt-4 space-y-4">
                                     <ol className="list-decimal list-inside text-sm space-y-2">

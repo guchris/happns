@@ -45,20 +45,20 @@ const EventGridAttendanceTabs = ({
     if (isLoading) {
         return (
             <div className="p-4 space-y-2">
-                <p className="text-sm text-muted-foreground">loading attending events...</p>
+                <p className="text-sm text-muted-foreground">Loading attending events...</p>
             </div>
         )
     }
 
     return (
         <div className="p-4 space-y-2">
-            <div className="text-sm font-medium text-muted-foreground">attendance</div>
+            <div className="text-sm font-medium text-muted-foreground">Attendance</div>
 
             <Tabs defaultValue="yes">
                 <TabsList>
-                    <TabsTrigger value="yes">yes</TabsTrigger>
-                    <TabsTrigger value="maybe">maybe</TabsTrigger>
-                    <TabsTrigger value="not">not</TabsTrigger>
+                    <TabsTrigger value="yes">Yes</TabsTrigger>
+                    <TabsTrigger value="maybe">Maybe</TabsTrigger>
+                    <TabsTrigger value="not">Not</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="yes">
@@ -102,7 +102,7 @@ const EventList = ({ events }: { events: Event[] }) => {
             ))}
         </div>
     ) : (
-        <p className="text-sm text-muted-foreground">no attending events</p>
+        <p className="text-sm text-muted-foreground">No Attending Events</p>
     );
 };
 
