@@ -1,7 +1,6 @@
 export const categoryOptions = [
-    { value: "other", label: "Other" },
     { value: "21plus", label: "21+" },
-    { value: "cinema-film", label: "Cinema & Film"},
+    { value: "cinema-film", label: "Cinema & Film" },
     { value: "comedy", label: "Comedy" },
     { value: "community", label: "Community" },
     { value: "culture", label: "Culture" },
@@ -10,10 +9,12 @@ export const categoryOptions = [
     { value: "fitness", label: "Fitness" },
     { value: "food-drink", label: "Food & Drink" },
     { value: "gaming", label: "Gaming" },
-    { value: "seasonal", label: "Seasonal" },
     { value: "music", label: "Music" },
+    { value: "other", label: "Other" },
     { value: "performing-arts", label: "Performing Arts" },
     { value: "politics", label: "Politics" },
+    { value: "seasonal", label: "Seasonal" },
+    { value: "shopping", label: "Shopping" },
     { value: "sports", label: "Sports" },
     { value: "technology", label: "Technology" },
 ];
