@@ -167,9 +167,9 @@ export function EventCalendarView({
                                             <Badge
                                                 className={cn(
                                                     "inline-block",
-                                                    item.eventDurationType === "single" && "bg-green-200 text-black",
-                                                    item.eventDurationType === "multi" && "bg-blue-200 text-black",
-                                                    item.eventDurationType === "extended" && "bg-purple-200 text-black"
+                                                    item.eventDurationType === "single" && "bg-green-200 text-black hover:bg-green-200",
+                                                    item.eventDurationType === "multi" && "bg-blue-200 text-black hover:bg-blue-200",
+                                                    item.eventDurationType === "extended" && "bg-purple-200 text-black hover:bg-purple-200"
                                                 )}
                                             >
                                                 {item.eventDurationType === "single"

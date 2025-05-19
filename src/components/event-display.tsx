@@ -149,9 +149,9 @@ export function EventDisplay({ event }: EventDisplayProps) {
                                         <Badge
                                             className={cn(
                                                 "inline-block",
-                                                event.eventDurationType === "single" && "bg-green-200 text-black",
-                                                event.eventDurationType === "multi" && "bg-blue-200 text-black",
-                                                event.eventDurationType === "extended" && "bg-purple-200 text-black"
+                                                event.eventDurationType === "single" && "bg-green-200 text-black hover:bg-green-200",
+                                                event.eventDurationType === "multi" && "bg-blue-200 text-black hover:bg-blue-200",
+                                                event.eventDurationType === "extended" && "bg-purple-200 text-black hover:bg-purple-200"
                                             )}
                                         >
                                             {event.eventDurationType === "single"

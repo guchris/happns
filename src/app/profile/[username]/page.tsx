@@ -179,7 +179,7 @@ export default async function PublicProfilePage({ params }: { params: { username
                             {/* City */}
                             {userInfo.selectedCity && (
                                 <div className="text-sm font-medium flex items-center space-x-2">
-                                    <span className="text-muted-foreground w-10">city</span>
+                                    <span className="text-muted-foreground w-10">City</span>
                                     <Link href={`/${userInfo.selectedCity.toLowerCase()}`} passHref>
                                         <Badge 
                                             variant="outline"
@@ -193,7 +193,7 @@ export default async function PublicProfilePage({ params }: { params: { username
 
                             {/* Role */}
                             <div className="text-sm font-medium flex items-center space-x-2">
-                                <span className="text-muted-foreground w-10">role</span>
+                                <span className="text-muted-foreground w-10">Role</span>
                                 <Badge variant="outline" className="inline-block">
                                     {userInfo.role}
                                 </Badge>
@@ -202,7 +202,7 @@ export default async function PublicProfilePage({ params }: { params: { username
                             {/* Instagram Handle */}
                             {userInfo.instagram && (
                                 <div className="text-sm font-medium flex items-center space-x-2">
-                                    <span className="text-muted-foreground w-10">insta</span>
+                                    <span className="text-muted-foreground w-10">Insta</span>
                                     <Badge variant="outline" className="inline-block">
                                         <a 
                                             href={`https://www.instagram.com/${userInfo.instagram}`}
@@ -223,14 +223,14 @@ export default async function PublicProfilePage({ params }: { params: { username
                     {/* User Stats */}
                     <div className="flex items-center gap-4">
                         <div className="flex-1 p-4">
-                            <div className="text-sm font-medium text-muted-foreground">bookmarked</div>
+                            <div className="text-sm font-medium text-muted-foreground">Bookmarked</div>
                             <div className="text-sm font-medium">
                                 {bookmarkCount} events bookmarked
                             </div>
                         </div>
                         <Separator orientation="vertical" className="h-auto self-stretch" />
                         <div className="flex-1 p-4">
-                            <div className="text-sm font-medium text-muted-foreground">attended</div>
+                            <div className="text-sm font-medium text-muted-foreground">Attended</div>
                             <div className="text-sm font-medium">
                                 {attendedCount} events attended
                             </div>
