@@ -108,7 +108,7 @@ export const TopBar: React.FC<TopBarProps> = ({ title }) => {
         await signOut(auth);
         router.push("/");
         toast({
-            title: "logged out"
+            title: "Logged Out"
         });
     };
 

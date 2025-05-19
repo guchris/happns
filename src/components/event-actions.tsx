@@ -10,7 +10,7 @@ import { useAuth } from "@/context/AuthContext"
 import { Event } from "@/components/types"
 import { useToast } from "@/hooks/use-toast"
 import SuggestEditDialog from "@/components/dialog-suggest-edit"
-import { formatEventDate } from "@/lib/eventUtils"
+import { formatEventDate, formatEventTime } from "@/lib/eventUtils"
 
 // Firebase Imports
 import { db } from "@/lib/firebase"
@@ -187,15 +187,12 @@ const EventActions = ({ event }: EventActionsProps) => {
         canvas.width = width;
         canvas.height = height;
     
-        // Draw background
-        ctx.fillStyle = "#fafafa";
+        // Draw black background
+        ctx.fillStyle = "#000000";
         ctx.fillRect(0, 0, width, height);
     
-        // Draw gray background
-        const { bgX, bgY, bgWidth, bgHeight } = drawGrayBackground(ctx, width, height);
-
-        // Draw text and image inside the gray background
-        drawTextAndImage(ctx, event, bgX, bgY, bgWidth, bgHeight);
+        // Draw text and image in new style
+        drawTextAndImage(ctx, event, width, height);
     };
 
     const drawRoundedImage = (
@@ -230,17 +227,17 @@ const EventActions = ({ event }: EventActionsProps) => {
         x: number,
         y: number,
         maxWidth: number,
-        lineHeight: number
+        lineHeight: number,
+        center: boolean = false
     ) => {
         const words = text.split(" ");
         let line = "";
         let currentY = y;
-    
+        ctx.textAlign = center ? "center" : ctx.textAlign;
         for (let i = 0; i < words.length; i++) {
             const testLine = line + words[i] + " ";
             const metrics = ctx.measureText(testLine);
             const testWidth = metrics.width;
-    
             if (testWidth > maxWidth && i > 0) {
                 ctx.fillText(line, x, currentY);
                 line = words[i] + " ";
@@ -249,101 +246,104 @@ const EventActions = ({ event }: EventActionsProps) => {
                 line = testLine;
             }
         }
-        ctx.fillText(line, x, currentY); // Draw the last line
-        return currentY + lineHeight; // Return the updated Y position
+        ctx.fillText(line, x, currentY);
+        return currentY + lineHeight;
     };    
-
-    const drawGrayBackground = (
-        ctx: CanvasRenderingContext2D,
-        width: number,
-        height: number
-    ): { bgX: number; bgY: number; bgWidth: number; bgHeight: number } => {
-        const bgWidth = width * 0.8; // 80% of canvas width
-        const bgHeight = height * 0.7; // 70% of canvas height
-        const bgX = (width - bgWidth) / 2; // Center horizontally
-        const bgY = (height - bgHeight) / 2; // Center vertically
-    
-        // Draw rounded gray background
-        const borderRadius = 20;
-        ctx.fillStyle = "#ffffff";
-        ctx.beginPath();
-        ctx.moveTo(bgX + borderRadius, bgY);
-        ctx.arcTo(bgX + bgWidth, bgY, bgX + bgWidth, bgY + bgHeight, borderRadius);
-        ctx.arcTo(bgX + bgWidth, bgY + bgHeight, bgX, bgY + bgHeight, borderRadius);
-        ctx.arcTo(bgX, bgY + bgHeight, bgX, bgY, borderRadius);
-        ctx.arcTo(bgX, bgY, bgX + bgWidth, bgY, borderRadius);
-        ctx.closePath();
-        ctx.fill();
-    
-        return { bgX, bgY, bgWidth, bgHeight };
-    };
 
     const drawTextAndImage = (
         ctx: CanvasRenderingContext2D,
         event: Event,
-        bgX: number,
-        bgY: number,
-        bgWidth: number,
-        bgHeight: number
+        width: number,
+        height: number
     ) => {
-        const padding = 40; // Padding inside the gray background
-        const verticalPadding = 40; // Additional vertical padding above "happns/"
-        let currentY = bgY + padding + verticalPadding; // Start with extra padding above "happns/"
-    
-        // Draw "happns/"
-        ctx.fillStyle = "#000000"; // Black text
-        ctx.font = "bold 44px Arial";
-        ctx.textAlign = "left";
+        // Spacing and font constants
+        const brandingFontSize = 64;
+        const imageWidth = width * 0.6;
+        const imageHeight = imageWidth;
+        const imageBorderRadius = 32;
+        const brandingSpacing = 80;
+        const imageSpacing = 100;
+        const eventNameFontSize = 56;
+        const eventNameSpacing = 40;
+        const eventDetailsFontSize = 40;
+        const eventTimeSpacing = 20;
+        const eventLocationSpacing = 20;
+
+        // Prepare text for measurement
+        ctx.font = `bold ${eventNameFontSize}px Arial`;
+        const eventName = event.name || "Event Name";
+        const maxTextWidth = width * 0.8;
+
+        // Estimate wrapped event name height
+        const eventNameWidth = ctx.measureText(eventName).width;
+        const eventNameLines = Math.max(1, Math.ceil(eventNameWidth / maxTextWidth));
+        const eventNameBlockHeight = eventNameLines * (eventNameFontSize + 8);
+
+        // Calculate total content height
+        const totalContentHeight =
+            brandingFontSize +
+            brandingSpacing +
+            imageHeight +
+            imageSpacing +
+            eventNameBlockHeight +
+            eventNameSpacing +
+            eventDetailsFontSize + // date
+            eventTimeSpacing +
+            eventDetailsFontSize + // time
+            eventLocationSpacing +
+            eventDetailsFontSize; // location
+
+        // Calculate top Y to vertically center
+        const topY = (height - totalContentHeight) / 2;
+
+        // Draw 'happns/' branding
+        ctx.fillStyle = "#FFFFFF";
+        ctx.font = `bold ${brandingFontSize}px Arial`;
+        ctx.textAlign = "center";
         ctx.textBaseline = "top";
-        ctx.fillText("happns/", bgX + padding, currentY);
-    
-        // Move to next section for the image
-        currentY += 100;
-    
-        // Draw the event image
-        const img = new Image();
+        ctx.fillText("happns/", width / 2, topY);
+
+        // Draw event image (centered)
+        const img = new window.Image();
         img.src = event.image;
-        console.log("Event image URL:", event?.image);
-        img.crossOrigin = "anonymous"; // Avoid CORS issues
-    
+        img.crossOrigin = "anonymous";
         img.onload = () => {
-            const imgSize = bgWidth - 2 * padding; // Image width matches gray background minus padding
-            const imgX = bgX + padding; // Left-align inside the gray background
-            const imgY = currentY; // Position the image below the "happns/" text
-            const borderRadius = 20; // Rounded corners for the image
-            ctx.save(); // Save the current canvas state before clipping
-            drawRoundedImage(ctx, img, imgX, imgY, imgSize, imgSize, borderRadius); // Draw the rounded image
-    
-            // Move to the section below the image
-            const textStartY = imgY + imgSize + 75; // Add some spacing below the image
-    
-            // Draw event name
-            ctx.fillStyle = "#000000"; // Black text
-            ctx.font = "bold 44px Arial";
-            const maxTextWidth = bgWidth - 2 * padding; // Text width matches the gray background
-            const wrappedTextBottomY = wrapText(ctx, event.name || "Event Name", bgX + padding, textStartY, maxTextWidth, 50);
+            let currentY = topY + brandingFontSize + brandingSpacing;
+            const imgX = (width - imageWidth) / 2;
+            ctx.save();
+            drawRoundedImage(ctx, img, imgX, currentY, imageWidth, imageHeight, imageBorderRadius);
+            ctx.restore();
+            currentY += imageHeight + imageSpacing;
 
-            // Add extra spacing below the wrapped text
-            const extraSpacing = 30;
-            const dateStartY = wrappedTextBottomY + extraSpacing;
+            // Draw event name (centered, bold, large, white)
+            ctx.fillStyle = "#FFFFFF";
+            ctx.font = `bold ${eventNameFontSize}px Arial`;
+            ctx.textAlign = "center";
+            ctx.textBaseline = "top";
+            let wrappedY = wrapText(ctx, eventName, width / 2, currentY, maxTextWidth, eventNameFontSize + 8, true);
+            currentY = wrappedY + eventNameSpacing;
 
-            // Draw event date
-            ctx.fillStyle = "#78716C"; // Gray text color
-            ctx.font = "40px Arial";
+            // Draw date (centered, white)
+            ctx.font = `${eventDetailsFontSize}px Arial`;
             const formattedDate = formatEventDate(event.startDate, event.endDate);
-            ctx.fillText(formattedDate, bgX + padding, dateStartY);
+            ctx.fillText(formattedDate, width / 2, currentY);
+            currentY += eventDetailsFontSize + eventTimeSpacing;
 
-            // Draw event time
-            const timeY = dateStartY + 50; // Add spacing below the date
-            ctx.fillText(`${event.times[0].startTime} - ${event.times[0].endTime}`, bgX + padding, timeY);
-    
-            console.log("Image and text successfully drawn on canvas.");
-            triggerDownload(ctx.canvas); // Trigger download after everything is drawn
+            // Draw time (centered, white, with dash, formatted)
+            const startTime = formatEventTime(event.times[0].startTime);
+            const endTime = formatEventTime(event.times[0].endTime);
+            const timeString = `${startTime} - ${endTime}`;
+            ctx.fillText(timeString, width / 2, currentY);
+            currentY += eventDetailsFontSize + eventLocationSpacing;
+
+            // Draw location (centered, white)
+            ctx.fillText(event.location || "Event Location", width / 2, currentY);
+
+            triggerDownload(ctx.canvas);
         };
-    
         img.onerror = () => {
             console.error("Failed to load event image. Skipping image rendering.");
-            triggerDownload(ctx.canvas); // Proceed with text-only image
+            triggerDownload(ctx.canvas);
         };
     };
 
