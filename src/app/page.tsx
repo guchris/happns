@@ -4,17 +4,10 @@ import Link from "next/link"
 
 // App Imports
 import { TopBar } from "@/components/top-bar"
-import CitySelector from "@/components/city-selector"
-import EventCarousel from "@/components/event-carousel"
-import CityGrid from "@/components/city-grid"
-import EventGridDynamic from "@/components/event-grid-dynamic"
-import EventGridAttendanceTabsClient from "@/components/event-grid-attendance-tabs-client"
-import EventGridBookmark from "@/components/event-grid-bookmark"
-import WelcomeCard from "@/components/card-welcome"
-import JoinCard from "@/components/card-join"
 import Footer from "@/components/footer"
 import { CarouselEvent } from "@/components/types"
 import { getTotalUpcomingEvents } from "@/lib/eventUtils"
+import HomeClientRedirect from "@/components/home-client-redirect"
 
 // Firebase Imports
 import { db } from "@/lib/firebase"
@@ -107,95 +100,57 @@ export default async function Home() {
 	const carouselEvents = await fetchCarouselEvents();
 
 	return (
-		<div className="flex flex-col min-h-safe-screen">
-			{/* Intro Animation */}
-			<div className="intro-animation">
-				<h1>
-					happns<span className="slash">/</span>
-				</h1>
-			</div>
+		<>
+			<HomeClientRedirect />
+			<div className="flex flex-col min-h-safe-screen">
+				{/* Intro Animation */}
+				<div className="intro-animation">
+					<h1>
+						happns<span className="slash">/</span>
+					</h1>
+				</div>
 
-			{/* Main Content */}
-			<div className="flex flex-col flex-1">
-				<TopBar title="happns" />
-				<Separator />
-				<Link href="/seattle" className="w-full block">
-					<div className="flex items-center justify-between h-14 px-4 text-lg font-semibold hover:bg-neutral-100 transition cursor-pointer">
-						<span>happns/seattle</span>
+				{/* Main Content */}
+				<div className="flex flex-col flex-1">
+					<TopBar title="happns" />
+					<Separator />
+					<Link href="/seattle" className="w-full block">
+						<div className="flex items-center justify-between h-14 px-4 text-lg font-semibold hover:bg-neutral-100 transition cursor-pointer">
+							<span>happns/seattle</span>
+							<span>--&gt;</span>
+						</div>
+					</Link>
+					<Separator />
+					<Link href="/portland" className="w-full block">
+						<div className="flex items-center justify-between h-14 px-4 text-lg font-semibold hover:bg-neutral-100 transition cursor-pointer">
+							<span>happns/portland</span>
+							<span>--&gt;</span>
+						</div>
+					</Link>
+					<Separator />
+					<div className="flex items-center justify-between h-14 px-4 text-lg font-semibold text-neutral-200 cursor-not-allowed select-none">
+						<span>happns/vancouver</span>
 						<span>--&gt;</span>
 					</div>
-				</Link>
-				<Separator />
-				<Link href="/portland" className="w-full block">
-					<div className="flex items-center justify-between h-14 px-4 text-lg font-semibold hover:bg-neutral-100 transition cursor-pointer">
-						<span>happns/portland</span>
+					<Separator />
+					<div className="flex items-center justify-between h-14 px-4 text-lg font-semibold text-neutral-200 cursor-not-allowed select-none">
+						<span>happns/san-francisco</span>
 						<span>--&gt;</span>
 					</div>
-				</Link>
-				<Separator />
-				<div className="flex items-center justify-between h-14 px-4 text-lg font-semibold text-neutral-200 cursor-not-allowed select-none">
-					<span>happns/vancouver</span>
-					<span>--&gt;</span>
+					<Separator />
+					<div className="flex items-center justify-between h-14 px-4 text-lg font-semibold text-neutral-200 cursor-not-allowed select-none">
+						<span>happns/los-angeles</span>
+						<span>--&gt;</span>
+					</div>
+					<Separator />
+					<div className="flex items-center justify-between h-14 px-4 text-lg font-semibold text-neutral-200 cursor-not-allowed select-none">
+						<span>happns/san-diego</span>
+						<span>--&gt;</span>
+					</div>
+					<Separator />
 				</div>
-				<Separator />
-				<div className="flex items-center justify-between h-14 px-4 text-lg font-semibold text-neutral-200 cursor-not-allowed select-none">
-					<span>happns/san-francisco</span>
-					<span>--&gt;</span>
-				</div>
-				<Separator />
-				<div className="flex items-center justify-between h-14 px-4 text-lg font-semibold text-neutral-200 cursor-not-allowed select-none">
-					<span>happns/los-angeles</span>
-					<span>--&gt;</span>
-				</div>
-				<Separator />
-				<div className="flex items-center justify-between h-14 px-4 text-lg font-semibold text-neutral-200 cursor-not-allowed select-none">
-					<span>happns/san-diego</span>
-					<span>--&gt;</span>
-				</div>
-				<Separator />
-
-				<div className="flex-1 flex flex-col justify-center overflow-y-auto">
-
-					{/* Hero Section */}
-					{/* <div className="flex flex-col max-w-[880px] md:max-w-[700px] lg:max-w-[880px] mx-auto p-4 space-y-8 items-center lg:flex-row lg:space-x-12"> */}
-						
-						{/* Left Section: Slogan, City Selector */}
-						{/* <div className="lg:w-1/2 space-y-4">
-							<h2 className="text-3xl font-bold">discover curated events happning in your city</h2>
-							<CitySelector cities={cities} />
-						</div> */}
-
-						{/* Right Section: Event Photo Carousel */}
-						{/* <EventCarousel carouselEvents={carouselEvents} /> */}
-
-					{/* </div> */}
-					
-					{/* <Separator /> */}
-
-					{/* <div className="py-12 space-y-8"> */}
-
-						{/* Welcome Card */}
-						{/* <WelcomeCard /> */}
-
-						{/* Attending Events Grid */}
-						{/* <EventGridAttendanceTabsClient /> */}
-
-						{/* Bookmarked Events Grid */}
-						{/* <EventGridBookmark /> */}
-
-						{/* Events Grid */}
-						{/* <EventGridDynamic cities={cities} /> */}
-
-						{/* Join Card */}
-						{/* <JoinCard /> */}
-
-						{/* City Grid */}
-						{/* <CityGrid cities={cities} /> */}
-
-					{/* </div> */}
-				</div>
+				<Footer />
 			</div>
-			<Footer />
-		</div>
+		</>
 	);
 }
