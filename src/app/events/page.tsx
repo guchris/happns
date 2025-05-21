@@ -66,36 +66,37 @@ export default function EventsPage() {
         setIsLoading(false);
       }
     };
-    fetchAttendingEvents();
+    if (user) {
+      fetchAttendingEvents();
+    }
   }, [user]);
 
+  // Only render redirect logic if loading or not logged in
   if (loading || !user) {
-    return null;
+    return <EventsAuthRedirect />;
   }
 
+  // Only render the page content if the user is logged in
   return (
-    <>
-        <div className="flex flex-col min-h-safe-screen">
-
-            {/* Main Content */}
-            <div className="flex flex-col flex-1">
-                <TopBar title="happns" />
-                <Separator />
-                <Link href="/seattle" className="w-full block">
-                    <div className="flex items-center justify-between h-14 px-4 text-lg font-semibold hover:bg-neutral-100 transition cursor-pointer">
-                        <span>happns/seattle</span>
-                        <span>--&gt;</span>
-                    </div>
-                </Link>
-                <Separator />
-                <div className="p-4 flex-col gap-4">
-                    <h1 className="font-bold">Welcome back, {userData?.username}!</h1>
-                    <p className="">You have <span className="font-semibold">{attendingEvents.length}</span> upcoming events.</p>
-                </div>
-                <EventGridAttending events={attendingEvents} isLoading={isLoading} />
-            </div>
-            <Footer />
+    <div className="flex flex-col min-h-safe-screen">
+      {/* Main Content */}
+      <div className="flex flex-col flex-1">
+        <TopBar title="happns" />
+        <Separator />
+        <Link href="/seattle" className="w-full block">
+          <div className="flex items-center justify-between h-14 px-4 text-lg font-semibold hover:bg-neutral-100 transition cursor-pointer">
+            <span>happns/seattle</span>
+            <span>--&gt;</span>
+          </div>
+        </Link>
+        <Separator />
+        <div className="p-4 flex-col gap-4">
+          <h1 className="font-bold">Welcome back, {userData?.username}!</h1>
+          <p className="">You have <span className="font-semibold">{attendingEvents.length}</span> upcoming events.</p>
         </div>
-    </>
+        <EventGridAttending events={attendingEvents} isLoading={isLoading} />
+      </div>
+      <Footer />
+    </div>
   );
 }
