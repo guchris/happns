@@ -41,10 +41,22 @@ export function EventDisplay({ event }: EventDisplayProps) {
     // Calculate the number of days away from the event start date
     const startDate = event?.startDate ? parseISO(event.startDate) : null;
     const endDate = event?.endDate ? parseISO(event.endDate) : null;
-    const daysAway = startDate ? differenceInDays(startDate, today) : null;
+    let daysAway: number | null = null;
+    let hasEventPassed = false;
+    if (event?.eventDurationType === "multi" || event?.eventDurationType === "extended") {
+        daysAway = startDate ? differenceInDays(startDate, today) : null;
+        hasEventPassed = endDate ? differenceInDays(endDate, today) < 0 : false;
+    } else {
+        daysAway = startDate ? differenceInDays(startDate, today) : null;
+        hasEventPassed = daysAway !== null && daysAway < 0;
+    }
 
     let daysAwayLabel = "";
-    if (daysAway === 0) {
+    let daysAwayBadgeVariant: "outline" | "default" | "secondary" | "destructive" = "outline";
+    if (hasEventPassed) {
+        daysAwayLabel = "Event Has Passed";
+        daysAwayBadgeVariant = "destructive";
+    } else if (daysAway === 0) {
         daysAwayLabel = "0";
     } else if (daysAway && daysAway < 0) {
         daysAwayLabel = "0";
@@ -180,7 +192,10 @@ export function EventDisplay({ event }: EventDisplayProps) {
                                 {/* Days Away */}
                                 <div className="text-sm font-medium flex items-center space-x-2">
                                     <span className="text-muted-foreground w-28">Days Away</span>
-                                    <Badge variant="outline" className="inline-block">
+                                    <Badge
+                                        variant={daysAwayBadgeVariant}
+                                        className="inline-block"
+                                    >
                                         {daysAwayLabel}
                                     </Badge>
                                 </div>
